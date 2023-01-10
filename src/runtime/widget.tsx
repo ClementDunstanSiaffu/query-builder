@@ -8,7 +8,7 @@ import { IMConfig } from "../config";
 import Query from "esri/rest/support/Query";
 import GraphicsLayer from "esri/layers/GraphicsLayer";
 import Table from "./components/Table";
-import {appActions} from 'jimu-core';
+import { appActions } from "jimu-core";
 
 export default class Widget extends React.PureComponent<
   AllWidgetProps<IMConfig>,
@@ -41,8 +41,9 @@ export default class Widget extends React.PureComponent<
       tablesId: null,
       isOpen: false,
       AndOr: "AND",
-      opened:false, autOpen:true
-
+      opened: false,
+      autOpen: true,
+      mouseleave: false,
     };
     this.activeViewChangeHandler = this.activeViewChangeHandler.bind(this);
     //Layer
@@ -55,6 +56,8 @@ export default class Widget extends React.PureComponent<
     this.chooseAndOr = this.chooseAndOr.bind(this);
     this.closeDrop = this.closeDrop.bind(this);
     this.openDrop = this.openDrop.bind(this);
+    this.closeDropOnclickOutside = this.closeDropOnclickOutside.bind(this);
+    this.onmouseLeave = this.onmouseLeave.bind(this);
   }
 
   nls = (id: string) => {
@@ -65,7 +68,7 @@ export default class Widget extends React.PureComponent<
         })
       : id;
   };
- 
+
   activeViewChangeHandler(jmv: JimuMapView) {
     if (jmv) {
       jmv.view.map.add(this.graphicLayerFound);
@@ -103,13 +106,13 @@ export default class Widget extends React.PureComponent<
 
   componentDidUpdate(prevProps, prevState) {
     if (this.state.isLayerSelected !== prevProps.isLayerSelected) {
-      console.log("è stato selezionato un layer");
+      // console.log("è stato selezionato un layer");
     }
     if (this.state.whereClauses !== prevProps.whereClauses) {
       // this.setState({whereClauses: this.state.whereClauses})
     }
-    if(prevProps.state=='CLOSED'){
-      this.setState({ 
+    if (prevProps.state == "CLOSED") {
+      this.setState({
         isLayerSelected: false,
         currentTargetText: null,
         geometry: null,
@@ -129,16 +132,13 @@ export default class Widget extends React.PureComponent<
         tablesId: null,
         isOpen: false,
         AndOr: "AND",
-        opened:false,
-        autOpen:true,
-      })
+        opened: false,
+        autOpen: true,
+      });
     }
   }
 
-  componentWillUnmount(): void {
-
-  
-  }
+  componentWillUnmount(): void {}
   /**==============================================
    * EVENT CLICK SELECT
    ==============================================*/
@@ -200,16 +200,13 @@ export default class Widget extends React.PureComponent<
 
   async getQuery(e) {
     let clickedQueryTableId = e.currentTarget.attributes[1].value;
-    console.log(clickedQueryTableId);
-    console.log(e.currentTarget.name);
     let currentClickedQueryAttribute;
     let queryIndex;
     if (this.state.whereClauses.length) {
-      console.log("ci sono più query");
+      // console.log("ci sono più query");
       queryIndex = this.state.whereClauses
         .map((obj) => obj.id)
         .indexOf(clickedQueryTableId);
-      console.log(queryIndex);
       if (queryIndex !== -1) {
         const updateState = this.state.whereClauses.map((obj) => {
           if (obj.id === queryIndex.toString()) {
@@ -307,7 +304,6 @@ export default class Widget extends React.PureComponent<
         } else {
           value = el.value?.txt ?? "";
         }
-        console.log(attributeQuery, queryValue, value);
         if (this.state.jimuMapView) {
           this.state.jimuMapView.view.map.allLayers.forEach((f, index) => {
             if (f.title === this.state.currentTargetText) {
@@ -364,7 +360,6 @@ export default class Widget extends React.PureComponent<
             normalizedWhereToSendQuery.push(queryInput);
           }
         }
-        console.log(attributeQuery, queryValue, value);
       });
       if (this.state.jimuMapView) {
         this.state.jimuMapView.view.map.allLayers.forEach((f, index) => {
@@ -376,18 +371,16 @@ export default class Widget extends React.PureComponent<
                 where: query.where,
               };
               // f.visible = true;
-              console.log(`${normalizedWhereToSendQuery.join(" OR ")}`);
+              // console.log(`${normalizedWhereToSendQuery.join(" OR ")}`);
               layerView.visible = true;
             });
           }
         });
       }
-      console.log(normalizedWhereToSendQuery);
     }
   }
 
   async thirdQuery(e) {
-    console.log(e.currentTarget.textContent);
     // const arrChoose = []
     const currentQueryTest = e.currentTarget.textContent;
     this.state.jimuMapView.view.map.allLayers.forEach((f, index) => {
@@ -512,7 +505,6 @@ export default class Widget extends React.PureComponent<
     }
   };
   queryTextIncludedConstructor = (txt, currentTableId, input) => {
-    console.log(txt, currentTableId, input);
     let queryIndex;
     if (this.state.whereClauses.length) {
       queryIndex = this.state.whereClauses
@@ -642,7 +634,7 @@ export default class Widget extends React.PureComponent<
   dropDown = (id) => {
     // e.preventDefault()
     // e.stopPropagation()
-    this.setState({autOpen:true});
+    this.setState({ autOpen: true });
     let queryIndex;
     queryIndex = this.state.whereClauses
       .map((obj) => obj.id)
@@ -682,7 +674,6 @@ export default class Widget extends React.PureComponent<
     }
   };
   handleCheckBox = (event) => {
-    console.log(event.target.checked);
     this.setState({
       isChecked: event.target.checked,
     });
@@ -732,7 +723,7 @@ export default class Widget extends React.PureComponent<
                 .map((obj) => obj.checkValue)
                 .indexOf(event.target.attributes.name.value);
               if (ifAlreadyCheck == -1) {
-                console.log("non è presente il valore tra i checked");
+                // console.log("non è presente il valore tra i checked");
                 obj = {
                   ...obj,
                   checkedList: [
@@ -769,9 +760,9 @@ export default class Widget extends React.PureComponent<
                   }
                 );
               } else {
-                console.log(
-                  "è già presente tra i valori quindi non aggiunto alla lista"
-                );
+                // console.log(
+                //   "è già presente tra i valori quindi non aggiunto alla lista"
+                // );
               }
             }
           }
@@ -824,7 +815,7 @@ export default class Widget extends React.PureComponent<
           where: query.where,
         };
         // f.visible = true;
-        console.log(`${firstQuery} LIKE '${secondQueryTarget}%'`);
+        // console.log(`${firstQuery} LIKE '${secondQueryTarget}%'`);
         layerView.visible = true;
         break;
       case "%LIKE":
@@ -834,7 +825,7 @@ export default class Widget extends React.PureComponent<
           where: query.where,
         };
         // f.visible = true;
-        console.log(`${firstQuery} LIKE '%${secondQueryTarget}'`);
+        // console.log(`${firstQuery} LIKE '%${secondQueryTarget}'`);
         layerView.visible = true;
         break;
       case "%LIKE%":
@@ -844,7 +835,7 @@ export default class Widget extends React.PureComponent<
           where: query.where,
         };
         // f.visible = true;
-        console.log(`${firstQuery} LIKE '%${secondQueryTarget}'`);
+        // console.log(`${firstQuery} LIKE '%${secondQueryTarget}'`);
         layerView.visible = true;
         break;
       case "NOT LIKE":
@@ -854,7 +845,7 @@ export default class Widget extends React.PureComponent<
           where: query.where,
         };
         // f.visible = true;
-        console.log(`${firstQuery} NOT LIKE '%${secondQueryTarget}%'`);
+        // console.log(`${firstQuery} NOT LIKE '%${secondQueryTarget}%'`);
         layerView.visible = true;
         break;
       case "is null":
@@ -864,7 +855,7 @@ export default class Widget extends React.PureComponent<
           where: query.where,
         };
         // f.visible = true;
-        console.log(`${firstQuery} is null`);
+        // console.log(`${firstQuery} is null`);
         layerView.visible = true;
         break;
       case "is not null":
@@ -874,7 +865,7 @@ export default class Widget extends React.PureComponent<
           where: query.where,
         };
         // f.visible = true;
-        console.log(`${firstQuery} is not null`);
+        // console.log(`${firstQuery} is not null`);
         layerView.visible = true;
         break;
       case "IN":
@@ -887,9 +878,9 @@ export default class Widget extends React.PureComponent<
             where: query.where,
           };
           // f.visible = true;
-          console.log(
-            `${firstQuery} IN (${"'" + secondQueryTarget.join("', '") + "'"})`
-          );
+          // console.log(
+          //   `${firstQuery} IN (${"'" + secondQueryTarget.join("', '") + "'"})`
+          // );
           layerView.visible = true;
         } else {
           query.where = `${firstQuery} IN (${secondQueryTarget.join(",")})`;
@@ -898,7 +889,7 @@ export default class Widget extends React.PureComponent<
             where: query.where,
           };
           // f.visible = true;
-          console.log(`${firstQuery} IN (${secondQueryTarget.join(",")})`);
+          // console.log(`${firstQuery} IN (${secondQueryTarget.join(",")})`);
           layerView.visible = true;
         }
 
@@ -910,7 +901,7 @@ export default class Widget extends React.PureComponent<
           where: query.where,
         };
         // f.visible = true;
-        console.log(`NOT ${firstQuery} IN (${secondQueryTarget.join(",")})`);
+        // console.log(`NOT ${firstQuery} IN (${secondQueryTarget.join(",")})`);
         layerView.visible = true;
         break;
       case "included":
@@ -920,9 +911,9 @@ export default class Widget extends React.PureComponent<
           where: query.where,
         };
         // // f.visible = true;
-        console.log(
-          `${firstQuery} > ${secondQueryTarget.firstTxt} AND ${firstQuery} < ${secondQueryTarget.secondTxt}`
-        );
+        // console.log(
+        //   `${firstQuery} > ${secondQueryTarget.firstTxt} AND ${firstQuery} < ${secondQueryTarget.secondTxt}`
+        // );
         layerView.visible = true;
         break;
       case "is_not_included":
@@ -932,9 +923,9 @@ export default class Widget extends React.PureComponent<
           where: query.where,
         };
         // // f.visible = true;
-        console.log(
-          `${firstQuery} < ${secondQueryTarget.firstTxt} OR ${firstQuery} > ${secondQueryTarget.secondTxt}`
-        );
+        // console.log(
+        //   `${firstQuery} < ${secondQueryTarget.firstTxt} OR ${firstQuery} > ${secondQueryTarget.secondTxt}`
+        // );
         layerView.visible = true;
         break;
       default:
@@ -945,7 +936,7 @@ export default class Widget extends React.PureComponent<
             where: query.where,
           };
           // f.visible = true;
-          console.log(`${firstQuery} ${queryRequest} '${secondQueryTarget}'`);
+          // console.log(`${firstQuery} ${queryRequest} '${secondQueryTarget}'`);
           layerView.visible = true;
         } else {
           query.where = `${firstQuery} ${queryRequest} ${secondQueryTarget}`;
@@ -954,7 +945,7 @@ export default class Widget extends React.PureComponent<
             where: query.where,
           };
           // f.visible = true;
-          console.log(`${firstQuery} ${queryRequest} ${secondQueryTarget}`);
+          // console.log(`${firstQuery} ${queryRequest} ${secondQueryTarget}`);
           layerView.visible = true;
         }
     }
@@ -970,29 +961,55 @@ export default class Widget extends React.PureComponent<
   };
 
   openDrop = () => {
-
-
-    this.setState({
-      autOpen:true
-  });}
+    if (this.state.autOpen) {
+      this.setState({
+        autOpen: false,
+      });
+    } else {
+      this.setState({
+        autOpen: true,
+        mouseleave: false,
+      });
+    }
+  };
 
   closeDrop = () => {
-
     this.setState({
-      opened:false,
-      autOpen:false
-  });
-// this.autOpen=false;
+      opened: false,
+      autOpen: false,
+    });
 
-
+    // this.autOpen=false;
   };
-  //TODO config abilitare tab true/false
-  specifiedElement = document.getElementById('wrap');
-  
-  render() {
 
+  closeDropOnclickOutside = () => {
+    if (this.state.autOpen && this.state.mouseleave) {
+      this.setState({
+        autOpen: false,
+      });
+    }
+  };
+  onmouseLeave = () => {
+    if (this.state.autOpen) {
+      this.setState({
+        mouseleave: true,
+      });
+    }
+  };
+
+  //TODO config abilitare tab true/false
+  specifiedElement = document.getElementById("wrap");
+
+  render() {
     return (
-      <div className="widget-attribute-table jimu-widget" id="wrap">
+      <div
+        className="widget-attribute-table jimu-widget"
+        id="wrap"
+        onClick={(e) => {
+          this.closeDropOnclickOutside();
+          e.stopPropagation();
+        }}
+      >
         {this.props.hasOwnProperty("useMapWidgetIds") &&
           this.props.useMapWidgetIds &&
           this.props.useMapWidgetIds[0] && (
@@ -1061,7 +1078,7 @@ export default class Widget extends React.PureComponent<
             </div>
             <div className="row mt-1 mb-3 justify-content-around">
               <div className="col-md-5 d-flex justify-content-center text-center">
-                <Button 
+                <Button
                   disabled={!this.state.currentTargetText}
                   onClick={this.addTable}
                   size="default"
@@ -1080,7 +1097,10 @@ export default class Widget extends React.PureComponent<
                   size="default"
                   className="d-flex align-items-center mb-2"
                   type="secondary"
-                  onClick={()=>{this.sendQuery; this.closeDrop()}}
+                  onClick={() => {
+                    this.sendQuery;
+                    this.closeDrop();
+                  }}
                 >
                   <p className="m-0 p-0">Applica</p>
                 </Button>
@@ -1088,8 +1108,6 @@ export default class Widget extends React.PureComponent<
             </div>
             <div className="row" style={{ height: "50%", overflowY: "scroll" }}>
               <div className="col-md-12">
-    
-  
                 {this.state.tables.map((el, i) => (
                   <Table
                     className="w-100"
@@ -1121,6 +1139,8 @@ export default class Widget extends React.PureComponent<
                     closeDrop={this.closeDrop}
                     opened={this.state.opened}
                     autOpen={this.state.autOpen}
+                    mouseleave={this.state.mouseleave}
+                    onmouseLeave={this.onmouseLeave}
                   />
                 ))}
               </div>

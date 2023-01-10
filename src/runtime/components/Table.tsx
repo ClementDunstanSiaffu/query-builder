@@ -48,10 +48,12 @@ function Table(props) {
     onChangeCheckBox,
     openDrop,
     closeDrop,
-    opened,autOpen
+    opened,
+    autOpen,
+    mouseleave,
+    onmouseLeave,
   } = props;
-  
-  // console.log(tablesId)
+
   return (
     <div className="my-1">
       {list.fields ? (
@@ -147,6 +149,8 @@ function Table(props) {
               closeDrop={closeDrop}
               opened={opened}
               autOpen={autOpen}
+              mouseleave={mouseleave}
+              onmouseLeave={onmouseLeave}
             />
           </div>
         </div>
@@ -181,15 +185,16 @@ const SecondConstructor = (props) => {
     onChangeCheckBox,
     openDrop,
     closeDrop,
-    opened:d,
-    autOpen
+    opened: d,
+    autOpen,
+    onmouseLeave,
   } = props;
   const normalizedThirdQuery = [];
   let defaultValue = "=";
   let dropdownValueQuery = "valore";
   let opened = false;
   let checked = 0;
-  let au=true;
+  let au = true;
 
   // valueThirdQuery.map((el, i) => { normalizedThirdQuery.push({ label: el.label[0].toString(), value: el.value[0].toString() }) })
   if (whereClauses[tablesId] && whereClauses[tablesId].ifInOrNotInQueryValue) {
@@ -210,20 +215,13 @@ const SecondConstructor = (props) => {
   }
   if (whereClauses[tablesId] && whereClauses[tablesId].isOpen) {
     // opened = whereClauses[tablesId].isOpen;
-    if(autOpen){
-      opened = true;
-    }else{
-      opened = false;
-    }
-    
   }
+
   if (whereClauses[tablesId] && whereClauses[tablesId].checkedList) {
     checked = whereClauses[tablesId].checkedList.length;
   }
-  
-  const test = (props) => {
-    console.log(event);
-  };
+
+  const test = (props) => {};
   return (
     <Switch queryValues={defaultValue}>
       <div value={"="} className="d-flex col-md-4">
@@ -341,51 +339,55 @@ const SecondConstructor = (props) => {
           </Dropdown>
         </div>
       </div>
-      <div value={"IN"} >
-        <div className="w-100" onClick={openDrop}>
-          <Dropdown activeIcon isOpen={opened} >
-            <DropdownButton onClick={dropDown} >
-              {checked} elementi selezionati
-            </DropdownButton >
-            <DropdownMenu>
-              <DropdownItem header>Multi selezione attiva</DropdownItem>
-              <DropdownItem divider />
-              {normalizedThirdQuery.map((el, i) => {
-                return (
-                  <DropdownItem 
-                    value={i}
-                    data-table-id={tablesId}
-                    className="d-flex justify-content-start"
-                  >
-                    {
-                      <Input
-                        onChange={onChangeCheckBox}
-                        type="checkbox"
-                        id={tablesId}
-                        name={el.label}
-                        value={el.label}
-                        defaultChecked={
-                          el.listel &&
-                          el.listel.filter(function (e) {
-                            return e.checkValue === el.label;
-                          }).length > 0
+      <div value={"IN"} onMouseLeave={() => onmouseLeave()}>
+        <div className="w-100">
+          {
+            <Dropdown activeIcon isOpen={autOpen} toggle={() => dropDown}>
+              <DropdownButton onClick={() => openDrop()}>
+                {checked} elementi selezionati
+              </DropdownButton>
+              <DropdownMenu>
+                <DropdownItem header>Multi selezione attiva</DropdownItem>
+                <DropdownItem divider />
+                {normalizedThirdQuery.map((el, i) => {
+                  return (
+                    <div>
+                      <DropdownItem
+                        value={i}
+                        data-table-id={tablesId}
+                        className="d-flex justify-content-start"
+                        strategy={"fixed"}
+                      >
+                        {
+                          <Input
+                            onChange={onChangeCheckBox}
+                            type="checkbox"
+                            id={tablesId}
+                            name={el.label}
+                            value={el.label}
+                            defaultChecked={
+                              el.listel &&
+                              el.listel.filter(function (e) {
+                                return e.checkValue === el.label;
+                              }).length > 0
+                            }
+                          />
                         }
-                      />
-                    }
-                    <label
-                      htmlFor={tablesId}
-                      className="ml-3 mb-0"
-                      id={tablesId}
-                    >
-                      {" "}
-                      {el.label}
-                    </label>
-                    {console.log("", el)}
-                  </DropdownItem>
-                );
-              })}
-            </DropdownMenu>
-          </Dropdown>
+                        <label
+                          htmlFor={tablesId}
+                          className="ml-3 mb-0"
+                          id={tablesId}
+                        >
+                          {" "}
+                          {el.label}
+                        </label>
+                      </DropdownItem>
+                    </div>
+                  );
+                })}
+              </DropdownMenu>
+            </Dropdown>
+          }
           {/*<MultiSelect*/}
           {/*    displayByValues={function myFunction (e) { return `${counterIsChecked.length} elementi selezionati` }}*/}
           {/*    items={normalizedThirdQuery}*/}
