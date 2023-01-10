@@ -46,8 +46,11 @@ function Table(props) {
     dropDown,
     isOpenDropD,
     onChangeCheckBox,
+    openDrop,
+    closeDrop,
+    opened,autOpen
   } = props;
-  // console.log(list)
+  
   // console.log(tablesId)
   return (
     <div className="my-1">
@@ -140,6 +143,10 @@ function Table(props) {
               dropDown={dropDown}
               isOpenDropD={isOpenDropD}
               onChangeCheckBox={onChangeCheckBox}
+              openDrop={openDrop}
+              closeDrop={closeDrop}
+              opened={opened}
+              autOpen={autOpen}
             />
           </div>
         </div>
@@ -172,14 +179,17 @@ const SecondConstructor = (props) => {
     dropDown,
     isOpenDropD,
     onChangeCheckBox,
-    isChecked,
+    openDrop,
+    closeDrop,
+    opened:d,
+    autOpen
   } = props;
   const normalizedThirdQuery = [];
   let defaultValue = "=";
   let dropdownValueQuery = "valore";
   let opened = false;
   let checked = 0;
-  let chLst = whereClauses[tablesId]?.checkedList || [];
+  let au=true;
 
   // valueThirdQuery.map((el, i) => { normalizedThirdQuery.push({ label: el.label[0].toString(), value: el.value[0].toString() }) })
   if (whereClauses[tablesId] && whereClauses[tablesId].ifInOrNotInQueryValue) {
@@ -199,11 +209,18 @@ const SecondConstructor = (props) => {
     dropdownValueQuery = whereClauses[tablesId].dropdownValueQuery;
   }
   if (whereClauses[tablesId] && whereClauses[tablesId].isOpen) {
-    opened = whereClauses[tablesId].isOpen;
+    // opened = whereClauses[tablesId].isOpen;
+    if(autOpen){
+      opened = true;
+    }else{
+      opened = false;
+    }
+    
   }
   if (whereClauses[tablesId] && whereClauses[tablesId].checkedList) {
     checked = whereClauses[tablesId].checkedList.length;
   }
+  
   const test = (props) => {
     console.log(event);
   };
@@ -233,6 +250,7 @@ const SecondConstructor = (props) => {
           />
         )}
         <div className="flex-shrink-1">
+          {}
           <Dropdown activeIcon>
             <DropdownButton>
               <SettingOutlined className="setting-svg" />
@@ -323,18 +341,18 @@ const SecondConstructor = (props) => {
           </Dropdown>
         </div>
       </div>
-      <div value={"IN"}>
-        <div className="w-100">
-          <Dropdown activeIcon isOpen={opened}>
-            <DropdownButton onClick={dropDown}>
+      <div value={"IN"} >
+        <div className="w-100" onClick={openDrop}>
+          <Dropdown activeIcon isOpen={opened} >
+            <DropdownButton onClick={dropDown} >
               {checked} elementi selezionati
-            </DropdownButton>
+            </DropdownButton >
             <DropdownMenu>
               <DropdownItem header>Multi selezione attiva</DropdownItem>
               <DropdownItem divider />
               {normalizedThirdQuery.map((el, i) => {
                 return (
-                  <DropdownItem
+                  <DropdownItem 
                     value={i}
                     data-table-id={tablesId}
                     className="d-flex justify-content-start"

@@ -8,6 +8,7 @@ import { IMConfig } from "../config";
 import Query from "esri/rest/support/Query";
 import GraphicsLayer from "esri/layers/GraphicsLayer";
 import Table from "./components/Table";
+import {appActions} from 'jimu-core';
 
 export default class Widget extends React.PureComponent<
   AllWidgetProps<IMConfig>,
@@ -40,6 +41,8 @@ export default class Widget extends React.PureComponent<
       tablesId: null,
       isOpen: false,
       AndOr: "AND",
+      opened:false, autOpen:true
+
     };
     this.activeViewChangeHandler = this.activeViewChangeHandler.bind(this);
     //Layer
@@ -50,6 +53,8 @@ export default class Widget extends React.PureComponent<
     this.thirdQuery = this.thirdQuery.bind(this);
     this.dropdownItemClick = this.dropdownItemClick.bind(this);
     this.chooseAndOr = this.chooseAndOr.bind(this);
+    this.closeDrop = this.closeDrop.bind(this);
+    this.openDrop = this.openDrop.bind(this);
   }
 
   nls = (id: string) => {
@@ -60,6 +65,7 @@ export default class Widget extends React.PureComponent<
         })
       : id;
   };
+ 
   activeViewChangeHandler(jmv: JimuMapView) {
     if (jmv) {
       jmv.view.map.add(this.graphicLayerFound);
@@ -102,8 +108,37 @@ export default class Widget extends React.PureComponent<
     if (this.state.whereClauses !== prevProps.whereClauses) {
       // this.setState({whereClauses: this.state.whereClauses})
     }
+    if(prevProps.state=='CLOSED'){
+      this.setState({ 
+        isLayerSelected: false,
+        currentTargetText: null,
+        geometry: null,
+        typeSelected: null,
+        listServices: [],
+        currentFirstQuery: "",
+        currentFirstQueryType: null,
+        dropdownValueQuery: "valore",
+        firstTextIncludedHandler: "0",
+        secondTextIncludedHandler: "0",
+        tables: [],
+        isChecked: false,
+        counterIsChecked: [],
+        checkedToQuery: [],
+        tableCounter: 0,
+        whereClauses: [],
+        tablesId: null,
+        isOpen: false,
+        AndOr: "AND",
+        opened:false,
+        autOpen:true,
+      })
+    }
   }
 
+  componentWillUnmount(): void {
+
+  
+  }
   /**==============================================
    * EVENT CLICK SELECT
    ==============================================*/
@@ -607,6 +642,7 @@ export default class Widget extends React.PureComponent<
   dropDown = (id) => {
     // e.preventDefault()
     // e.stopPropagation()
+    this.setState({autOpen:true});
     let queryIndex;
     queryIndex = this.state.whereClauses
       .map((obj) => obj.id)
@@ -932,10 +968,31 @@ export default class Widget extends React.PureComponent<
       () => console.log(this.state.AndOr)
     );
   };
+
+  openDrop = () => {
+
+
+    this.setState({
+      autOpen:true
+  });}
+
+  closeDrop = () => {
+
+    this.setState({
+      opened:false,
+      autOpen:false
+  });
+// this.autOpen=false;
+
+
+  };
   //TODO config abilitare tab true/false
+  specifiedElement = document.getElementById('wrap');
+  
   render() {
+
     return (
-      <div className="widget-attribute-table jimu-widget">
+      <div className="widget-attribute-table jimu-widget" id="wrap">
         {this.props.hasOwnProperty("useMapWidgetIds") &&
           this.props.useMapWidgetIds &&
           this.props.useMapWidgetIds[0] && (
@@ -1004,7 +1061,8 @@ export default class Widget extends React.PureComponent<
             </div>
             <div className="row mt-1 mb-3 justify-content-around">
               <div className="col-md-5 d-flex justify-content-center text-center">
-                <Button
+                <Button 
+                  disabled={!this.state.currentTargetText}
                   onClick={this.addTable}
                   size="default"
                   className="d-flex align-items-center  mb-2"
@@ -1022,7 +1080,7 @@ export default class Widget extends React.PureComponent<
                   size="default"
                   className="d-flex align-items-center mb-2"
                   type="secondary"
-                  onClick={this.sendQuery}
+                  onClick={()=>{this.sendQuery; this.closeDrop()}}
                 >
                   <p className="m-0 p-0">Applica</p>
                 </Button>
@@ -1030,6 +1088,8 @@ export default class Widget extends React.PureComponent<
             </div>
             <div className="row" style={{ height: "50%", overflowY: "scroll" }}>
               <div className="col-md-12">
+    
+  
                 {this.state.tables.map((el, i) => (
                   <Table
                     className="w-100"
@@ -1057,6 +1117,10 @@ export default class Widget extends React.PureComponent<
                     deleteTable={() => this.deleteTable(el.id)}
                     univocoSelectHandler={this.univocoSelectHandler}
                     onChangeCheckBox={this.onChangeCheckBox}
+                    openDrop={this.openDrop}
+                    closeDrop={this.closeDrop}
+                    opened={this.state.opened}
+                    autOpen={this.state.autOpen}
                   />
                 ))}
               </div>
