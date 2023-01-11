@@ -998,8 +998,6 @@ export default class Widget extends React.PureComponent<
   };
 
   //TODO config abilitare tab true/false
-  specifiedElement = document.getElementById("wrap");
-
   render() {
     return (
       <div
@@ -1097,10 +1095,7 @@ export default class Widget extends React.PureComponent<
                   size="default"
                   className="d-flex align-items-center mb-2"
                   type="secondary"
-                  onClick={() => {
-                    this.sendQuery;
-                    this.closeDrop();
-                  }}
+                  onClick={this.sendQuery}
                 >
                   <p className="m-0 p-0">Applica</p>
                 </Button>
