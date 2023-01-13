@@ -1,5 +1,5 @@
 /** @jsx jsx */
-import { React, AllWidgetProps, jsx } from "jimu-core";
+import { React, AllWidgetProps, jsx,appActions } from "jimu-core";
 import { JimuMapViewComponent, JimuMapView } from "jimu-arcgis";
 import "../style.css";
 import { Select, Option, Alert, Button, Icon } from "jimu-ui";
@@ -8,7 +8,11 @@ import { IMConfig } from "../config";
 import Query from "esri/rest/support/Query";
 import GraphicsLayer from "esri/layers/GraphicsLayer";
 import Table from "./components/Table";
-import { appActions } from "jimu-core";
+import helper from '../helper';
+import Polygon from 'esri/geometry/Polygon';
+import attribute_table_connector from '../attribute_table_connector'
+
+
 
 export default class Widget extends React.PureComponent<
   AllWidgetProps<IMConfig>,
@@ -16,10 +20,18 @@ export default class Widget extends React.PureComponent<
 > {
   graphicLayerFound = new GraphicsLayer({ listMode: "hide", visible: true });
   graphicLayerSelected = new GraphicsLayer({ listMode: "hide", visible: true });
+
+  static activeV = null;
+  static jimuLayerViewz = null;
+  static anyvariable = null
+
+
   constructor(props) {
     super(props);
     this.state = {
       jimuMapView: null,
+      layerContents:[],
+      checkedLayer_:[],
       resultLayerList: [],
       isLayerSelected: false,
       resultsLayerSelected: [],
@@ -58,6 +70,10 @@ export default class Widget extends React.PureComponent<
     this.openDrop = this.openDrop.bind(this);
     this.closeDropOnclickOutside = this.closeDropOnclickOutside.bind(this);
     this.onmouseLeave = this.onmouseLeave.bind(this);
+    this.getAllCheckedLayers = this.getAllCheckedLayers.bind(this);
+    this.getAllJimuLayerViews = this.getAllJimuLayerViews.bind(this);
+    this.connector = this.connector.bind(this);
+
   }
 
   nls = (id: string) => {
@@ -73,9 +89,8 @@ export default class Widget extends React.PureComponent<
     if (jmv) {
       jmv.view.map.add(this.graphicLayerFound);
       jmv.view.map.add(this.graphicLayerSelected);
-
       const resultLayerList = [];
-
+      Widget.anyvariable = new attribute_table_connector(jmv,this);
       jmv.view.map.allLayers.forEach((f, index) => {
         if (f.type === "feature") {
           jmv.view.whenLayerView(f).then((layerView) => {
@@ -97,6 +112,8 @@ export default class Widget extends React.PureComponent<
           });
         }
       });
+      Widget.activeV=jmv;
+      Widget.jimuLayerViewz = jmv?.jimuLayerViews;
       this.setState({
         resultLayerList: resultLayerList,
         jimuMapView: jmv,
@@ -198,6 +215,7 @@ export default class Widget extends React.PureComponent<
     }
   }
 
+  // for called on drop select list
   async getQuery(e) {
     let clickedQueryTableId = e.currentTarget.attributes[1].value;
     let currentClickedQueryAttribute;
@@ -282,6 +300,7 @@ export default class Widget extends React.PureComponent<
   //TODO la sendQuery andrà risistemata quando si aggiungerà oltre all'espressione anche il set di espressioni
   // perché ora per l'AND fa il ciclo for su ogni where inserita nell'array ma dopo sarà necessario scomporre per creare le espressioni
 
+  // step1 
   async sendQuery() {
     if (this.state.AndOr === "AND") {
       this.state.whereClauses.forEach((el, id) => {
@@ -308,12 +327,12 @@ export default class Widget extends React.PureComponent<
           this.state.jimuMapView.view.map.allLayers.forEach((f, index) => {
             if (f.title === this.state.currentTargetText) {
               this.state.jimuMapView.view.whenLayerView(f).then((layerView) => {
-                this.queryConstructor(
+                this.queryConstructor( //step 2 start querying
                   layerView,
                   attributeQuery,
                   queryValue,
                   value,
-                  this.state.AndOr
+                  this.state.AndOr,this.connector
                 );
               });
             }
@@ -361,17 +380,17 @@ export default class Widget extends React.PureComponent<
           }
         }
       });
-      if (this.state.jimuMapView) {
+      if (this.state.jimuMapView) {// 
         this.state.jimuMapView.view.map.allLayers.forEach((f, index) => {
           if (f.title === this.state.currentTargetText) {
             this.state.jimuMapView.view.whenLayerView(f).then((layerView) => {
               let queryOr = `${normalizedWhereToSendQuery.join(" OR ")}`;
+              console.log('xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx',layerView.layer.title);
               query.outFields = [`*`];
               layerView.filter = {
                 where: query.where,
               };
-              // f.visible = true;
-              // console.log(`${normalizedWhereToSendQuery.join(" OR ")}`);
+              console.log('yyyyyyyyyyyyyyyyyyyyy',layerView);
               layerView.visible = true;
             });
           }
@@ -804,7 +823,7 @@ export default class Widget extends React.PureComponent<
     firstQuery,
     queryRequest,
     secondQueryTarget,
-    AndOr
+    AndOr,connector
   ) => {
     const query = new Query();
     switch (queryRequest) {
@@ -881,16 +900,50 @@ export default class Widget extends React.PureComponent<
           // console.log(
           //   `${firstQuery} IN (${"'" + secondQueryTarget.join("', '") + "'"})`
           // );
-          layerView.visible = true;
+          // layerView.visible = true;
+          // layerView.queryFeatures(query).then(function(results){
+          //   let layerViewArr = [layerView.layer]; 
+          //   const selectedLayersContents = helper.getSelectedContentsLayer(results,layerViewArr);
+          //   console.log('ccccccccccccccccccccccccccccc',this.state.resultsLayerSelected.title)
+          // });
+            
         } else {
-          query.where = `${firstQuery} IN (${secondQueryTarget.join(",")})`;
-          query.outFields = [`${firstQuery}`];
+          // query.where = `${firstQuery} IN (${secondQueryTarget.join(",")})`;
+          query.returnGeometry = true;
+          query.outFields = ['*'];
+          // query.outFields = [`${firstQuery}`];
           layerView.filter = {
             where: query.where,
           };
           // f.visible = true;
           // console.log(`${firstQuery} IN (${secondQueryTarget.join(",")})`);
           layerView.visible = true;
+          
+        // layerView.queryFeatures(query).then(function(results){
+        //   console.log('',layerView.layer.title)
+        //   let checkedLayer_ = [layerView.layer.id];
+        //   const selectedLayersContents = helper.getSelectedContentsLayer([results.features],checkedLayer_);
+        //   const numberOfAttributes = helper.getNumberOfAttributes(selectedLayersContents);
+        
+        this.state.jimuMapView.view.whenLayerView(layerView.layer).then((layerview)=>{
+         const result = layerview.queryFeatures(query).then((resu)=>{
+          //  console.log(resu,"check results");
+         })
+        });
+        console.log('query',layerView.layer);
+        // console.log('pppppppppppppppppppppppppppppppppppp',results.features[0])
+
+        // if (layerView?._highlightIds){
+        //     for (const key of layerView._highlightIds.keys()){
+        //         highlightIds.push(key);
+        //     }
+        // }
+        // const result = await layerView.queryFeatures(query);
+        
+          
+      // dispatch ........................
+        // connector({checkedLayer_,selectedLayersContents,numberOfAttributes,results:[results.features],layer:layerView.layer});
+          // });
         }
 
         break;
@@ -948,8 +1001,9 @@ export default class Widget extends React.PureComponent<
           // console.log(`${firstQuery} ${queryRequest} ${secondQueryTarget}`);
           layerView.visible = true;
         }
-    }
-  };
+        
+      }
+    };
 
   chooseAndOr = (e) => {
     this.setState(
@@ -996,6 +1050,69 @@ export default class Widget extends React.PureComponent<
       });
     }
   };
+
+  // methods for attribute table
+
+  getAllCheckedLayers = ()=>{
+    const activeView = Widget.activeV;
+    const allMapLayers = activeView.view.map.allLayers?.items;
+    const checkedLayers = this.state.checkedLayer_;
+    let newMapLayer = [];
+    if (allMapLayers?.length > 0 && checkedLayers.length > 0){
+        newMapLayer = allMapLayers.reduce((newArray,item)=>{
+            if (checkedLayers.includes(item.id)){
+                newArray.push(item);
+            }
+            return newArray;
+        },[])
+    }
+    return newMapLayer;
+}
+
+getActiveView = ()=>{
+  const activeView = Widget.activeV;
+  return activeView;
+}
+
+
+getAllJimuLayerViews = ()=>{
+  const jimuLayerViews = Widget.jimuLayerViewz;
+  return jimuLayerViews
+}
+
+connector = (data)=>{
+  console.log('rrrrrrrrrrrrrrrrrrrrrrrrr',data)
+
+  let obj = {     
+    results:data.results,
+    allCheckedLayers:[data.layer],
+}
+
+
+  Widget.anyvariable.init(obj);
+  Widget.anyvariable.dispatchingAll();
+  // let activeV =this.state.jimuMapView;
+  // this.setState({layerContents:data.selectedLayersContents});
+  // this.setState({checkedLayer_:data.checkedLayer_});
+  // const geometry = Polygon.fromExtent(activeV.view.extent).toJSON();
+  // const layerOpen = {
+  //   geometry:geometry,
+  //   typeSelected:"contains",
+  // }
+  // this.props.dispatch(appActions.widgetStatePropChange("value","createTable",true));
+
+//   if (Object.keys(data.numberOfAttributes).length > 0){
+//     this.props.dispatch(appActions.widgetStatePropChange("value","createTable",true));
+//     this.props.dispatch(appActions.widgetStatePropChange("value","numberOfAttribute",data.numberOfAttributes));
+//     this.props.dispatch(appActions.widgetStatePropChange("value","layerOpen",layerOpen));
+//     this.props.dispatch(appActions.widgetStatePropChange("value","getAllLayers",this.getAllCheckedLayers));
+//     this.props.dispatch(appActions.widgetStatePropChange("value","getActiveView",this.getActiveView));
+//     this.props.dispatch(appActions.widgetStatePropChange("value","getAllJimuLayerViews",this.getAllJimuLayerViews));
+// }else{
+//   this.props.dispatch(appActions.widgetStatePropChange("value","showAlert",true));
+// }
+  
+}
 
   //TODO config abilitare tab true/false
   render() {
