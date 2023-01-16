@@ -1052,8 +1052,8 @@ export default class Widget extends React.PureComponent<
     }
   };
 
+  
   // methods for attribute table
-
   getAllCheckedLayers = () => {
     const activeView = Widget.activeV;
     const allMapLayers = activeView.view.map.allLayers?.items;
