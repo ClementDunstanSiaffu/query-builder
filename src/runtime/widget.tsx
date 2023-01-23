@@ -69,6 +69,7 @@ export default class Widget extends React.PureComponent<
     this.getAllCheckedLayers = this.getAllCheckedLayers.bind(this);
     this.getAllJimuLayerViews = this.getAllJimuLayerViews.bind(this);
     this.connector_function = this.connector_function.bind(this);
+    this.functionCounterIsChecked = this.functionCounterIsChecked.bind(this);
   }
 
   nls = (id: string) => {
@@ -101,7 +102,7 @@ export default class Widget extends React.PureComponent<
             element: f,
             label: f.title,
             value: index,
-            layerID: f.layerId,
+            layerID: f.id,
             urlServiceServer: f.url,
           });
         }
@@ -1145,6 +1146,17 @@ export default class Widget extends React.PureComponent<
     }
   };
 
+  functionCounterIsChecked = (e,val)=>{
+    let counter = [...this.state.counterIsChecked];
+if(e.target.checked){
+  counter.push(val);
+  this.setState({counterIsChecked:counter});
+}else{
+  let index = counter.indexOf(val);
+  if(index>-1) counter.splice(index,1);
+  this.setState({counterIsChecked:counter});}
+  }
+
   //TODO config abilitare tab true/false
   render() {
     return (
@@ -1190,8 +1202,10 @@ export default class Widget extends React.PureComponent<
                     {this.state.resultLayerList.map((el, i) => {
                       return (
                         <Option
-                          value={el.element.layerId}
+                          value={el.layerID}
                           parsedUrl={el.element.parsedUrl}
+                          id={i}
+                          key={i}
                         >
                           {el.element.title}
                         </Option>
@@ -1284,6 +1298,7 @@ export default class Widget extends React.PureComponent<
                     autOpen={this.state.autOpen}
                     mouseleave={this.state.mouseleave}
                     onmouseLeave={this.onmouseLeave}
+                    functionCounterIsChecked={this.functionCounterIsChecked}
                   />
                 ))}
               </div>

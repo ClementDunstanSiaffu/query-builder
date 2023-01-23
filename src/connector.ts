@@ -81,10 +81,7 @@ class Helper {
         }
         return layerContentsObject;
     }
-
-   
-
-    
+ 
     getClickedLayerStatus = (results:any[],selectedLayer:selectedLayerType[]):boolean=>{
         let status = false;
         let index = -1;
