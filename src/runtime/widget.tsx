@@ -1083,8 +1083,15 @@ export default class Widget extends React.PureComponent<
 
   connector_function = async (data) => {
     const { layerView, query } = data;
-    const results = await layerView.layer.queryFeatures(query);
+    const results = await layerView.queryFeatures(query);
+    console.log(results,"check results")
     let checkedLayer_ = [data.layerView.layer.id];
+    if (results?.features?.length){
+      const features = results.features;
+      features.forEach(el => {
+        layerView.highlight(el.attributes.OBJECTID)
+      });
+    }
     const selectedLayersContents = helper.getSelectedContentsLayer(
       [results.features],
       checkedLayer_
@@ -1092,7 +1099,6 @@ export default class Widget extends React.PureComponent<
     const numberOfAttributes = helper.getNumberOfAttributes(
       selectedLayersContents
     );
-
     let activeV = this.state.jimuMapView;
     this.setState({ layerContents: selectedLayersContents });
     this.setState({ checkedLayer_: checkedLayer_ });
