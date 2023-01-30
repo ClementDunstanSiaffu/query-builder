@@ -1,3 +1,4 @@
+import { JimuMapView } from "jimu-arcgis"
 
 type layerContentsObjectType = {
     id:string,
@@ -149,6 +150,25 @@ class Helper {
             }
         }
         return numberToAdd;
+    }
+
+    getHighlightedIds = (val:any[],fieldValues:any[])=>{
+        let highlightedArray = [];
+        if (val?.length && fieldValues?.length){
+            const copiedFieldValues = [...fieldValues];
+            for (let i = 0;i < val.length;i++){
+                const item = copiedFieldValues.find((item)=>{
+                    if (`${item.value}` === val[i]){
+                        return item
+                    }
+                    
+                });
+                if (item){
+                    highlightedArray.push(`${item.objectId}`)
+                } 
+            }
+        }
+        return highlightedArray;
     }
 
 }

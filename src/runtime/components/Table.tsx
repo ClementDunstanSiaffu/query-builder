@@ -52,6 +52,7 @@ function Table(props) {
     autOpen,
     mouseleave,
     onmouseLeave,
+    dropdowns
   } = props;
 
   return (
@@ -151,6 +152,7 @@ function Table(props) {
               autOpen={autOpen}
               mouseleave={mouseleave}
               onmouseLeave={onmouseLeave}
+              dropdowns = {dropdowns}
             />
           </div>
         </div>
@@ -188,6 +190,7 @@ const SecondConstructor = (props) => {
     opened: d,
     autOpen,
     onmouseLeave,
+    dropdowns
   } = props;
   const normalizedThirdQuery = [];
   let defaultValue = "=";
@@ -201,10 +204,16 @@ const SecondConstructor = (props) => {
     whereClauses[tablesId].ifInOrNotInQueryValue.map((el, i) => {
       normalizedThirdQuery.push({
         id: tablesId.toString(),
-        label: el.label[0].toString(),
-        value: el.value[0].toString(),
+        label: el.label.toString(),
+        value: el.value.toString(),
         listel: whereClauses[tablesId].checkedList,
       });
+      // normalizedThirdQuery.push({
+      //   id: tablesId.toString(),
+      //   label: el.label[0].toString(),
+      //   value: el.value[0].toString(),
+      //   listel: whereClauses[tablesId].checkedList,
+      // });
     });
   }
   if (whereClauses[tablesId] && whereClauses[tablesId].queryValue) {
@@ -342,8 +351,8 @@ const SecondConstructor = (props) => {
       <div value={"IN"} onMouseLeave={() => onmouseLeave()}>
         <div className="w-100">
           {
-            <Dropdown activeIcon isOpen={autOpen} toggle={() => dropDown}>
-              <DropdownButton onClick={() => openDrop()}>
+            <Dropdown activeIcon isOpen={dropdowns[tablesId]} toggle={() => dropDown}>
+              <DropdownButton onClick={() => openDrop(tablesId)}>
                 {checked} elementi selezionati
               </DropdownButton>
               <DropdownMenu>
@@ -364,7 +373,7 @@ const SecondConstructor = (props) => {
                             type="checkbox"
                             id={tablesId}
                             name={el.label}
-                            value={el.label}
+                            value={el.value}
                             defaultChecked={
                               el.listel &&
                               el.listel.filter(function (e) {
