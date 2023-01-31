@@ -872,10 +872,6 @@ export default class Widget extends React.PureComponent<
     if (brackets.includes(val.charAt(0))){
       status = true;
     }
-    // const regexVal = /(\d{3}|\(\d{3}\))/
-    // let status = false;
-    // if (regexVal.test(val)){status = true;}
-    console.log(status,"check status")
     return status;
   }
 
