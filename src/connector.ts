@@ -181,7 +181,6 @@ class Helper {
     }
 
     getHighlightedIds = (val:any[],fieldValues:any[])=>{
-        console.log(fieldValues,"check fieldvalues")
         let highlightedArray = [];
         if (val?.length && fieldValues?.length){
             const copiedFieldValues = [...fieldValues];
