@@ -28,5 +28,6 @@ export default {
     fields:"Campi",
     selectionAction:"Selezione Azione",
     mapLoading:"In attesa del caricamento della mappa...",
-    noSelectedItem:"Non è stata selezionata alcuna voce"
+    noSelectedItem:"Non è stata selezionata alcuna voce",
+    noItemSelected:"Non è stato trovato alcun attributo dopo l'interrogazione"
 }

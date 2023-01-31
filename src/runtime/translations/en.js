@@ -26,6 +26,7 @@ System.register([], function (_export) {return {execute: function () {_export({
     "fields":"Fields",
     "selectionAction":"Selection Action",
     "mapLoading":"Waiting map to load...",
-    "noSelectedItem":"No item was selected"
+    "noSelectedItem":"No item was selected",
+    "noItemSelected":"No attributes was found after query"
 })}}});
 

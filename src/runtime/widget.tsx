@@ -61,7 +61,8 @@ export default class Widget extends React.PureComponent<
       selectedField:null,
       otherQueriesValue:{},
       dropId:null,
-      higlightSelected:[]
+      higlightSelected:[],
+      itemNotFound:null
     };
     this.activeViewChangeHandler = this.activeViewChangeHandler.bind(this);
     //Layer
@@ -1257,7 +1258,15 @@ export default class Widget extends React.PureComponent<
       numberOfAttributes:numberOfAttributes,
       layerOpen:layerOpen
     });
-    this.attributeTableConnector.dispatchingAll();
+    try{
+      this.attributeTableConnector.dispatchingAll();
+      this.setState({itemNotFound:null})
+    }catch(err){
+      console.log(err,"check err")
+      if (err){
+        this.setState({itemNotFound:this.nls(err)})
+      }
+    }
 
     // if (Object.keys(numberOfAttributes).length > 0) {
     //   // this.props.dispatch(
@@ -1457,8 +1466,20 @@ if(e.target.checked){
                     onmouseLeave={this.onmouseLeave}
                     functionCounterIsChecked={this.functionCounterIsChecked}
                     dropdowns = {this.state.dropDowns}
+                    itemNotFound = {this.state.itemNotFound}
                   />
                 ))}
+                {
+                  this.state.itemNotFound && 
+                  <Alert
+                    className="w-100"
+                    form="basic"
+                    open
+                    text={this.state.itemNotFound}
+                    type="error"
+                    withIcon
+                  />
+                }
               </div>
             </div>
           </div>
