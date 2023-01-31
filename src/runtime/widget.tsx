@@ -260,16 +260,11 @@ export default class Widget extends React.PureComponent<
           if (f.title === this.state.currentTargetText) {
             this.state.jimuMapView.view.whenLayerView(f).then((layerView) => {
               const query = new Query();
-              // query.where = `${currentClickedQueryAttribute} is not null AND OBJECTID is not null`;
               query.where = `${currentClickedQueryAttribute} is not null`;
               query.outFields = [`${currentClickedQueryAttribute}`];
-              // query.outFields = [this.state.currentFirstQuery];
-              // query.outFields = [`${currentClickedQueryAttribute}`,"OBJECTID"];
               layerView.filter = {
                 where: query.where,
               };
-              // f.visible = true
-              // layerView.visible = true
               const results = f.queryFeatures(query);
               results.then((result) => {
                 const detailThirdQuery = [];
@@ -277,12 +272,7 @@ export default class Widget extends React.PureComponent<
                   detailThirdQuery.push({
                     label: el.attributes[currentClickedQueryAttribute],
                     value: el.attributes[currentClickedQueryAttribute],
-                    // value: el.attributes["OBJECTID"],
                   });
-                  // detailThirdQuery.push({
-                  //   value: Object.values(el.attributes),
-                  //   label: Object.values(el.attributes),
-                  // });
                 });
                 if (queryIndex !== -1) {
                   const updateState = this.state.whereClauses.map((obj) => {
@@ -997,9 +987,6 @@ export default class Widget extends React.PureComponent<
           layerView.visible = true;
           connector_function({ layerView, query,queryRequest,values,layer });
           // f.visible = true;
-          // console.log(
-          //   `${firstQuery} IN (${"'" + secondQueryTarget.join("', '") + "'"})`
-          // );
         } else {
           if (this.checkParenthesis(secondQueryTarget.join(","))){
             const stringFiedValue = this.loopToGetString(secondQueryTarget);
@@ -1012,8 +999,6 @@ export default class Widget extends React.PureComponent<
             where: query.where,
           };
           // f.visible = true;
-          // console.log(`${firstQuery} IN (${secondQueryTarget.join(",")})`);
-          layer.visible = true;
           layerView.visible = true;
           // displaying  data to table
           connector_function({ layerView, query,queryRequest,values,layer});
@@ -1027,13 +1012,11 @@ export default class Widget extends React.PureComponent<
         }else{
           query.where = `NOT  ${firstQuery} IN (${secondQueryTarget.join(",")})`;
         }
-        // query.where = `NOT  ${firstQuery} IN (${secondQueryTarget.join(",")})`;
         query.outFields = [`${firstQuery}`];
         layerView.filter = {
           where: query.where,
         };
         // f.visible = true;
-        // console.log(`NOT ${firstQuery} IN (${secondQueryTarget.join(",")})`);
         layerView.visible = true;
 
         // displaying  data to table
@@ -1045,10 +1028,6 @@ export default class Widget extends React.PureComponent<
         layerView.filter = {
           where: query.where,
         };
-        // // f.visible = true;
-        // console.log(
-        //   `${firstQuery} > ${secondQueryTarget.firstTxt} AND ${firstQuery} < ${secondQueryTarget.secondTxt}`
-        // );
         layerView.visible = true;
 
         // displaying  data to table
@@ -1060,10 +1039,6 @@ export default class Widget extends React.PureComponent<
         layerView.filter = {
           where: query.where,
         };
-        // // f.visible = true;
-        // console.log(
-        //   `${firstQuery} < ${secondQueryTarget.firstTxt} OR ${firstQuery} > ${secondQueryTarget.secondTxt}`
-        // );
         layerView.visible = true;
 
         // displaying  data to table
@@ -1076,8 +1051,6 @@ export default class Widget extends React.PureComponent<
           layerView.filter = {
             where: query.where,
           };
-          // f.visible = true;
-          // console.log(`${firstQuery} ${queryRequest} '${secondQueryTarget}'`);
           layerView.visible = true;
 
           // displaying  data to table
@@ -1088,8 +1061,6 @@ export default class Widget extends React.PureComponent<
           layerView.filter = {
             where: query.where,
           };
-          // f.visible = true;
-          // console.log(`${firstQuery} ${queryRequest} ${secondQueryTarget}`);
           layerView.visible = true;
 
           // displaying  data to table
@@ -1170,7 +1141,6 @@ export default class Widget extends React.PureComponent<
   };
 
   connector_function = async (data) => {
-    const requiredRequest = ["IN","NOT_IN"]
     const { layerView, query,queryRequest,values,layer} = data;
     if (this.state.higlightSelected.length){
       layerView._highlightIds.clear();
@@ -1189,16 +1159,10 @@ export default class Widget extends React.PureComponent<
       }
     }
     let checkedLayer_ = [data.layerView.layer.id];
-    // let highlightIds = this.state.highlightIds;
     const currentField = query.outFields[0];
     let currentValue = helper.getValues(results.features,currentField);
     const otherQueriesValueArr = this.state.otherQueriesValue[currentField]??[];
     const highlightIds = helper.getHighlightedIds(currentValue,otherQueriesValueArr);
-    // if (!requiredRequest.includes(queryRequest)){
-    //   highlightIds = helper.getHighlightedIds(currentValue,otherQueriesValueArr);
-    // }else{
-    //   highlightIds =  helper.getObjectIds(this.state.highlightIds,otherQueriesValueArr);
-    // }
     if (highlightIds.length){
       const higlightSelectedArr = [];
       highlightIds.forEach(el => {
@@ -1218,18 +1182,6 @@ export default class Widget extends React.PureComponent<
       }
       this.setState({higlightSelected:higlightSelectedArr});
     }
-    // if (results?.features?.length){
-    //   results.features.forEach(feature=>{
-    //     const id = feature.layer.id;
-    //     const jimuLayerViews = this.state.jimuMapView.jimuLayerViews;
-    //     // console.log(id,jimuLayerViews,"checking both");
-    //     this.state.jimuMapView.view.whenLayerView(feature.layer).then((layerViewL)=>{
-    //       console.log(layerViewL,'layer view')
-    //       layerViewL.visible = true;
-    //     })
-    //     // helper.activateLayerOnTheMap(id,jimuLayerViews);
-    //   })
-    // }
  
     const selectedLayersContents = helper.getSelectedContentsLayer(
       [results.features],
@@ -1246,9 +1198,6 @@ export default class Widget extends React.PureComponent<
       geometry: geometry,
       typeSelected: "contains",
     };
-    // this.props.dispatch(
-    //   appActions.widgetStatePropChange("value", "createTable", true)
-    // );
     const allCheckedLayers = this.getAllCheckedLayers()
     this.attributeTableConnector.init({
       results:[results.features],
@@ -1262,69 +1211,24 @@ export default class Widget extends React.PureComponent<
       this.attributeTableConnector.dispatchingAll();
       this.setState({itemNotFound:null})
     }catch(err){
-      console.log(err,"check err")
-      if (err){
-        this.setState({itemNotFound:this.nls(err)})
-      }
+      if (err)this.setState({itemNotFound:this.nls(err)})
     }
-
-    // if (Object.keys(numberOfAttributes).length > 0) {
-    //   // this.props.dispatch(
-    //   //   appActions.widgetStatePropChange("value", "createTable", true)
-    //   // );
-    //   this.props.dispatch(
-    //     appActions.widgetStatePropChange(
-    //       "value",
-    //       "numberOfAttribute",
-    //       numberOfAttributes
-    //     )
-    //   );
-    //   this.props.dispatch(
-    //     appActions.widgetStatePropChange("value", "layerOpen", layerOpen)
-    //   );
-    //   this.props.dispatch(
-    //     appActions.widgetStatePropChange(
-    //       "value",
-    //       "getAllLayers",
-    //       this.getAllCheckedLayers
-    //     )
-    //   );
-    //   this.props.dispatch(
-    //     appActions.widgetStatePropChange(
-    //       "value",
-    //       "getActiveView",
-    //       this.getActiveView
-    //     )
-    //   );
-    //   this.props.dispatch(
-    //     appActions.widgetStatePropChange(
-    //       "value",
-    //       "getAllJimuLayerViews",
-    //       this.getAllJimuLayerViews
-    //     )
-    //   );
-    // } else {
-    //   this.props.dispatch(
-    //     appActions.widgetStatePropChange("value", "showAlert", true)
-    //   );
-    // }
   };
 
   functionCounterIsChecked = (e,val)=>{
     let counter = [...this.state.counterIsChecked];
-if(e.target.checked){
-  counter.push(val);
-  this.setState({counterIsChecked:counter});
-}else{
-  let index = counter.indexOf(val);
-  if(index>-1) counter.splice(index,1);
-  this.setState({counterIsChecked:counter});}
+    if(e.target.checked){
+      counter.push(val);
+      this.setState({counterIsChecked:counter});
+    }else{
+      let index = counter.indexOf(val);
+      if(index>-1) counter.splice(index,1);
+      this.setState({counterIsChecked:counter});
+    }
   }
   
-
   //TODO config abilitare tab true/false
   render() {
-    // console.log(this.state.otherQueriesValue,"check other values")
     return (
       <div
         className="widget-attribute-table jimu-widget"

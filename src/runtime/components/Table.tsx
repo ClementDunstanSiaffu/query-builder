@@ -53,7 +53,6 @@ function Table(props) {
     mouseleave,
     onmouseLeave,
     dropdowns,
-    itemNotFound
   } = props;
 
   return (
@@ -154,7 +153,6 @@ function Table(props) {
               mouseleave={mouseleave}
               onmouseLeave={onmouseLeave}
               dropdowns = {dropdowns}
-              itemNotFound = {itemNotFound}
             />
           </div>
         </div>
@@ -193,7 +191,6 @@ const SecondConstructor = (props) => {
     autOpen,
     onmouseLeave,
     dropdowns,
-    itemNotFound
   } = props;
   const normalizedThirdQuery = [];
   let defaultValue = "=";
