@@ -10,6 +10,8 @@ import GraphicsLayer from "esri/layers/GraphicsLayer";
 import Table from "./components/Table";
 import helper from "../connector";
 import Polygon from "esri/geometry/Polygon";
+import AttributeTableConnector from "../connector/attribute_table_connector";
+import geometryEngine from "esri/geometry/geometryEngine";
 
 export default class Widget extends React.PureComponent<
   AllWidgetProps<IMConfig>,
@@ -21,6 +23,8 @@ export default class Widget extends React.PureComponent<
   static activeV = null;
   static jimuLayerViewz = null;
   static attribute_table_data = null;
+
+  attributeTableConnector = null;
 
   constructor(props) {
     super(props);
@@ -56,7 +60,8 @@ export default class Widget extends React.PureComponent<
       highlightIds:[],
       selectedField:null,
       otherQueriesValue:{},
-      dropId:null
+      dropId:null,
+      higlightSelected:[]
     };
     this.activeViewChangeHandler = this.activeViewChangeHandler.bind(this);
     //Layer
@@ -118,6 +123,7 @@ export default class Widget extends React.PureComponent<
         resultLayerList: resultLayerList,
         jimuMapView: jmv,
       });
+      this.attributeTableConnector = new AttributeTableConnector(jmv,this)
     }
   }
 
@@ -298,30 +304,29 @@ export default class Widget extends React.PureComponent<
           }
         });
       }
-    }else{
-      if (this.state.jimuMapView) {
-        this.state.jimuMapView.view.map.allLayers.forEach((f, index) => {
-          if (f.title === this.state.currentTargetText) {
-            this.state.jimuMapView.view.whenLayerView(f).then((layerView) => {
-              const query = new Query();
-              query.where = `${currentClickedQueryAttribute} is not null AND OBJECTID is not null`;
-              query.outFields = [`${currentClickedQueryAttribute}`,"OBJECTID"];
-              layerView.filter = {where: query.where};
-              const results = f.queryFeatures(query);
-              results.then((result) => {
-                const detailThirdQuery = [];
-                result.features.forEach((el) => {
-                  detailThirdQuery.push({
-                    value: el.attributes[currentClickedQueryAttribute],
-                    objectId: el.attributes["OBJECTID"],
-                  });
+    }
+    if (this.state.jimuMapView) {
+      this.state.jimuMapView.view.map.allLayers.forEach((f, index) => {
+      if (f.title === this.state.currentTargetText) {
+        this.state.jimuMapView.view.whenLayerView(f).then((layerView) => {
+          const query = new Query();
+          query.where = `${currentClickedQueryAttribute} is not null AND OBJECTID is not null`;
+          query.outFields = [`${currentClickedQueryAttribute}`,"OBJECTID"];
+          layerView.filter = {where: query.where};
+          const results = f.queryFeatures(query);
+            results.then((result) => {
+              const detailThirdQuery = [];
+              result.features.forEach((el) => {
+                detailThirdQuery.push({
+                  value: el.attributes[currentClickedQueryAttribute],
+                  objectId: el.attributes["OBJECTID"],
                 });
-                this.setState({otherQueriesValue:{...this.state.otherQueriesValue,[currentClickedQueryAttribute]:detailThirdQuery}})
               });
+              this.setState({otherQueriesValue:{[currentClickedQueryAttribute]:detailThirdQuery}})
             });
-          }
-        });
-      }
+          });
+        }
+      });
     }
   }
 
@@ -362,7 +367,8 @@ export default class Widget extends React.PureComponent<
                   queryValue,
                   value,
                   this.state.AndOr,
-                  this.connector_function
+                  this.connector_function,
+                  f
                 );
               });
             }
@@ -737,6 +743,8 @@ export default class Widget extends React.PureComponent<
   onChangeCheckBox = (event) => {
     let currentId = event.target.attributes.id.value;
     let objectId = event.target.attributes.value.value;
+    const currentHighlightIds = this.state.highlightIds
+    const highlightingIds = helper.getCheckedHighlightedIds(currentHighlightIds,objectId);
     let queryIndex;
     if (event.target.checked) {
       queryIndex = this.state.whereClauses
@@ -825,7 +833,7 @@ export default class Widget extends React.PureComponent<
           return { obj };
         });
       }
-      this.setState({highlightIds:[...this.state.highlightIds,objectId]});
+      // this.setState({highlightIds:[...this.state.highlightIds,objectId]});
     }
     if (event.target.checked === false) {
       // Find the obj object in the whereClauses array
@@ -854,12 +862,20 @@ export default class Widget extends React.PureComponent<
         }
       );
     }
+    console.log(highlightingIds)
+    this.setState({highlightIds:highlightingIds});
   };
 
-  checkParenthesis (val:any){
-    const regexVal = /(\d{3}|\(\d{3}\))/
+  checkParenthesis (val:string){
     let status = false;
-    if (regexVal.test(val))status = true;
+    const brackets = ['(',')','[',']','{','}']
+    if (brackets.includes(val.charAt(0))){
+      status = true;
+    }
+    // const regexVal = /(\d{3}|\(\d{3}\))/
+    // let status = false;
+    // if (regexVal.test(val)){status = true;}
+    console.log(status,"check status")
     return status;
   }
 
@@ -882,7 +898,8 @@ export default class Widget extends React.PureComponent<
     queryRequest,
     secondQueryTarget,
     AndOr,
-    connector_function
+    connector_function,
+    layer
   ) => {
     const query = new Query();
     const values = secondQueryTarget;
@@ -946,6 +963,7 @@ export default class Widget extends React.PureComponent<
         layerView.filter = {
           where: query.where,
         };
+        
         // f.visible = true;
         // console.log(`${firstQuery} is null`);
         layerView.visible = true;
@@ -975,7 +993,8 @@ export default class Widget extends React.PureComponent<
           layerView.filter = {
             where: query.where,
           };
-          connector_function({ layerView, query,queryRequest,values });
+          layerView.visible = true;
+          connector_function({ layerView, query,queryRequest,values,layer });
           // f.visible = true;
           // console.log(
           //   `${firstQuery} IN (${"'" + secondQueryTarget.join("', '") + "'"})`
@@ -989,17 +1008,19 @@ export default class Widget extends React.PureComponent<
           }else{
             query.where = `${firstQuery} IN (${secondQueryTarget.join(",")})`;
           }
-          // query.where = `${firstQuery} IN ('${secondQueryTarget.join(",")}')`;
+          // query.where = `${firstQuery} IN (${secondQueryTarget.join(",")})`;
           query.outFields = [`${firstQuery}`];
           layerView.filter = {
             where: query.where,
           };
           // f.visible = true;
           // console.log(`${firstQuery} IN (${secondQueryTarget.join(",")})`);
+          console.log(query.where,"check where")
+          layer.visible = true;
           layerView.visible = true;
 
           // displaying  data to table
-          connector_function({ layerView, query,queryRequest,values });
+          connector_function({ layerView, query,queryRequest,values,layer});
         }
 
         break;
@@ -1048,6 +1069,7 @@ export default class Widget extends React.PureComponent<
         break;
       default:
         if (this.containsAnyLetters(secondQueryTarget)) {
+          console.log("our target 1")
           query.where = `${firstQuery} ${queryRequest} '${secondQueryTarget}'`;
           query.outFields = [`${firstQuery}`];
           layerView.filter = {
@@ -1133,6 +1155,7 @@ export default class Widget extends React.PureComponent<
         return newArray;
       }, []);
     }
+    console.log(newMapLayer);
     return newMapLayer;
   };
 
@@ -1148,31 +1171,66 @@ export default class Widget extends React.PureComponent<
 
   connector_function = async (data) => {
     const requiredRequest = ["IN","NOT_IN"]
-    const { layerView, query,queryRequest,values} = data;
-    // if (!query.outFields.includes("OBJECTID") && query.outFields[0] !== "*" )query.outFields = [...query.outFields,"OBJECTID"]
-    const results = await layerView.queryFeatures(query);
+    const { layerView, query,queryRequest,values,layer} = data;
+    if (this.state.higlightSelected.length){
+      layerView._highlightIds.clear();
+      this.state.higlightSelected.forEach((highlight)=>{
+        highlight.remove();
+      })
+    }
+    query.returnGeometry = true;
+    let results = {features:[]};
+    if (layerView.queryFeatures){
+      results = await layerView.queryFeatures(query);
+    }
+    if (!results.features.length){
+      if (layer?.queryFeatures){
+        results = await layer.queryFeatures(query);
+      }
+    }
     let checkedLayer_ = [data.layerView.layer.id];
     let highlightIds = this.state.highlightIds;
+    const currentField = query.outFields[0];
+    let currentValue = helper.getValues(results.features,currentField);
+    const otherQueriesValueArr = this.state.otherQueriesValue[currentField]??[];
     if (!requiredRequest.includes(queryRequest)){
-      let currentValue = values
-      if (!Array.isArray(currentValue)){
-        currentValue = [values];
-      }
-      const currentField = query.outFields[0]
-      const otherQueriesValueArr = this.state.otherQueriesValue[currentField]??[];
       highlightIds = helper.getHighlightedIds(currentValue,otherQueriesValueArr);
+    }else{
+      highlightIds =  helper.getObjectIds(this.state.highlightIds,otherQueriesValueArr);
     }
     if (highlightIds.length){
+      const higlightSelectedArr = [];
       highlightIds.forEach(el => {
-        layerView.highlight(el);
+        const highlightSelected = layerView.highlight(el);
+        higlightSelectedArr.push(highlightSelected);
       });
-      // results.features.forEach(el => {
-      //   layerView.highlight(el.attributes.OBJECTID)
-      //   // console.log(el.attributes,"check el")
-      //   // // console.log(el.attributes.OBJECTID,"check layer")
-      //   // // layerView.highlight(el.attributes.OBJECTID);
-      // });
+      if (results.features.length){
+        console.log(results.features,"checking features")
+        const arrayGeometry = [];
+        results.features.forEach(el=>{
+          const newGeometry = geometryEngine.buffer(el.geometry,1, "meters");
+          arrayGeometry.push(newGeometry);
+        })
+        if (arrayGeometry.length){
+          const unifiedGeomtry = geometryEngine.union(arrayGeometry);
+          this.state.jimuMapView.view.goTo(unifiedGeomtry.extent);
+        }
+      }
+      this.setState({higlightSelected:higlightSelectedArr});
     }
+    // if (results?.features?.length){
+    //   results.features.forEach(feature=>{
+    //     const id = feature.layer.id;
+    //     const jimuLayerViews = this.state.jimuMapView.jimuLayerViews;
+    //     // console.log(id,jimuLayerViews,"checking both");
+    //     this.state.jimuMapView.view.whenLayerView(feature.layer).then((layerViewL)=>{
+    //       console.log(layerViewL,'layer view')
+    //       layerViewL.visible = true;
+    //     })
+    //     // helper.activateLayerOnTheMap(id,jimuLayerViews);
+    //   })
+    // }
+ 
     const selectedLayersContents = helper.getSelectedContentsLayer(
       [results.features],
       checkedLayer_
@@ -1181,56 +1239,67 @@ export default class Widget extends React.PureComponent<
       selectedLayersContents
     );
     let activeV = this.state.jimuMapView;
-    this.setState({ layerContents: selectedLayersContents });
+    this.setState({ layerContents: selectedLayersContents});
     this.setState({ checkedLayer_: checkedLayer_ });
-    const geometry = Polygon.fromExtent(activeV.view.extent).toJSON();
+    const geometry = Polygon.fromExtent(layerView.view.extent).toJSON();
     const layerOpen = {
       geometry: geometry,
       typeSelected: "contains",
     };
-    this.props.dispatch(
-      appActions.widgetStatePropChange("value", "createTable", true)
-    );
-    if (Object.keys(numberOfAttributes).length > 0) {
-      this.props.dispatch(
-        appActions.widgetStatePropChange("value", "createTable", true)
-      );
-      this.props.dispatch(
-        appActions.widgetStatePropChange(
-          "value",
-          "numberOfAttribute",
-          numberOfAttributes
-        )
-      );
-      this.props.dispatch(
-        appActions.widgetStatePropChange("value", "layerOpen", layerOpen)
-      );
-      this.props.dispatch(
-        appActions.widgetStatePropChange(
-          "value",
-          "getAllLayers",
-          this.getAllCheckedLayers
-        )
-      );
-      this.props.dispatch(
-        appActions.widgetStatePropChange(
-          "value",
-          "getActiveView",
-          this.getActiveView
-        )
-      );
-      this.props.dispatch(
-        appActions.widgetStatePropChange(
-          "value",
-          "getAllJimuLayerViews",
-          this.getAllJimuLayerViews
-        )
-      );
-    } else {
-      this.props.dispatch(
-        appActions.widgetStatePropChange("value", "showAlert", true)
-      );
-    }
+    // this.props.dispatch(
+    //   appActions.widgetStatePropChange("value", "createTable", true)
+    // );
+    const allCheckedLayers = this.getAllCheckedLayers()
+    this.attributeTableConnector.init({
+      results:[results.features],
+      allCheckedLayers:allCheckedLayers,
+      isLayerChecked:true,
+      checkedLayers:checkedLayer_,
+      numberOfAttributes:numberOfAttributes,
+      layerOpen:layerOpen
+    });
+    this.attributeTableConnector.dispatchingAll();
+
+    // if (Object.keys(numberOfAttributes).length > 0) {
+    //   // this.props.dispatch(
+    //   //   appActions.widgetStatePropChange("value", "createTable", true)
+    //   // );
+    //   this.props.dispatch(
+    //     appActions.widgetStatePropChange(
+    //       "value",
+    //       "numberOfAttribute",
+    //       numberOfAttributes
+    //     )
+    //   );
+    //   this.props.dispatch(
+    //     appActions.widgetStatePropChange("value", "layerOpen", layerOpen)
+    //   );
+    //   this.props.dispatch(
+    //     appActions.widgetStatePropChange(
+    //       "value",
+    //       "getAllLayers",
+    //       this.getAllCheckedLayers
+    //     )
+    //   );
+    //   this.props.dispatch(
+    //     appActions.widgetStatePropChange(
+    //       "value",
+    //       "getActiveView",
+    //       this.getActiveView
+    //     )
+    //   );
+    //   this.props.dispatch(
+    //     appActions.widgetStatePropChange(
+    //       "value",
+    //       "getAllJimuLayerViews",
+    //       this.getAllJimuLayerViews
+    //     )
+    //   );
+    // } else {
+    //   this.props.dispatch(
+    //     appActions.widgetStatePropChange("value", "showAlert", true)
+    //   );
+    // }
   };
 
   functionCounterIsChecked = (e,val)=>{
