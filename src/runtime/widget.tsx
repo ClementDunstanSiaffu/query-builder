@@ -1150,14 +1150,21 @@ export default class Widget extends React.PureComponent<
     }
     query.returnGeometry = true;
     let results = {features:[]};
-    if (layerView.queryFeatures){
-      results = await layerView.queryFeatures(query);
+    // if (layerView.queryFeatures){
+    //   results = await layerView.queryFeatures(query);
+    // }
+
+    try{
+      results = await layer.queryFeatures(query)
+    }catch(err){
+      if (layerView?.queryFeatures)results = await layerView.queryFeatures(query);
     }
-    if (!results.features.length){
-      if (layer?.queryFeatures){
-        results = await layer.queryFeatures(query);
-      }
-    }
+
+    if (layer?.queryFeatures)results = await layer.queryFeatures(query);
+    
+    //  if (layerView?.queryFeatures && results.features.length){
+    //   results = await layerView.queryFeatures(query);
+    // }
     let checkedLayer_ = [data.layerView.layer.id];
     const currentField = query.outFields[0];
     let currentValue = helper.getValues(results.features,currentField);
@@ -1170,6 +1177,7 @@ export default class Widget extends React.PureComponent<
         higlightSelectedArr.push(highlightSelected);
       });
       if (results.features.length){
+        console.log(results.features,query.where);
         const arrayGeometry = [];
         results.features.forEach(el=>{
           const newGeometry = geometryEngine.buffer(el.geometry,1, "meters");
