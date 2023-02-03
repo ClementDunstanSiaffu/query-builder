@@ -1150,10 +1150,6 @@ export default class Widget extends React.PureComponent<
     }
     query.returnGeometry = true;
     let results = {features:[]};
-    // if (layerView.queryFeatures){
-    //   results = await layerView.queryFeatures(query);
-    // }
-
     try{
       results = await layer.queryFeatures(query)
     }catch(err){
@@ -1161,10 +1157,6 @@ export default class Widget extends React.PureComponent<
     }
 
     if (layer?.queryFeatures)results = await layer.queryFeatures(query);
-    
-    //  if (layerView?.queryFeatures && results.features.length){
-    //   results = await layerView.queryFeatures(query);
-    // }
     let checkedLayer_ = [data.layerView.layer.id];
     const currentField = query.outFields[0];
     let currentValue = helper.getValues(results.features,currentField);
