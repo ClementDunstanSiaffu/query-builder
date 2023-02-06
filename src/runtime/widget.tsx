@@ -498,26 +498,14 @@ export default class Widget extends React.PureComponent<
   deleteTable = (id) => {
     const copiedTable = [...this.state.tables];
     const newTables = copiedTable.filter((el) =>el.id !== id);
-    // const newTables = this.state.tables.filter((el) => {
-    //   return el.id !== id;
-    // });
-    // console.log(newTables,"check new tables")
     const copiedWhereClauses =[...this.state.whereClauses];
     const deletedWhereClauses = copiedWhereClauses.filter((el) =>el.id !== id.toString());
-    // console.log(newTables,deletedWhereClauses,"check new tables")
-    // const deletedWhereClauses = this.state.whereClauses.filter((el) => {
-    //   return el.id !== id.toString();
-    // });
-
-    this.setState({
-      tables:newTables,
-      whereClauses: deletedWhereClauses,
-    });
-    // if (this.state.tables.length === 0) {
-    //   this.setState({
-    //     whereClauses: [],
-    //   });
-    // }
+    this.setState({tables:newTables,whereClauses: deletedWhereClauses,});
+    if (this.state.tables.length === 0) {
+      this.setState({
+        whereClauses: [],
+      });
+    }
   };
 
   textInputHandler = (e) => {
@@ -1181,7 +1169,6 @@ export default class Widget extends React.PureComponent<
         higlightSelectedArr.push(highlightSelected);
       });
       if (results.features.length){
-        console.log(results.features,query.where);
         const arrayGeometry = [];
         results.features.forEach(el=>{
           const newGeometry = geometryEngine.buffer(el.geometry,1, "meters");
@@ -1241,7 +1228,6 @@ export default class Widget extends React.PureComponent<
   
   //TODO config abilitare tab true/false
   render() {
-    console.log(this.state.whereClauses,this.state.tables,"whereClause")
     return (
       <div
         className="widget-attribute-table jimu-widget"
