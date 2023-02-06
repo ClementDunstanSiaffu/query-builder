@@ -131,10 +131,8 @@ export default class Widget extends React.PureComponent<
 
   componentDidUpdate(prevProps, prevState) {
     if (this.state.isLayerSelected !== prevProps.isLayerSelected) {
-      // console.log("è stato selezionato un layer");
     }
     if (this.state.whereClauses !== prevProps.whereClauses) {
-      // this.setState({whereClauses: this.state.whereClauses})
     }
     if (prevProps.state == "CLOSED") {
       this.setState({
@@ -169,7 +167,6 @@ export default class Widget extends React.PureComponent<
    ==============================================*/
 
   async getQueryAttribute(e) {
-    // console.log(e.currentTarget.attributes[1].value)
     if (!this.state.whereClauses.length) {
       let whereClause = {
         id: e.currentTarget.attributes[1].value,
@@ -230,7 +227,6 @@ export default class Widget extends React.PureComponent<
     let currentClickedQueryAttribute;
     let queryIndex;
     if (this.state.whereClauses.length) {
-      // console.log("ci sono più query");
       queryIndex = this.state.whereClauses
         .map((obj) => obj.id)
         .indexOf(clickedQueryTableId);
@@ -239,7 +235,6 @@ export default class Widget extends React.PureComponent<
           if (obj.id === queryIndex.toString()) {
             currentClickedQueryAttribute = obj.attributeQuery;
             obj = { ...obj, queryValue: e.currentTarget.name };
-            // return this.state.whereClauses[queryIndex] = obj
             let filteredWhereClauses = this.state.whereClauses.filter(
               (a) => a.id !== obj.id
             );
@@ -277,7 +272,7 @@ export default class Widget extends React.PureComponent<
                 });
                 if (queryIndex !== -1) {
                   if(typeof detailThirdQuery[0].value !== "number"){
-                    detailThirdQuery.sort();
+                    detailThirdQuery.sort((a,b)=>a.label < b.label ?-1:a.label > b.label ? 1:0);
                   }else{
                     detailThirdQuery.sort((a,b)=>a.value - b.value < 0 ? -1:a.value === b.value?0:1)
                   }
@@ -335,6 +330,7 @@ export default class Widget extends React.PureComponent<
 
   // step1
   async sendQuery() {
+    this.queryArray = [];
     if (this.state.AndOr === "AND") {
       this.state.whereClauses.forEach((el, id) => {
         let attributeQuery = el.attributeQuery;
@@ -809,7 +805,6 @@ export default class Widget extends React.PureComponent<
                 .map((obj) => obj.checkValue)
                 .indexOf(event.target.attributes.name.value);
               if (ifAlreadyCheck == -1) {
-                // console.log("non è presente il valore tra i checked");
                 obj = {
                   ...obj,
                   checkedList: [
@@ -845,11 +840,7 @@ export default class Widget extends React.PureComponent<
                     });
                   }
                 );
-              } else {
-                // console.log(
-                //   "è già presente tra i valori quindi non aggiunto alla lista"
-                // );
-              }
+              } 
             }
           }
           return { obj };
@@ -926,8 +917,6 @@ export default class Widget extends React.PureComponent<
         layerView.filter = {
           where: query.where,
         };
-        // f.visible = true;
-        // console.log(`${firstQuery} LIKE '${secondQueryTarget}%'`);
         layerView.visible = true;
 
         // displaying  data to table
@@ -939,8 +928,6 @@ export default class Widget extends React.PureComponent<
         layerView.filter = {
           where: query.where,
         };
-        // f.visible = true;
-        // console.log(`${firstQuery} LIKE '%${secondQueryTarget}'`);
         layerView.visible = true;
 
         // displaying  data to table
@@ -952,8 +939,6 @@ export default class Widget extends React.PureComponent<
         layerView.filter = {
           where: query.where,
         };
-        // f.visible = true;
-        // console.log(`${firstQuery} LIKE '%${secondQueryTarget}'`);
         layerView.visible = true;
 
         // displaying  data to table
@@ -965,8 +950,6 @@ export default class Widget extends React.PureComponent<
         layerView.filter = {
           where: query.where,
         };
-        // f.visible = true;
-        // console.log(`${firstQuery} NOT LIKE '%${secondQueryTarget}%'`);
         layerView.visible = true;
 
         // displaying  data to table
@@ -978,9 +961,6 @@ export default class Widget extends React.PureComponent<
         layerView.filter = {
           where: query.where,
         };
-        
-        // f.visible = true;
-        // console.log(`${firstQuery} is null`);
         layerView.visible = true;
 
         // displaying  data to table
@@ -992,8 +972,6 @@ export default class Widget extends React.PureComponent<
         layerView.filter = {
           where: query.where,
         };
-        // f.visible = true;
-        // console.log(`${firstQuery} is not null`);
         layerView.visible = true;
 
         // displaying  data to table
@@ -1093,14 +1071,7 @@ export default class Widget extends React.PureComponent<
     }
   };
 
-  chooseAndOr = (e) => {
-    this.setState(
-      {
-        AndOr: e.target.value,
-      },
-      () => console.log(this.state.AndOr)
-    );
-  };
+  chooseAndOr = (e) =>this.setState({AndOr: e.target.value});
 
   openDrop = (id) => {
     this.setState({mouseleave:false});
@@ -1172,7 +1143,6 @@ export default class Widget extends React.PureComponent<
         highlight.remove();
       })
     }
-    // query.returnGeometry = true;
     let results = {features:[]};
     let additionalQuery = query.where;
     if (this.queryArray.length < this.state.whereClauses.length-1){
@@ -1183,22 +1153,17 @@ export default class Widget extends React.PureComponent<
       query.returnGeometry = true;
       const currentQuery = this.queryArray.join(" ");
       query.where = currentQuery;
-      console.log(currentQuery,"check current query")
       try{
-        // results = await layer.queryFeatures(currentQuery)
         results = await layer.queryFeatures(query);
       }catch(err){
-        // if (layerView?.queryFeatures)results = await layerView.queryFeatures(query);
         if (layerView?.queryFeatures)results = await layerView.queryFeatures(query);
       }
-      // if (layer?.queryFeatures)results = await layer.queryFeatures(query);
       if (layer?.queryFeatures)results = await layer.queryFeatures(query);
       let checkedLayer_ = [data.layerView.layer.id];
       const currentField = query.outFields[0];
       let currentValue = helper.getValues(results.features,currentField);
       const otherQueriesValueArr = this.state.otherQueriesValue[currentField]??[];
       const highlightIds = helper.getHighlightedIds(currentValue,otherQueriesValueArr);
-      console.log(highlightIds,otherQueriesValueArr,currentValue,currentField,"check highlightIds")
       if (highlightIds.length){
         const higlightSelectedArr = [];
         highlightIds.forEach(el => {
@@ -1268,7 +1233,6 @@ export default class Widget extends React.PureComponent<
   
   //TODO config abilitare tab true/false
   render() {
-    console.log(this.state.tables,this.state.tables.length,"check tables")
     return (
       <div
         className="widget-attribute-table jimu-widget"
