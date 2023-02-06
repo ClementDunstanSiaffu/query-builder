@@ -275,6 +275,11 @@ export default class Widget extends React.PureComponent<
                   });
                 });
                 if (queryIndex !== -1) {
+                  if(typeof detailThirdQuery[0].value !== "number"){
+                    detailThirdQuery.sort();
+                  }else{
+                    detailThirdQuery.sort((a,b)=>a.value - b.value < 0 ? -1:a.value === b.value?0:1)
+                  }
                   const updateState = this.state.whereClauses.map((obj) => {
                     if (obj.id === queryIndex.toString()) {
                       obj = { ...obj, ifInOrNotInQueryValue: detailThirdQuery };
@@ -491,21 +496,28 @@ export default class Widget extends React.PureComponent<
   };
 
   deleteTable = (id) => {
-    const newTables = this.state.tables.filter((el) => {
-      return el.id !== id;
-    });
-    const deletedWhereClauses = this.state.whereClauses.filter((el) => {
-      return el.id !== id.toString();
-    });
+    const copiedTable = [...this.state.tables];
+    const newTables = copiedTable.filter((el) =>el.id !== id);
+    // const newTables = this.state.tables.filter((el) => {
+    //   return el.id !== id;
+    // });
+    // console.log(newTables,"check new tables")
+    const copiedWhereClauses =[...this.state.whereClauses];
+    const deletedWhereClauses = copiedWhereClauses.filter((el) =>el.id !== id.toString());
+    // console.log(newTables,deletedWhereClauses,"check new tables")
+    // const deletedWhereClauses = this.state.whereClauses.filter((el) => {
+    //   return el.id !== id.toString();
+    // });
+
     this.setState({
-      tables: [...newTables],
+      tables:newTables,
       whereClauses: deletedWhereClauses,
     });
-    if (this.state.tables.length === 0) {
-      this.setState({
-        whereClauses: [],
-      });
-    }
+    // if (this.state.tables.length === 0) {
+    //   this.setState({
+    //     whereClauses: [],
+    //   });
+    // }
   };
 
   textInputHandler = (e) => {
@@ -1229,6 +1241,7 @@ export default class Widget extends React.PureComponent<
   
   //TODO config abilitare tab true/false
   render() {
+    console.log(this.state.whereClauses,this.state.tables,"whereClause")
     return (
       <div
         className="widget-attribute-table jimu-widget"
