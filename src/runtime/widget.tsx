@@ -500,7 +500,7 @@ export default class Widget extends React.PureComponent<
     this.setState({
       tables: [...this.state.tables, { id: this.state.tableCounter }],
       tableCounter: this.state.tableCounter + 1,
-      dropDowns:{...this.state.dropDowns,[currentId]:true}
+      dropDowns:{...this.state.dropDowns,[currentId]:false}
     });
   };
 

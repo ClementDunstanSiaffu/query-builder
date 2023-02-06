@@ -11,3 +11,7 @@
     transition: all 1s;
     transform-origin: 50% 50%;
 }
+
+#wrap{
+    min-width: 300px !important;
+}
