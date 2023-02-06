@@ -25,6 +25,7 @@ export default class Widget extends React.PureComponent<
   static attribute_table_data = null;
 
   attributeTableConnector = null;
+  queryArray = [];
 
   constructor(props) {
     super(props);
@@ -343,9 +344,9 @@ export default class Widget extends React.PureComponent<
           value = el.value?.txt ?? "";
         } else if (queryValue === "IN" || queryValue === "NOT_IN") {
           value = [];
-          if (queryValue === "IN"){
+          if (queryValue === "IN" && el.checkedList.length){
             el.checkedList.forEach((el) => value.push(el.checkValue));
-          }else{
+          }else if (queryValue === "NOT_IN" && this.state.counterIsChecked.length){
             this.state.counterIsChecked.forEach((el) => value.push(el));
           }
         } else if (
@@ -379,9 +380,10 @@ export default class Widget extends React.PureComponent<
         }
       });
     } else {
-      const query = new Query();
+      // const query = new Query();
       let normalizedWhereToSendQuery: any = [];
       this.state.whereClauses.forEach((el, id) => {
+        const query = new Query();
         let attributeQuery = el.attributeQuery;
         let queryValue = el.queryValue;
         let value;
@@ -391,14 +393,18 @@ export default class Widget extends React.PureComponent<
         }
         if (queryValue === "IN" || queryValue === "NOT_IN") {
           value = [];
-          el.checkedList.forEach((el) => value.push(el.checkValue));
+          if (queryValue === "IN" && el.checkedList.length){
+            el.checkedList.forEach((el) => value.push(el.checkValue));
+          }else if (queryValue === "NOT_IN" && this.state.counterIsChecked.length){
+            this.state.counterIsChecked.forEach((el) => value.push(el.checkValue));
+          }
           if (this.containsAnyLetters(value)) {
-            let queryIn = `${attributeQuery} IN (${
-              "'" + value.join("', '") + "'"
-            })`;
+            let queryIn = `${attributeQuery} IN (${"'" + value.join("', '") + "'"})`;
+            query.where = queryIn;
             normalizedWhereToSendQuery.push(queryIn);
           } else {
             let queryIn = `${attributeQuery} IN (${value.join(",")})`;
+            query.where = queryIn;
             normalizedWhereToSendQuery.push(queryIn);
           }
         }
@@ -418,24 +424,42 @@ export default class Widget extends React.PureComponent<
             normalizedWhereToSendQuery.push(queryInput);
           }
         }
+        if (this.state.jimuMapView) {
+          this.state.jimuMapView.view.map.allLayers.forEach((f, index) => {
+            if (f.title === this.state.currentTargetText) {
+              this.state.jimuMapView.view.whenLayerView(f).then((layerView) => {
+                let queryOr = `${normalizedWhereToSendQuery.join(" OR ")}`;
+                // query.outFields = [`*`];
+                query.outFields = [`${attributeQuery}`]
+                layerView.filter = {
+                  where: query.where,
+                };
+                layerView.visible = true;
+  
+                // displaying  data to table
+                this.connector_function({ layerView, query,queryRequest:"OR",layer:f,AndOr:this.state.AndOr});
+              });
+            }
+          });
+        }
       });
-      if (this.state.jimuMapView) {
-        this.state.jimuMapView.view.map.allLayers.forEach((f, index) => {
-          if (f.title === this.state.currentTargetText) {
-            this.state.jimuMapView.view.whenLayerView(f).then((layerView) => {
-              let queryOr = `${normalizedWhereToSendQuery.join(" OR ")}`;
-              query.outFields = [`*`];
-              layerView.filter = {
-                where: query.where,
-              };
-              layerView.visible = true;
+      // if (this.state.jimuMapView) {
+      //   this.state.jimuMapView.view.map.allLayers.forEach((f, index) => {
+      //     if (f.title === this.state.currentTargetText) {
+      //       this.state.jimuMapView.view.whenLayerView(f).then((layerView) => {
+      //         let queryOr = `${normalizedWhereToSendQuery.join(" OR ")}`;
+      //         query.outFields = [`*`];
+      //         layerView.filter = {
+      //           where: query.where,
+      //         };
+      //         layerView.visible = true;
 
-              // displaying  data to table
-              this.connector_function({ layerView, query,queryRequest:"OR",layer:f });
-            });
-          }
-        });
-      }
+      //         // displaying  data to table
+      //         this.connector_function({ layerView, query,queryRequest:"OR",layer:f,AndOr:this.state.AndOr});
+      //       });
+      //     }
+      //   });
+      // }
     }
   }
 
@@ -907,7 +931,7 @@ export default class Widget extends React.PureComponent<
         layerView.visible = true;
 
         // displaying  data to table
-        connector_function({ layerView, query,queryRequest,values,layer});
+        connector_function({ layerView, query,queryRequest,values,layer,AndOr});
         break;
       case "%LIKE":
         query.where = `${firstQuery} LIKE '%${secondQueryTarget}'`;
@@ -920,7 +944,7 @@ export default class Widget extends React.PureComponent<
         layerView.visible = true;
 
         // displaying  data to table
-        connector_function({ layerView, query,queryRequest,values,layer });
+        connector_function({ layerView, query,queryRequest,values,layer,AndOr});
         break;
       case "%LIKE%":
         query.where = `${firstQuery} LIKE '%${secondQueryTarget}%'`;
@@ -933,7 +957,7 @@ export default class Widget extends React.PureComponent<
         layerView.visible = true;
 
         // displaying  data to table
-        connector_function({ layerView, query,queryRequest,values,layer });
+        connector_function({ layerView, query,queryRequest,values,layer,AndOr});
         break;
       case "NOT LIKE":
         query.where = `${firstQuery} NOT LIKE '%${secondQueryTarget}%'`;
@@ -946,7 +970,7 @@ export default class Widget extends React.PureComponent<
         layerView.visible = true;
 
         // displaying  data to table
-        connector_function({ layerView, query,queryRequest,values,layer});
+        connector_function({ layerView, query,queryRequest,values,layer,AndOr});
         break;
       case "is null":
         query.where = `${firstQuery} is null`;
@@ -960,7 +984,7 @@ export default class Widget extends React.PureComponent<
         layerView.visible = true;
 
         // displaying  data to table
-        connector_function({ layerView, query,queryRequest,values,layer});
+        connector_function({ layerView, query,queryRequest,values,layer,AndOr});
         break;
       case "is not null":
         query.where = `${firstQuery} is not null`;
@@ -973,7 +997,7 @@ export default class Widget extends React.PureComponent<
         layerView.visible = true;
 
         // displaying  data to table
-        connector_function({ layerView, query,queryRequest,values,layer });
+        connector_function({ layerView, query,queryRequest,values,layer,AndOr});
         break;
       case "IN":
         if (this.containsAnyLetters(secondQueryTarget)) {
@@ -985,7 +1009,7 @@ export default class Widget extends React.PureComponent<
             where: query.where,
           };
           layerView.visible = true;
-          connector_function({ layerView, query,queryRequest,values,layer });
+          connector_function({ layerView, query,queryRequest,values,layer,AndOr});
           // f.visible = true;
         } else {
           if (this.checkParenthesis(secondQueryTarget.join(","))){
@@ -1001,7 +1025,7 @@ export default class Widget extends React.PureComponent<
           // f.visible = true;
           layerView.visible = true;
           // displaying  data to table
-          connector_function({ layerView, query,queryRequest,values,layer});
+          connector_function({ layerView, query,queryRequest,values,layer,AndOr});
         }
 
         break;
@@ -1020,7 +1044,7 @@ export default class Widget extends React.PureComponent<
         layerView.visible = true;
 
         // displaying  data to table
-        connector_function({ layerView, query,queryRequest,values,layer });
+        connector_function({ layerView, query,queryRequest,values,layer,AndOr});
         break;
       case "included":
         query.where = `${firstQuery} > ${secondQueryTarget.firstTxt} AND ${firstQuery} < ${secondQueryTarget.secondTxt}`;
@@ -1031,7 +1055,7 @@ export default class Widget extends React.PureComponent<
         layerView.visible = true;
 
         // displaying  data to table
-        connector_function({ layerView, query,queryRequest,values,layer });
+        connector_function({ layerView, query,queryRequest,values,layer,AndOr});
         break;
       case "is_not_included":
         query.where = `${firstQuery} < ${secondQueryTarget.firstTxt} OR ${firstQuery} > ${secondQueryTarget.secondTxt}`;
@@ -1042,7 +1066,7 @@ export default class Widget extends React.PureComponent<
         layerView.visible = true;
 
         // displaying  data to table
-        connector_function({ layerView, query,queryRequest,values,layer });
+        connector_function({ layerView, query,queryRequest,values,layer,AndOr});
         break;
       default:
         if (this.containsAnyLetters(secondQueryTarget)) {
@@ -1054,7 +1078,7 @@ export default class Widget extends React.PureComponent<
           layerView.visible = true;
 
           // displaying  data to table
-          connector_function({ layerView, query,queryRequest,values });
+          connector_function({ layerView, query,queryRequest,values,layer,AndOr});
         } else {
           query.where = `${firstQuery} ${queryRequest} ${secondQueryTarget}`;
           query.outFields = [`${firstQuery}`];
@@ -1064,7 +1088,7 @@ export default class Widget extends React.PureComponent<
           layerView.visible = true;
 
           // displaying  data to table
-          connector_function({ layerView, query,queryRequest,values,layer });
+          connector_function({ layerView, query,queryRequest,values,layer,AndOr});
         }
     }
   };
@@ -1141,76 +1165,92 @@ export default class Widget extends React.PureComponent<
   };
 
   connector_function = async (data) => {
-    const { layerView, query,queryRequest,values,layer} = data;
+    const { layerView, query,queryRequest,values,layer,AndOr} = data;
     if (this.state.higlightSelected.length){
       layerView._highlightIds.clear();
       this.state.higlightSelected.forEach((highlight)=>{
         highlight.remove();
       })
     }
-    query.returnGeometry = true;
+    // query.returnGeometry = true;
     let results = {features:[]};
-    try{
-      results = await layer.queryFeatures(query)
-    }catch(err){
-      if (layerView?.queryFeatures)results = await layerView.queryFeatures(query);
+    let additionalQuery = query.where;
+    if (this.queryArray.length < this.state.whereClauses.length-1){
+      additionalQuery = query.where + " " + AndOr;
     }
-
-    if (layer?.queryFeatures)results = await layer.queryFeatures(query);
-    let checkedLayer_ = [data.layerView.layer.id];
-    const currentField = query.outFields[0];
-    let currentValue = helper.getValues(results.features,currentField);
-    const otherQueriesValueArr = this.state.otherQueriesValue[currentField]??[];
-    const highlightIds = helper.getHighlightedIds(currentValue,otherQueriesValueArr);
-    if (highlightIds.length){
-      const higlightSelectedArr = [];
-      highlightIds.forEach(el => {
-        const highlightSelected = layerView.highlight(el);
-        higlightSelectedArr.push(highlightSelected);
-      });
-      if (results.features.length){
-        const arrayGeometry = [];
-        results.features.forEach(el=>{
-          const newGeometry = geometryEngine.buffer(el.geometry,1, "meters");
-          arrayGeometry.push(newGeometry);
-        })
-        if (arrayGeometry.length){
-          const unifiedGeomtry = geometryEngine.union(arrayGeometry);
-          this.state.jimuMapView.view.goTo(unifiedGeomtry.extent);
-        }
+    this.queryArray.push(additionalQuery);
+    if (this.queryArray.length >= this.state.whereClauses.length){
+      query.returnGeometry = true;
+      const currentQuery = this.queryArray.join(" ");
+      query.where = currentQuery;
+      console.log(currentQuery,"check current query")
+      try{
+        // results = await layer.queryFeatures(currentQuery)
+        results = await layer.queryFeatures(query);
+      }catch(err){
+        // if (layerView?.queryFeatures)results = await layerView.queryFeatures(query);
+        if (layerView?.queryFeatures)results = await layerView.queryFeatures(query);
       }
-      this.setState({higlightSelected:higlightSelectedArr});
-    }
- 
-    const selectedLayersContents = helper.getSelectedContentsLayer(
-      [results.features],
-      checkedLayer_
-    );
-    const numberOfAttributes = helper.getNumberOfAttributes(
-      selectedLayersContents
-    );
-    let activeV = this.state.jimuMapView;
-    this.setState({ layerContents: selectedLayersContents});
-    this.setState({ checkedLayer_: checkedLayer_ });
-    const geometry = Polygon.fromExtent(layerView.view.extent).toJSON();
-    const layerOpen = {
-      geometry: geometry,
-      typeSelected: "contains",
-    };
-    const allCheckedLayers = this.getAllCheckedLayers()
-    this.attributeTableConnector.init({
-      results:[results.features],
-      allCheckedLayers:allCheckedLayers,
-      isLayerChecked:true,
-      checkedLayers:checkedLayer_,
-      numberOfAttributes:numberOfAttributes,
-      layerOpen:layerOpen
-    });
-    try{
-      this.attributeTableConnector.dispatchingAll();
-      this.setState({itemNotFound:null})
-    }catch(err){
-      if (err)this.setState({itemNotFound:this.nls(err)})
+      // if (layer?.queryFeatures)results = await layer.queryFeatures(query);
+      if (layer?.queryFeatures)results = await layer.queryFeatures(query);
+      let checkedLayer_ = [data.layerView.layer.id];
+      const currentField = query.outFields[0];
+      let currentValue = helper.getValues(results.features,currentField);
+      const otherQueriesValueArr = this.state.otherQueriesValue[currentField]??[];
+      const highlightIds = helper.getHighlightedIds(currentValue,otherQueriesValueArr);
+      console.log(highlightIds,otherQueriesValueArr,currentValue,currentField,"check highlightIds")
+      if (highlightIds.length){
+        const higlightSelectedArr = [];
+        highlightIds.forEach(el => {
+          const highlightSelected = layerView.highlight(el);
+          higlightSelectedArr.push(highlightSelected);
+        });
+        if (results.features.length){
+          const arrayGeometry = [];
+          results.features.forEach(el=>{
+            const newGeometry = geometryEngine.buffer(el.geometry,1, "meters");
+            arrayGeometry.push(newGeometry);
+          })
+          if (arrayGeometry.length){
+            const unifiedGeomtry = geometryEngine.union(arrayGeometry);
+            this.state.jimuMapView.view.goTo(unifiedGeomtry.extent);
+          }
+        }
+        this.setState({higlightSelected:higlightSelectedArr});
+      }
+  
+      const selectedLayersContents = helper.getSelectedContentsLayer(
+        [results.features],
+        checkedLayer_
+      );
+      const numberOfAttributes = helper.getNumberOfAttributes(
+        selectedLayersContents
+      );
+      let activeV = this.state.jimuMapView;
+      this.setState({ layerContents: selectedLayersContents});
+      this.setState({ checkedLayer_: checkedLayer_ });
+      const geometry = Polygon.fromExtent(layerView.view.extent).toJSON();
+      const layerOpen = {
+        geometry: geometry,
+        typeSelected: "contains",
+      };
+      const allCheckedLayers = this.getAllCheckedLayers()
+      this.attributeTableConnector.init({
+        results:[results.features],
+        allCheckedLayers:allCheckedLayers,
+        isLayerChecked:true,
+        checkedLayers:checkedLayer_,
+        numberOfAttributes:numberOfAttributes,
+        layerOpen:layerOpen
+      });
+      try{
+        this.attributeTableConnector.dispatchingAll();
+        this.setState({itemNotFound:null})
+      }catch(err){
+        if (err)this.setState({itemNotFound:this.nls(err)})
+      }
+    }else{
+      
     }
   };
 
@@ -1228,6 +1268,7 @@ export default class Widget extends React.PureComponent<
   
   //TODO config abilitare tab true/false
   render() {
+    console.log(this.state.tables,this.state.tables.length,"check tables")
     return (
       <div
         className="widget-attribute-table jimu-widget"
