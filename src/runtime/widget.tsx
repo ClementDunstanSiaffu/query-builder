@@ -377,6 +377,7 @@ export default class Widget extends React.PureComponent<
       });
     } else {
       // const query = new Query();
+      const checkedQuery = ["is null","is not null","IN","NOT_IN","included","is_not_included"]
       let normalizedWhereToSendQuery: any = [];
       this.state.whereClauses.forEach((el, id) => {
         const query = new Query();
@@ -385,6 +386,7 @@ export default class Widget extends React.PureComponent<
         let value;
         if (queryValue === "is null" || queryValue === "is not null") {
           let queryIn = `${attributeQuery} ${queryValue}`;
+          query.where = queryIn;
           normalizedWhereToSendQuery.push(queryIn);
         }
         if (queryValue === "IN" || queryValue === "NOT_IN") {
@@ -397,6 +399,7 @@ export default class Widget extends React.PureComponent<
           if (this.containsAnyLetters(value)) {
             let queryIn = `${attributeQuery} IN (${"'" + value.join("', '") + "'"})`;
             query.where = queryIn;
+            console.log(query.where,queryIn,"check both above")
             normalizedWhereToSendQuery.push(queryIn);
           } else {
             let queryIn = `${attributeQuery} IN (${value.join(",")})`;
@@ -409,14 +412,17 @@ export default class Widget extends React.PureComponent<
           queryValue === "included"
             ? (queryIn = `${attributeQuery} > ${el.firstTxt.value} AND ${attributeQuery} < ${el.secondTxt.value}`)
             : (queryIn = `${attributeQuery} < ${el.firstTxt.value} OR ${attributeQuery} > ${el.secondTxt.value}`);
+            query.where = queryIn;
           normalizedWhereToSendQuery.push(queryIn);
-        } else {
+        } else if (!checkedQuery.includes(queryValue)){
           value = el.value?.txt ?? "";
           if (this.containsAnyLetters(value)) {
             let queryInput = `${attributeQuery} ${queryValue} '${value}'`;
+            query.where = queryInput;
             normalizedWhereToSendQuery.push(queryInput);
           } else {
             let queryInput = `${attributeQuery} ${queryValue} ${value}`;
+            query.where = queryInput;
             normalizedWhereToSendQuery.push(queryInput);
           }
         }
@@ -431,7 +437,6 @@ export default class Widget extends React.PureComponent<
                   where: query.where,
                 };
                 layerView.visible = true;
-  
                 // displaying  data to table
                 this.connector_function({ layerView, query,queryRequest:"OR",layer:f,AndOr:this.state.AndOr});
               });
@@ -1148,6 +1153,7 @@ export default class Widget extends React.PureComponent<
     if (this.queryArray.length < this.state.whereClauses.length-1){
       additionalQuery = query.where + " " + AndOr;
     }
+    console.log(additionalQuery,"additional query")
     this.queryArray.push(additionalQuery);
     if (this.queryArray.length >= this.state.whereClauses.length){
       query.returnGeometry = true;
