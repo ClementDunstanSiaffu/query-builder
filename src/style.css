@@ -15,3 +15,12 @@
 #wrap{
     min-width: 300px !important;
 }
+
+.include{
+    display: flex;
+    flex-direction: row;
+}
+
+#inputs{
+    width:20% !important;
+}

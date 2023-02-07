@@ -640,31 +640,31 @@ const SecondConstructor = (props) => {
       <div value={"is null"}></div>
       <div value={"is not null"}></div>
       <div value={"included"} className="d-flex col-md-4">
-        <div className="column d-flex justify-content-between">
+        <div className="include">
           <TextInput
             onChange={textFirstIncludedHandler}
             onAcceptValue={function noRefCheck() {}}
             type="text"
-            className="w-10"
             data-table-id={tablesId}
+            id='inputs'
           />
-          <p className="col-md-2 text-center" style={{width:'10px'}}>e</p>
+          <p className="col-md-2 text-center" style={{width:'10%'}}>e</p>
           <TextInput
             onChange={textSecondIncludedHandler}
             onAcceptValue={function noRefCheck() {}}
             type="text"
-            className="w-10"
             data-table-id={tablesId}
+            id='inputs'
           />
         </div>
       </div>
       <div value={"is_not_included"} className="d-flex col-md-4">
-        <div className="column d-flex justify-content-between">
+        <div className="include">
           <TextInput
             onChange={textFirstIncludedHandler}
             onAcceptValue={function noRefCheck() {}}
             type="text"
-            className="w-10"
+            id='inputs'
             data-table-id={tablesId}
           />
           <p className="col-sm-2 text-center">e</p>
@@ -672,7 +672,7 @@ const SecondConstructor = (props) => {
             onChange={textSecondIncludedHandler}
             onAcceptValue={function noRefCheck() {}}
             type="text"
-            className="w-10"
+            id='inputs'
             data-table-id={tablesId}
           />
         </div>
