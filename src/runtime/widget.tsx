@@ -1000,22 +1000,28 @@ export default class Widget extends React.PureComponent<
         }
 
         break;
-      case "NOT_IN":
-        if (this.checkParenthesis(secondQueryTarget.join(","))){
-          const stringFiedValue = this.loopToGetString(secondQueryTarget);
-          query.where = `NOT  ${firstQuery} IN (${stringFiedValue})`;
-        }else{
-          query.where = `NOT  ${firstQuery} IN (${secondQueryTarget.join(",")})`;
-        }
-        query.outFields = [`${firstQuery}`];
-        layerView.filter = {
-          where: query.where,
-        };
+      case "NOT_IN":        
+        if (this.containsAnyLetters(secondQueryTarget)) {
+          query.where = `NOT ${firstQuery} IN (${"'" + secondQueryTarget.join("', '") + "'"})`;
+          query.outFields = [`${firstQuery}`];
+          layerView.filter = {where: query.where};
+          layerView.visible = true;
+          connector_function({ layerView, query,queryRequest,values,layer,AndOr});
         // f.visible = true;
-        layerView.visible = true;
-
+        }else{
+          if (this.checkParenthesis(secondQueryTarget.join(","))){
+            const stringFiedValue = this.loopToGetString(secondQueryTarget);
+            query.where = `NOT  ${firstQuery} IN (${stringFiedValue})`;
+          }else{
+            query.where = `NOT  ${firstQuery} IN (${secondQueryTarget.join(",")})`;
+          }
+          query.outFields = [`${firstQuery}`];
+          layerView.filter = {where: query.where};
+          // f.visible = true;
+          layerView.visible = true;
+          connector_function({ layerView, query,queryRequest,values,layer,AndOr});
+        }
         // displaying  data to table
-        connector_function({ layerView, query,queryRequest,values,layer,AndOr});
         break;
       case "included":
         query.where = `(${firstQuery} > ${secondQueryTarget.firstTxt} AND ${firstQuery} < ${secondQueryTarget.secondTxt})`;
@@ -1194,7 +1200,6 @@ export default class Widget extends React.PureComponent<
       };
       if (results.features.length){
         const isLayerChecked = this.state.isAttributeTableClosed ? false:true;
-        console.log(isLayerChecked,"called here")
         const allCheckedLayers = this.getAllCheckedLayers()
         this.attributeTableConnector.init({
           results:[results.features],
@@ -1214,9 +1219,8 @@ export default class Widget extends React.PureComponent<
           this.setState({isAttributeTableClosed:true})
         }
       }else{
-        console.log("close table")
         this.attributeTableConnector.closeTable();
-        this.setState({isAttributeTableClosed:true})
+        this.setState({isAttributeTableClosed:true,itemNotFound:this.nls("noItemSelected")})
       }
 
     }
