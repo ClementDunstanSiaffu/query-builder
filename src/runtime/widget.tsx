@@ -30,42 +30,6 @@ export default class Widget extends React.PureComponent<
   constructor(props) {
     super(props);
     this.init();
-    // this.state = {
-    //   jimuMapView: null,
-    //   layerContents: [],
-    //   checkedLayer_: [],
-    //   resultLayerList: [],
-    //   isLayerSelected: false,
-    //   resultsLayerSelected: [],
-    //   currentTargetText: null,
-    //   geometry: null,
-    //   typeSelected: null,
-    //   listServices: [],
-    //   currentFirstQuery: "",
-    //   currentFirstQueryType: null,
-    //   dropdownValueQuery: "valore",
-    //   firstTextIncludedHandler: "0",
-    //   secondTextIncludedHandler: "0",
-    //   tables: [],
-    //   isChecked: false,
-    //   counterIsChecked: [],
-    //   checkedToQuery: [],
-    //   tableCounter: 0,
-    //   whereClauses: [],
-    //   tablesId: null,
-    //   isOpen: false,
-    //   AndOr: "AND",
-    //   opened: false,
-    //   autOpen: true,
-    //   mouseleave: false,
-    //   dropDowns:{},
-    //   highlightIds:[],
-    //   selectedField:null,
-    //   otherQueriesValue:{},
-    //   dropId:null,
-    //   higlightSelected:[],
-    //   itemNotFound:null
-    // };
     this.activeViewChangeHandler = this.activeViewChangeHandler.bind(this);
     //Layer
     this.onChangeSelectLayer = this.onChangeSelectLayer.bind(this);
