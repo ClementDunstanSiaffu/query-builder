@@ -29,6 +29,63 @@ export default class Widget extends React.PureComponent<
 
   constructor(props) {
     super(props);
+    this.init();
+    // this.state = {
+    //   jimuMapView: null,
+    //   layerContents: [],
+    //   checkedLayer_: [],
+    //   resultLayerList: [],
+    //   isLayerSelected: false,
+    //   resultsLayerSelected: [],
+    //   currentTargetText: null,
+    //   geometry: null,
+    //   typeSelected: null,
+    //   listServices: [],
+    //   currentFirstQuery: "",
+    //   currentFirstQueryType: null,
+    //   dropdownValueQuery: "valore",
+    //   firstTextIncludedHandler: "0",
+    //   secondTextIncludedHandler: "0",
+    //   tables: [],
+    //   isChecked: false,
+    //   counterIsChecked: [],
+    //   checkedToQuery: [],
+    //   tableCounter: 0,
+    //   whereClauses: [],
+    //   tablesId: null,
+    //   isOpen: false,
+    //   AndOr: "AND",
+    //   opened: false,
+    //   autOpen: true,
+    //   mouseleave: false,
+    //   dropDowns:{},
+    //   highlightIds:[],
+    //   selectedField:null,
+    //   otherQueriesValue:{},
+    //   dropId:null,
+    //   higlightSelected:[],
+    //   itemNotFound:null
+    // };
+    this.activeViewChangeHandler = this.activeViewChangeHandler.bind(this);
+    //Layer
+    this.onChangeSelectLayer = this.onChangeSelectLayer.bind(this);
+    this.getQueryAttribute = this.getQueryAttribute.bind(this);
+    this.getQuery = this.getQuery.bind(this);
+    this.sendQuery = this.sendQuery.bind(this);
+    this.thirdQuery = this.thirdQuery.bind(this);
+    this.dropdownItemClick = this.dropdownItemClick.bind(this);
+    this.chooseAndOr = this.chooseAndOr.bind(this);
+    this.closeDrop = this.closeDrop.bind(this);
+    this.openDrop = this.openDrop.bind(this);
+    this.closeDropOnclickOutside = this.closeDropOnclickOutside.bind(this);
+    this.onmouseLeave = this.onmouseLeave.bind(this);
+    this.getAllCheckedLayers = this.getAllCheckedLayers.bind(this);
+    this.getAllJimuLayerViews = this.getAllJimuLayerViews.bind(this);
+    this.connector_function = this.connector_function.bind(this);
+    this.functionCounterIsChecked = this.functionCounterIsChecked.bind(this);
+  }
+
+  init = ()=>{
     this.state = {
       jimuMapView: null,
       layerContents: [],
@@ -63,25 +120,9 @@ export default class Widget extends React.PureComponent<
       otherQueriesValue:{},
       dropId:null,
       higlightSelected:[],
-      itemNotFound:null
+      itemNotFound:null,
+      currentSelectedId:" "
     };
-    this.activeViewChangeHandler = this.activeViewChangeHandler.bind(this);
-    //Layer
-    this.onChangeSelectLayer = this.onChangeSelectLayer.bind(this);
-    this.getQueryAttribute = this.getQueryAttribute.bind(this);
-    this.getQuery = this.getQuery.bind(this);
-    this.sendQuery = this.sendQuery.bind(this);
-    this.thirdQuery = this.thirdQuery.bind(this);
-    this.dropdownItemClick = this.dropdownItemClick.bind(this);
-    this.chooseAndOr = this.chooseAndOr.bind(this);
-    this.closeDrop = this.closeDrop.bind(this);
-    this.openDrop = this.openDrop.bind(this);
-    this.closeDropOnclickOutside = this.closeDropOnclickOutside.bind(this);
-    this.onmouseLeave = this.onmouseLeave.bind(this);
-    this.getAllCheckedLayers = this.getAllCheckedLayers.bind(this);
-    this.getAllJimuLayerViews = this.getAllJimuLayerViews.bind(this);
-    this.connector_function = this.connector_function.bind(this);
-    this.functionCounterIsChecked = this.functionCounterIsChecked.bind(this);
   }
 
   nls = (id: string) => {
@@ -478,6 +519,7 @@ export default class Widget extends React.PureComponent<
             this.setState({
               resultsLayerSelected: f,
               currentTargetText: e.currentTarget.innerText,
+              currentSelectedId:e.currentTarget.value
             });
             this.props.dispatch(
               appActions.widgetStatePropChange("value", "checkedLayers", [f.id])
@@ -1237,6 +1279,14 @@ export default class Widget extends React.PureComponent<
       this.setState({counterIsChecked:counter});
     }
   }
+
+  functionRefresh = ()=>{
+    const resultLayerList = this.state.resultLayerList;
+    const jimuMapView = this.state.jimuMapView
+    this.init();
+    this.attributeTableConnector.closeTable();
+    this.setState({...this.state,resultLayerList:resultLayerList,jimuMapView:jimuMapView});
+  }
   
   //TODO config abilitare tab true/false
   render() {
@@ -1279,6 +1329,7 @@ export default class Widget extends React.PureComponent<
                   <Select
                     onChange={this.onChangeSelectLayer}
                     placeholder="Seleziona il Layer"
+                    value={this.state.currentSelectedId}
                   >
                     {this.state.resultLayerList.map((el, i) => {
                       return (
@@ -1341,6 +1392,15 @@ export default class Widget extends React.PureComponent<
                   onClick={this.sendQuery}
                 >
                   <p className="m-0 p-0">Applica</p>
+                </Button>
+                <Button
+                  size="default"
+                  className="d-flex align-items-center mb-2"
+                  style={{marginLeft:'5px'}}
+                  type="secondary"
+                  onClick={this.functionRefresh}
+                >
+                  <p className="m-0 p-0">Ricaricare</p>
                 </Button>
               </div>
             </div>
