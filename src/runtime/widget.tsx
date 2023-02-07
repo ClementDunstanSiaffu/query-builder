@@ -331,6 +331,7 @@ export default class Widget extends React.PureComponent<
   // step1
   async sendQuery() {
     this.queryArray = [];
+    const checkedQuery = ["is null","is not null","IN","NOT_IN","included","is_not_included"]
     if (this.state.AndOr === "AND") {
       this.state.whereClauses.forEach((el, id) => {
         let attributeQuery = el.attributeQuery;
@@ -353,7 +354,7 @@ export default class Widget extends React.PureComponent<
             firstTxt: el.firstTxt.value,
             secondTxt: el.secondTxt.value,
           };
-        } else {
+        } else if (!checkedQuery.includes(queryValue)) {
           value = el.value?.txt ?? "";
         }
         if (this.state.jimuMapView) {
@@ -376,7 +377,7 @@ export default class Widget extends React.PureComponent<
         }
       });
     } else {
-      const checkedQuery = ["is null","is not null","IN","NOT_IN","included","is_not_included"]
+      // const checkedQuery = ["is null","is not null","IN","NOT_IN","included","is_not_included"]
       let normalizedWhereToSendQuery: any = [];
       this.state.whereClauses.forEach((el, id) => {
         const query = new Query();
@@ -1011,7 +1012,7 @@ export default class Widget extends React.PureComponent<
         connector_function({ layerView, query,queryRequest,values,layer,AndOr});
         break;
       case "included":
-        query.where = `${firstQuery} > ${secondQueryTarget.firstTxt} AND ${firstQuery} < ${secondQueryTarget.secondTxt}`;
+        query.where = `(${firstQuery} > ${secondQueryTarget.firstTxt} AND ${firstQuery} < ${secondQueryTarget.secondTxt})`;
         query.outFields = [`${firstQuery}`];
         layerView.filter = {
           where: query.where,
@@ -1022,7 +1023,7 @@ export default class Widget extends React.PureComponent<
         connector_function({ layerView, query,queryRequest,values,layer,AndOr});
         break;
       case "is_not_included":
-        query.where = `${firstQuery} < ${secondQueryTarget.firstTxt} OR ${firstQuery} > ${secondQueryTarget.secondTxt}`;
+        query.where = `(${firstQuery} < ${secondQueryTarget.firstTxt} OR ${firstQuery} > ${secondQueryTarget.secondTxt})`;
         query.outFields = [`${firstQuery}`];
         layerView.filter = {
           where: query.where,
@@ -1185,23 +1186,27 @@ export default class Widget extends React.PureComponent<
         geometry: geometry,
         typeSelected: "contains",
       };
-      const allCheckedLayers = this.getAllCheckedLayers()
-      this.attributeTableConnector.init({
-        results:[results.features],
-        allCheckedLayers:allCheckedLayers,
-        isLayerChecked:true,
-        checkedLayers:checkedLayer_,
-        numberOfAttributes:numberOfAttributes,
-        layerOpen:layerOpen
-      });
-      try{
-        this.attributeTableConnector.dispatchingAll();
-        this.setState({itemNotFound:null})
-      }catch(err){
-        if (err)this.setState({itemNotFound:this.nls(err)})
+      if (results.features.length){
+        const allCheckedLayers = this.getAllCheckedLayers()
+        this.attributeTableConnector.init({
+          results:[results.features],
+          allCheckedLayers:allCheckedLayers,
+          isLayerChecked:true,
+          checkedLayers:checkedLayer_,
+          numberOfAttributes:numberOfAttributes,
+          layerOpen:layerOpen
+        });
+        try{
+          this.attributeTableConnector.dispatchingAll();
+          this.setState({itemNotFound:null})
+        }catch(err){
+          if (err)this.setState({itemNotFound:this.nls(err)});
+          this.attributeTableConnector.closeTable()
+        }
+      }else{
+        this.attributeTableConnector.closeTable()
       }
-    }else{
-      
+
     }
   };
 

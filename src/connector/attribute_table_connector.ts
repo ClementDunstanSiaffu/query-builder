@@ -257,6 +257,15 @@ class AttributeTableConnector {
 
     }
 
+    closeTable = ()=>{
+        const self = AttributeTableConnector.self;
+        const props = self.props
+        if (props && props.hasOwnProperty("dispatch") ){
+            props.dispatch(appActions.widgetStatePropChange("value","checkedLayers",[]));
+            props.dispatch(appActions.widgetStatePropChange("value","createTable",true));
+        }
+    }
+
     getProps = ()=>{
         const self = AttributeTableConnector.self;
         const props = self.props;
