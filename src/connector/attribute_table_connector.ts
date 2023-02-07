@@ -235,15 +235,16 @@ class AttributeTableConnector {
             const allCheckedLayers = this.allCheckedLayers;
             const activeView = this.getActiveView();
             if (numberOfAttributes && layerOpen && allCheckedLayers && activeView){
+                if (!this.isLayerChecked){
+                    props.dispatch(appActions.widgetStatePropChange("value","checkedLayers",this.checkedLayers));
+                }
                 if (Object.keys(numberOfAttributes).length > 0){
                     props.dispatch(appActions.widgetStatePropChange("value","createTable",true));
                     props.dispatch(appActions.widgetStatePropChange("value","numberOfAttribute",numberOfAttributes));
                     props.dispatch(appActions.widgetStatePropChange("value","layerOpen",layerOpen));
                     props.dispatch(appActions.widgetStatePropChange("value","getAllLayers",this.getAllCheckedLayers));
                     props.dispatch(appActions.widgetStatePropChange("value","getActiveView",this.getActiveView));
-                    if (!this.isLayerChecked){
-                        props.dispatch(appActions.widgetStatePropChange("value","checkedLayers",this.checkedLayers));
-                    }
+                
                     return;
                 }
                 throw "noItemSelected"

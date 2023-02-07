@@ -238,6 +238,19 @@ class Helper {
         } 
     }
 
+    likelyQuery = (attributeQuery,queryValue,value)=>{
+        switch(queryValue){
+            case "LIKE%":
+                return `${attributeQuery} LIKE '%${value}'`;
+            case "%LIKE%":
+                return `${attributeQuery} LIKE '%${value}%'`;
+            case "%LIKE":
+                return `${attributeQuery} LIKE '%${value}'`;
+            case "NOT LIKE":
+                return `${attributeQuery} NOT LIKE '%${value}%'`;  
+        }
+    }
+
 }
 
 export default new Helper();

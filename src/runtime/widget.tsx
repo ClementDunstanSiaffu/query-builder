@@ -157,6 +157,7 @@ export default class Widget extends React.PureComponent<
         AndOr: "AND",
         opened: false,
         autOpen: true,
+        isAttributeTableClosed:false
       });
     }
   }
@@ -331,7 +332,8 @@ export default class Widget extends React.PureComponent<
   // step1
   async sendQuery() {
     this.queryArray = [];
-    const checkedQuery = ["is null","is not null","IN","NOT_IN","included","is_not_included"]
+    const checkedQuery = ["is null","is not null","IN","NOT_IN","included","is_not_included"];
+    const likelyQuery = ['LIKE%','%LIKE','%LIKE%','NOT LIKE']
     if (this.state.AndOr === "AND") {
       this.state.whereClauses.forEach((el, id) => {
         let attributeQuery = el.attributeQuery;
@@ -415,14 +417,18 @@ export default class Widget extends React.PureComponent<
           normalizedWhereToSendQuery.push(queryIn);
         } else if (!checkedQuery.includes(queryValue)){
           value = el.value?.txt ?? "";
-          if (this.containsAnyLetters(value)) {
-            let queryInput = `${attributeQuery} ${queryValue} '${value}'`;
-            query.where = queryInput;
-            normalizedWhereToSendQuery.push(queryInput);
-          } else {
-            let queryInput = `${attributeQuery} ${queryValue} ${value}`;
-            query.where = queryInput;
-            normalizedWhereToSendQuery.push(queryInput);
+          if (likelyQuery.includes(queryValue)){
+            query.where = helper.likelyQuery(attributeQuery,queryValue,value)
+          }else{
+            if (this.containsAnyLetters(value)) {
+              let queryInput = `${attributeQuery} ${queryValue} '${value}'`;
+              query.where = queryInput;
+              normalizedWhereToSendQuery.push(queryInput);
+            } else {
+              let queryInput = `${attributeQuery} ${queryValue} ${value}`;
+              query.where = queryInput;
+              normalizedWhereToSendQuery.push(queryInput);
+            }
           }
         }
         if (this.state.jimuMapView) {
@@ -1187,24 +1193,30 @@ export default class Widget extends React.PureComponent<
         typeSelected: "contains",
       };
       if (results.features.length){
+        const isLayerChecked = this.state.isAttributeTableClosed ? false:true;
+        console.log(isLayerChecked,"called here")
         const allCheckedLayers = this.getAllCheckedLayers()
         this.attributeTableConnector.init({
           results:[results.features],
           allCheckedLayers:allCheckedLayers,
-          isLayerChecked:true,
+          isLayerChecked:isLayerChecked,
           checkedLayers:checkedLayer_,
           numberOfAttributes:numberOfAttributes,
           layerOpen:layerOpen
         });
+        this.setState({isAttributeTableClosed:false})
         try{
           this.attributeTableConnector.dispatchingAll();
           this.setState({itemNotFound:null})
         }catch(err){
           if (err)this.setState({itemNotFound:this.nls(err)});
-          this.attributeTableConnector.closeTable()
+          this.attributeTableConnector.closeTable();
+          this.setState({isAttributeTableClosed:true})
         }
       }else{
-        this.attributeTableConnector.closeTable()
+        console.log("close table")
+        this.attributeTableConnector.closeTable();
+        this.setState({isAttributeTableClosed:true})
       }
 
     }
