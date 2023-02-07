@@ -376,7 +376,6 @@ export default class Widget extends React.PureComponent<
         }
       });
     } else {
-      // const query = new Query();
       const checkedQuery = ["is null","is not null","IN","NOT_IN","included","is_not_included"]
       let normalizedWhereToSendQuery: any = [];
       this.state.whereClauses.forEach((el, id) => {
@@ -399,7 +398,6 @@ export default class Widget extends React.PureComponent<
           if (this.containsAnyLetters(value)) {
             let queryIn = `${attributeQuery} IN (${"'" + value.join("', '") + "'"})`;
             query.where = queryIn;
-            console.log(query.where,queryIn,"check both above")
             normalizedWhereToSendQuery.push(queryIn);
           } else {
             let queryIn = `${attributeQuery} IN (${value.join(",")})`;
@@ -444,23 +442,6 @@ export default class Widget extends React.PureComponent<
           });
         }
       });
-      // if (this.state.jimuMapView) {
-      //   this.state.jimuMapView.view.map.allLayers.forEach((f, index) => {
-      //     if (f.title === this.state.currentTargetText) {
-      //       this.state.jimuMapView.view.whenLayerView(f).then((layerView) => {
-      //         let queryOr = `${normalizedWhereToSendQuery.join(" OR ")}`;
-      //         query.outFields = [`*`];
-      //         layerView.filter = {
-      //           where: query.where,
-      //         };
-      //         layerView.visible = true;
-
-      //         // displaying  data to table
-      //         this.connector_function({ layerView, query,queryRequest:"OR",layer:f,AndOr:this.state.AndOr});
-      //       });
-      //     }
-      //   });
-      // }
     }
   }
 
@@ -1153,7 +1134,6 @@ export default class Widget extends React.PureComponent<
     if (this.queryArray.length < this.state.whereClauses.length-1){
       additionalQuery = query.where + " " + AndOr;
     }
-    console.log(additionalQuery,"additional query")
     this.queryArray.push(additionalQuery);
     if (this.queryArray.length >= this.state.whereClauses.length){
       query.returnGeometry = true;
