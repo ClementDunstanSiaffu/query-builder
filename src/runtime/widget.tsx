@@ -264,9 +264,8 @@ export default class Widget extends React.PureComponent<
               const query = new Query();
               query.where = `${currentClickedQueryAttribute} is not null`;
               query.outFields = [`${currentClickedQueryAttribute}`];
-              layerView.filter = {
-                where: query.where,
-              };
+              // layerView.filter = {where: query.where,};
+              // layerView.visible = false;
               const results = f.queryFeatures(query);
               results.then((result) => {
                 const detailThirdQuery = [];
@@ -313,7 +312,8 @@ export default class Widget extends React.PureComponent<
           const query = new Query();
           query.where = `${currentClickedQueryAttribute} is not null AND OBJECTID is not null`;
           query.outFields = [`${currentClickedQueryAttribute}`,"OBJECTID"];
-          layerView.filter = {where: query.where};
+          // layerView.filter = {where: query.where};
+          // layerView.visible = false;
           const results = f.queryFeatures(query);
             results.then((result) => {
               const detailThirdQuery = [];
