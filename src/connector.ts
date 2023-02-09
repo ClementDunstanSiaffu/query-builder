@@ -175,17 +175,9 @@ class Helper {
                 for (let i = 0;i < fields.length;i++ ){
                     const currentField = fields[i];
                     const currentValue = feature.attributes[currentField];
-                    if (currentValue){
-                        object[currentField] = currentValue;
-                        // values.push(currentValue);
-                       
-                    }
+                    if (currentValue)object[currentField] = currentValue;
                 }
                 values.push(object);
-                // const currentValue = feature.attributes[field];
-                // if (currentValue){
-                //     values.push(currentValue);
-                // }
             });
         }
         return values;
@@ -204,21 +196,6 @@ class Helper {
         return currentOtherValues;
     }
 
-    // getValues = (features:any[],field:string)=>{
-    //     const values = [];
-    //     if (features.length){
-    //         features.forEach(feature => {
-    //             const currentValue = feature.attributes[field];
-    //             if (currentValue){
-    //                 values.push(currentValue);
-    //             }
-    //         });
-    //     }
-    //     return values;
-    // }
-
-
-    
     getHighlightedIds = (values:any[],otherValues:any)=>{
         const highlightIds = []
         if (values.length){
@@ -239,14 +216,12 @@ class Helper {
                             if (item){
                                 if (!objectId){
                                     objectId = item.objectId;
-                                    // objectId = `${item.objectId}`;
                                 }else{
                                     if (objectId === item.objectId){
                                         objectId = item.objectId;
                                     }
                                 }
                             }
-                            // if (item)sortingHighlightedIds.push(`${item.objectId}`)
                         }
                     })
                     if (objectId)highlightIds.push(objectId);
@@ -255,27 +230,6 @@ class Helper {
         }
         return highlightIds;
     }
-
-
-    // getHighlightedIds = (val:any[],fieldValues:any[])=>{
-    //     let highlightedArray = [];
-    //     if (val?.length && fieldValues?.length){
-    //         const copiedFieldValues = [...fieldValues];
-    //         for (let i = 0;i < val.length;i++){
-    //             const item = copiedFieldValues.find((item)=>{
-    //                 if (item.value === val[i]){
-    //                     return item
-    //                 }
-                    
-    //             });
-    //             if (item){
-    //                 highlightedArray.push(item.objectId)
-    //                 // highlightedArray.push(`${item.objectId}`)
-    //             } 
-    //         }
-    //     }
-    //     return highlightedArray;
-    // }
 
     getObjectIds = (val:any[],fieldValues:any[])=>{
         let highlightedArray = [];
@@ -288,10 +242,7 @@ class Helper {
                     }
                     
                 });
-                if (item){
-                    highlightedArray.push(item.objectId)
-                    // highlightedArray.push(val[i])
-                } 
+                if (item)highlightedArray.push(item.objectId) 
             }
         }
         return highlightedArray;

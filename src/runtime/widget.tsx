@@ -1165,15 +1165,8 @@ export default class Widget extends React.PureComponent<
       }
       if (layer?.queryFeatures)results = await layer.queryFeatures(query);
       let checkedLayer_ = [data.layerView.layer.id];
-      // const currentField = query.outFields[0];
       let currentValue = helper.getValues(results.features,query.outFields);
-      // const otherQueriesValueArr = helper.getOtherValuesArr(this.state.otherQueriesValue,query.outFields);
       const highlightIds = helper.getHighlightedIds(currentValue,this.state.otherQueriesValue);
-      // let currentValue = helper.getValues(results.features,currentField);
-      // const otherQueriesValueArr = this.state.otherQueriesValue[currentField]??[];
-
-      // const highlightIds = helper.getHighlightedIds(currentValue,otherQueriesValueArr);
-      console.log(currentValue,highlightIds,"check highlights")
       if (highlightIds.length){
         const higlightSelectedArr = [];
         highlightIds.forEach(el => {
@@ -1260,7 +1253,6 @@ export default class Widget extends React.PureComponent<
   
   //TODO config abilitare tab true/false
   render() {
-    console.log(this.state.otherQueriesValue,"check other value")
     return (
       <div
         className="widget-attribute-table jimu-widget"
