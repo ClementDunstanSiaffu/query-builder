@@ -167,38 +167,115 @@ class Helper {
         return copiedCurrentHighlightIds;
     }
 
-    getValues = (features:any[],field:string)=>{
+    getValues = (features:any[],fields:string[])=>{
         const values = [];
         if (features.length){
             features.forEach(feature => {
-                const currentValue = feature.attributes[field];
-                if (currentValue){
-                    values.push(currentValue);
+                const object = {};
+                for (let i = 0;i < fields.length;i++ ){
+                    const currentField = fields[i];
+                    const currentValue = feature.attributes[currentField];
+                    if (currentValue){
+                        object[currentField] = currentValue;
+                        // values.push(currentValue);
+                       
+                    }
                 }
+                values.push(object);
+                // const currentValue = feature.attributes[field];
+                // if (currentValue){
+                //     values.push(currentValue);
+                // }
             });
         }
         return values;
     }
 
-    getHighlightedIds = (val:any[],fieldValues:any[])=>{
-        let highlightedArray = [];
-        if (val?.length && fieldValues?.length){
-            const copiedFieldValues = [...fieldValues];
-            for (let i = 0;i < val.length;i++){
-                const item = copiedFieldValues.find((item)=>{
-                    if (item.value === val[i]){
-                        return item
-                    }
-                    
-                });
-                if (item){
-                    highlightedArray.push(item.objectId)
-                    // highlightedArray.push(`${item.objectId}`)
-                } 
+    getOtherValuesArr = (otherValues:any,fields:string[])=>{
+        let currentOtherValues = [];
+        if (fields.length){
+            for (let i = 0;i < fields.length;i++){
+                const currentField = fields[i];
+                if (otherValues[currentField]){
+                    currentOtherValues = otherValues[currentField];
+                }
             }
         }
-        return highlightedArray;
+        return currentOtherValues;
     }
+
+    // getValues = (features:any[],field:string)=>{
+    //     const values = [];
+    //     if (features.length){
+    //         features.forEach(feature => {
+    //             const currentValue = feature.attributes[field];
+    //             if (currentValue){
+    //                 values.push(currentValue);
+    //             }
+    //         });
+    //     }
+    //     return values;
+    // }
+
+
+    
+    getHighlightedIds = (values:any[],otherValues:any)=>{
+        const highlightIds = []
+        if (values.length){
+            for (let i = 0;i < values.length;i++){
+                const currentValue = values[i];
+                const keys = Object.keys(currentValue);
+                if (keys.length){
+                    let objectId = null;
+                    keys.forEach(key=>{
+                        const currentKeyValue = currentValue[key];
+                        const otherValueArr = otherValues[key];
+                        if (currentKeyValue && otherValueArr.length){
+                            const item = otherValueArr.find((item)=>{
+                                if(item.value === currentKeyValue){
+                                    return item;
+                                }
+                            })
+                            if (item){
+                                if (!objectId){
+                                    objectId = item.objectId;
+                                    // objectId = `${item.objectId}`;
+                                }else{
+                                    if (objectId === item.objectId){
+                                        objectId = item.objectId;
+                                    }
+                                }
+                            }
+                            // if (item)sortingHighlightedIds.push(`${item.objectId}`)
+                        }
+                    })
+                    if (objectId)highlightIds.push(objectId);
+                }
+            }
+        }
+        return highlightIds;
+    }
+
+
+    // getHighlightedIds = (val:any[],fieldValues:any[])=>{
+    //     let highlightedArray = [];
+    //     if (val?.length && fieldValues?.length){
+    //         const copiedFieldValues = [...fieldValues];
+    //         for (let i = 0;i < val.length;i++){
+    //             const item = copiedFieldValues.find((item)=>{
+    //                 if (item.value === val[i]){
+    //                     return item
+    //                 }
+                    
+    //             });
+    //             if (item){
+    //                 highlightedArray.push(item.objectId)
+    //                 // highlightedArray.push(`${item.objectId}`)
+    //             } 
+    //         }
+    //     }
+    //     return highlightedArray;
+    // }
 
     getObjectIds = (val:any[],fieldValues:any[])=>{
         let highlightedArray = [];

@@ -26,6 +26,7 @@ export default class Widget extends React.PureComponent<
 
   attributeTableConnector = null;
   queryArray = [];
+  outfields = [];
 
   constructor(props) {
     super(props);
@@ -319,7 +320,7 @@ export default class Widget extends React.PureComponent<
                   objectId: el.attributes["OBJECTID"],
                 });
               });
-              this.setState({otherQueriesValue:{[currentClickedQueryAttribute]:detailThirdQuery}})
+              this.setState({otherQueriesValue:{...this.state.otherQueriesValue,[currentClickedQueryAttribute]:detailThirdQuery}})
             });
           });
         }
@@ -333,6 +334,7 @@ export default class Widget extends React.PureComponent<
   // step1
   async sendQuery() {
     this.queryArray = [];
+    this.outfields = [];
     const checkedQuery = ["is null","is not null","IN","NOT_IN","included","is_not_included"];
     const likelyQuery = ['LIKE%','%LIKE','%LIKE%','NOT LIKE']
     if (this.state.AndOr === "AND") {
@@ -438,13 +440,13 @@ export default class Widget extends React.PureComponent<
               this.state.jimuMapView.view.whenLayerView(f).then((layerView) => {
                 let queryOr = `${normalizedWhereToSendQuery.join(" OR ")}`;
                 // query.outFields = [`*`];
-                query.outFields = [`${attributeQuery}`]
+                // query.outFields = [`${attributeQuery}`]
                 layerView.filter = {
                   where: query.where,
                 };
                 layerView.visible = true;
                 // displaying  data to table
-                this.connector_function({ layerView, query,queryRequest:"OR",layer:f,AndOr:this.state.AndOr});
+                this.connector_function({ layerView, query,queryRequest:"OR",layer:f,AndOr:this.state.AndOr,field:attributeQuery});
               });
             }
           });
@@ -908,81 +910,81 @@ export default class Widget extends React.PureComponent<
     switch (queryRequest) {
       case "LIKE%":
         query.where = `${firstQuery} LIKE '${secondQueryTarget}%'`;
-        query.outFields = [`${firstQuery}`];
+        // query.outFields = [`${firstQuery}`];
         layerView.filter = {
           where: query.where,
         };
         layerView.visible = true;
 
         // displaying  data to table
-        connector_function({ layerView, query,queryRequest,values,layer,AndOr});
+        connector_function({ layerView, query,queryRequest,values,layer,AndOr,field:firstQuery});
         break;
       case "%LIKE":
         query.where = `${firstQuery} LIKE '%${secondQueryTarget}'`;
-        query.outFields = [`${firstQuery}`];
+        // query.outFields = [`${firstQuery}`];
         layerView.filter = {
           where: query.where,
         };
         layerView.visible = true;
 
         // displaying  data to table
-        connector_function({ layerView, query,queryRequest,values,layer,AndOr});
+        connector_function({ layerView, query,queryRequest,values,layer,AndOr,field:firstQuery});
         break;
       case "%LIKE%":
         query.where = `${firstQuery} LIKE '%${secondQueryTarget}%'`;
-        query.outFields = [`${firstQuery}`];
+        // query.outFields = [`${firstQuery}`];
         layerView.filter = {
           where: query.where,
         };
         layerView.visible = true;
 
         // displaying  data to table
-        connector_function({ layerView, query,queryRequest,values,layer,AndOr});
+        connector_function({ layerView, query,queryRequest,values,layer,AndOr,field:firstQuery});
         break;
       case "NOT LIKE":
         query.where = `${firstQuery} NOT LIKE '%${secondQueryTarget}%'`;
-        query.outFields = [`${firstQuery}`];
+        // query.outFields = [`${firstQuery}`];
         layerView.filter = {
           where: query.where,
         };
         layerView.visible = true;
 
         // displaying  data to table
-        connector_function({ layerView, query,queryRequest,values,layer,AndOr});
+        connector_function({ layerView, query,queryRequest,values,layer,AndOr,field:firstQuery});
         break;
       case "is null":
         query.where = `${firstQuery} is null`;
-        query.outFields = [`${firstQuery}`];
+        // query.outFields = [`${firstQuery}`];
         layerView.filter = {
           where: query.where,
         };
         layerView.visible = true;
 
         // displaying  data to table
-        connector_function({ layerView, query,queryRequest,values,layer,AndOr});
+        connector_function({ layerView, query,queryRequest,values,layer,AndOr,field:firstQuery});
         break;
       case "is not null":
         query.where = `${firstQuery} is not null`;
-        query.outFields = [`${firstQuery}`];
+        // query.outFields = [`${firstQuery}`];
         layerView.filter = {
           where: query.where,
         };
         layerView.visible = true;
 
         // displaying  data to table
-        connector_function({ layerView, query,queryRequest,values,layer,AndOr});
+        connector_function({ layerView, query,queryRequest,values,layer,AndOr,field:firstQuery});
         break;
       case "IN":
         if (this.containsAnyLetters(secondQueryTarget)) {
           query.where = `${firstQuery} IN (${
             "'" + secondQueryTarget.join("', '") + "'"
           })`;
-          query.outFields = [`${firstQuery}`];
+          // query.outFields = [`${firstQuery}`];
           layerView.filter = {
             where: query.where,
           };
           layerView.visible = true;
-          connector_function({ layerView, query,queryRequest,values,layer,AndOr});
+          connector_function({ layerView, query,queryRequest,values,layer,AndOr,field:firstQuery});
           // f.visible = true;
         } else {
           if (this.checkParenthesis(secondQueryTarget.join(","))){
@@ -991,14 +993,14 @@ export default class Widget extends React.PureComponent<
           }else{
             query.where = `${firstQuery} IN (${secondQueryTarget.join(",")})`;
           }
-          query.outFields = [`${firstQuery}`];
+          // query.outFields = [`${firstQuery}`];
           layerView.filter = {
             where: query.where,
           };
           // f.visible = true;
           layerView.visible = true;
           // displaying  data to table
-          connector_function({ layerView, query,queryRequest,values,layer,AndOr});
+          connector_function({ layerView, query,queryRequest,values,layer,AndOr,field:firstQuery});
         }
 
         break;
@@ -1008,7 +1010,7 @@ export default class Widget extends React.PureComponent<
           query.outFields = [`${firstQuery}`];
           layerView.filter = {where: query.where};
           layerView.visible = true;
-          connector_function({ layerView, query,queryRequest,values,layer,AndOr});
+          connector_function({ layerView, query,queryRequest,values,layer,AndOr,field:firstQuery});
         // f.visible = true;
         }else{
           if (this.checkParenthesis(secondQueryTarget.join(","))){
@@ -1021,43 +1023,43 @@ export default class Widget extends React.PureComponent<
           layerView.filter = {where: query.where};
           // f.visible = true;
           layerView.visible = true;
-          connector_function({ layerView, query,queryRequest,values,layer,AndOr});
+          connector_function({ layerView, query,queryRequest,values,layer,AndOr,field:firstQuery});
         }
         // displaying  data to table
         break;
       case "included":
         query.where = `(${firstQuery} > ${secondQueryTarget.firstTxt} AND ${firstQuery} < ${secondQueryTarget.secondTxt})`;
-        query.outFields = [`${firstQuery}`];
+        // query.outFields = [`${firstQuery}`];
         layerView.filter = {
           where: query.where,
         };
         layerView.visible = true;
 
         // displaying  data to table
-        connector_function({ layerView, query,queryRequest,values,layer,AndOr});
+        connector_function({ layerView, query,queryRequest,values,layer,AndOr,field:firstQuery});
         break;
       case "is_not_included":
         query.where = `(${firstQuery} < ${secondQueryTarget.firstTxt} OR ${firstQuery} > ${secondQueryTarget.secondTxt})`;
-        query.outFields = [`${firstQuery}`];
+        // query.outFields = [`${firstQuery}`];
         layerView.filter = {
           where: query.where,
         };
         layerView.visible = true;
 
         // displaying  data to table
-        connector_function({ layerView, query,queryRequest,values,layer,AndOr});
+        connector_function({ layerView, query,queryRequest,values,layer,AndOr,field:firstQuery});
         break;
       default:
         if (this.containsAnyLetters(secondQueryTarget)) {
           query.where = `${firstQuery} ${queryRequest} '${secondQueryTarget}'`;
-          query.outFields = [`${firstQuery}`];
+          // query.outFields = [`${firstQuery}`];
           layerView.filter = {
             where: query.where,
           };
           layerView.visible = true;
 
           // displaying  data to table
-          connector_function({ layerView, query,queryRequest,values,layer,AndOr});
+          connector_function({ layerView, query,queryRequest,values,layer,AndOr,field:firstQuery});
         } else {
           query.where = `${firstQuery} ${queryRequest} ${secondQueryTarget}`;
           query.outFields = [`${firstQuery}`];
@@ -1067,7 +1069,7 @@ export default class Widget extends React.PureComponent<
           layerView.visible = true;
 
           // displaying  data to table
-          connector_function({ layerView, query,queryRequest,values,layer,AndOr});
+          connector_function({ layerView, query,queryRequest,values,layer,AndOr,field:firstQuery});
         }
     }
   };
@@ -1137,7 +1139,7 @@ export default class Widget extends React.PureComponent<
   };
 
   connector_function = async (data) => {
-    const { layerView, query,queryRequest,values,layer,AndOr} = data;
+    const { layerView, query,queryRequest,values,layer,AndOr,field} = data;
     if (this.state.higlightSelected.length){
       layerView._highlightIds.clear();
       this.state.higlightSelected.forEach((highlight)=>{
@@ -1150,7 +1152,9 @@ export default class Widget extends React.PureComponent<
       additionalQuery = query.where + " " + AndOr;
     }
     this.queryArray.push(additionalQuery);
+    this.outfields.push(`${field}`)
     if (this.queryArray.length >= this.state.whereClauses.length){
+      query.outFields = this.outfields;
       query.returnGeometry = true;
       const currentQuery = this.queryArray.join(" ");
       query.where = currentQuery;
@@ -1161,10 +1165,15 @@ export default class Widget extends React.PureComponent<
       }
       if (layer?.queryFeatures)results = await layer.queryFeatures(query);
       let checkedLayer_ = [data.layerView.layer.id];
-      const currentField = query.outFields[0];
-      let currentValue = helper.getValues(results.features,currentField);
-      const otherQueriesValueArr = this.state.otherQueriesValue[currentField]??[];
-      const highlightIds = helper.getHighlightedIds(currentValue,otherQueriesValueArr);
+      // const currentField = query.outFields[0];
+      let currentValue = helper.getValues(results.features,query.outFields);
+      // const otherQueriesValueArr = helper.getOtherValuesArr(this.state.otherQueriesValue,query.outFields);
+      const highlightIds = helper.getHighlightedIds(currentValue,this.state.otherQueriesValue);
+      // let currentValue = helper.getValues(results.features,currentField);
+      // const otherQueriesValueArr = this.state.otherQueriesValue[currentField]??[];
+
+      // const highlightIds = helper.getHighlightedIds(currentValue,otherQueriesValueArr);
+      console.log(currentValue,highlightIds,"check highlights")
       if (highlightIds.length){
         const higlightSelectedArr = [];
         highlightIds.forEach(el => {
@@ -1247,9 +1256,11 @@ export default class Widget extends React.PureComponent<
     this.attributeTableConnector.closeTable();
     this.setState({...this.state,resultLayerList:resultLayerList,jimuMapView:jimuMapView});
   }
+
   
   //TODO config abilitare tab true/false
   render() {
+    console.log(this.state.otherQueriesValue,"check other value")
     return (
       <div
         className="widget-attribute-table jimu-widget"
