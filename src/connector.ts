@@ -196,40 +196,101 @@ class Helper {
         return currentOtherValues;
     }
 
-    getHighlightedIds = (values:any[],otherValues:any)=>{
-        const highlightIds = []
-        if (values.length){
-            for (let i = 0;i < values.length;i++){
-                const currentValue = values[i];
-                const keys = Object.keys(currentValue);
-                if (keys.length){
-                    let objectId = null;
-                    keys.forEach(key=>{
-                        const currentKeyValue = currentValue[key];
-                        const otherValueArr = otherValues[key];
-                        if (currentKeyValue && otherValueArr.length){
-                            const item = otherValueArr.find((item)=>{
-                                if(item.value === currentKeyValue){
-                                    return item;
-                                }
-                            })
-                            if (item){
-                                if (!objectId){
-                                    objectId = item.objectId;
-                                }else{
-                                    if (objectId === item.objectId){
-                                        objectId = item.objectId;
-                                    }
-                                }
-                            }
-                        }
-                    })
-                    if (objectId)highlightIds.push(objectId);
-                }
+    getReferenceObjectId = (val:any,otherValueArr:any)=>{
+        let referenceObjectId = " ";
+        const item = otherValueArr.find((item)=>{
+            if(item.value === val){
+                return item;
             }
-        }
+        })
+        if (item)referenceObjectId = item.objectId;
+        return referenceObjectId;
+    }
+
+    loopGetAllMatchedValueArr = (val:any,otherValueArr:any[])=>{
+        const allMatchedArr = otherValueArr.reduce((newArr,item)=>{
+            if(item.value === val){
+                newArr.push(item)
+            }
+            return newArr;
+        },[])
+        return allMatchedArr;
+    }
+
+    getHighlightedIds = (features:any[])=>{
+        const highlightIds = [];
+        if (features.length)features.forEach(el=>highlightIds.push(el.attributes.OBJECTID))
         return highlightIds;
     }
+
+    // getHighlightedIds = (values:any[],otherValues:any)=>{
+    //     const highlightIds = []
+    //     if (values.length){
+    //         for (let i = 0;i < values.length;i++){
+    //             const currentValue = values[i];
+    //             const keys = Object.keys(currentValue);
+    //             if (keys.length){
+    //                 let objectId = null;
+    //                 const objectIdsArr = [];
+    //                 const matchedObjectIds = [];
+    //                 keys.forEach(key=>{
+    //                     const currentKeyValue = currentValue[key];
+    //                     const otherValueArr = otherValues[key];
+    //                     if (currentKeyValue && otherValueArr.length){
+    //                         if (key === "OBJECTID")objectId = this.getReferenceObjectId(currentKeyValue,otherValueArr);
+    //                         if (!keys.includes("OBJECTID")){
+    //                             const allMatchedValueItems = this.loopGetAllMatchedValueArr(currentKeyValue,otherValueArr);
+    //                             if (allMatchedValueItems.length){
+    //                                 allMatchedValueItems.forEach(val => {
+    //                                     if (objectIdsArr.length){
+    //                                         console.log(objectIdsArr.includes(val.objectId),objectIdsArr,val.objectId)
+    //                                         if (objectIdsArr.includes(val.objectId)){
+    //                                             if (!matchedObjectIds.includes(val.objectId))matchedObjectIds.push(val.objectId)
+    //                                         }
+    //                                         // else{
+    //                                         //     objectIdsArr.push(val.objectId)
+    //                                         // }
+    //                                     }else{
+    //                                         objectIdsArr.push(val.objectId);
+    //                                         if (keys.length === 1){
+    //                                             matchedObjectIds.push(val.objectId)
+    //                                         }
+    //                                     }
+    //                                 });
+    //                             }
+    //                         }
+
+    //                         // const item = otherValueArr.find((item)=>{
+    //                         //     if(item.value === currentKeyValue){
+    //                         //         return item;
+    //                         //     }
+    //                         // })
+    //                         // if (item){
+    //                         //     if (!objectId){
+    //                         //         objectId = item.objectId;
+    //                         //     }else{
+    //                         //         if (objectId === item.objectId){
+    //                         //             objectId = item.objectId;
+    //                         //         }
+    //                         //     }
+    //                         // }
+    //                     }
+    //                 })
+    //                 if (keys.includes("OBJECTID")){
+    //                     highlightIds.push(objectId)
+    //                 }else{
+    //                     console.log(highlightIds,objectIdsArr,"checking both")
+    //                     highlightIds.push(...matchedObjectIds);
+    //                 }
+    //                 // if (objectId)highlightIds.push(objectId);
+    //             }
+    //         }
+    //     }
+    //     console.log(highlightIds,"check highlights")
+    //     return highlightIds;
+    // }
+
+
 
     getObjectIds = (val:any[],fieldValues:any[])=>{
         let highlightedArray = [];
