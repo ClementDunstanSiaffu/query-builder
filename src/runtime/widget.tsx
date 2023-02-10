@@ -889,67 +889,31 @@ export default class Widget extends React.PureComponent<
     switch (queryRequest) {
       case "LIKE%":
         query.where = `${firstQuery} LIKE '${secondQueryTarget}%'`;
-        // query.outFields = [`${firstQuery}`];
-        // layerView.filter = {
-        //   where: query.where,
-        // };
-        // layerView.visible = true;
-
         // displaying  data to table
         connector_function({ layerView, query,queryRequest,values,layer,AndOr,field:firstQuery});
         break;
       case "%LIKE":
         query.where = `${firstQuery} LIKE '%${secondQueryTarget}'`;
-        // query.outFields = [`${firstQuery}`];
-        // layerView.filter = {
-        //   where: query.where,
-        // };
-        // layerView.visible = true;
-
         // displaying  data to table
         connector_function({ layerView, query,queryRequest,values,layer,AndOr,field:firstQuery});
         break;
       case "%LIKE%":
         query.where = `${firstQuery} LIKE '%${secondQueryTarget}%'`;
-        // query.outFields = [`${firstQuery}`];
-        // layerView.filter = {
-        //   where: query.where,
-        // };
-        // layerView.visible = true;
-
         // displaying  data to table
         connector_function({ layerView, query,queryRequest,values,layer,AndOr,field:firstQuery});
         break;
       case "NOT LIKE":
         query.where = `${firstQuery} NOT LIKE '%${secondQueryTarget}%'`;
-        // query.outFields = [`${firstQuery}`];
-        // layerView.filter = {
-        //   where: query.where,
-        // };
-        // layerView.visible = true;
-
         // displaying  data to table
         connector_function({ layerView, query,queryRequest,values,layer,AndOr,field:firstQuery});
         break;
       case "is null":
         query.where = `${firstQuery} is null`;
-        // query.outFields = [`${firstQuery}`];
-        // layerView.filter = {
-        //   where: query.where,
-        // };
-        // layerView.visible = true;
-
         // displaying  data to table
         connector_function({ layerView, query,queryRequest,values,layer,AndOr,field:firstQuery});
         break;
       case "is not null":
         query.where = `${firstQuery} is not null`;
-        // query.outFields = [`${firstQuery}`];
-        // layerView.filter = {
-        //   where: query.where,
-        // };
-        // layerView.visible = true;
-
         // displaying  data to table
         connector_function({ layerView, query,queryRequest,values,layer,AndOr,field:firstQuery});
         break;
@@ -958,13 +922,7 @@ export default class Widget extends React.PureComponent<
           query.where = `${firstQuery} IN (${
             "'" + secondQueryTarget.join("', '") + "'"
           })`;
-          // query.outFields = [`${firstQuery}`];
-          // layerView.filter = {
-          //   where: query.where,
-          // };
-          // layerView.visible = true;
           connector_function({ layerView, query,queryRequest,values,layer,AndOr,field:firstQuery});
-          // f.visible = true;
         } else {
           if (this.checkParenthesis(secondQueryTarget.join(","))){
             const stringFiedValue = this.loopToGetString(secondQueryTarget);
@@ -972,12 +930,6 @@ export default class Widget extends React.PureComponent<
           }else{
             query.where = `${firstQuery} IN (${secondQueryTarget.join(",")})`;
           }
-          // query.outFields = [`${firstQuery}`];
-          // layerView.filter = {
-          //   where: query.where,
-          // };
-          // f.visible = true;
-          // layerView.visible = true;
           // displaying  data to table
           connector_function({ layerView, query,queryRequest,values,layer,AndOr,field:firstQuery});
         }
@@ -987,10 +939,7 @@ export default class Widget extends React.PureComponent<
         if (this.containsAnyLetters(secondQueryTarget)) {
           query.where = `NOT ${firstQuery} IN (${"'" + secondQueryTarget.join("', '") + "'"})`;
           query.outFields = [`${firstQuery}`];
-          // layerView.filter = {where: query.where};
-          // layerView.visible = true;
           connector_function({ layerView, query,queryRequest,values,layer,AndOr,field:firstQuery});
-        // f.visible = true;
         }else{
           if (this.checkParenthesis(secondQueryTarget.join(","))){
             const stringFiedValue = this.loopToGetString(secondQueryTarget);
@@ -999,54 +948,28 @@ export default class Widget extends React.PureComponent<
             query.where = `NOT  ${firstQuery} IN (${secondQueryTarget.join(",")})`;
           }
           query.outFields = [`${firstQuery}`];
-          // layerView.filter = {where: query.where};
-          // f.visible = true;
-          // layerView.visible = true;
           connector_function({ layerView, query,queryRequest,values,layer,AndOr,field:firstQuery});
         }
         // displaying  data to table
         break;
       case "included":
         query.where = `(${firstQuery} > ${secondQueryTarget.firstTxt} AND ${firstQuery} < ${secondQueryTarget.secondTxt})`;
-        // query.outFields = [`${firstQuery}`];
-        // layerView.filter = {
-        //   where: query.where,
-        // };
-        // layerView.visible = true;
-
         // displaying  data to table
         connector_function({ layerView, query,queryRequest,values,layer,AndOr,field:firstQuery});
         break;
       case "is_not_included":
         query.where = `(${firstQuery} < ${secondQueryTarget.firstTxt} OR ${firstQuery} > ${secondQueryTarget.secondTxt})`;
-        // query.outFields = [`${firstQuery}`];
-        // layerView.filter = {
-        //   where: query.where,
-        // };
-        // layerView.visible = true;
-
         // displaying  data to table
         connector_function({ layerView, query,queryRequest,values,layer,AndOr,field:firstQuery});
         break;
       default:
         if (this.containsAnyLetters(secondQueryTarget)) {
           query.where = `${firstQuery} ${queryRequest} '${secondQueryTarget}'`;
-          // query.outFields = [`${firstQuery}`];
-          // layerView.filter = {
-          //   where: query.where,
-          // };
-          // layerView.visible = true;
-
           // displaying  data to table
           connector_function({ layerView, query,queryRequest,values,layer,AndOr,field:firstQuery});
         } else {
           query.where = `${firstQuery} ${queryRequest} ${secondQueryTarget}`;
           query.outFields = [`${firstQuery}`];
-          // layerView.filter = {
-          //   where: query.where,
-          // };
-          // layerView.visible = true;
-
           // displaying  data to table
           connector_function({ layerView, query,queryRequest,values,layer,AndOr,field:firstQuery});
         }
@@ -1064,8 +987,6 @@ export default class Widget extends React.PureComponent<
     }else{
       this.setState({dropDowns:{...this.state.dropDowns,[id]:true}});    }
   };
-
-
 
   closeDrop = () => {
     this.setState({
@@ -1089,7 +1010,6 @@ export default class Widget extends React.PureComponent<
       });
   };
 
-  
   // methods for attribute table
   getAllCheckedLayers = () => {
     const activeView = Widget.activeV;
