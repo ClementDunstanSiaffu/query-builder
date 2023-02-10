@@ -23,10 +23,12 @@ export default class Widget extends React.PureComponent<
   static activeV = null;
   static jimuLayerViewz = null;
   static attribute_table_data = null;
+  static initialZoom = 0;
 
   attributeTableConnector = null;
   queryArray = [];
   outfields = [];
+  currentLayerView = null;
 
   constructor(props) {
     super(props);
@@ -131,7 +133,8 @@ export default class Widget extends React.PureComponent<
         resultLayerList: resultLayerList,
         jimuMapView: jmv,
       });
-      this.attributeTableConnector = new AttributeTableConnector(jmv,this)
+      this.attributeTableConnector = new AttributeTableConnector(jmv,this);
+      Widget.initialZoom = jmv.view.zoom;
     }
   }
 
@@ -1207,6 +1210,7 @@ export default class Widget extends React.PureComponent<
         typeSelected: "contains",
       };
       if (results.features.length){
+        this.currentLayerView = layerView;
         const isLayerChecked = this.state.isAttributeTableClosed ? false:true;
         const allCheckedLayers = this.getAllCheckedLayers()
         this.attributeTableConnector.init({
@@ -1252,6 +1256,9 @@ export default class Widget extends React.PureComponent<
     this.init();
     this.attributeTableConnector.closeTable();
     this.setState({...this.state,resultLayerList:resultLayerList,jimuMapView:jimuMapView});
+    const view = jimuMapView.view
+    view.goTo({center:view.center,zoom:Widget.initialZoom});
+    if (this.currentLayerView)this.currentLayerView.visible = false;
   }
 
   
