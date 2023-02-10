@@ -307,28 +307,6 @@ export default class Widget extends React.PureComponent<
         });
       }
     }
-    // if (this.state.jimuMapView) {
-    //   this.state.jimuMapView.view.map.allLayers.forEach((f, index) => {
-    //   if (f.title === this.state.currentTargetText) {
-    //     this.state.jimuMapView.view.whenLayerView(f).then((layerView) => {
-    //       const query = new Query();
-    //       query.where = `${currentClickedQueryAttribute} is not null AND OBJECTID is not null`;
-    //       query.outFields = [`${currentClickedQueryAttribute}`,"OBJECTID"];
-    //       const results = f.queryFeatures(query);
-    //         results.then((result) => {
-    //           const detailThirdQuery = [];
-    //           result.features.forEach((el) => {
-    //             detailThirdQuery.push({
-    //               value: el.attributes[currentClickedQueryAttribute],
-    //               objectId: el.attributes["OBJECTID"],
-    //             });
-    //           });
-    //           this.setState({otherQueriesValue:{...this.state.otherQueriesValue,[currentClickedQueryAttribute]:detailThirdQuery}})
-    //         });
-    //       });
-    //     }
-    //   });
-    // }
   }
 
   //TODO la sendQuery andrà risistemata quando si aggiungerà oltre all'espressione anche il set di espressioni
@@ -761,8 +739,6 @@ export default class Widget extends React.PureComponent<
   onChangeCheckBox = (event) => {
     let currentId = event.target.attributes.id.value;
     let objectId = event.target.attributes.value.value;
-    const currentHighlightIds = this.state.highlightIds
-    const highlightingIds = helper.getCheckedHighlightedIds(currentHighlightIds,objectId);
     let queryIndex;
     if (event.target.checked) {
       queryIndex = this.state.whereClauses
@@ -874,7 +850,6 @@ export default class Widget extends React.PureComponent<
         }
       );
     }
-    this.setState({highlightIds:highlightingIds});
   };
 
   checkParenthesis (val:string){
@@ -1172,8 +1147,6 @@ export default class Widget extends React.PureComponent<
       if (layer?.queryFeatures)results = await layer.queryFeatures(query);
       let checkedLayer_ = [data.layerView.layer.id];
       const highlightIds = helper.getHighlightedIds(results.features);
-      // let currentValue = helper.getValues(results.features,query.outFields);
-      // const highlightIds = helper.getHighlightedIds(currentValue,this.state.otherQueriesValue);
       if (highlightIds.length){
         const higlightSelectedArr = [];
         highlightIds.forEach(el => {
