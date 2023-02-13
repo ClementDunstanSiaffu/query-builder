@@ -1040,8 +1040,6 @@ export default class Widget extends React.PureComponent<
       query.returnGeometry = true;
       const currentQuery = this.queryArray.join(" ");
       query.where = currentQuery;
-      layerView.filter = {where:query.where};
-      layerView.visible = true;
       try{
         results = await layer.queryFeatures(query);
       }catch(err){
