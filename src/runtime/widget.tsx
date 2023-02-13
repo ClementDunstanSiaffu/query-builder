@@ -88,7 +88,8 @@ export default class Widget extends React.PureComponent<
       dropId:null,
       higlightSelected:[],
       itemNotFound:null,
-      currentSelectedId:" "
+      currentSelectedId:" ",
+      isAttributeTableClosed:false
     };
   }
 
@@ -1059,6 +1060,7 @@ export default class Widget extends React.PureComponent<
       query.outFields = this.outfields;
       query.returnGeometry = true;
       const currentQuery = this.queryArray.join(" ");
+      console.log(currentQuery,"check where")
       query.where = currentQuery;
       layerView.filter = {where:query.where};
       layerView.visible = true;
@@ -1070,6 +1072,7 @@ export default class Widget extends React.PureComponent<
       if (layer?.queryFeatures)results = await layer.queryFeatures(query);
       let checkedLayer_ = [data.layerView.layer.id];
       const highlightIds = helper.getHighlightedIds(results.features);
+      console.log(highlightIds,"check highlightIds")
       if (highlightIds.length){
         const higlightSelectedArr = [];
         highlightIds.forEach(el => {
@@ -1151,7 +1154,7 @@ export default class Widget extends React.PureComponent<
     const jimuMapView = this.state.jimuMapView
     this.init();
     this.attributeTableConnector.closeTable();
-    this.setState({...this.state,resultLayerList:resultLayerList,jimuMapView:jimuMapView});
+    this.setState({...this.state,resultLayerList:resultLayerList,jimuMapView:jimuMapView,isAttributeTableClosed:true});
     const view = jimuMapView.view
     view.goTo({center:view.center,zoom:Widget.initialZoom});
     if (this.currentLayerView)this.currentLayerView.visible = false;
