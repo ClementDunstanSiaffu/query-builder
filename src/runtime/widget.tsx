@@ -89,7 +89,9 @@ export default class Widget extends React.PureComponent<
       higlightSelected:[],
       itemNotFound:null,
       currentSelectedId:" ",
-      isAttributeTableClosed:false
+      isAttributeTableClosed:false,
+      widgetStateClosedChecked:false,
+      widgetStateOpenedChecked:false
     };
   }
 
@@ -113,11 +115,9 @@ export default class Widget extends React.PureComponent<
             const query = new Query();
             query.where = "1=1";
             query.outFields = ["*"];
-            layerView.filter = {
-              where: query.where,
-            };
-            f.visible = false;
-            layerView.visible = false;
+            layerView.filter = {where: query.where};
+            // f.visible = false;
+            // layerView.visible = false;
           });
           resultLayerList.push({
             element: f,
@@ -144,32 +144,34 @@ export default class Widget extends React.PureComponent<
     }
     if (this.state.whereClauses !== prevProps.whereClauses) {
     }
-    if (prevProps.state == "CLOSED") {
-      this.setState({
-        isLayerSelected: false,
-        currentTargetText: null,
-        geometry: null,
-        typeSelected: null,
-        listServices: [],
-        currentFirstQuery: "",
-        currentFirstQueryType: null,
-        dropdownValueQuery: "valore",
-        firstTextIncludedHandler: "0",
-        secondTextIncludedHandler: "0",
-        tables: [],
-        isChecked: false,
-        counterIsChecked: [],
-        checkedToQuery: [],
-        tableCounter: 0,
-        whereClauses: [],
-        tablesId: null,
-        isOpen: false,
-        AndOr: "AND",
-        opened: false,
-        autOpen: true,
-        isAttributeTableClosed:false
-      });
-    }
+    // if (prevProps.state == "CLOSED") {
+    //   const jimuMapView = this.state.jimuMapView;
+    //   const view = jimuMapView?.view;
+    //   this.setState({
+    //     isLayerSelected: false,
+    //     currentTargetText: null,
+    //     geometry: null,
+    //     typeSelected: null,
+    //     listServices: [],
+    //     currentFirstQuery: "",
+    //     currentFirstQueryType: null,
+    //     dropdownValueQuery: "valore",
+    //     firstTextIncludedHandler: "0",
+    //     secondTextIncludedHandler: "0",
+    //     tables: [],
+    //     isChecked: false,
+    //     counterIsChecked: [],
+    //     checkedToQuery: [],
+    //     tableCounter: 0,
+    //     whereClauses: [],
+    //     tablesId: null,
+    //     isOpen: false,
+    //     AndOr: "AND",
+    //     opened: false,
+    //     autOpen: true,
+    //     isAttributeTableClosed:false
+    //   });
+    // }
   }
 
   componentWillUnmount(): void {}
@@ -1171,6 +1173,40 @@ export default class Widget extends React.PureComponent<
   
   //TODO config abilitare tab true/false
   render() {
+    if(this.props.state ==="CLOSED" && !this.state.widgetStateClosedChecked ){
+      console.log("called")
+      const jimuMapView = this.state.jimuMapView;
+      const view = jimuMapView.view;
+      const resultLayerList = this.state.resultLayerList;
+      this.init();
+      this.attributeTableConnector.closeTable();
+      this.setState({
+        ...this.state,
+        resultLayerList:resultLayerList,
+        jimuMapView:jimuMapView,
+        isAttributeTableClosed:true,
+        widgetStateOpenedChecked:false,
+        widgetStateClosedChecked:true
+      });
+      // jimuMapView.view.map.allLayers.forEach((f, index) => {
+      //   if (f.type === "feature") {
+      //     jimuMapView.view.whenLayerView(f).then((layerView) => {
+      //       const query = new Query();
+      //       query.where = "1=1";
+      //       query.outFields = ["*"];
+      //       layerView.filter = {where: query.where,};
+      //       f.visible = true;
+      //       layerView.visible = true;
+      //     });
+      //   }
+      // })
+      view.goTo({center:view.center,zoom:Widget.initialZoom});
+      if (this.currentLayerView)this.clearHighlights(this.currentLayerView);
+    }
+    if (this.props.state=="OPENED" && !this.state.widgetStateOpenedChecked){
+      this.setState({widgetStateClosedChecked:false,widgetStateOpenedChecked:true});
+    }
+    console.log(this.props.state,this.state.widgetStateClosedChecked,"check widget state")
     return (
       <div
         className="widget-attribute-table jimu-widget"
