@@ -1132,10 +1132,7 @@ export default class Widget extends React.PureComponent<
     this.setState({...this.state,resultLayerList:resultLayerList,jimuMapView:jimuMapView,isAttributeTableClosed:true});
     const view = jimuMapView.view
     view.goTo({center:view.center,zoom:Widget.initialZoom});
-    if (this.currentLayerView){
-      this.currentLayerView.visible = false;
-      this.clearHighlights(this.currentLayerView);
-    }
+    if (this.currentLayerView)this.clearHighlights(this.currentLayerView);
   }
 
   
