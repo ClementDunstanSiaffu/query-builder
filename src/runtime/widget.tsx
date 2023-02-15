@@ -209,7 +209,7 @@ export default class Widget extends React.PureComponent<
   }
 
   // for called on drop select list
-  async getQuery(e) {
+  async getQuery(e,type = "single") {
     let clickedQueryTableId = e.currentTarget.attributes[1].value;
     let currentClickedQueryAttribute;
     let queryIndex;
@@ -271,8 +271,9 @@ export default class Widget extends React.PureComponent<
                       filteredWhereClauses.sort(function (a, b) {
                         return a.id < b.id ? -1 : a.id == b.id ? 0 : 1;
                       });
+                      const keytype = type === "single" ? "whereClauses":"whereClausesSet" 
                       return this.setState({
-                        whereClauses: filteredWhereClauses,
+                        [keytype]: filteredWhereClauses,
                       });
                     }
                     return { obj };

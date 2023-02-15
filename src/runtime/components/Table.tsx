@@ -97,7 +97,7 @@ function Table(props) {
               })}
             </Select>
             <div className="col-md-4 mb-2">
-              <Select onChange={getQuery} placeholder="Seleziona campo">
+              <Select onChange={(e)=>getQuery(e,"single")} placeholder="Seleziona campo">
                 {whereClauses[tablesId] &&
                 whereClauses[tablesId].attributeQueryType === "string"
                   ? queryConstructorString.map((o, i) => {
