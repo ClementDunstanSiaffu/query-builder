@@ -12,6 +12,7 @@ import helper from "../connector";
 import Polygon from "esri/geometry/Polygon";
 import AttributeTableConnector from "../connector/attribute_table_connector";
 import geometryEngine from "esri/geometry/geometryEngine";
+import AddSetTable from "./components/AddSetTable";
 
 export default class Widget extends React.PureComponent<
   AllWidgetProps<IMConfig>,
@@ -75,6 +76,9 @@ export default class Widget extends React.PureComponent<
       checkedToQuery: [],
       tableCounter: 0,
       whereClauses: [],
+      tablesSetId:null,
+      whereClausesSet:[],
+      tablesSet:[],
       tablesId: null,
       isOpen: false,
       AndOr: "AND",
@@ -456,13 +460,11 @@ export default class Widget extends React.PureComponent<
   };
 
   addTwoTable = () => {
+    const currentId =  this.state.tableCounter
     this.setState({
-      tables: [
-        ...this.state.tables,
-        { id: this.state.tableCounter },
-        { id: this.state.tableCounter },
-      ],
-      tableCounter: this.state.tableCounter + 1,
+      tablesSet: [...this.state.tablesSet, { id: this.state.tableCounter },{ id: this.state.tableCounter }],
+      tableCounter: this.state.tableCounter + 2,
+      dropDowns:{...this.state.dropDowns,[currentId]:false}
     });
   };
 
@@ -476,6 +478,20 @@ export default class Widget extends React.PureComponent<
     if (this.state.tables.length === 0) {
       this.setState({
         whereClauses: [],
+      });
+    }
+  };
+
+  deleteSetTable = (id) => {
+    const copiedTable = [...this.state.tablesSet];
+    const newTables = copiedTable.filter((el) =>el.id !== id);
+    // this.setState({tableCounter:this.state.tableCounter-1});
+    const copiedWhereClauses =[...this.state.whereClausesSet];
+    const deletedWhereClauses = copiedWhereClauses.filter((el) =>el.id !== id.toString());
+    this.setState({tablesSet:newTables,whereClausesSet: deletedWhereClauses,tableCounter:this.state.tableCounter-1});
+    if (this.state.tablesSet.length === 0) {
+      this.setState({
+        whereClausesSet: [],
       });
     }
   };
@@ -1237,7 +1253,7 @@ export default class Widget extends React.PureComponent<
               </div>
             </div>
             <div className="row mt-1 mb-3 justify-content-around">
-              <div className="col-md-5 d-flex justify-content-center text-center">
+              <div className="col-md-5 d-flex justify-content-center text-center" style={{gap:'2%'}}>
                 <Button
                   disabled={!this.state.currentTargetText}
                   onClick={this.addTable}
@@ -1251,6 +1267,20 @@ export default class Widget extends React.PureComponent<
                   />
                   <p className="m-0 p-0">Aggiungi espressione</p>
                 </Button>
+                <Button
+                  disabled={!this.state.currentTargetText}
+                  onClick={this.addTwoTable}
+                  size="default"
+                  className="d-flex align-items-center  mb-2"
+                  type="primary"
+                >
+                  <Icon
+                    icon='<svg viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M7.5 0a.5.5 0 0 0-.5.5V7H.5a.5.5 0 0 0 0 1H7v6.5a.5.5 0 0 0 1 0V8h6.5a.5.5 0 0 0 0-1H8V.5a.5.5 0 0 0-.5-.5Z" fill="#000"></path></svg>'
+                    size="m"
+                  />
+                  <p className="m-0 p-0">Aggiungi l'espressione dell'insieme</p>
+                </Button>
+
               </div>
               <div className="col-md-5 d-flex justify-content-center text-center">
                 <Button
@@ -1289,6 +1319,11 @@ export default class Widget extends React.PureComponent<
                     tables={this.state.tables}
                     tablesId={el.id}
                     whereClauses={this.state.whereClauses}
+                    // for Add set table............................
+                    tablesSet={this.state.tablesSet}
+                    tablesSetId={el.id}
+                    whereClausesSet={this.state.whereClausesSet}
+                    // End for Add set table............................
                     getQueryAttribute={this.getQueryAttribute}
                     getQuery={this.getQuery}
                     handleThirdQuery={this.thirdQuery}
@@ -1311,7 +1346,69 @@ export default class Widget extends React.PureComponent<
                     dropdowns = {this.state.dropDowns}
                     itemNotFound = {this.state.itemNotFound}
                   />
-                ))}
+                  ))}<br /><br />
+                   {this.state.tablesSet.length < 2 ? (
+                    <p>
+                      Visualizza le feature nel layer corrispondenti alla
+                      seguente espressione
+                    </p>
+                  ) : (
+                    <Select
+                      onChange={''}
+                      placeholder=" Visualizza le feature nel layer che corrispondono a tutte le espressioni seguenti"
+                      defaultValue="AND"
+                    >
+                      <Option value="AND">
+                        Visualizza le feature nel layer che corrispondono a
+                        tutte le espressioni seguenti
+                      </Option>
+                      <Option value="OR">
+                        Visualizza le feature nel layer che corrispondono ad una
+                        qualsiasi delle espressioni seguenti
+                      </Option>
+                    </Select>
+                  )}
+                  {this.state.tablesSet.map((el, i) => (
+                  <AddSetTable
+                    className="w-100"
+                    key={i}
+                    id={`row-${i}`}
+                    list={this.state.resultsLayerSelected}
+                    isOpenDropD={this.state.isOpen}
+                    dropDown={() => this.dropDown(el.id)}
+                    dropdownValueQuery={this.state.dropdownValueQuery}
+                    isChecked={this.state.isChecked}
+                    counterIsChecked={this.state.counterIsChecked}
+                    checkedToQuery={this.state.checkedToQuery}
+                    // for Add set table............................
+                    tablesSet={this.state.tablesSet}
+                    tablesSetId={el.id}
+                    whereClausesSet={this.state.whereClausesSet}
+                    // End for Add set table............................
+                    getQueryAttribute={this.getQueryAttribute}
+                    getQuery={this.getQuery}
+                    handleThirdQuery={this.thirdQuery}
+                    textInputHandler={this.textInputHandler}
+                    dropdownItemHandler={this.dropdownItemClick}
+                    textFirstIncludedHandler={this.textFirstIncludedHandler}
+                    textSecondIncludedHandler={this.textSecondIncludedHandler}
+                    dropDownToggler={this.dropDown}
+                    handleCheckBox={this.handleCheckBox}
+                    deleteTable={() => this.deleteSetTable(el.id)}
+                    univocoSelectHandler={this.univocoSelectHandler}
+                    onChangeCheckBox={this.onChangeCheckBox}
+                    openDrop={this.openDrop}
+                    closeDrop={this.closeDrop}
+                    opened={this.state.opened}
+                    autOpen={this.state.autOpen}
+                    mouseleave={this.state.mouseleave}
+                    onmouseLeave={this.onmouseLeave}
+                    functionCounterIsChecked={this.functionCounterIsChecked}
+                    dropdowns = {this.state.dropDowns}
+                    itemNotFound = {this.state.itemNotFound}
+                  />
+                  ))}
+                  <br/><br/>
                 {
                   this.state.itemNotFound && 
                   <Alert
