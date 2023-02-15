@@ -100,7 +100,7 @@ function AddSetTable(props) {
               })}
             </Select>
             <div className="col-md-4 mb-2">
-              <Select onChange={getQuery} placeholder="Seleziona campo">
+              <Select onChange={(e)=>getQuery(e,"set")} placeholder="Seleziona campo">
                 {whereClausesSet[tablesSetId] &&
                 whereClausesSet[tablesSetId].attributeQueryType === "string"
                   ? queryConstructorString.map((o, i) => {
