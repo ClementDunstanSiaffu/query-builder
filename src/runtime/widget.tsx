@@ -75,6 +75,7 @@ export default class Widget extends React.PureComponent<
       counterIsChecked: [],
       checkedToQuery: [],
       tableCounter: 0,
+      tableCounterSet: 0,
       whereClauses: [],
       tablesSetId:null,
       whereClausesSet:[],
@@ -86,6 +87,7 @@ export default class Widget extends React.PureComponent<
       autOpen: true,
       mouseleave: false,
       dropDowns:{},
+      dropDownSet:{},
       highlightIds:[],
       selectedField:null,
       otherQueriesValue:{},
@@ -461,11 +463,11 @@ export default class Widget extends React.PureComponent<
   };
 
   addTwoTable = () => {
-    const currentId =  this.state.tableCounter
+    const currentId =  this.state.tableCounterSet
     this.setState({
-      tablesSet: [...this.state.tablesSet, { id: this.state.tableCounter },{ id: this.state.tableCounter }],
-      tableCounter: this.state.tableCounter + 2,
-      dropDowns:{...this.state.dropDowns,[currentId]:false}
+      tablesSet: [...this.state.tablesSet, { id: this.state.tableCounterSet -1 },{ id:this.state.tableCounterSet }],
+      tableCounterSet: this.state.tableCounterSet + 2,
+      dropDownSet:{...this.state.dropDownSet,[currentId]:false}
     });
   };
 
@@ -1405,7 +1407,7 @@ export default class Widget extends React.PureComponent<
                     mouseleave={this.state.mouseleave}
                     onmouseLeave={this.onmouseLeave}
                     functionCounterIsChecked={this.functionCounterIsChecked}
-                    dropdowns = {this.state.dropDowns}
+                    dropdownSet = {this.state.dropDownSet}
                     itemNotFound = {this.state.itemNotFound}
                   />
                   ))}
