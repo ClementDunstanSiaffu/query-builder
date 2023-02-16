@@ -55,7 +55,7 @@ function AddSetTable(props) {
     autOpen,
     mouseleave,
     onmouseLeave,
-    dropdownSet,
+    dropdownsSet,
   } = props;
 
   return (
@@ -100,7 +100,10 @@ function AddSetTable(props) {
               })}
             </Select>
             <div className="col-md-4 mb-2">
-              <Select onChange={(e)=>getQuery(e,"set")} placeholder="Seleziona campo">
+              <Select
+                onChange={(e) => getQuery(e, "set")}
+                placeholder="Seleziona campo"
+              >
                 {whereClausesSet[tablesSetId] &&
                 whereClausesSet[tablesSetId].attributeQueryType === "string"
                   ? queryConstructorString.map((o, i) => {
@@ -155,7 +158,7 @@ function AddSetTable(props) {
               autOpen={autOpen}
               mouseleave={mouseleave}
               onmouseLeave={onmouseLeave}
-              dropdownSet = {dropdownSet}
+              dropdownsSet={dropdownsSet}
             />
           </div>
         </div>
@@ -193,7 +196,7 @@ const SecondConstructor = (props) => {
     opened: d,
     autOpen,
     onmouseLeave,
-    dropdownSet,
+    dropdownsSet,
   } = props;
   const normalizedThirdQuery = [];
   let defaultValue = "=";
@@ -203,7 +206,10 @@ const SecondConstructor = (props) => {
   let au = true;
 
   // valueThirdQuery.map((el, i) => { normalizedThirdQuery.push({ label: el.label[0].toString(), value: el.value[0].toString() }) })
-  if (whereClausesSet[tablesSetId] && whereClausesSet[tablesSetId].ifInOrNotInQueryValue) {
+  if (
+    whereClausesSet[tablesSetId] &&
+    whereClausesSet[tablesSetId].ifInOrNotInQueryValue
+  ) {
     whereClausesSet[tablesSetId].ifInOrNotInQueryValue.map((el, i) => {
       normalizedThirdQuery.push({
         id: tablesSetId.toString(),
@@ -222,14 +228,20 @@ const SecondConstructor = (props) => {
   if (whereClausesSet[tablesSetId] && whereClausesSet[tablesSetId].queryValue) {
     defaultValue = whereClausesSet[tablesSetId].queryValue;
   }
-  if (whereClausesSet[tablesSetId] && whereClausesSet[tablesSetId].dropdownValueQuery) {
+  if (
+    whereClausesSet[tablesSetId] &&
+    whereClausesSet[tablesSetId].dropdownValueQuery
+  ) {
     dropdownValueQuery = whereClausesSet[tablesSetId].dropdownValueQuery;
   }
   if (whereClausesSet[tablesSetId] && whereClausesSet[tablesSetId].isOpen) {
     // opened = whereClausesSet[tablesSetId].isOpen;
   }
 
-  if (whereClausesSet[tablesSetId] && whereClausesSet[tablesSetId].checkedList) {
+  if (
+    whereClausesSet[tablesSetId] &&
+    whereClausesSet[tablesSetId].checkedList
+  ) {
     checked = whereClausesSet[tablesSetId].checkedList.length;
   }
 
@@ -354,7 +366,11 @@ const SecondConstructor = (props) => {
       <div value={"IN"} onMouseLeave={() => onmouseLeave()}>
         <div className="w-100">
           {
-            <Dropdown activeIcon isOpen={dropdownSet[tablesSetId]} toggle={() => dropDown}>
+            <Dropdown
+              activeIcon
+              isOpen={dropdownsSet[tablesSetId]}
+              toggle={() => dropDown}
+            >
               <DropdownButton onClick={() => openDrop(tablesSetId)}>
                 {checked} elementi selezionati
               </DropdownButton>
@@ -649,15 +665,17 @@ const SecondConstructor = (props) => {
             onAcceptValue={function noRefCheck() {}}
             type="text"
             data-table-id={tablesSetId}
-            id='inputs'
+            id="inputs"
           />
-          <p className="col-md-2 text-center" style={{width:'10%'}}>e</p>
+          <p className="col-md-2 text-center" style={{ width: "10%" }}>
+            e
+          </p>
           <TextInput
             onChange={textSecondIncludedHandler}
             onAcceptValue={function noRefCheck() {}}
             type="text"
             data-table-id={tablesSetId}
-            id='inputs'
+            id="inputs"
           />
         </div>
       </div>
@@ -667,7 +685,7 @@ const SecondConstructor = (props) => {
             onChange={textFirstIncludedHandler}
             onAcceptValue={function noRefCheck() {}}
             type="text"
-            id='inputs'
+            id="inputs"
             data-table-id={tablesSetId}
           />
           <p className="col-sm-2 text-center">e</p>
@@ -675,7 +693,7 @@ const SecondConstructor = (props) => {
             onChange={textSecondIncludedHandler}
             onAcceptValue={function noRefCheck() {}}
             type="text"
-            id='inputs'
+            id="inputs"
             data-table-id={tablesSetId}
           />
         </div>

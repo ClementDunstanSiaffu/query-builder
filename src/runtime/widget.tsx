@@ -51,9 +51,11 @@ export default class Widget extends React.PureComponent<
     this.getAllJimuLayerViews = this.getAllJimuLayerViews.bind(this);
     this.connector_function = this.connector_function.bind(this);
     this.functionCounterIsChecked = this.functionCounterIsChecked.bind(this);
+    this.getQueryAttributeSet = this.getQueryAttributeSet.bind(this);
+    this.getQuerySet = this.getQuerySet.bind(this);
   }
 
-  init = ()=>{
+  init = () => {
     this.state = {
       jimuMapView: null,
       layerContents: [],
@@ -77,29 +79,30 @@ export default class Widget extends React.PureComponent<
       tableCounter: 0,
       tableCounterSet: 0,
       whereClauses: [],
-      tablesSetId:null,
-      whereClausesSet:[],
-      tablesSet:[],
+      tablesSetId: null,
+      whereClauseSet: [],
+      tablesSet: [],
       tablesId: null,
       isOpen: false,
       AndOr: "AND",
       opened: false,
       autOpen: true,
       mouseleave: false,
-      dropDowns:{},
-      dropDownSet:{},
-      highlightIds:[],
-      selectedField:null,
-      otherQueriesValue:{},
-      dropId:null,
-      higlightSelected:[],
-      itemNotFound:null,
-      currentSelectedId:" ",
-      isAttributeTableClosed:false,
-      widgetStateClosedChecked:false,
-      widgetStateOpenedChecked:false
+      dropDowns: {},
+      dropDownsSet: {},
+      highlightIds: [],
+      selectedField: null,
+      otherQueriesValue: {},
+      dropId: null,
+      dropIdSet: null,
+      higlightSelected: [],
+      itemNotFound: null,
+      currentSelectedId: " ",
+      isAttributeTableClosed: false,
+      widgetStateClosedChecked: false,
+      widgetStateOpenedChecked: false,
     };
-  }
+  };
 
   nls = (id: string) => {
     return this.props.intl
@@ -121,7 +124,7 @@ export default class Widget extends React.PureComponent<
             const query = new Query();
             query.where = "1=1";
             query.outFields = ["*"];
-            layerView.filter = {where: query.where};
+            layerView.filter = { where: query.where };
           });
           resultLayerList.push({
             element: f,
@@ -138,7 +141,7 @@ export default class Widget extends React.PureComponent<
         resultLayerList: resultLayerList,
         jimuMapView: jmv,
       });
-      this.attributeTableConnector = new AttributeTableConnector(jmv,this);
+      this.attributeTableConnector = new AttributeTableConnector(jmv, this);
       Widget.initialZoom = jmv.view.zoom;
     }
   }
@@ -207,11 +210,66 @@ export default class Widget extends React.PureComponent<
         });
       }
     }
-    this.setState({selectedField:e.currentTarget.name})
+    this.setState({ selectedField: e.currentTarget.name });
+  }
+
+  async getQueryAttributeSet(e) {
+    if (!this.state.whereClauseSet.length) {
+      let whereClauseSet = {
+        id: e.currentTarget.attributes[1].value,
+        attributeQuery: e.currentTarget.name,
+        attributeQueryType: e.currentTarget.attributes.datatype.value,
+        queryValue: "=",
+      };
+      this.setState({
+        whereClauseSet: [whereClauseSet],
+      });
+    }
+    if (this.state.whereClauseSet.length) {
+      const queryIndex = this.state.whereClauseSet
+        .map((obj) => obj.id)
+        .indexOf(e.currentTarget.attributes[1].value);
+      if (queryIndex !== -1) {
+        const updateState = this.state.whereClauseSet.map((obj) => {
+          if (obj.id === queryIndex.toString()) {
+            obj = {
+              ...obj,
+              attributeQuery: e.currentTarget.name,
+              attributeQueryType: e.currentTarget.attributes.datatype.value,
+            };
+            // return this.state.whereClauseSet[queryIndex] = obj
+            let filteredWhereClauseSet = this.state.whereClauseSet.filter(
+              (a) => a.id !== obj.id
+            );
+            filteredWhereClauseSet.push(obj);
+            filteredWhereClauseSet.sort(function (a, b) {
+              return a.id < b.id ? -1 : a.id == b.id ? 0 : 1;
+            });
+            return this.setState({
+              whereClauseSet: filteredWhereClauseSet,
+            });
+          }
+          return { obj };
+        });
+      } else {
+        let whereClauseSet = {
+          id: e.currentTarget.attributes[1].value,
+          attributeQuery: e.currentTarget.name,
+          attributeQueryType: e.currentTarget.attributes.datatype.value,
+        };
+        this.setState({
+          whereClauseSet: [...this.state.whereClauseSet, whereClauseSet],
+        });
+        this.state.whereClauseSet.sort(function (a, b) {
+          return a.id < b.id ? -1 : a.id == b.id ? 0 : 1;
+        });
+      }
+    }
+    this.setState({ selectedField: e.currentTarget.name });
   }
 
   // for called on drop select list
-  async getQuery(e,type = "single") {
+  async getQuery(e, type = "single") {
     let clickedQueryTableId = e.currentTarget.attributes[1].value;
     let currentClickedQueryAttribute;
     let queryIndex;
@@ -257,10 +315,14 @@ export default class Widget extends React.PureComponent<
                   });
                 });
                 if (queryIndex !== -1) {
-                  if(typeof detailThirdQuery[0].value !== "number"){
-                    detailThirdQuery.sort((a,b)=>a.label < b.label ?-1:a.label > b.label ? 1:0);
-                  }else{
-                    detailThirdQuery.sort((a,b)=>a.value - b.value < 0 ? -1:a.value === b.value?0:1)
+                  if (typeof detailThirdQuery[0].value !== "number") {
+                    detailThirdQuery.sort((a, b) =>
+                      a.label < b.label ? -1 : a.label > b.label ? 1 : 0
+                    );
+                  } else {
+                    detailThirdQuery.sort((a, b) =>
+                      a.value - b.value < 0 ? -1 : a.value === b.value ? 0 : 1
+                    );
                   }
                   const updateState = this.state.whereClauses.map((obj) => {
                     if (obj.id === queryIndex.toString()) {
@@ -273,9 +335,95 @@ export default class Widget extends React.PureComponent<
                       filteredWhereClauses.sort(function (a, b) {
                         return a.id < b.id ? -1 : a.id == b.id ? 0 : 1;
                       });
-                      const keytype = type === "single" ? "whereClauses":"whereClausesSet" 
+                      const keytype =
+                        type === "single" ? "whereClauses" : "whereClausesSet";
                       return this.setState({
                         [keytype]: filteredWhereClauses,
+                      });
+                    }
+                    return { obj };
+                  });
+                }
+              });
+            });
+          }
+        });
+      }
+    }
+  }
+
+  async getQuerySet(e, type = "single") {
+    let clickedQueryTableId = e.currentTarget.attributes[1].value;
+    let currentClickedQueryAttribute;
+    let queryIndex;
+    if (this.state.whereClauseSet.length) {
+      queryIndex = this.state.whereClauseSet
+        .map((obj) => obj.id)
+        .indexOf(clickedQueryTableId);
+      if (queryIndex !== -1) {
+        const updateState = this.state.whereClauseSet.map((obj) => {
+          if (obj.id === queryIndex.toString()) {
+            currentClickedQueryAttribute = obj.attributeQuery;
+            obj = { ...obj, queryValue: e.currentTarget.name };
+            let filteredWhereClauseSet = this.state.whereClauseSet.filter(
+              (a) => a.id !== obj.id
+            );
+            filteredWhereClauseSet.push(obj);
+            filteredWhereClauseSet.sort(function (a, b) {
+              return a.id < b.id ? -1 : a.id == b.id ? 0 : 1;
+            });
+            return this.setState({
+              whereClauseSet: filteredWhereClauseSet,
+            });
+          }
+          return { obj };
+        });
+      }
+    }
+    if (e.currentTarget.name === "IN" || e.currentTarget.name === "NOT_IN") {
+      if (this.state.jimuMapView) {
+        this.state.jimuMapView.view.map.allLayers.forEach((f, index) => {
+          if (f.title === this.state.currentTargetText) {
+            this.state.jimuMapView.view.whenLayerView(f).then((layerView) => {
+              const query = new Query();
+              query.where = `${currentClickedQueryAttribute} is not null`;
+              query.outFields = [`${currentClickedQueryAttribute}`];
+              const results = f.queryFeatures(query);
+              results.then((result) => {
+                const detailThirdQuery = [];
+                result.features.forEach((el) => {
+                  detailThirdQuery.push({
+                    label: el.attributes[currentClickedQueryAttribute],
+                    value: el.attributes[currentClickedQueryAttribute],
+                  });
+                });
+
+                if (queryIndex !== -1) {
+                  if (typeof detailThirdQuery[0].value !== "number") {
+                    detailThirdQuery.sort((a, b) =>
+                      a.label < b.label ? -1 : a.label > b.label ? 1 : 0
+                    );
+                  } else {
+                    detailThirdQuery.sort((a, b) =>
+                      a.value - b.value < 0 ? -1 : a.value === b.value ? 0 : 1
+                    );
+                  }
+                  const updateState = this.state.whereClauseSet.map((obj) => {
+                    if (obj.id === queryIndex.toString()) {
+                      obj = { ...obj, ifInOrNotInQueryValue: detailThirdQuery };
+                      // return this.state.whereClauseSet[queryIndex] = obj
+                      let filteredWhereClauseSet =
+                        this.state.whereClauseSet.filter(
+                          (a) => a.id !== obj.id
+                        );
+                      filteredWhereClauseSet.push(obj);
+                      filteredWhereClauseSet.sort(function (a, b) {
+                        return a.id < b.id ? -1 : a.id == b.id ? 0 : 1;
+                      });
+                      const keytype =
+                        type === "single" ? "whereClauses" : "whereClauseSet";
+                      return this.setState({
+                        [keytype]: filteredWhereClauseSet,
                       });
                     }
                     return { obj };
@@ -296,8 +444,15 @@ export default class Widget extends React.PureComponent<
   async sendQuery() {
     this.queryArray = [];
     this.outfields = [];
-    const checkedQuery = ["is null","is not null","IN","NOT_IN","included","is_not_included"];
-    const likelyQuery = ['LIKE%','%LIKE','%LIKE%','NOT LIKE']
+    const checkedQuery = [
+      "is null",
+      "is not null",
+      "IN",
+      "NOT_IN",
+      "included",
+      "is_not_included",
+    ];
+    const likelyQuery = ["LIKE%", "%LIKE", "%LIKE%", "NOT LIKE"];
     if (this.state.AndOr === "AND") {
       this.state.whereClauses.forEach((el, id) => {
         let attributeQuery = el.attributeQuery;
@@ -307,9 +462,12 @@ export default class Widget extends React.PureComponent<
           value = el.value?.txt ?? "";
         } else if (queryValue === "IN" || queryValue === "NOT_IN") {
           value = [];
-          if (queryValue === "IN" && el.checkedList.length){
+          if (queryValue === "IN" && el.checkedList.length) {
             el.checkedList.forEach((el) => value.push(el.checkValue));
-          }else if (queryValue === "NOT_IN" && this.state.counterIsChecked.length){
+          } else if (
+            queryValue === "NOT_IN" &&
+            this.state.counterIsChecked.length
+          ) {
             this.state.counterIsChecked.forEach((el) => value.push(el));
           }
         } else if (
@@ -357,13 +515,20 @@ export default class Widget extends React.PureComponent<
         }
         if (queryValue === "IN" || queryValue === "NOT_IN") {
           value = [];
-          if (queryValue === "IN" && el.checkedList.length){
+          if (queryValue === "IN" && el.checkedList.length) {
             el.checkedList.forEach((el) => value.push(el.checkValue));
-          }else if (queryValue === "NOT_IN" && this.state.counterIsChecked.length){
-            this.state.counterIsChecked.forEach((el) => value.push(el.checkValue));
+          } else if (
+            queryValue === "NOT_IN" &&
+            this.state.counterIsChecked.length
+          ) {
+            this.state.counterIsChecked.forEach((el) =>
+              value.push(el.checkValue)
+            );
           }
           if (this.containsAnyLetters(value)) {
-            let queryIn = `${attributeQuery} IN (${"'" + value.join("', '") + "'"})`;
+            let queryIn = `${attributeQuery} IN (${
+              "'" + value.join("', '") + "'"
+            })`;
             query.where = queryIn;
             normalizedWhereToSendQuery.push(queryIn);
           } else {
@@ -377,13 +542,13 @@ export default class Widget extends React.PureComponent<
           queryValue === "included"
             ? (queryIn = `${attributeQuery} > ${el.firstTxt.value} AND ${attributeQuery} < ${el.secondTxt.value}`)
             : (queryIn = `${attributeQuery} < ${el.firstTxt.value} OR ${attributeQuery} > ${el.secondTxt.value}`);
-            query.where = queryIn;
+          query.where = queryIn;
           normalizedWhereToSendQuery.push(queryIn);
-        } else if (!checkedQuery.includes(queryValue)){
+        } else if (!checkedQuery.includes(queryValue)) {
           value = el.value?.txt ?? "";
-          if (likelyQuery.includes(queryValue)){
-            query.where = helper.likelyQuery(attributeQuery,queryValue,value)
-          }else{
+          if (likelyQuery.includes(queryValue)) {
+            query.where = helper.likelyQuery(attributeQuery, queryValue, value);
+          } else {
             if (this.containsAnyLetters(value)) {
               let queryInput = `${attributeQuery} ${queryValue} '${value}'`;
               query.where = queryInput;
@@ -407,7 +572,14 @@ export default class Widget extends React.PureComponent<
                 };
                 layerView.visible = true;
                 // displaying  data to table
-                this.connector_function({ layerView, query,queryRequest:"OR",layer:f,AndOr:this.state.AndOr,field:attributeQuery});
+                this.connector_function({
+                  layerView,
+                  query,
+                  queryRequest: "OR",
+                  layer: f,
+                  AndOr: this.state.AndOr,
+                  field: attributeQuery,
+                });
               });
             }
           });
@@ -442,7 +614,7 @@ export default class Widget extends React.PureComponent<
             this.setState({
               resultsLayerSelected: f,
               currentTargetText: e.currentTarget.innerText,
-              currentSelectedId:e.currentTarget.value
+              currentSelectedId: e.currentTarget.value,
             });
             this.props.dispatch(
               appActions.widgetStatePropChange("value", "checkedLayers", [f.id])
@@ -454,30 +626,38 @@ export default class Widget extends React.PureComponent<
   }
 
   addTable = () => {
-    const currentId =  this.state.tableCounter
+    const currentId = this.state.tableCounter;
     this.setState({
       tables: [...this.state.tables, { id: this.state.tableCounter }],
       tableCounter: this.state.tableCounter + 1,
-      dropDowns:{...this.state.dropDowns,[currentId]:false}
+      dropDowns: { ...this.state.dropDowns, [currentId]: false },
     });
   };
 
   addTwoTable = () => {
-    const currentId =  this.state.tableCounterSet
+    const currentId = this.state.tableCounterSet;
+    let idOne = this.state.tableCounterSet;
+    let idTwo = idOne + 1;
     this.setState({
-      tablesSet: [...this.state.tablesSet, { id: this.state.tableCounterSet -1 },{ id:this.state.tableCounterSet }],
+      tablesSet: [...this.state.tablesSet, { id: idOne }, { id: idTwo }],
       tableCounterSet: this.state.tableCounterSet + 2,
-      dropDownSet:{...this.state.dropDownSet,[currentId]:false}
+      dropDownsSet: { ...this.state.dropDownsSet, [currentId]: false },
     });
   };
 
   deleteTable = (id) => {
     const copiedTable = [...this.state.tables];
-    const newTables = copiedTable.filter((el) =>el.id !== id);
+    const newTables = copiedTable.filter((el) => el.id !== id);
     // this.setState({tableCounter:this.state.tableCounter-1});
-    const copiedWhereClauses =[...this.state.whereClauses];
-    const deletedWhereClauses = copiedWhereClauses.filter((el) =>el.id !== id.toString());
-    this.setState({tables:newTables,whereClauses: deletedWhereClauses,tableCounter:this.state.tableCounter-1});
+    const copiedWhereClauses = [...this.state.whereClauses];
+    const deletedWhereClauses = copiedWhereClauses.filter(
+      (el) => el.id !== id.toString()
+    );
+    this.setState({
+      tables: newTables,
+      whereClauses: deletedWhereClauses,
+      tableCounter: this.state.tableCounter - 1,
+    });
     if (this.state.tables.length === 0) {
       this.setState({
         whereClauses: [],
@@ -487,11 +667,17 @@ export default class Widget extends React.PureComponent<
 
   deleteSetTable = (id) => {
     const copiedTable = [...this.state.tablesSet];
-    const newTables = copiedTable.filter((el) =>el.id !== id);
+    const newTables = copiedTable.filter((el) => el.id !== id);
     // this.setState({tableCounter:this.state.tableCounter-1});
-    const copiedWhereClauses =[...this.state.whereClausesSet];
-    const deletedWhereClauses = copiedWhereClauses.filter((el) =>el.id !== id.toString());
-    this.setState({tablesSet:newTables,whereClausesSet: deletedWhereClauses,tableCounter:this.state.tableCounter-1});
+    const copiedWhereClauses = [...this.state.whereClausesSet];
+    const deletedWhereClauses = copiedWhereClauses.filter(
+      (el) => el.id !== id.toString()
+    );
+    this.setState({
+      tablesSet: newTables,
+      whereClausesSet: deletedWhereClauses,
+      tableCounter: this.state.tableCounter - 1,
+    });
     if (this.state.tablesSet.length === 0) {
       this.setState({
         whereClausesSet: [],
@@ -682,8 +868,6 @@ export default class Widget extends React.PureComponent<
   };
 
   dropDown = (id) => {
-    // e.preventDefault()
-    // e.stopPropagation()
     this.setState({ autOpen: true });
     let queryIndex;
     queryIndex = this.state.whereClauses
@@ -723,6 +907,48 @@ export default class Widget extends React.PureComponent<
       });
     }
   };
+
+  dropDownSet = (id) => {
+    this.setState({ autOpen: true });
+    let queryIndex;
+    queryIndex = this.state.whereClauseSet
+      .map((obj) => obj.id)
+      .indexOf(id.toString());
+    if (queryIndex !== -1) {
+      const updateState = this.state.whereClauseSet.map((obj) => {
+        if (obj.id === queryIndex.toString()) {
+          if (!obj.isOpen) {
+            obj = { ...obj, isOpen: true };
+            let filteredWhereClauseSet = this.state.whereClauseSet.filter(
+              (a) => a.id !== obj.id
+            );
+            Set.push(obj);
+            filteredWhereClauseSet.sort(function (a, b) {
+              return a.id < b.id ? -1 : a.id == b.id ? 0 : 1;
+            });
+            return this.setState({
+              whereClauseSet: filteredWhereClauseSet,
+            });
+          } else {
+            obj = { ...obj, isOpen: false };
+            let filteredWhereClauseSet = this.state.whereClauseSet.filter(
+              (a) => a.id !== obj.id
+            );
+            filteredWhereClauseSet.push(obj);
+            filteredWhereClauseSet.sort(function (a, b) {
+              return a.id < b.id ? -1 : a.id == b.id ? 0 : 1;
+            });
+            return this.setState({
+              whereClauseSet: filteredWhereClauseSet,
+            });
+          }
+          // return this.state.whereClauses[queryIndex] = obj
+        }
+        return { obj };
+      });
+    }
+  };
+
   handleCheckBox = (event) => {
     this.setState({
       isChecked: event.target.checked,
@@ -809,7 +1035,7 @@ export default class Widget extends React.PureComponent<
                     });
                   }
                 );
-              } 
+              }
             }
           }
           return { obj };
@@ -845,22 +1071,22 @@ export default class Widget extends React.PureComponent<
     }
   };
 
-  checkParenthesis (val:string){
+  checkParenthesis(val: string) {
     let status = false;
-    const brackets = ['(',')','[',']','{','}']
-    if (brackets.includes(val.charAt(0))){
+    const brackets = ["(", ")", "[", "]", "{", "}"];
+    if (brackets.includes(val.charAt(0))) {
       status = true;
     }
     return status;
   }
 
-  loopToGetString (stringArr:string[]){
+  loopToGetString(stringArr: string[]) {
     let newString = " ";
-    if (stringArr.length){
+    if (stringArr.length) {
       newString = JSON.stringify(stringArr[0]);
-      newString = newString.replace(/"/g,`'`);
-      for (let i = 1;i < stringArr.length;i++){
-        const newStringVal = JSON.stringify(stringArr[i]).replace(/"/g,`'`);
+      newString = newString.replace(/"/g, `'`);
+      for (let i = 1; i < stringArr.length; i++) {
+        const newStringVal = JSON.stringify(stringArr[i]).replace(/"/g, `'`);
         newString += "," + newStringVal;
       }
     }
@@ -882,102 +1108,234 @@ export default class Widget extends React.PureComponent<
       case "LIKE%":
         query.where = `${firstQuery} LIKE '${secondQueryTarget}%'`;
         // displaying  data to table
-        connector_function({ layerView, query,queryRequest,values,layer,AndOr,field:firstQuery});
+        connector_function({
+          layerView,
+          query,
+          queryRequest,
+          values,
+          layer,
+          AndOr,
+          field: firstQuery,
+        });
         break;
       case "%LIKE":
         query.where = `${firstQuery} LIKE '%${secondQueryTarget}'`;
         // displaying  data to table
-        connector_function({ layerView, query,queryRequest,values,layer,AndOr,field:firstQuery});
+        connector_function({
+          layerView,
+          query,
+          queryRequest,
+          values,
+          layer,
+          AndOr,
+          field: firstQuery,
+        });
         break;
       case "%LIKE%":
         query.where = `${firstQuery} LIKE '%${secondQueryTarget}%'`;
         // displaying  data to table
-        connector_function({ layerView, query,queryRequest,values,layer,AndOr,field:firstQuery});
+        connector_function({
+          layerView,
+          query,
+          queryRequest,
+          values,
+          layer,
+          AndOr,
+          field: firstQuery,
+        });
         break;
       case "NOT LIKE":
         query.where = `${firstQuery} NOT LIKE '%${secondQueryTarget}%'`;
         // displaying  data to table
-        connector_function({ layerView, query,queryRequest,values,layer,AndOr,field:firstQuery});
+        connector_function({
+          layerView,
+          query,
+          queryRequest,
+          values,
+          layer,
+          AndOr,
+          field: firstQuery,
+        });
         break;
       case "is null":
         query.where = `${firstQuery} is null`;
         // displaying  data to table
-        connector_function({ layerView, query,queryRequest,values,layer,AndOr,field:firstQuery});
+        connector_function({
+          layerView,
+          query,
+          queryRequest,
+          values,
+          layer,
+          AndOr,
+          field: firstQuery,
+        });
         break;
       case "is not null":
         query.where = `${firstQuery} is not null`;
         // displaying  data to table
-        connector_function({ layerView, query,queryRequest,values,layer,AndOr,field:firstQuery});
+        connector_function({
+          layerView,
+          query,
+          queryRequest,
+          values,
+          layer,
+          AndOr,
+          field: firstQuery,
+        });
         break;
       case "IN":
         if (this.containsAnyLetters(secondQueryTarget)) {
           query.where = `${firstQuery} IN (${
             "'" + secondQueryTarget.join("', '") + "'"
           })`;
-          connector_function({ layerView, query,queryRequest,values,layer,AndOr,field:firstQuery});
+          connector_function({
+            layerView,
+            query,
+            queryRequest,
+            values,
+            layer,
+            AndOr,
+            field: firstQuery,
+          });
         } else {
-          if (this.checkParenthesis(secondQueryTarget.join(","))){
+          if (this.checkParenthesis(secondQueryTarget.join(","))) {
             const stringFiedValue = this.loopToGetString(secondQueryTarget);
             query.where = `${firstQuery} IN (${stringFiedValue})`;
-          }else{
+          } else {
             query.where = `${firstQuery} IN (${secondQueryTarget.join(",")})`;
           }
           // displaying  data to table
-          connector_function({ layerView, query,queryRequest,values,layer,AndOr,field:firstQuery});
+          connector_function({
+            layerView,
+            query,
+            queryRequest,
+            values,
+            layer,
+            AndOr,
+            field: firstQuery,
+          });
         }
 
         break;
-      case "NOT_IN":        
+      case "NOT_IN":
         if (this.containsAnyLetters(secondQueryTarget)) {
-          query.where = `NOT ${firstQuery} IN (${"'" + secondQueryTarget.join("', '") + "'"})`;
+          query.where = `NOT ${firstQuery} IN (${
+            "'" + secondQueryTarget.join("', '") + "'"
+          })`;
           query.outFields = [`${firstQuery}`];
-          connector_function({ layerView, query,queryRequest,values,layer,AndOr,field:firstQuery});
-        }else{
-          if (this.checkParenthesis(secondQueryTarget.join(","))){
+          connector_function({
+            layerView,
+            query,
+            queryRequest,
+            values,
+            layer,
+            AndOr,
+            field: firstQuery,
+          });
+        } else {
+          if (this.checkParenthesis(secondQueryTarget.join(","))) {
             const stringFiedValue = this.loopToGetString(secondQueryTarget);
             query.where = `NOT  ${firstQuery} IN (${stringFiedValue})`;
-          }else{
-            query.where = `NOT  ${firstQuery} IN (${secondQueryTarget.join(",")})`;
+          } else {
+            query.where = `NOT  ${firstQuery} IN (${secondQueryTarget.join(
+              ","
+            )})`;
           }
           query.outFields = [`${firstQuery}`];
-          connector_function({ layerView, query,queryRequest,values,layer,AndOr,field:firstQuery});
+          connector_function({
+            layerView,
+            query,
+            queryRequest,
+            values,
+            layer,
+            AndOr,
+            field: firstQuery,
+          });
         }
         // displaying  data to table
         break;
       case "included":
         query.where = `(${firstQuery} > ${secondQueryTarget.firstTxt} AND ${firstQuery} < ${secondQueryTarget.secondTxt})`;
         // displaying  data to table
-        connector_function({ layerView, query,queryRequest,values,layer,AndOr,field:firstQuery});
+        connector_function({
+          layerView,
+          query,
+          queryRequest,
+          values,
+          layer,
+          AndOr,
+          field: firstQuery,
+        });
         break;
       case "is_not_included":
         query.where = `(${firstQuery} < ${secondQueryTarget.firstTxt} OR ${firstQuery} > ${secondQueryTarget.secondTxt})`;
         // displaying  data to table
-        connector_function({ layerView, query,queryRequest,values,layer,AndOr,field:firstQuery});
+        connector_function({
+          layerView,
+          query,
+          queryRequest,
+          values,
+          layer,
+          AndOr,
+          field: firstQuery,
+        });
         break;
       default:
         if (this.containsAnyLetters(secondQueryTarget)) {
           query.where = `${firstQuery} ${queryRequest} '${secondQueryTarget}'`;
           // displaying  data to table
-          connector_function({ layerView, query,queryRequest,values,layer,AndOr,field:firstQuery});
+          connector_function({
+            layerView,
+            query,
+            queryRequest,
+            values,
+            layer,
+            AndOr,
+            field: firstQuery,
+          });
         } else {
           query.where = `${firstQuery} ${queryRequest} ${secondQueryTarget}`;
           query.outFields = [`${firstQuery}`];
           // displaying  data to table
-          connector_function({ layerView, query,queryRequest,values,layer,AndOr,field:firstQuery});
+          connector_function({
+            layerView,
+            query,
+            queryRequest,
+            values,
+            layer,
+            AndOr,
+            field: firstQuery,
+          });
         }
     }
   };
 
-  chooseAndOr = (e) =>this.setState({AndOr: e.target.value});
+  chooseAndOr = (e) => this.setState({ AndOr: e.target.value });
 
   openDrop = (id) => {
-    this.setState({mouseleave:false});
-    this.setState({dropId:id});
-    const dropDowns = {...this.state.dropDowns};
-    if (dropDowns[id]){
-      this.setState({dropDowns:{...this.state.dropDowns,[id]:false}});
-    }else{
-      this.setState({dropDowns:{...this.state.dropDowns,[id]:true}});    }
+    this.setState({ mouseleave: false });
+    this.setState({ dropId: id });
+    const dropDowns = { ...this.state.dropDowns };
+    if (dropDowns[id]) {
+      this.setState({ dropDowns: { ...this.state.dropDowns, [id]: false } });
+    } else {
+      this.setState({ dropDowns: { ...this.state.dropDowns, [id]: true } });
+    }
+  };
+
+  openDropSet = (id) => {
+    this.setState({ mouseleave: false });
+    this.setState({ dropIdSet: id });
+    const dropDownsSet = { ...this.state.dropDownsSet };
+    if (dropDownsSet[id]) {
+      this.setState({
+        dropDownsSet: { ...this.state.dropDownsSet, [id]: false },
+      });
+    } else {
+      this.setState({
+        dropDownsSet: { ...this.state.dropDownsSet, [id]: true },
+      });
+    }
   };
 
   closeDrop = () => {
@@ -990,16 +1348,24 @@ export default class Widget extends React.PureComponent<
   };
 
   closeDropOnclickOutside = () => {
-    if (this.state.dropId!==null && this.state.mouseleave) {
-      this.setState({dropDowns:{...this.state.dropDowns,[this.state.dropId]:false}});
-      this.setState({mouseleave:false});
+    if (this.state.dropId !== null && this.state.mouseleave) {
+      this.setState({
+        dropDowns: { ...this.state.dropDowns, [this.state.dropId]: false },
+      });
+      this.setState({
+        dropDownsSet: {
+          ...this.state.dropDownsSet,
+          [this.state.dropIdSet]: false,
+        },
+      });
+      this.setState({ mouseleave: false });
     }
   };
 
   onmouseLeave = () => {
-      this.setState({
-        mouseleave: true,
-      });
+    this.setState({
+      mouseleave: true,
+    });
   };
 
   // methods for attribute table
@@ -1029,64 +1395,66 @@ export default class Widget extends React.PureComponent<
     return jimuLayerViews;
   };
 
-  clearHighlights = (layerView:any)=>{
-    if (layerView){
+  clearHighlights = (layerView: any) => {
+    if (layerView) {
       layerView._highlightIds.clear();
     }
-  }
+  };
 
   connector_function = async (data) => {
-    const { layerView, query,queryRequest,values,layer,AndOr,field} = data;
-    if (this.state.higlightSelected.length){
+    const { layerView, query, queryRequest, values, layer, AndOr, field } =
+      data;
+    if (this.state.higlightSelected.length) {
       this.clearHighlights(layerView);
       // layerView._highlightIds.clear();
-      this.state.higlightSelected.forEach((highlight)=>{
+      this.state.higlightSelected.forEach((highlight) => {
         highlight.remove();
-      })
+      });
     }
-    let results = {features:[]};
+    let results = { features: [] };
     let additionalQuery = query.where;
-    if (this.queryArray.length < this.state.whereClauses.length-1){
+    if (this.queryArray.length < this.state.whereClauses.length - 1) {
       additionalQuery = query.where + " " + AndOr;
     }
     this.queryArray.push(additionalQuery);
-    this.outfields.push(`${field}`)
-    if (this.queryArray.length >= this.state.whereClauses.length){
-      if (!this.outfields.includes("OBJECTID")){
-        this.outfields.push('OBJECTID');
+    this.outfields.push(`${field}`);
+    if (this.queryArray.length >= this.state.whereClauses.length) {
+      if (!this.outfields.includes("OBJECTID")) {
+        this.outfields.push("OBJECTID");
       }
       query.outFields = this.outfields;
       query.returnGeometry = true;
       const currentQuery = this.queryArray.join(" ");
       query.where = currentQuery;
-      try{
+      try {
         results = await layer.queryFeatures(query);
-      }catch(err){
-        if (layerView?.queryFeatures)results = await layerView.queryFeatures(query);
+      } catch (err) {
+        if (layerView?.queryFeatures)
+          results = await layerView.queryFeatures(query);
       }
-      if (layer?.queryFeatures)results = await layer.queryFeatures(query);
+      if (layer?.queryFeatures) results = await layer.queryFeatures(query);
       let checkedLayer_ = [data.layerView.layer.id];
       const highlightIds = helper.getHighlightedIds(results.features);
-      if (highlightIds.length){
+      if (highlightIds.length) {
         const higlightSelectedArr = [];
-        highlightIds.forEach(el => {
+        highlightIds.forEach((el) => {
           const highlightSelected = layerView.highlight(el);
           higlightSelectedArr.push(highlightSelected);
         });
-        if (results.features.length){
+        if (results.features.length) {
           const arrayGeometry = [];
-          results.features.forEach(el=>{
-            const newGeometry = geometryEngine.buffer(el.geometry,1, "meters");
+          results.features.forEach((el) => {
+            const newGeometry = geometryEngine.buffer(el.geometry, 1, "meters");
             arrayGeometry.push(newGeometry);
-          })
-          if (arrayGeometry.length){
+          });
+          if (arrayGeometry.length) {
             const unifiedGeomtry = geometryEngine.union(arrayGeometry);
             this.state.jimuMapView.view.goTo(unifiedGeomtry.extent);
           }
         }
-        this.setState({higlightSelected:higlightSelectedArr});
+        this.setState({ higlightSelected: higlightSelectedArr });
       }
-  
+
       const selectedLayersContents = helper.getSelectedContentsLayer(
         [results.features],
         checkedLayer_
@@ -1095,69 +1463,75 @@ export default class Widget extends React.PureComponent<
         selectedLayersContents
       );
       let activeV = this.state.jimuMapView;
-      this.setState({ layerContents: selectedLayersContents});
+      this.setState({ layerContents: selectedLayersContents });
       this.setState({ checkedLayer_: checkedLayer_ });
       const geometry = Polygon.fromExtent(layerView.view.extent).toJSON();
       const layerOpen = {
         geometry: geometry,
         typeSelected: "contains",
       };
-      if (results.features.length){
+      if (results.features.length) {
         this.currentLayerView = layerView;
-        const isLayerChecked = this.state.isAttributeTableClosed ? false:true;
-        const allCheckedLayers = this.getAllCheckedLayers()
+        const isLayerChecked = this.state.isAttributeTableClosed ? false : true;
+        const allCheckedLayers = this.getAllCheckedLayers();
         this.attributeTableConnector.init({
-          results:[results.features],
-          allCheckedLayers:allCheckedLayers,
-          isLayerChecked:isLayerChecked,
-          checkedLayers:checkedLayer_,
-          numberOfAttributes:numberOfAttributes,
-          layerOpen:layerOpen
+          results: [results.features],
+          allCheckedLayers: allCheckedLayers,
+          isLayerChecked: isLayerChecked,
+          checkedLayers: checkedLayer_,
+          numberOfAttributes: numberOfAttributes,
+          layerOpen: layerOpen,
         });
-        this.setState({isAttributeTableClosed:false})
-        try{
+        this.setState({ isAttributeTableClosed: false });
+        try {
           this.attributeTableConnector.dispatchingAll();
-          this.setState({itemNotFound:null})
-        }catch(err){
-          if (err)this.setState({itemNotFound:this.nls(err)});
+          this.setState({ itemNotFound: null });
+        } catch (err) {
+          if (err) this.setState({ itemNotFound: this.nls(err) });
           this.attributeTableConnector.closeTable();
-          this.setState({isAttributeTableClosed:true})
+          this.setState({ isAttributeTableClosed: true });
         }
-      }else{
+      } else {
         this.attributeTableConnector.closeTable();
-        this.setState({isAttributeTableClosed:true,itemNotFound:this.nls("noItemSelected")})
+        this.setState({
+          isAttributeTableClosed: true,
+          itemNotFound: this.nls("noItemSelected"),
+        });
       }
-
     }
   };
 
-  functionCounterIsChecked = (e,val)=>{
+  functionCounterIsChecked = (e, val) => {
     let counter = [...this.state.counterIsChecked];
-    if(e.target.checked){
+    if (e.target.checked) {
       counter.push(val);
-      this.setState({counterIsChecked:counter});
-    }else{
+      this.setState({ counterIsChecked: counter });
+    } else {
       let index = counter.indexOf(val);
-      if(index>-1) counter.splice(index,1);
-      this.setState({counterIsChecked:counter});
+      if (index > -1) counter.splice(index, 1);
+      this.setState({ counterIsChecked: counter });
     }
-  }
+  };
 
-  functionRefresh = ()=>{
+  functionRefresh = () => {
     const resultLayerList = this.state.resultLayerList;
-    const jimuMapView = this.state.jimuMapView
+    const jimuMapView = this.state.jimuMapView;
     this.init();
     this.attributeTableConnector.closeTable();
-    this.setState({...this.state,resultLayerList:resultLayerList,jimuMapView:jimuMapView,isAttributeTableClosed:true});
-    const view = jimuMapView.view
-    view.goTo({center:view.center,zoom:Widget.initialZoom});
-    if (this.currentLayerView)this.clearHighlights(this.currentLayerView);
-  }
+    this.setState({
+      ...this.state,
+      resultLayerList: resultLayerList,
+      jimuMapView: jimuMapView,
+      isAttributeTableClosed: true,
+    });
+    const view = jimuMapView.view;
+    view.goTo({ center: view.center, zoom: Widget.initialZoom });
+    if (this.currentLayerView) this.clearHighlights(this.currentLayerView);
+  };
 
-  
   //TODO config abilitare tab true/false
   render() {
-    if(this.props.state ==="CLOSED" && !this.state.widgetStateClosedChecked ){
+    if (this.props.state === "CLOSED" && !this.state.widgetStateClosedChecked) {
       const jimuMapView = this.state.jimuMapView;
       const view = jimuMapView.view;
       const resultLayerList = this.state.resultLayerList;
@@ -1165,17 +1539,20 @@ export default class Widget extends React.PureComponent<
       this.attributeTableConnector.closeTable();
       this.setState({
         ...this.state,
-        resultLayerList:resultLayerList,
-        jimuMapView:jimuMapView,
-        isAttributeTableClosed:true,
-        widgetStateOpenedChecked:false,
-        widgetStateClosedChecked:true
+        resultLayerList: resultLayerList,
+        jimuMapView: jimuMapView,
+        isAttributeTableClosed: true,
+        widgetStateOpenedChecked: false,
+        widgetStateClosedChecked: true,
       });
-      view.goTo({center:view.center,zoom:Widget.initialZoom});
-      if (this.currentLayerView)this.clearHighlights(this.currentLayerView);
+      view.goTo({ center: view.center, zoom: Widget.initialZoom });
+      if (this.currentLayerView) this.clearHighlights(this.currentLayerView);
     }
-    if (this.props.state=="OPENED" && !this.state.widgetStateOpenedChecked){
-      this.setState({widgetStateClosedChecked:false,widgetStateOpenedChecked:true});
+    if (this.props.state == "OPENED" && !this.state.widgetStateOpenedChecked) {
+      this.setState({
+        widgetStateClosedChecked: false,
+        widgetStateOpenedChecked: true,
+      });
     }
     return (
       <div
@@ -1256,7 +1633,10 @@ export default class Widget extends React.PureComponent<
               </div>
             </div>
             <div className="row mt-1 mb-3 justify-content-around">
-              <div className="col-md-5 d-flex justify-content-center text-center" style={{gap:'2%'}}>
+              <div
+                className="col-md-5 d-flex justify-content-center text-center"
+                style={{ gap: "2%" }}
+              >
                 <Button
                   disabled={!this.state.currentTargetText}
                   onClick={this.addTable}
@@ -1283,7 +1663,6 @@ export default class Widget extends React.PureComponent<
                   />
                   <p className="m-0 p-0">Aggiungi l'espressione dell'insieme</p>
                 </Button>
-
               </div>
               <div className="col-md-5 d-flex justify-content-center text-center">
                 <Button
@@ -1297,7 +1676,7 @@ export default class Widget extends React.PureComponent<
                 <Button
                   size="default"
                   className="d-flex align-items-center mb-2"
-                  style={{marginLeft:'5px'}}
+                  style={{ marginLeft: "5px" }}
                   type="secondary"
                   onClick={this.functionRefresh}
                 >
@@ -1346,39 +1725,41 @@ export default class Widget extends React.PureComponent<
                     mouseleave={this.state.mouseleave}
                     onmouseLeave={this.onmouseLeave}
                     functionCounterIsChecked={this.functionCounterIsChecked}
-                    dropdowns = {this.state.dropDowns}
-                    itemNotFound = {this.state.itemNotFound}
+                    dropdowns={this.state.dropDowns}
+                    itemNotFound={this.state.itemNotFound}
                   />
-                  ))}<br /><br />
-                   {this.state.tablesSet.length < 2 ? (
-                    <p>
-                      Visualizza le feature nel layer corrispondenti alla
-                      seguente espressione
-                    </p>
-                  ) : (
-                    <Select
-                      onChange={''}
-                      placeholder=" Visualizza le feature nel layer che corrispondono a tutte le espressioni seguenti"
-                      defaultValue="AND"
-                    >
-                      <Option value="AND">
-                        Visualizza le feature nel layer che corrispondono a
-                        tutte le espressioni seguenti
-                      </Option>
-                      <Option value="OR">
-                        Visualizza le feature nel layer che corrispondono ad una
-                        qualsiasi delle espressioni seguenti
-                      </Option>
-                    </Select>
-                  )}
-                  {this.state.tablesSet.map((el, i) => (
+                ))}
+                <br />
+                <br />
+                {this.state.tablesSet.length < 2 ? (
+                  <p>
+                    Visualizza le feature nel layer corrispondenti alla seguente
+                    espressione
+                  </p>
+                ) : (
+                  <Select
+                    onChange={""}
+                    placeholder=" Visualizza le feature nel layer che corrispondono a tutte le espressioni seguenti"
+                    defaultValue="AND"
+                  >
+                    <Option value="AND">
+                      Visualizza le feature nel layer che corrispondono a tutte
+                      le espressioni seguenti
+                    </Option>
+                    <Option value="OR">
+                      Visualizza le feature nel layer che corrispondono ad una
+                      qualsiasi delle espressioni seguenti
+                    </Option>
+                  </Select>
+                )}
+                {this.state.tablesSet.map((el, i) => (
                   <AddSetTable
                     className="w-100"
                     key={i}
                     id={`row-${i}`}
                     list={this.state.resultsLayerSelected}
                     isOpenDropD={this.state.isOpen}
-                    dropDown={() => this.dropDown(el.id)}
+                    dropDown={() => this.dropDownSet(el.id)}
                     dropdownValueQuery={this.state.dropdownValueQuery}
                     isChecked={this.state.isChecked}
                     counterIsChecked={this.state.counterIsChecked}
@@ -1386,34 +1767,34 @@ export default class Widget extends React.PureComponent<
                     // for Add set table............................
                     tablesSet={this.state.tablesSet}
                     tablesSetId={el.id}
-                    whereClausesSet={this.state.whereClausesSet}
+                    whereClausesSet={this.state.whereClauseSet}
                     // End for Add set table............................
-                    getQueryAttribute={this.getQueryAttribute}
-                    getQuery={this.getQuery}
+                    getQueryAttribute={this.getQueryAttributeSet}
+                    getQuery={this.getQuerySet}
                     handleThirdQuery={this.thirdQuery}
                     textInputHandler={this.textInputHandler}
                     dropdownItemHandler={this.dropdownItemClick}
                     textFirstIncludedHandler={this.textFirstIncludedHandler}
                     textSecondIncludedHandler={this.textSecondIncludedHandler}
-                    dropDownToggler={this.dropDown}
+                    dropDownToggler={this.dropDownSet}
                     handleCheckBox={this.handleCheckBox}
                     deleteTable={() => this.deleteSetTable(el.id)}
                     univocoSelectHandler={this.univocoSelectHandler}
                     onChangeCheckBox={this.onChangeCheckBox}
-                    openDrop={this.openDrop}
+                    openDrop={this.openDropSet}
                     closeDrop={this.closeDrop}
                     opened={this.state.opened}
                     autOpen={this.state.autOpen}
                     mouseleave={this.state.mouseleave}
                     onmouseLeave={this.onmouseLeave}
                     functionCounterIsChecked={this.functionCounterIsChecked}
-                    dropdownSet = {this.state.dropDownSet}
-                    itemNotFound = {this.state.itemNotFound}
+                    dropdownsSet={this.state.dropDownsSet}
+                    itemNotFound={this.state.itemNotFound}
                   />
-                  ))}
-                  <br/><br/>
-                {
-                  this.state.itemNotFound && 
+                ))}
+                <br />
+                <br />
+                {this.state.itemNotFound && (
                   <Alert
                     className="w-100"
                     form="basic"
@@ -1422,7 +1803,7 @@ export default class Widget extends React.PureComponent<
                     type="error"
                     withIcon
                   />
-                }
+                )}
               </div>
             </div>
           </div>
