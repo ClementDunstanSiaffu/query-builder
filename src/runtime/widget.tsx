@@ -669,14 +669,14 @@ export default class Widget extends React.PureComponent<
     const copiedTable = [...this.state.tablesSet];
     const newTables = copiedTable.filter((el) => el.id !== id);
     // this.setState({tableCounter:this.state.tableCounter-1});
-    const copiedWhereClauses = [...this.state.whereClausesSet];
+    const copiedWhereClauses = [...this.state.whereClauseSet];
     const deletedWhereClauses = copiedWhereClauses.filter(
       (el) => el.id !== id.toString()
     );
     this.setState({
       tablesSet: newTables,
-      whereClausesSet: deletedWhereClauses,
-      tableCounter: this.state.tableCounter - 1,
+      whereClauseSet: deletedWhereClauses,
+      tableCounterSet: this.state.tableCounter - 1,
     });
     if (this.state.tablesSet.length === 0) {
       this.setState({
@@ -1642,7 +1642,7 @@ export default class Widget extends React.PureComponent<
                   onClick={this.addTable}
                   size="default"
                   className="d-flex align-items-center  mb-2"
-                  type="primary"
+                  type="secondary"
                 >
                   <Icon
                     icon='<svg viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M7.5 0a.5.5 0 0 0-.5.5V7H.5a.5.5 0 0 0 0 1H7v6.5a.5.5 0 0 0 1 0V8h6.5a.5.5 0 0 0 0-1H8V.5a.5.5 0 0 0-.5-.5Z" fill="#000"></path></svg>'
@@ -1655,7 +1655,7 @@ export default class Widget extends React.PureComponent<
                   onClick={this.addTwoTable}
                   size="default"
                   className="d-flex align-items-center  mb-2"
-                  type="primary"
+                  type="secondary"
                 >
                   <Icon
                     icon='<svg viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M7.5 0a.5.5 0 0 0-.5.5V7H.5a.5.5 0 0 0 0 1H7v6.5a.5.5 0 0 0 1 0V8h6.5a.5.5 0 0 0 0-1H8V.5a.5.5 0 0 0-.5-.5Z" fill="#000"></path></svg>'
@@ -1730,6 +1730,7 @@ export default class Widget extends React.PureComponent<
                   />
                 ))}
                 <br />
+                <div style={{width:'100%',background:'#005eca',height:'10px'}}></div>
                 <br />
                 {this.state.tablesSet.length < 2 ? (
                   <p>
