@@ -215,13 +215,13 @@ const SecondConstructor = (props) => {
         id: tablesSetId.toString(),
         label: el.label.toString(),
         value: el.value.toString(),
-        listel: whereClausesSet[tablesSetId].checkedList,
+        listel: whereClausesSet[tablesSetId].checkedListSet,
       });
       // normalizedThirdQuery.push({
       //   id: tablesSetId.toString(),
       //   label: el.label[0].toString(),
       //   value: el.value[0].toString(),
-      //   listel: whereClausesSet[tablesSetId].checkedList,
+      //   listel: whereClausesSet[tablesSetId].checkedListSet,
       // });
     });
   }
@@ -240,9 +240,9 @@ const SecondConstructor = (props) => {
 
   if (
     whereClausesSet[tablesSetId] &&
-    whereClausesSet[tablesSetId].checkedList
+    whereClausesSet[tablesSetId].checkedListSet
   ) {
-    checked = whereClausesSet[tablesSetId].checkedList.length;
+    checked = whereClausesSet[tablesSetId].checkedListSet.length;
   }
 
   const test = (props) => {};

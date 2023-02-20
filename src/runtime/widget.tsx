@@ -30,6 +30,7 @@ export default class Widget extends React.PureComponent<
   queryArray = [];
   outfields = [];
   currentLayerView = null;
+ 
 
   constructor(props) {
     super(props);
@@ -40,9 +41,12 @@ export default class Widget extends React.PureComponent<
     this.getQueryAttribute = this.getQueryAttribute.bind(this);
     this.getQuery = this.getQuery.bind(this);
     this.sendQuery = this.sendQuery.bind(this);
+    this.sendQuerySet = this.sendQuerySet.bind(this);
+    this.runbothQueries= this.runbothQueries.bind(this);
     this.thirdQuery = this.thirdQuery.bind(this);
     this.dropdownItemClick = this.dropdownItemClick.bind(this);
     this.chooseAndOr = this.chooseAndOr.bind(this);
+    this.chooseAndOrSet = this.chooseAndOrSet.bind(this);
     this.closeDrop = this.closeDrop.bind(this);
     this.openDrop = this.openDrop.bind(this);
     this.closeDropOnclickOutside = this.closeDropOnclickOutside.bind(this);
@@ -53,6 +57,7 @@ export default class Widget extends React.PureComponent<
     this.functionCounterIsChecked = this.functionCounterIsChecked.bind(this);
     this.getQueryAttributeSet = this.getQueryAttributeSet.bind(this);
     this.getQuerySet = this.getQuerySet.bind(this);
+    this.onChangeCheckBoxSet = this.onChangeCheckBoxSet.bind(this);
   }
 
   init = () => {
@@ -85,6 +90,7 @@ export default class Widget extends React.PureComponent<
       tablesId: null,
       isOpen: false,
       AndOr: "AND",
+      AndOrSet:"AND",
       opened: false,
       autOpen: true,
       mouseleave: false,
@@ -112,6 +118,11 @@ export default class Widget extends React.PureComponent<
         })
       : id;
   };
+
+  runbothQueries = ()=>{
+    this.sendQuery();
+    this.sendQuerySet();
+  }
 
   activeViewChangeHandler(jmv: JimuMapView) {
     if (jmv) {
@@ -453,7 +464,7 @@ export default class Widget extends React.PureComponent<
       "is_not_included",
     ];
     const likelyQuery = ["LIKE%", "%LIKE", "%LIKE%", "NOT LIKE"];
-    if (this.state.AndOr === "AND") {
+     if (this.state.AndOr === "AND") { 
       this.state.whereClauses.forEach((el, id) => {
         let attributeQuery = el.attributeQuery;
         let queryValue = el.queryValue;
@@ -588,6 +599,154 @@ export default class Widget extends React.PureComponent<
     }
   }
 
+  async sendQuerySet() {
+    this.queryArray = [];
+    this.outfields = [];
+    const checkedQuery = [
+      "is null",
+      "is not null",
+      "IN",
+      "NOT_IN",
+      "included",
+      "is_not_included",
+    ];
+    const likelyQuery = ["LIKE%", "%LIKE", "%LIKE%", "NOT LIKE"];
+      if (this.state.AndOrSet === "AND") { 
+        this.state.whereClauseSet.forEach((el, id) => {
+          let attributeQuery = el.attributeQuery;
+          let queryValue = el.queryValue;
+          let value;
+          if (queryValue === "is null" || queryValue === "is not null") {
+            value = el.value?.txt ?? "";
+          } else if (queryValue === "IN" || queryValue === "NOT_IN") {
+            value = [];
+            if (queryValue === "IN" && el.checkedListSet.length) {
+              el.checkedListSet.forEach((el) => value.push(el.checkValue));
+            } else if (
+              queryValue === "NOT_IN" &&
+              this.state.counterIsChecked.length
+            ) {
+              this.state.counterIsChecked.forEach((el) => value.push(el));
+            }
+          } else if (
+            queryValue === "included" ||
+            queryValue === "is_not_included"
+          ) {
+            value = {
+              firstTxt: el.firstTxt.value,
+              secondTxt: el.secondTxt.value,
+            };
+          } else if (!checkedQuery.includes(queryValue)) {
+            value = el.value?.txt ?? "";
+          }
+          if (this.state.jimuMapView) {
+            this.state.jimuMapView.view.map.allLayers.forEach((f, index) => {
+              if (f.title === this.state.currentTargetText) {
+                this.state.jimuMapView.view.whenLayerView(f).then((layerView) => {
+                  this.queryConstructor(
+                    //step 2 start querying
+                    layerView,
+                    attributeQuery,
+                    queryValue,
+                    value,
+                    this.state.AndOrSet,
+                    this.connector_function,
+                    f
+                  );
+                });
+              }
+            });
+          }
+        });
+      } else {
+        // const checkedQuery = ["is null","is not null","IN","NOT_IN","included","is_not_included"]
+        let normalizedWhereToSendQuery: any = [];
+        this.state.whereClauseSet.forEach((el, id) => {
+          const query = new Query();
+          let attributeQuery = el.attributeQuery;
+          let queryValue = el.queryValue;
+          let value;
+          if (queryValue === "is null" || queryValue === "is not null") {
+            let queryIn = `${attributeQuery} ${queryValue}`;
+            query.where = queryIn;
+            normalizedWhereToSendQuery.push(queryIn);
+          }
+          if (queryValue === "IN" || queryValue === "NOT_IN") {
+            value = [];
+            if (queryValue === "IN" && el.checkedListSet.length) {
+              el.checkedListSet.forEach((el) => value.push(el.checkValue));
+            } else if (
+              queryValue === "NOT_IN" &&
+              this.state.counterIsChecked.length
+            ) {
+              this.state.counterIsChecked.forEach((el) =>
+                value.push(el.checkValue)
+              );
+            }
+            if (this.containsAnyLetters(value)) {
+              let queryIn = `${attributeQuery} IN (${
+                "'" + value.join("', '") + "'"
+              })`;
+              query.where = queryIn;
+              normalizedWhereToSendQuery.push(queryIn);
+            } else {
+              let queryIn = `${attributeQuery} IN (${value.join(",")})`;
+              query.where = queryIn;
+              normalizedWhereToSendQuery.push(queryIn);
+            }
+          }
+          if (queryValue === "included" || queryValue === "is_not_included") {
+            let queryIn;
+            queryValue === "included"
+              ? (queryIn = `${attributeQuery} > ${el.firstTxt.value} AND ${attributeQuery} < ${el.secondTxt.value}`)
+              : (queryIn = `${attributeQuery} < ${el.firstTxt.value} OR ${attributeQuery} > ${el.secondTxt.value}`);
+            query.where = queryIn;
+            normalizedWhereToSendQuery.push(queryIn);
+          } else if (!checkedQuery.includes(queryValue)) {
+            value = el.value?.txt ?? "";
+            if (likelyQuery.includes(queryValue)) {
+              query.where = helper.likelyQuery(attributeQuery, queryValue, value);
+            } else {
+              if (this.containsAnyLetters(value)) {
+                let queryInput = `${attributeQuery} ${queryValue} '${value}'`;
+                query.where = queryInput;
+                normalizedWhereToSendQuery.push(queryInput);
+              } else {
+                let queryInput = `${attributeQuery} ${queryValue} ${value}`;
+                query.where = queryInput;
+                normalizedWhereToSendQuery.push(queryInput);
+              }
+            }
+          }
+          if (this.state.jimuMapView) {
+            this.state.jimuMapView.view.map.allLayers.forEach((f, index) => {
+              if (f.title === this.state.currentTargetText) {
+                this.state.jimuMapView.view.whenLayerView(f).then((layerView) => {
+                  let queryOr = `${normalizedWhereToSendQuery.join(" OR ")}`;
+                  // query.outFields = [`*`];
+                  // query.outFields = [`${attributeQuery}`]
+                  layerView.filter = {
+                    where: query.where,
+                  };
+                  layerView.visible = true;
+                  // displaying  data to table
+                  this.connector_function({
+                    layerView,
+                    query,
+                    queryRequest: "OR",
+                    layer: f,
+                    AndOr: this.state.AndOrSet,
+                    field: attributeQuery,
+                  });
+                });
+              }
+            });
+          }
+        });
+      }
+    
+  }
+
   async thirdQuery(e) {
     // const arrChoose = []
     const currentQueryTest = e.currentTarget.textContent;
@@ -648,7 +807,7 @@ export default class Widget extends React.PureComponent<
   deleteTable = (id) => {
     const copiedTable = [...this.state.tables];
     const newTables = copiedTable.filter((el) => el.id !== id);
-    // this.setState({tableCounter:this.state.tableCounter-1});
+    this.setState({tableCounter:this.state.tableCounter-1});
     const copiedWhereClauses = [...this.state.whereClauses];
     const deletedWhereClauses = copiedWhereClauses.filter(
       (el) => el.id !== id.toString()
@@ -668,7 +827,7 @@ export default class Widget extends React.PureComponent<
   deleteSetTable = (id) => {
     const copiedTable = [...this.state.tablesSet];
     const newTables = copiedTable.filter((el) => el.id !== id);
-    // this.setState({tableCounter:this.state.tableCounter-1});
+    this.setState({tableCounterSet:this.state.tableCounterSet-1});
     const copiedWhereClauses = [...this.state.whereClauseSet];
     const deletedWhereClauses = copiedWhereClauses.filter(
       (el) => el.id !== id.toString()
@@ -1071,6 +1230,122 @@ export default class Widget extends React.PureComponent<
     }
   };
 
+  onChangeCheckBoxSet = (event) => {
+    let currentId = event.target.attributes.id.value;
+    let objectId = event.target.attributes.value.value;
+    let queryIndex;
+    if (event.target.checked) {
+      queryIndex = this.state.whereClauseSet
+        .map((obj) => obj.id)
+        .indexOf(currentId);
+      if (queryIndex !== -1) {
+        this.state.whereClauseSet.map((obj) => {
+          if (obj.id === queryIndex.toString()) {
+            if (!obj.checkedListSet) {
+              obj = {
+                ...obj,
+                checkedListSet: [
+                  {
+                    checkValue: event.target.attributes.name.value,
+                    isChecked: true,
+                  },
+                ],
+              };
+              let filteredWhereClauseSet = this.state.whereClauseSet.filter(
+                (a) => a.id !== obj.id
+              );
+              filteredWhereClauseSet.push(obj);
+              this.setState(
+                {
+                  whereClauseSet: filteredWhereClauseSet,
+                },
+                () => {
+                  this.state.whereClauseSet.sort(function (a, b) {
+                    return a.id < b.id ? -1 : a.id == b.id ? 0 : 1;
+                  });
+
+                  // Remove duplicate entries from the whereClauses array
+                  this.setState({
+                    whereClauseSet: Array.from(new Set(this.state.whereClauseSet)),
+                  });
+                }
+              );
+            } else {
+              const ifAlreadyCheck = obj.checkedListSet
+                .map((obj) => obj.checkValue)
+                .indexOf(event.target.attributes.name.value);
+              if (ifAlreadyCheck == -1) {
+                obj = {
+                  ...obj,
+                  checkedListSet: [
+                    ...obj.checkedListSet,
+                    {
+                      checkValue: event.target.attributes.name.value,
+                      isChecked: true,
+                    },
+                  ],
+                };
+                // Find the index of the obj object in the whereClauses array
+                const index = this.state.whereClauseSet.findIndex(
+                  (a) => a.id === obj.id
+                );
+                // Remove the obj object from the whereClauses array
+                this.state.whereClauseSet.splice(index, 1);
+                // Add the updated obj object to the whereClauses array
+                this.state.whereClauseSet.push(obj);
+                this.setState(
+                  {
+                    whereClauseSet: this.state.whereClauseSet,
+                  },
+                  () => {
+                    this.state.whereClauseSet.sort(function (a, b) {
+                      return a.id < b.id ? -1 : a.id == b.id ? 0 : 1;
+                    });
+
+                    // Remove duplicate entries from the whereClauses array
+                    this.setState({
+                      whereClauseSet: Array.from(
+                        new Set(this.state.whereClauseSet)
+                      ),
+                    });
+                  }
+                );
+              }
+            }
+          }
+          return { obj };
+        });
+      }
+    }
+    if (event.target.checked === false) {
+      // Find the obj object in the whereClauses array
+      const obj = this.state.whereClauseSet.find((a) => a.id === currentId);
+      // Remove the checkValue from the checkedList array
+      obj.checkedListSet = obj.checkedListSet.filter(
+        (a) => a.checkValue !== event.target.attributes.name.value
+      );
+      // Update the obj object in the whereClauses array
+      const index = this.state.whereClauseSet.findIndex(
+        (a) => a.id === currentId
+      );
+      this.state.whereClauseSet[index] = obj;
+      this.setState(
+        {
+          whereClauseSet: this.state.whereClauseSet,
+        },
+        () => {
+          this.state.whereClauseSet.sort(function (a, b) {
+            return a.id < b.id ? -1 : a.id == b.id ? 0 : 1;
+          });
+          // Remove duplicate entries from the whereClauses array
+          this.setState({
+            whereClauseSet: Array.from(new Set(this.state.whereClauseSet)),
+          });
+        }
+      );
+    }
+  };
+
   checkParenthesis(val: string) {
     let status = false;
     const brackets = ["(", ")", "[", "]", "{", "}"];
@@ -1311,6 +1586,9 @@ export default class Widget extends React.PureComponent<
   };
 
   chooseAndOr = (e) => this.setState({ AndOr: e.target.value });
+
+  chooseAndOrSet = (e) => this.setState({ AndOrSet: e.target.value });
+
 
   openDrop = (id) => {
     this.setState({ mouseleave: false });
@@ -1669,7 +1947,7 @@ export default class Widget extends React.PureComponent<
                   size="default"
                   className="d-flex align-items-center mb-2"
                   type="secondary"
-                  onClick={this.sendQuery}
+                  onClick={this.runbothQueries}
                 >
                   <p className="m-0 p-0">Applica</p>
                 </Button>
@@ -1701,11 +1979,6 @@ export default class Widget extends React.PureComponent<
                     tables={this.state.tables}
                     tablesId={el.id}
                     whereClauses={this.state.whereClauses}
-                    // for Add set table............................
-                    tablesSet={this.state.tablesSet}
-                    tablesSetId={el.id}
-                    whereClausesSet={this.state.whereClausesSet}
-                    // End for Add set table............................
                     getQueryAttribute={this.getQueryAttribute}
                     getQuery={this.getQuery}
                     handleThirdQuery={this.thirdQuery}
@@ -1739,7 +2012,7 @@ export default class Widget extends React.PureComponent<
                   </p>
                 ) : (
                   <Select
-                    onChange={""}
+                    onChange={this.chooseAndOrSet}
                     placeholder=" Visualizza le feature nel layer che corrispondono a tutte le espressioni seguenti"
                     defaultValue="AND"
                   >
@@ -1781,7 +2054,7 @@ export default class Widget extends React.PureComponent<
                     handleCheckBox={this.handleCheckBox}
                     deleteTable={() => this.deleteSetTable(el.id)}
                     univocoSelectHandler={this.univocoSelectHandler}
-                    onChangeCheckBox={this.onChangeCheckBox}
+                    onChangeCheckBox={this.onChangeCheckBoxSet}
                     openDrop={this.openDropSet}
                     closeDrop={this.closeDrop}
                     opened={this.state.opened}
