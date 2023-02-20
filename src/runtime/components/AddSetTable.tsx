@@ -20,7 +20,7 @@ import {
 } from "../utils/queryTableValue";
 // import {useState} from 'react'
 
-function Table(props) {
+function AddSetTable(props) {
   const {
     list,
     handleThirdQuery,
@@ -37,9 +37,12 @@ function Table(props) {
     functionCounterIsChecked,
     checkedToQuery,
     deleteTable,
-    tablesId,
     getQueryAttribute,
-    whereClauses,
+    // for Add set table............................
+    tablesSet,
+    tablesSetId,
+    whereClausesSet,
+    // End for Add set table............................
     tables,
     getQuery,
     univocoSelectHandler,
@@ -52,7 +55,7 @@ function Table(props) {
     autOpen,
     mouseleave,
     onmouseLeave,
-    dropdowns,
+    dropdownsSet,
   } = props;
 
   return (
@@ -85,7 +88,7 @@ function Table(props) {
                 ) {
                   return (
                     <Option
-                      data-table-id={tablesId}
+                      data-table-id={tablesSetId}
                       value={i}
                       name={el.name}
                       dataType={el.type}
@@ -97,13 +100,16 @@ function Table(props) {
               })}
             </Select>
             <div className="col-md-4 mb-2">
-              <Select onChange={(e)=>getQuery(e,"single")} placeholder="Seleziona campo">
-                {whereClauses[tablesId] &&
-                whereClauses[tablesId].attributeQueryType === "string"
+              <Select
+                onChange={(e) => getQuery(e, "set")}
+                placeholder="Seleziona campo"
+              >
+                {whereClausesSet[tablesSetId] &&
+                whereClausesSet[tablesSetId].attributeQueryType === "string"
                   ? queryConstructorString.map((o, i) => {
                       return (
                         <Option
-                          data-table-id={tablesId}
+                          data-table-id={tablesSetId}
                           value={i}
                           name={o.value}
                         >
@@ -114,7 +120,7 @@ function Table(props) {
                   : queryConstructorNumber.map((o, i) => {
                       return (
                         <Option
-                          data-table-id={tablesId}
+                          data-table-id={tablesSetId}
                           value={i}
                           name={o.value}
                         >
@@ -139,8 +145,8 @@ function Table(props) {
               functionCounterIsChecked={functionCounterIsChecked}
               checkedToQuery={checkedToQuery}
               getQueryAttribute={getQueryAttribute}
-              whereClauses={whereClauses}
-              tablesId={tablesId}
+              whereClausesSet={whereClausesSet}
+              tablesSetId={tablesSetId}
               dropDownToggler={dropDownToggler}
               univocoSelectHandler={univocoSelectHandler}
               dropDown={dropDown}
@@ -152,7 +158,7 @@ function Table(props) {
               autOpen={autOpen}
               mouseleave={mouseleave}
               onmouseLeave={onmouseLeave}
-              dropdowns = {dropdowns}
+              dropdownsSet={dropdownsSet}
             />
           </div>
         </div>
@@ -178,8 +184,8 @@ const SecondConstructor = (props) => {
     textSecondIncludedHandler,
     counterIsChecked,
     functionCounterIsChecked,
-    tablesId,
-    whereClauses,
+    tablesSetId,
+    whereClausesSet,
     dropDownToggler,
     univocoSelectHandler,
     dropDown,
@@ -190,7 +196,7 @@ const SecondConstructor = (props) => {
     opened: d,
     autOpen,
     onmouseLeave,
-    dropdowns,
+    dropdownsSet,
   } = props;
   const normalizedThirdQuery = [];
   let defaultValue = "=";
@@ -200,34 +206,43 @@ const SecondConstructor = (props) => {
   let au = true;
 
   // valueThirdQuery.map((el, i) => { normalizedThirdQuery.push({ label: el.label[0].toString(), value: el.value[0].toString() }) })
-  if (whereClauses[tablesId] && whereClauses[tablesId].ifInOrNotInQueryValue) {
-    whereClauses[tablesId].ifInOrNotInQueryValue.map((el, i) => {
+  if (
+    whereClausesSet[tablesSetId] &&
+    whereClausesSet[tablesSetId].ifInOrNotInQueryValue
+  ) {
+    whereClausesSet[tablesSetId].ifInOrNotInQueryValue.map((el, i) => {
       normalizedThirdQuery.push({
-        id: tablesId.toString(),
+        id: tablesSetId.toString(),
         label: el.label.toString(),
         value: el.value.toString(),
-        listel: whereClauses[tablesId].checkedList,
+        listel: whereClausesSet[tablesSetId].checkedListSet,
       });
       // normalizedThirdQuery.push({
-      //   id: tablesId.toString(),
+      //   id: tablesSetId.toString(),
       //   label: el.label[0].toString(),
       //   value: el.value[0].toString(),
-      //   listel: whereClauses[tablesId].checkedList,
+      //   listel: whereClausesSet[tablesSetId].checkedListSet,
       // });
     });
   }
-  if (whereClauses[tablesId] && whereClauses[tablesId].queryValue) {
-    defaultValue = whereClauses[tablesId].queryValue;
+  if (whereClausesSet[tablesSetId] && whereClausesSet[tablesSetId].queryValue) {
+    defaultValue = whereClausesSet[tablesSetId].queryValue;
   }
-  if (whereClauses[tablesId] && whereClauses[tablesId].dropdownValueQuery) {
-    dropdownValueQuery = whereClauses[tablesId].dropdownValueQuery;
+  if (
+    whereClausesSet[tablesSetId] &&
+    whereClausesSet[tablesSetId].dropdownValueQuery
+  ) {
+    dropdownValueQuery = whereClausesSet[tablesSetId].dropdownValueQuery;
   }
-  if (whereClauses[tablesId] && whereClauses[tablesId].isOpen) {
-    // opened = whereClauses[tablesId].isOpen;
+  if (whereClausesSet[tablesSetId] && whereClausesSet[tablesSetId].isOpen) {
+    // opened = whereClausesSet[tablesSetId].isOpen;
   }
 
-  if (whereClauses[tablesId] && whereClauses[tablesId].checkedList) {
-    checked = whereClauses[tablesId].checkedList.length;
+  if (
+    whereClausesSet[tablesSetId] &&
+    whereClausesSet[tablesSetId].checkedListSet
+  ) {
+    checked = whereClausesSet[tablesSetId].checkedListSet.length;
   }
 
   const test = (props) => {};
@@ -241,7 +256,7 @@ const SecondConstructor = (props) => {
           >
             {normalizedThirdQuery.map((el, i) => {
               return (
-                <Option value={i} data-table-id={tablesId}>
+                <Option value={i} data-table-id={tablesSetId}>
                   {el.label}
                 </Option>
               );
@@ -253,7 +268,7 @@ const SecondConstructor = (props) => {
             onAcceptValue={function noRefCheck() {}}
             type="text"
             className=" w-100"
-            data-table-id={tablesId}
+            data-table-id={tablesSetId}
           />
         )}
         <div className="flex-shrink-1">
@@ -268,7 +283,7 @@ const SecondConstructor = (props) => {
               <DropdownItem
                 value="valore"
                 onClick={dropdownItemHandler}
-                data-table-id={tablesId}
+                data-table-id={tablesSetId}
               >
                 Valore
               </DropdownItem>
@@ -276,14 +291,14 @@ const SecondConstructor = (props) => {
                 value="campo"
                 onClick={dropdownItemHandler}
                 disabled
-                data-table-id={tablesId}
+                data-table-id={tablesSetId}
               >
                 Campo
               </DropdownItem>
               <DropdownItem
                 value="univoco"
                 onClick={dropdownItemHandler}
-                data-table-id={tablesId}
+                data-table-id={tablesSetId}
               >
                 Univoci
               </DropdownItem>
@@ -299,7 +314,7 @@ const SecondConstructor = (props) => {
           >
             {normalizedThirdQuery.map((el, i) => {
               return (
-                <Option value={i} data-table-id={tablesId}>
+                <Option value={i} data-table-id={tablesSetId}>
                   {el.label}
                 </Option>
               );
@@ -311,7 +326,7 @@ const SecondConstructor = (props) => {
             onAcceptValue={function noRefCheck() {}}
             type="text"
             className=" w-100"
-            data-table-id={tablesId}
+            data-table-id={tablesSetId}
           />
         )}
         <div className="flex-shrink-1">
@@ -325,7 +340,7 @@ const SecondConstructor = (props) => {
               <DropdownItem
                 value="valore"
                 onClick={dropdownItemHandler}
-                data-table-id={tablesId}
+                data-table-id={tablesSetId}
               >
                 Valore
               </DropdownItem>
@@ -333,14 +348,14 @@ const SecondConstructor = (props) => {
                 value="campo"
                 onClick={dropdownItemHandler}
                 disabled
-                data-table-id={tablesId}
+                data-table-id={tablesSetId}
               >
                 Campo
               </DropdownItem>
               <DropdownItem
                 value="univoco"
                 onClick={dropdownItemHandler}
-                data-table-id={tablesId}
+                data-table-id={tablesSetId}
               >
                 Univoci
               </DropdownItem>
@@ -351,8 +366,12 @@ const SecondConstructor = (props) => {
       <div value={"IN"} onMouseLeave={() => onmouseLeave()}>
         <div className="w-100">
           {
-            <Dropdown activeIcon isOpen={dropdowns[tablesId]} toggle={() => dropDown}>
-              <DropdownButton onClick={() => openDrop(tablesId)}>
+            <Dropdown
+              activeIcon
+              isOpen={dropdownsSet[tablesSetId]}
+              toggle={() => dropDown}
+            >
+              <DropdownButton onClick={() => openDrop(tablesSetId)}>
                 {checked} elementi selezionati
               </DropdownButton>
               <DropdownMenu>
@@ -363,7 +382,7 @@ const SecondConstructor = (props) => {
                     <div>
                       <DropdownItem
                         value={i}
-                        data-table-id={tablesId}
+                        data-table-id={tablesSetId}
                         className="d-flex justify-content-start"
                         strategy={"fixed"}
                       >
@@ -371,7 +390,7 @@ const SecondConstructor = (props) => {
                           <Input
                             onChange={onChangeCheckBox}
                             type="checkbox"
-                            id={tablesId}
+                            id={tablesSetId}
                             name={el.label}
                             value={el.value}
                             defaultChecked={
@@ -383,9 +402,9 @@ const SecondConstructor = (props) => {
                           />
                         }
                         <label
-                          htmlFor={tablesId}
+                          htmlFor={tablesSetId}
                           className="ml-3 mb-0"
-                          id={tablesId}
+                          id={tablesSetId}
                         >
                           {" "}
                           {el.label}
@@ -402,7 +421,7 @@ const SecondConstructor = (props) => {
           {/*    items={normalizedThirdQuery}*/}
           {/*    onClickItem={functionCounterIsChecked}*/}
           {/*    placeholder={'0 elementi selezionati'}*/}
-          {/*    data-table-id={tablesId}*/}
+          {/*    data-table-id={tablesSetId}*/}
           {/*    onClick={test}*/}
           {/*/>*/}
         </div>
@@ -417,7 +436,7 @@ const SecondConstructor = (props) => {
             onClickItem={functionCounterIsChecked}
             onClick={test}
             placeholder={"0 elementi selezionati"}
-            id={tablesId}
+            id={tablesSetId}
           />
         </div>
       </div>
@@ -426,7 +445,7 @@ const SecondConstructor = (props) => {
           <Select placeholder="Seleziona il Layer">
             {normalizedThirdQuery.map((el, i) => {
               return (
-                <Option value={i} data-table-id={tablesId}>
+                <Option value={i} data-table-id={tablesSetId}>
                   {el.label}
                 </Option>
               );
@@ -438,7 +457,7 @@ const SecondConstructor = (props) => {
             onAcceptValue={function noRefCheck() {}}
             type="text"
             className=" w-100"
-            data-table-id={tablesId}
+            data-table-id={tablesSetId}
           />
         )}
         <div className="flex-shrink-1">
@@ -452,7 +471,7 @@ const SecondConstructor = (props) => {
               <DropdownItem
                 value="valore"
                 onClick={dropdownItemHandler}
-                data-table-id={tablesId}
+                data-table-id={tablesSetId}
               >
                 Valore
               </DropdownItem>
@@ -460,14 +479,14 @@ const SecondConstructor = (props) => {
                 value="campo"
                 onClick={dropdownItemHandler}
                 disabled
-                data-table-id={tablesId}
+                data-table-id={tablesSetId}
               >
                 Campo
               </DropdownItem>
               <DropdownItem
                 value="univoco"
                 onClick={dropdownItemHandler}
-                data-table-id={tablesId}
+                data-table-id={tablesSetId}
               >
                 Univoci
               </DropdownItem>
@@ -480,7 +499,7 @@ const SecondConstructor = (props) => {
           <Select placeholder="Seleziona il Layer">
             {normalizedThirdQuery.map((el, i) => {
               return (
-                <Option value={i} data-table-id={tablesId}>
+                <Option value={i} data-table-id={tablesSetId}>
                   {el.label}
                 </Option>
               );
@@ -492,7 +511,7 @@ const SecondConstructor = (props) => {
             onAcceptValue={function noRefCheck() {}}
             type="text"
             className=" w-100"
-            data-table-id={tablesId}
+            data-table-id={tablesSetId}
           />
         )}
         <div className="flex-shrink-1">
@@ -506,7 +525,7 @@ const SecondConstructor = (props) => {
               <DropdownItem
                 value="valore"
                 onClick={dropdownItemHandler}
-                data-table-id={tablesId}
+                data-table-id={tablesSetId}
               >
                 Valore
               </DropdownItem>
@@ -514,14 +533,14 @@ const SecondConstructor = (props) => {
                 value="campo"
                 onClick={dropdownItemHandler}
                 disabled
-                data-table-id={tablesId}
+                data-table-id={tablesSetId}
               >
                 Campo
               </DropdownItem>
               <DropdownItem
                 value="univoco"
                 onClick={dropdownItemHandler}
-                data-table-id={tablesId}
+                data-table-id={tablesSetId}
               >
                 Univoci
               </DropdownItem>
@@ -534,7 +553,7 @@ const SecondConstructor = (props) => {
           <Select placeholder="Seleziona il Layer">
             {normalizedThirdQuery.map((el, i) => {
               return (
-                <Option value={i} data-table-id={tablesId}>
+                <Option value={i} data-table-id={tablesSetId}>
                   {el.label}
                 </Option>
               );
@@ -546,7 +565,7 @@ const SecondConstructor = (props) => {
             onAcceptValue={function noRefCheck() {}}
             type="text"
             className=" w-100"
-            data-table-id={tablesId}
+            data-table-id={tablesSetId}
           />
         )}
         <div className="flex-shrink-1">
@@ -560,7 +579,7 @@ const SecondConstructor = (props) => {
               <DropdownItem
                 value="valore"
                 onClick={dropdownItemHandler}
-                data-table-id={tablesId}
+                data-table-id={tablesSetId}
               >
                 Valore
               </DropdownItem>
@@ -568,14 +587,14 @@ const SecondConstructor = (props) => {
                 value="campo"
                 onClick={dropdownItemHandler}
                 disabled
-                data-table-id={tablesId}
+                data-table-id={tablesSetId}
               >
                 Campo
               </DropdownItem>
               <DropdownItem
                 value="univoco"
                 onClick={dropdownItemHandler}
-                data-table-id={tablesId}
+                data-table-id={tablesSetId}
               >
                 Univoci
               </DropdownItem>
@@ -588,7 +607,7 @@ const SecondConstructor = (props) => {
           <Select placeholder="Seleziona il Layer">
             {normalizedThirdQuery.map((el, i) => {
               return (
-                <Option value={i} data-table-id={tablesId}>
+                <Option value={i} data-table-id={tablesSetId}>
                   {el.label}
                 </Option>
               );
@@ -600,7 +619,7 @@ const SecondConstructor = (props) => {
             onAcceptValue={function noRefCheck() {}}
             type="text"
             className=" w-100"
-            data-table-id={tablesId}
+            data-table-id={tablesSetId}
           />
         )}
         <div className="flex-shrink-1">
@@ -614,7 +633,7 @@ const SecondConstructor = (props) => {
               <DropdownItem
                 value="valore"
                 onClick={dropdownItemHandler}
-                data-table-id={tablesId}
+                data-table-id={tablesSetId}
               >
                 Valore
               </DropdownItem>
@@ -622,14 +641,14 @@ const SecondConstructor = (props) => {
                 value="campo"
                 onClick={dropdownItemHandler}
                 disabled
-                data-table-id={tablesId}
+                data-table-id={tablesSetId}
               >
                 Campo
               </DropdownItem>
               <DropdownItem
                 value="univoco"
                 onClick={dropdownItemHandler}
-                data-table-id={tablesId}
+                data-table-id={tablesSetId}
               >
                 Univoci
               </DropdownItem>
@@ -645,16 +664,18 @@ const SecondConstructor = (props) => {
             onChange={textFirstIncludedHandler}
             onAcceptValue={function noRefCheck() {}}
             type="text"
-            data-table-id={tablesId}
-            id='inputs'
+            data-table-id={tablesSetId}
+            id="inputs"
           />
-          <p className="col-md-2 text-center" style={{width:'10%'}}>e</p>
+          <p className="col-md-2 text-center" style={{ width: "10%" }}>
+            e
+          </p>
           <TextInput
             onChange={textSecondIncludedHandler}
             onAcceptValue={function noRefCheck() {}}
             type="text"
-            data-table-id={tablesId}
-            id='inputs'
+            data-table-id={tablesSetId}
+            id="inputs"
           />
         </div>
       </div>
@@ -664,16 +685,16 @@ const SecondConstructor = (props) => {
             onChange={textFirstIncludedHandler}
             onAcceptValue={function noRefCheck() {}}
             type="text"
-            id='inputs'
-            data-table-id={tablesId}
+            id="inputs"
+            data-table-id={tablesSetId}
           />
           <p className="col-sm-2 text-center">e</p>
           <TextInput
             onChange={textSecondIncludedHandler}
             onAcceptValue={function noRefCheck() {}}
             type="text"
-            id='inputs'
-            data-table-id={tablesId}
+            id="inputs"
+            data-table-id={tablesSetId}
           />
         </div>
       </div>
@@ -683,7 +704,7 @@ const SecondConstructor = (props) => {
           onAcceptValue={function noRefCheck() {}}
           type="text"
           className=" w-100"
-          data-table-id={tablesId}
+          data-table-id={tablesSetId}
         />
       </div>
       <div value={"%LIKE"} className="d-flex col-md-4">
@@ -692,7 +713,7 @@ const SecondConstructor = (props) => {
           onAcceptValue={function noRefCheck() {}}
           type="text"
           className=" w-100"
-          data-table-id={tablesId}
+          data-table-id={tablesSetId}
         />
       </div>
       <div value={"LIKE%"} className="d-flex col-md-4">
@@ -701,7 +722,7 @@ const SecondConstructor = (props) => {
           onAcceptValue={function noRefCheck() {}}
           type="text"
           className=" w-100"
-          data-table-id={tablesId}
+          data-table-id={tablesSetId}
         />
       </div>
       <div value={"%LIKE%"} className="d-flex col-md-4">
@@ -710,7 +731,7 @@ const SecondConstructor = (props) => {
           onAcceptValue={function noRefCheck() {}}
           type="text"
           className=" w-100"
-          data-table-id={tablesId}
+          data-table-id={tablesSetId}
         />
       </div>
       <div value={"NOT LIKE"} className="d-flex col-md-4">
@@ -719,11 +740,11 @@ const SecondConstructor = (props) => {
           onAcceptValue={function noRefCheck() {}}
           type="text"
           className=" w-100"
-          data-table-id={tablesId}
+          data-table-id={tablesSetId}
         />
       </div>
     </Switch>
   );
 };
 
-export default Table;
+export default AddSetTable;
