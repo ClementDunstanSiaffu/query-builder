@@ -12,6 +12,9 @@ type selectedLayerType = {
 
 class Helper {
 
+    setQueryArray = [];
+    setOutFields = [];
+
     getLayerAttributes = (selectedLayerId:string,layerContents:layerContentsObjectType[]):any[]=>{
         let attributes = [];
         if (layerContents?.length > 0){
@@ -157,6 +160,21 @@ class Helper {
                 return `${attributeQuery} NOT LIKE '%${value}%'`;  
         }
     }
+
+    querySetConstructor = (query:any,setWhereClause:any[],AndOrSet:any,field:string)=>{
+        let currentQuery = query.where;
+        if (this.setQueryArray.length < setWhereClause.length -1 ){
+            currentQuery = query.where +  " " + AndOrSet;
+        }
+        this.setQueryArray.push(currentQuery);
+        this.setOutFields.push(`${field}`);
+        // if(this.setQueryArray.length >= setWhereClause.length){
+        //     return {querySetArray:this.setQueryArray,querySetOutfields:this.setOutFields}
+        // }
+    }
+
+    getQuerySetValue = ()=>({querySetArray:this.setQueryArray,querySetOutfields:this.setOutFields})
+
 
 }
 

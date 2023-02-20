@@ -42,7 +42,7 @@ export default class Widget extends React.PureComponent<
     this.getQuery = this.getQuery.bind(this);
     this.sendQuery = this.sendQuery.bind(this);
     this.sendQuerySet = this.sendQuerySet.bind(this);
-    this.runbothQueries= this.runbothQueries.bind(this);
+    // this.runbothQueries= this.runbothQueries.bind(this);
     this.thirdQuery = this.thirdQuery.bind(this);
     this.dropdownItemClick = this.dropdownItemClick.bind(this);
     this.chooseAndOr = this.chooseAndOr.bind(this);
@@ -119,10 +119,10 @@ export default class Widget extends React.PureComponent<
       : id;
   };
 
-  runbothQueries = ()=>{
-    this.sendQuery();
-    this.sendQuerySet();
-  }
+  // runbothQueries = ()=>{
+  //   this.sendQuery();
+  //   this.sendQuerySet();
+  // }
 
   activeViewChangeHandler(jmv: JimuMapView) {
     if (jmv) {
@@ -1375,7 +1375,8 @@ export default class Widget extends React.PureComponent<
     secondQueryTarget,
     AndOr,
     connector_function,
-    layer
+    layer,
+    queryType = "single"
   ) => {
     const query = new Query();
     const values = secondQueryTarget;
@@ -1383,41 +1384,54 @@ export default class Widget extends React.PureComponent<
       case "LIKE%":
         query.where = `${firstQuery} LIKE '${secondQueryTarget}%'`;
         // displaying  data to table
-        connector_function({
-          layerView,
-          query,
-          queryRequest,
-          values,
-          layer,
-          AndOr,
-          field: firstQuery,
-        });
+        if (queryType === "single"){
+          connector_function({
+            layerView,
+            query,
+            queryRequest,
+            values,
+            layer,
+            AndOr,
+            field: firstQuery,
+          });
+        }else{
+          helper.querySetConstructor(query,this.state.whereClauseSet,this.state.AndOrSet,firstQuery)
+        }
         break;
       case "%LIKE":
         query.where = `${firstQuery} LIKE '%${secondQueryTarget}'`;
         // displaying  data to table
-        connector_function({
-          layerView,
-          query,
-          queryRequest,
-          values,
-          layer,
-          AndOr,
-          field: firstQuery,
-        });
+        if (queryType === "single"){
+          connector_function({
+            layerView,
+            query,
+            queryRequest,
+            values,
+            layer,
+            AndOr,
+            field: firstQuery,
+          });
+        }else{
+          helper.querySetConstructor(query,this.state.whereClauseSet,this.state.AndOrSet,firstQuery)
+        }
         break;
       case "%LIKE%":
         query.where = `${firstQuery} LIKE '%${secondQueryTarget}%'`;
         // displaying  data to table
-        connector_function({
-          layerView,
-          query,
-          queryRequest,
-          values,
-          layer,
-          AndOr,
-          field: firstQuery,
-        });
+        if (queryType === "single"){
+          connector_function({
+            layerView,
+            query,
+            queryRequest,
+            values,
+            layer,
+            AndOr,
+            field: firstQuery,
+          });
+        }else{
+          helper.querySetConstructor(query,this.state.whereClauseSet,this.state.AndOrSet,firstQuery)
+        }
+     
         break;
       case "NOT LIKE":
         query.where = `${firstQuery} NOT LIKE '%${secondQueryTarget}%'`;
@@ -1947,7 +1961,7 @@ export default class Widget extends React.PureComponent<
                   size="default"
                   className="d-flex align-items-center mb-2"
                   type="secondary"
-                  onClick={this.runbothQueries}
+                  onClick={this.sendQuery}
                 >
                   <p className="m-0 p-0">Applica</p>
                 </Button>
