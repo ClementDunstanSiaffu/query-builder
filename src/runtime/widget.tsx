@@ -110,6 +110,7 @@ export default class Widget extends React.PureComponent<
       isAttributeTableClosed: false,
       widgetStateClosedChecked: false,
       widgetStateOpenedChecked: false,
+      showAddSelect:true,
     };
   };
 
@@ -763,6 +764,12 @@ setQueryConstructor = (queryRequest,firstQuery,secondQueryTarget)=>{
       tableCounter: this.state.tableCounter + 1,
       dropDowns: { ...this.state.dropDowns, [currentId]: false },
     });
+    if(this.state.tables.length > 0){
+      this.setState({showAddSelect:false});
+    } 
+    if(this.state.tablesSet.length > 0){
+      this.setState({showAddSelect:false});
+    }
   };
 
   addTwoTable = () => {
@@ -774,6 +781,9 @@ setQueryConstructor = (queryRequest,firstQuery,secondQueryTarget)=>{
       tableCounterSet: this.state.tableCounterSet + 2,
       dropDownsSet: { ...this.state.dropDownsSet, [currentId]: false },
     });
+    if(this.state.tables.length > 0){
+      this.setState({showAddSelect:false});
+    }
   };
 
   deleteTable = (id) => {
@@ -794,6 +804,13 @@ setQueryConstructor = (queryRequest,firstQuery,secondQueryTarget)=>{
         whereClauses: [],
       });
     }
+
+    if(this.state.tables.length == 2 && this.state.tablesSet.length == 0){
+      this.setState({showAddSelect:true});
+    }  
+    if(this.state.tables.length == 1 && this.state.tablesSet.length > 0){
+      this.setState({showAddSelect:true});
+    }   
   };
 
   deleteSetTable = (id) => {
@@ -814,6 +831,10 @@ setQueryConstructor = (queryRequest,firstQuery,secondQueryTarget)=>{
         whereClausesSet: [],
       });
     }
+    
+    if(this.state.tables.length == 1 && this.state.tablesSet.length == 1){
+      this.setState({showAddSelect:true});
+    } 
   };
 
   textInputHandler = (e) => {
@@ -1855,7 +1876,7 @@ setQueryConstructor = (queryRequest,firstQuery,secondQueryTarget)=>{
                       );
                     })}
                   </Select>
-                  {this.state.tables.length < 2 ? (
+                  {this.state.showAddSelect ? (
                     <p>
                       Visualizza le feature nel layer corrispondenti alla
                       seguente espressione
@@ -1908,7 +1929,7 @@ setQueryConstructor = (queryRequest,firstQuery,secondQueryTarget)=>{
                     icon='<svg viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M7.5 0a.5.5 0 0 0-.5.5V7H.5a.5.5 0 0 0 0 1H7v6.5a.5.5 0 0 0 1 0V8h6.5a.5.5 0 0 0 0-1H8V.5a.5.5 0 0 0-.5-.5Z" fill="#000"></path></svg>'
                     size="m"
                   />
-                  <p className="m-0 p-0">Aggiungi l'espressione dell'insieme</p>
+                  <p className="m-0 p-0">Aggiungi set di espressioni</p>
                 </Button>
               </div>
               <div className="col-md-5 d-flex justify-content-center text-center">
@@ -1975,10 +1996,10 @@ setQueryConstructor = (queryRequest,firstQuery,secondQueryTarget)=>{
                 <div style={{width:'100%',background:'#005eca',height:'10px'}}></div>
                 <br />
                 {this.state.tablesSet.length < 2 ? (
-                  <p>
+                  this.state.tablesSet.length == 1 ? <p>
                     Visualizza le feature nel layer corrispondenti alla seguente
                     espressione
-                  </p>
+                  </p>:''
                 ) : (
                   <Select
                     onChange={this.chooseAndOrSet}
