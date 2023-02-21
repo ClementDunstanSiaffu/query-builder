@@ -161,13 +161,16 @@ class Helper {
         }
     }
 
+
     querySetConstructor = (query:any,setWhereClause:any[],AndOrSet:any,field:string)=>{
         let currentQuery = query.where;
-        if (this.setQueryArray.length < setWhereClause.length -1 ){
+        console.log(this.setQueryArray.length < setWhereClause.length-1,"checking")
+        if (this.setQueryArray.length < setWhereClause.length-1){
             currentQuery = query.where +  " " + AndOrSet;
         }
         this.setQueryArray.push(currentQuery);
         this.setOutFields.push(`${field}`);
+        console.log(this.setQueryArray,this.setOutFields,"make sure")
         // if(this.setQueryArray.length >= setWhereClause.length){
         //     return {querySetArray:this.setQueryArray,querySetOutfields:this.setOutFields}
         // }
