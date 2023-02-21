@@ -1617,6 +1617,15 @@ setQueryConstructor = (queryRequest,firstQuery,secondQueryTarget)=>{
       });
       this.setState({ mouseleave: false });
     }
+    if (this.state.dropIdSet !== null && this.state.mouseleave) {
+      this.setState({
+        dropDownsSet: {
+          ...this.state.dropDownsSet,
+          [this.state.dropIdSet]: false,
+        },
+      });
+      this.setState({ mouseleave: false });
+    }
   };
 
   onmouseLeave = () => {
