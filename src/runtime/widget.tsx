@@ -61,7 +61,6 @@ export default class Widget extends React.PureComponent<
     this.getQueryAttributeSet = this.getQueryAttributeSet.bind(this);
     this.getQuerySet = this.getQuerySet.bind(this);
     this.onChangeCheckBoxSet = this.onChangeCheckBoxSet.bind(this);
-    this.querySetConstructor = this.querySetConstructor.bind(this);
   }
 
   init = () => {
@@ -123,11 +122,6 @@ export default class Widget extends React.PureComponent<
       : id;
   };
 
-  // runbothQueries = ()=>{
-  //   this.sendQuery();
-  //   this.sendQuerySet();
-  // }
-
   activeViewChangeHandler(jmv: JimuMapView) {
     if (jmv) {
       jmv.view.map.add(this.graphicLayerFound);
@@ -152,20 +146,15 @@ export default class Widget extends React.PureComponent<
       });
       Widget.activeV = jmv;
       Widget.jimuLayerViewz = jmv?.jimuLayerViews;
-      this.setState({
-        resultLayerList: resultLayerList,
-        jimuMapView: jmv,
-      });
+      this.setState({resultLayerList: resultLayerList,jimuMapView: jmv});
       this.attributeTableConnector = new AttributeTableConnector(jmv, this);
       Widget.initialZoom = jmv.view.zoom;
     }
   }
 
   componentDidUpdate(prevProps, prevState) {
-    if (this.state.isLayerSelected !== prevProps.isLayerSelected) {
-    }
-    if (this.state.whereClauses !== prevProps.whereClauses) {
-    }
+    if (this.state.isLayerSelected !== prevProps.isLayerSelected) {}
+    if (this.state.whereClauses !== prevProps.whereClauses) {}
   }
 
   componentWillUnmount(): void {}
@@ -181,9 +170,7 @@ export default class Widget extends React.PureComponent<
         attributeQueryType: e.currentTarget.attributes.datatype.value,
         queryValue: "=",
       };
-      this.setState({
-        whereClauses: [whereClause],
-      });
+      this.setState({whereClauses: [whereClause]});
     }
     if (this.state.whereClauses.length) {
       const queryIndex = this.state.whereClauses
@@ -197,10 +184,7 @@ export default class Widget extends React.PureComponent<
               attributeQuery: e.currentTarget.name,
               attributeQueryType: e.currentTarget.attributes.datatype.value,
             };
-            // return this.state.whereClauses[queryIndex] = obj
-            let filteredWhereClauses = this.state.whereClauses.filter(
-              (a) => a.id !== obj.id
-            );
+            let filteredWhereClauses = this.state.whereClauses.filter((a) => a.id !== obj.id);
             filteredWhereClauses.push(obj);
             filteredWhereClauses.sort(function (a, b) {
               return a.id < b.id ? -1 : a.id == b.id ? 0 : 1;
@@ -252,10 +236,7 @@ export default class Widget extends React.PureComponent<
               attributeQuery: e.currentTarget.name,
               attributeQueryType: e.currentTarget.attributes.datatype.value,
             };
-            // return this.state.whereClauseSet[queryIndex] = obj
-            let filteredWhereClauseSet = this.state.whereClauseSet.filter(
-              (a) => a.id !== obj.id
-            );
+            let filteredWhereClauseSet = this.state.whereClauseSet.filter((a) => a.id !== obj.id);
             filteredWhereClauseSet.push(obj);
             filteredWhereClauseSet.sort(function (a, b) {
               return a.id < b.id ? -1 : a.id == b.id ? 0 : 1;
@@ -272,9 +253,7 @@ export default class Widget extends React.PureComponent<
           attributeQuery: e.currentTarget.name,
           attributeQueryType: e.currentTarget.attributes.datatype.value,
         };
-        this.setState({
-          whereClauseSet: [...this.state.whereClauseSet, whereClauseSet],
-        });
+        this.setState({whereClauseSet: [...this.state.whereClauseSet, whereClauseSet],});
         this.state.whereClauseSet.sort(function (a, b) {
           return a.id < b.id ? -1 : a.id == b.id ? 0 : 1;
         });
@@ -516,7 +495,6 @@ export default class Widget extends React.PureComponent<
         }
       });
     } else {
-      // const checkedQuery = ["is null","is not null","IN","NOT_IN","included","is_not_included"]
       let normalizedWhereToSendQuery: any = [];
       this.state.whereClauses.forEach((el, id) => {
         const query = new Query();
@@ -579,9 +557,6 @@ export default class Widget extends React.PureComponent<
           this.state.jimuMapView.view.map.allLayers.forEach((f, index) => {
             if (f.title === this.state.currentTargetText) {
               this.state.jimuMapView.view.whenLayerView(f).then((layerView) => {
-                let queryOr = `${normalizedWhereToSendQuery.join(" OR ")}`;
-                // query.outFields = [`*`];
-                // query.outFields = [`${attributeQuery}`]
                 layerView.filter = {
                   where: query.where,
                 };
@@ -603,22 +578,6 @@ export default class Widget extends React.PureComponent<
     }
   }
 
-  querySetConstructor = (query:any,field:string)=>{
-    let currentQuery = query.where;
-    const setWhereClause = this.state.whereClauseSet;
-    const AndOrSet = this.state.AndOrSet
-    if (this.setQueryArray.length < setWhereClause.length-1){
-        currentQuery = query.where +  " " + AndOrSet;
-    }
-    this.setQueryArray.push(currentQuery);
-    this.setOutFields.push(`${field}`);
-    // console.log(this.setQueryArray,setWhereClause,currentQuery)
-    if(this.setQueryArray.length >= setWhereClause.length){
-      this.setQueryString = this.setQueryArray.join(" ");
-      // console.log(this.setQueryString,this.setQueryArray,"from query set constructor")
-        // return {querySetArray:this.setQueryArray,querySetOutfields:this.setOutFields}
-    }
-}
 
 setQueryConstructor = (queryRequest,firstQuery,secondQueryTarget)=>{
   switch (queryRequest) {
@@ -670,9 +629,6 @@ setQueryConstructor = (queryRequest,firstQuery,secondQueryTarget)=>{
 }
 
   sendQuerySet() {
-    // this.queryArray = [];
-    // this.outfields = [];
-    let queryString = null;
     const checkedQuery = [
       "is null",
       "is not null",
@@ -721,36 +677,10 @@ setQueryConstructor = (queryRequest,firstQuery,secondQueryTarget)=>{
             setQueryString += "  " +  this.state.AndOrSet + "  ";
           }
           outFields.push(`${attributeQuery}`);
-          // if (this.state.jimuMapView) {
-          //   this.state.jimuMapView.view.map.allLayers.forEach((f, index) => {
-          //     if (f.title === this.state.currentTargetText) {
-          //       this.state.jimuMapView.view.whenLayerView(f).then((layerView) => {
-          //         this.setQueryConstructor(queryValue,attributeQuery,value)
-          //         // this.queryConstructor(
-          //         //   //step 2 start querying
-          //         //   layerView,
-          //         //   attributeQuery,
-          //         //   queryValue,
-          //         //   value,
-          //         //   this.state.AndOrSet,
-          //         //   this.connector_function,
-          //         //   f,
-          //         //   "set"
-          //         // );
-          //         // if(this.setQueryArray.length >= this.state.whereClauseSet.length){
-          //         //   return;
-          //         // }
-          //       });
-          //     }
-          //   });
-          // }
         });
-        // console.log(this.setQueryArray,"from send query")
       } else {
-        // const checkedQuery = ["is null","is not null","IN","NOT_IN","included","is_not_included"]
         let normalizedWhereToSendQuery: any = [];
         this.state.whereClauseSet.forEach((el,i) => {
-          // const query = new Query();
           let attributeQuery = el.attributeQuery;
           let queryValue = el.queryValue;
           let value;
@@ -774,19 +704,6 @@ setQueryConstructor = (queryRequest,firstQuery,secondQueryTarget)=>{
             };
           } else if (!checkedQuery.includes(queryValue)) {
               value = el.value?.txt ?? "";
-              // if (likelyQuery.includes(queryValue)) {
-              //   query.where = helper.likelyQuery(attributeQuery, queryValue, value);
-              // } else {
-              //   if (this.containsAnyLetters(value)) {
-              //     let queryInput = `${attributeQuery} ${queryValue} '${value}'`;
-              //     query.where = queryInput;
-              //     normalizedWhereToSendQuery.push(queryInput);
-              //   } else {
-              //     let queryInput = `${attributeQuery} ${queryValue} ${value}`;
-              //     query.where = queryInput;
-              //     normalizedWhereToSendQuery.push(queryInput);
-              //   }
-              // }
           }
           if (setQueryString){
             setQueryString += this.setQueryConstructor(queryValue,attributeQuery,value);
@@ -797,84 +714,6 @@ setQueryConstructor = (queryRequest,firstQuery,secondQueryTarget)=>{
             setQueryString += "  " +  this.state.AndOrSet + "  ";
           }
           outFields.push(`${attributeQuery}`);
-          // if (queryValue === "is null" || queryValue === "is not null") {
-          //   let queryIn = `${attributeQuery} ${queryValue}`;
-          //   // query.where = queryIn;
-          //   normalizedWhereToSendQuery.push(queryIn);
-          // }
-          // if (queryValue === "IN" || queryValue === "NOT_IN") {
-          //   value = [];
-          //   if (queryValue === "IN" && el.checkedListSet.length) {
-          //     el.checkedListSet.forEach((el) => value.push(el.checkValue));
-          //   } else if (
-          //     queryValue === "NOT_IN" &&
-          //     this.state.counterIsChecked.length
-          //   ) {
-          //     this.state.counterIsChecked.forEach((el) =>
-          //       value.push(el.checkValue)
-          //     );
-          //   }
-          //   if (this.containsAnyLetters(value)) {
-          //     let queryIn = `${attributeQuery} IN (${"'" + value.join("', '") + "'"})`;
-          //     query.where = queryIn;
-          //     normalizedWhereToSendQuery.push(queryIn);
-          //   } else {
-          //     let queryIn = `${attributeQuery} IN (${value.join(",")})`;
-          //     query.where = queryIn;
-          //     normalizedWhereToSendQuery.push(queryIn);
-          //   }
-          // }
-          // if (queryValue === "included" || queryValue === "is_not_included") {
-          //   let queryIn;
-          //   queryValue === "included"
-          //     ? (queryIn = `${attributeQuery} > ${el.firstTxt.value} AND ${attributeQuery} < ${el.secondTxt.value}`)
-          //     : (queryIn = `${attributeQuery} < ${el.firstTxt.value} OR ${attributeQuery} > ${el.secondTxt.value}`);
-          //   query.where = queryIn;
-          //   normalizedWhereToSendQuery.push(queryIn);
-          // } else if (!checkedQuery.includes(queryValue)) {
-          //   value = el.value?.txt ?? "";
-          //   if (likelyQuery.includes(queryValue)) {
-          //     query.where = helper.likelyQuery(attributeQuery, queryValue, value);
-          //   } else {
-          //     if (this.containsAnyLetters(value)) {
-          //       let queryInput = `${attributeQuery} ${queryValue} '${value}'`;
-          //       query.where = queryInput;
-          //       normalizedWhereToSendQuery.push(queryInput);
-          //     } else {
-          //       let queryInput = `${attributeQuery} ${queryValue} ${value}`;
-          //       query.where = queryInput;
-          //       normalizedWhereToSendQuery.push(queryInput);
-          //     }
-          //   }
-          // }
-          // if (this.state.jimuMapView) {
-          //   this.state.jimuMapView.view.map.allLayers.forEach((f, index) => {
-          //     if (f.title === this.state.currentTargetText) {
-          //       this.state.jimuMapView.view.whenLayerView(f).then((layerView) => {
-          //         let queryOr = `${normalizedWhereToSendQuery.join(" OR ")}`;
-          //         // query.outFields = [`*`];
-          //         // query.outFields = [`${attributeQuery}`]
-          //         layerView.filter = {
-          //           where: query.where,
-          //         };
-          //         layerView.visible = true;
-          //         // displaying  data to table
-          //         // this.connector_function({
-          //         //   layerView,
-          //         //   query,
-          //         //   queryRequest: "OR",
-          //         //   layer: f,
-          //         //   AndOr: this.state.AndOrSet,
-          //         //   field: attributeQuery,
-          //         // });
-          //         this.querySetConstructor(query,attributeQuery);
-          //         // if(this.setQueryArray.length >= this.state.whereClauseSet.length){
-          //         //   return;
-          //         // }
-          //       });
-          //     }
-          //   });
-          // }
         });
       }
     return {setQueryString,outFields}
@@ -1154,9 +993,7 @@ setQueryConstructor = (queryRequest,firstQuery,secondQueryTarget)=>{
         });
       }
     }
-    this.setState({
-      dropdownValueQuery: e.target.value,
-    });
+    this.setState({dropdownValueQuery: e.target.value});
   };
 
   dropDown = (id) => {
@@ -1516,8 +1353,6 @@ setQueryConstructor = (queryRequest,firstQuery,secondQueryTarget)=>{
     switch (queryRequest) {
       case "LIKE%":
         query.where = `${firstQuery} LIKE '${secondQueryTarget}%'`;
-        // displaying  data to table
-        if (queryType === "single"){
           connector_function({
             layerView,
             query,
@@ -1527,14 +1362,9 @@ setQueryConstructor = (queryRequest,firstQuery,secondQueryTarget)=>{
             AndOr,
             field: firstQuery,
           });
-        }else{
-          this.querySetConstructor(query,firstQuery)
-        }
         break;
       case "%LIKE":
         query.where = `${firstQuery} LIKE '%${secondQueryTarget}'`;
-        // displaying  data to table
-        if (queryType === "single"){
           connector_function({
             layerView,
             query,
@@ -1544,14 +1374,9 @@ setQueryConstructor = (queryRequest,firstQuery,secondQueryTarget)=>{
             AndOr,
             field: firstQuery,
           });
-        }else{
-          this.querySetConstructor(query,firstQuery)
-        }
         break;
       case "%LIKE%":
         query.where = `${firstQuery} LIKE '%${secondQueryTarget}%'`;
-        // displaying  data to table
-        if (queryType === "single"){
           connector_function({
             layerView,
             query,
@@ -1561,15 +1386,9 @@ setQueryConstructor = (queryRequest,firstQuery,secondQueryTarget)=>{
             AndOr,
             field: firstQuery,
           });
-        }else{
-          this.querySetConstructor(query,firstQuery)
-        }
-     
         break;
       case "NOT LIKE":
         query.where = `${firstQuery} NOT LIKE '%${secondQueryTarget}%'`;
-        // displaying  data to table
-        if (queryType === "single"){
           connector_function({
             layerView,
             query,
@@ -1579,14 +1398,9 @@ setQueryConstructor = (queryRequest,firstQuery,secondQueryTarget)=>{
             AndOr,
             field: firstQuery,
           });
-        }else{
-          this.querySetConstructor(query,firstQuery)
-        }
         break;
       case "is null":
         query.where = `${firstQuery} is null`;
-        // displaying  data to table
-        if (queryType === "single"){
           connector_function({
             layerView,
             query,
@@ -1596,14 +1410,9 @@ setQueryConstructor = (queryRequest,firstQuery,secondQueryTarget)=>{
             AndOr,
             field: firstQuery,
           });
-        }else{
-          this.querySetConstructor(query,firstQuery)
-        }
         break;
       case "is not null":
         query.where = `${firstQuery} is not null`;
-        // displaying  data to table
-        if (queryType === "single"){
           connector_function({
             layerView,
             query,
@@ -1613,16 +1422,12 @@ setQueryConstructor = (queryRequest,firstQuery,secondQueryTarget)=>{
             AndOr,
             field: firstQuery,
           });
-        }else{
-          this.querySetConstructor(query,firstQuery)
-        }
         break;
       case "IN":
         if (this.containsAnyLetters(secondQueryTarget)) {
           query.where = `${firstQuery} IN (${
             "'" + secondQueryTarget.join("', '") + "'"
           })`;
-          if (queryType === "single"){
             connector_function({
               layerView,
               query,
@@ -1632,9 +1437,6 @@ setQueryConstructor = (queryRequest,firstQuery,secondQueryTarget)=>{
               AndOr,
               field: firstQuery,
             });
-          }else{
-            this.querySetConstructor(query,firstQuery)
-          }
         } else {
           if (this.checkParenthesis(secondQueryTarget.join(","))) {
             const stringFiedValue = this.loopToGetString(secondQueryTarget);
@@ -1642,8 +1444,6 @@ setQueryConstructor = (queryRequest,firstQuery,secondQueryTarget)=>{
           } else {
             query.where = `${firstQuery} IN (${secondQueryTarget.join(",")})`;
           }
-          // displaying  data to table
-          if (queryType === "single"){
             connector_function({
               layerView,
               query,
@@ -1653,11 +1453,7 @@ setQueryConstructor = (queryRequest,firstQuery,secondQueryTarget)=>{
               AndOr,
               field: firstQuery,
             });
-          }else{
-            this.querySetConstructor(query,firstQuery)
-          }
         }
-
         break;
       case "NOT_IN":
         if (this.containsAnyLetters(secondQueryTarget)) {
@@ -1665,7 +1461,6 @@ setQueryConstructor = (queryRequest,firstQuery,secondQueryTarget)=>{
             "'" + secondQueryTarget.join("', '") + "'"
           })`;
           query.outFields = [`${firstQuery}`];
-          if (queryType === "single"){
             connector_function({
               layerView,
               query,
@@ -1675,9 +1470,6 @@ setQueryConstructor = (queryRequest,firstQuery,secondQueryTarget)=>{
               AndOr,
               field: firstQuery,
             });
-          }else{
-            this.querySetConstructor(query,firstQuery)
-          }
         } else {
           if (this.checkParenthesis(secondQueryTarget.join(","))) {
             const stringFiedValue = this.loopToGetString(secondQueryTarget);
@@ -1688,7 +1480,6 @@ setQueryConstructor = (queryRequest,firstQuery,secondQueryTarget)=>{
             )})`;
           }
           query.outFields = [`${firstQuery}`];
-          if (queryType === "single"){
             connector_function({
               layerView,
               query,
@@ -1698,16 +1489,10 @@ setQueryConstructor = (queryRequest,firstQuery,secondQueryTarget)=>{
               AndOr,
               field: firstQuery,
             });
-          }else{
-            this.querySetConstructor(query,firstQuery)
-          }
         }
-        // displaying  data to table
         break;
       case "included":
         query.where = `(${firstQuery} > ${secondQueryTarget.firstTxt} AND ${firstQuery} < ${secondQueryTarget.secondTxt})`;
-        // displaying  data to table
-        if (queryType === "single"){
           connector_function({
             layerView,
             query,
@@ -1717,14 +1502,9 @@ setQueryConstructor = (queryRequest,firstQuery,secondQueryTarget)=>{
             AndOr,
             field: firstQuery,
           });
-        }else{
-          this.querySetConstructor(query,firstQuery)
-        }
         break;
       case "is_not_included":
         query.where = `(${firstQuery} < ${secondQueryTarget.firstTxt} OR ${firstQuery} > ${secondQueryTarget.secondTxt})`;
-        // displaying  data to table
-        if (queryType === "single"){
           connector_function({
             layerView,
             query,
@@ -1734,15 +1514,10 @@ setQueryConstructor = (queryRequest,firstQuery,secondQueryTarget)=>{
             AndOr,
             field: firstQuery,
           });
-        }else{
-          this.querySetConstructor(query,firstQuery)
-        }
         break;
       default:
         if (this.containsAnyLetters(secondQueryTarget)) {
           query.where = `${firstQuery} ${queryRequest} '${secondQueryTarget}'`;
-          // displaying  data to table
-          if (queryType === "single"){
             connector_function({
               layerView,
               query,
@@ -1752,14 +1527,9 @@ setQueryConstructor = (queryRequest,firstQuery,secondQueryTarget)=>{
               AndOr,
               field: firstQuery,
             });
-          }else{
-            this.querySetConstructor(query,firstQuery)
-          }
         } else {
           query.where = `${firstQuery} ${queryRequest} ${secondQueryTarget}`;
           query.outFields = [`${firstQuery}`];
-          // displaying  data to table
-          if (queryType === "single"){
             connector_function({
               layerView,
               query,
@@ -1769,9 +1539,6 @@ setQueryConstructor = (queryRequest,firstQuery,secondQueryTarget)=>{
               AndOr,
               field: firstQuery,
             });
-          }else{
-            this.querySetConstructor(query,firstQuery)
-          }
         }
     }
   };
@@ -1899,18 +1666,12 @@ setQueryConstructor = (queryRequest,firstQuery,secondQueryTarget)=>{
           const set = new Set(this.outfields);
           this.outfields = Array.from(set);
         }
-        // if (this.setQueryArray.length >= this.state.whereClauseSet){
-          // console.log(this.setQueryString,"checking query string")
-        // }
-        // const {querySetArray,querySetOutfields} = helper.getQuerySetValue();
-        // console.log(querySetArray,querySetArray.length,querySetOutfields,querySetOutfields.length,"check query set")
       }
       if (!this.outfields.includes("OBJECTID")) {
         this.outfields.push("OBJECTID");
       }
       query.outFields = this.outfields;
       query.returnGeometry = true;
-      // const currentQuery = this.queryArray.join(" ");
       query.where = currentQuery;
       try {
         results = await layer.queryFeatures(query);
