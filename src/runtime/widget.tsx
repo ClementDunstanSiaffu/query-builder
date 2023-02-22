@@ -448,134 +448,148 @@ export default class Widget extends React.PureComponent<
       "is_not_included",
     ];
     const likelyQuery = ["LIKE%", "%LIKE", "%LIKE%", "NOT LIKE"];
-     if (this.state.AndOr === "AND") { 
-      this.state.whereClauses.forEach((el, id) => {
-        let attributeQuery = el.attributeQuery;
-        let queryValue = el.queryValue;
-        let value;
-        if (queryValue === "is null" || queryValue === "is not null") {
-          value = el.value?.txt ?? "";
-        } else if (queryValue === "IN" || queryValue === "NOT_IN") {
-          value = [];
-          if (queryValue === "IN" && el.checkedList.length) {
-            el.checkedList.forEach((el) => value.push(el.checkValue));
-          } else if (
-            queryValue === "NOT_IN" &&
-            this.state.counterIsChecked.length
-          ) {
-            this.state.counterIsChecked.forEach((el) => value.push(el));
-          }
-        } else if (
-          queryValue === "included" ||
-          queryValue === "is_not_included"
-        ) {
-          value = {
-            firstTxt: el.firstTxt.value,
-            secondTxt: el.secondTxt.value,
-          };
-        } else if (!checkedQuery.includes(queryValue)) {
-          value = el.value?.txt ?? "";
-        }
-        if (this.state.jimuMapView) {
-          this.state.jimuMapView.view.map.allLayers.forEach((f, index) => {
-            if (f.title === this.state.currentTargetText) {
-              this.state.jimuMapView.view.whenLayerView(f).then((layerView) => {
-                this.queryConstructor(
-                  //step 2 start querying
-                  layerView,
-                  attributeQuery,
-                  queryValue,
-                  value,
-                  this.state.AndOr,
-                  this.connector_function,
-                  f
-                );
-              });
+    if (this.state.whereClauses.length){
+      if (this.state.AndOr === "AND") { 
+        this.state.whereClauses.forEach((el, id) => {
+          let attributeQuery = el.attributeQuery;
+          let queryValue = el.queryValue;
+          let value;
+          if (queryValue === "is null" || queryValue === "is not null") {
+            value = el.value?.txt ?? "";
+          } else if (queryValue === "IN" || queryValue === "NOT_IN") {
+            value = [];
+            if (queryValue === "IN" && el.checkedList.length) {
+              el.checkedList.forEach((el) => value.push(el.checkValue));
+            } else if (
+              queryValue === "NOT_IN" &&
+              this.state.counterIsChecked.length
+            ) {
+              this.state.counterIsChecked.forEach((el) => value.push(el));
             }
-          });
-        }
-      });
-    } else {
-      let normalizedWhereToSendQuery: any = [];
-      this.state.whereClauses.forEach((el, id) => {
-        const query = new Query();
-        let attributeQuery = el.attributeQuery;
-        let queryValue = el.queryValue;
-        let value;
-        if (queryValue === "is null" || queryValue === "is not null") {
-          let queryIn = `${attributeQuery} ${queryValue}`;
-          query.where = queryIn;
-          normalizedWhereToSendQuery.push(queryIn);
-        }
-        if (queryValue === "IN" || queryValue === "NOT_IN") {
-          value = [];
-          if (queryValue === "IN" && el.checkedList.length) {
-            el.checkedList.forEach((el) => value.push(el.checkValue));
           } else if (
-            queryValue === "NOT_IN" &&
-            this.state.counterIsChecked.length
+            queryValue === "included" ||
+            queryValue === "is_not_included"
           ) {
-            this.state.counterIsChecked.forEach((el) =>
-              value.push(el.checkValue)
-            );
+            value = {
+              firstTxt: el.firstTxt.value,
+              secondTxt: el.secondTxt.value,
+            };
+          } else if (!checkedQuery.includes(queryValue)) {
+            value = el.value?.txt ?? "";
           }
-          if (this.containsAnyLetters(value)) {
-            let queryIn = `${attributeQuery} IN (${
-              "'" + value.join("', '") + "'"
-            })`;
-            query.where = queryIn;
-            normalizedWhereToSendQuery.push(queryIn);
-          } else {
-            let queryIn = `${attributeQuery} IN (${value.join(",")})`;
-            query.where = queryIn;
-            normalizedWhereToSendQuery.push(queryIn);
-          }
-        }
-        if (queryValue === "included" || queryValue === "is_not_included") {
-          let queryIn;
-          queryValue === "included"
-            ? (queryIn = `${attributeQuery} > ${el.firstTxt.value} AND ${attributeQuery} < ${el.secondTxt.value}`)
-            : (queryIn = `${attributeQuery} < ${el.firstTxt.value} OR ${attributeQuery} > ${el.secondTxt.value}`);
-          query.where = queryIn;
-          normalizedWhereToSendQuery.push(queryIn);
-        } else if (!checkedQuery.includes(queryValue)) {
-          value = el.value?.txt ?? "";
-          if (likelyQuery.includes(queryValue)) {
-            query.where = helper.likelyQuery(attributeQuery, queryValue, value);
-          } else {
-            if (this.containsAnyLetters(value)) {
-              let queryInput = `${attributeQuery} ${queryValue} '${value}'`;
-              query.where = queryInput;
-              normalizedWhereToSendQuery.push(queryInput);
-            } else {
-              let queryInput = `${attributeQuery} ${queryValue} ${value}`;
-              query.where = queryInput;
-              normalizedWhereToSendQuery.push(queryInput);
-            }
-          }
-        }
-        if (this.state.jimuMapView) {
-          this.state.jimuMapView.view.map.allLayers.forEach((f, index) => {
-            if (f.title === this.state.currentTargetText) {
-              this.state.jimuMapView.view.whenLayerView(f).then((layerView) => {
-                layerView.filter = {
-                  where: query.where,
-                };
-                layerView.visible = true;
-                // displaying  data to table
-                this.connector_function({
-                  layerView,
-                  query,
-                  queryRequest: "OR",
-                  layer: f,
-                  AndOr: this.state.AndOr,
-                  field: attributeQuery,
+          if (this.state.jimuMapView) {
+            this.state.jimuMapView.view.map.allLayers.forEach((f, index) => {
+              if (f.title === this.state.currentTargetText) {
+                this.state.jimuMapView.view.whenLayerView(f).then((layerView) => {
+                  this.queryConstructor(
+                    //step 2 start querying
+                    layerView,
+                    attributeQuery,
+                    queryValue,
+                    value,
+                    this.state.AndOr,
+                    this.connector_function,
+                    f
+                  );
                 });
-              });
+              }
+            });
+          }
+        });
+      } else {
+        let normalizedWhereToSendQuery: any = [];
+        this.state.whereClauses.forEach((el, id) => {
+          const query = new Query();
+          let attributeQuery = el.attributeQuery;
+          let queryValue = el.queryValue;
+          let value;
+          if (queryValue === "is null" || queryValue === "is not null") {
+            let queryIn = `${attributeQuery} ${queryValue}`;
+            query.where = queryIn;
+            normalizedWhereToSendQuery.push(queryIn);
+          }
+          if (queryValue === "IN" || queryValue === "NOT_IN") {
+            value = [];
+            if (queryValue === "IN" && el.checkedList.length) {
+              el.checkedList.forEach((el) => value.push(el.checkValue));
+            } else if (
+              queryValue === "NOT_IN" &&
+              this.state.counterIsChecked.length
+            ) {
+              this.state.counterIsChecked.forEach((el) =>
+                value.push(el.checkValue)
+              );
             }
-          });
-        }
-      });
+            if (this.containsAnyLetters(value)) {
+              let queryIn = `${attributeQuery} IN (${"'" + value.join("', '") + "'"})`;
+              query.where = queryIn;
+              normalizedWhereToSendQuery.push(queryIn);
+            } else {
+              let queryIn = `${attributeQuery} IN (${value.join(",")})`;
+              query.where = queryIn;
+              normalizedWhereToSendQuery.push(queryIn);
+            }
+          }
+          if (queryValue === "included" || queryValue === "is_not_included") {
+            let queryIn;
+            queryValue === "included"
+              ? (queryIn = `${attributeQuery} > ${el.firstTxt.value} AND ${attributeQuery} < ${el.secondTxt.value}`)
+              : (queryIn = `${attributeQuery} < ${el.firstTxt.value} OR ${attributeQuery} > ${el.secondTxt.value}`);
+            query.where = queryIn;
+            normalizedWhereToSendQuery.push(queryIn);
+          } else if (!checkedQuery.includes(queryValue)) {
+            value = el.value?.txt ?? "";
+            if (likelyQuery.includes(queryValue)) {
+              query.where = helper.likelyQuery(attributeQuery, queryValue, value);
+            } else {
+              if (this.containsAnyLetters(value)) {
+                let queryInput = `${attributeQuery} ${queryValue} '${value}'`;
+                query.where = queryInput;
+                normalizedWhereToSendQuery.push(queryInput);
+              } else {
+                let queryInput = `${attributeQuery} ${queryValue} ${value}`;
+                query.where = queryInput;
+                normalizedWhereToSendQuery.push(queryInput);
+              }
+            }
+          }
+          if (this.state.jimuMapView) {
+            this.state.jimuMapView.view.map.allLayers.forEach((f, index) => {
+              if (f.title === this.state.currentTargetText) {
+                this.state.jimuMapView.view.whenLayerView(f).then((layerView) => {
+                  this.connector_function({
+                    layerView,
+                    query,
+                    queryRequest: "OR",
+                    layer: f,
+                    AndOr: this.state.AndOr,
+                    field: attributeQuery,
+                    source:"singleQuery"
+                  });
+                });
+              }
+            });
+          }
+        });
+      }
+    }else if (this.state.whereClauseSet.length){
+      if (this.state.jimuMapView) {
+        this.state.jimuMapView.view.map.allLayers.forEach((f, index) => {
+          if (f.title === this.state.currentTargetText) {
+            this.state.jimuMapView.view.whenLayerView(f).then((layerView) => {
+              this.connector_function({
+                layerView,
+                query:new Query(),
+                queryRequest:null,
+                layer: f,
+                AndOr: this.state.AndOr,
+                field: null,
+                source:"setQuery"
+              });
+            });
+          }
+        });
+      }
     }
   }
 
@@ -721,7 +735,6 @@ setQueryConstructor = (queryRequest,firstQuery,secondQueryTarget)=>{
   }
 
   async thirdQuery(e) {
-    // const arrChoose = []
     const currentQueryTest = e.currentTarget.textContent;
     this.state.jimuMapView.view.map.allLayers.forEach((f, index) => {
       if (f.title === this.state.currentTargetText) {
@@ -875,7 +888,6 @@ setQueryConstructor = (queryRequest,firstQuery,secondQueryTarget)=>{
         const updateState = this.state.whereClauses.map((obj) => {
           if (obj.id === queryIndex.toString()) {
             obj = { ...obj, value: { txt: txt } };
-            // return this.state.whereClauses[queryIndex] = obj
             let filteredWhereClauses = this.state.whereClauses.filter(
               (a) => a.id !== obj.id
             );
@@ -904,7 +916,6 @@ setQueryConstructor = (queryRequest,firstQuery,secondQueryTarget)=>{
             input === "first"
               ? (obj = { ...obj, firstTxt: { value: txt } })
               : (obj = { ...obj, secondTxt: { value: txt } });
-            // return this.state.whereClauses[queryIndex] = obj
             let filteredWhereClauses = this.state.whereClauses.filter(
               (a) => a.id !== obj.id
             );
@@ -934,7 +945,6 @@ setQueryConstructor = (queryRequest,firstQuery,secondQueryTarget)=>{
       const updateState = this.state.whereClauses.map((obj) => {
         if (obj.id === queryIndex.toString()) {
           obj = { ...obj, dropdownValueQuery: clickedValue };
-          // return this.state.whereClauses[queryIndex] = obj
           let filteredWhereClauses = this.state.whereClauses.filter(
             (a) => a.id !== obj.id
           );
@@ -984,7 +994,6 @@ setQueryConstructor = (queryRequest,firstQuery,secondQueryTarget)=>{
                                   ifInOrNotInQueryValue: detailThirdQuery,
                                   dropdownValueQuery: clickedValue,
                                 };
-                                // return this.state.whereClauses[queryIndex] = obj
                                 let filteredWhereClauses =
                                   this.state.whereClauses.filter(
                                     (a) => a.id !== obj.id
@@ -1051,7 +1060,6 @@ setQueryConstructor = (queryRequest,firstQuery,secondQueryTarget)=>{
               whereClauses: filteredWhereClauses,
             });
           }
-          // return this.state.whereClauses[queryIndex] = obj
         }
         return { obj };
       });
@@ -1382,6 +1390,7 @@ setQueryConstructor = (queryRequest,firstQuery,secondQueryTarget)=>{
             layer,
             AndOr,
             field: firstQuery,
+            source:"singleQuery"
           });
         break;
       case "%LIKE":
@@ -1394,6 +1403,7 @@ setQueryConstructor = (queryRequest,firstQuery,secondQueryTarget)=>{
             layer,
             AndOr,
             field: firstQuery,
+            source:"singleQuery"
           });
         break;
       case "%LIKE%":
@@ -1406,6 +1416,7 @@ setQueryConstructor = (queryRequest,firstQuery,secondQueryTarget)=>{
             layer,
             AndOr,
             field: firstQuery,
+            source:"singleQuery"
           });
         break;
       case "NOT LIKE":
@@ -1418,6 +1429,7 @@ setQueryConstructor = (queryRequest,firstQuery,secondQueryTarget)=>{
             layer,
             AndOr,
             field: firstQuery,
+            source:"singleQuery"
           });
         break;
       case "is null":
@@ -1430,6 +1442,7 @@ setQueryConstructor = (queryRequest,firstQuery,secondQueryTarget)=>{
             layer,
             AndOr,
             field: firstQuery,
+            source:"singleQuery"
           });
         break;
       case "is not null":
@@ -1442,13 +1455,12 @@ setQueryConstructor = (queryRequest,firstQuery,secondQueryTarget)=>{
             layer,
             AndOr,
             field: firstQuery,
+            source:"singleQuery"
           });
         break;
       case "IN":
         if (this.containsAnyLetters(secondQueryTarget)) {
-          query.where = `${firstQuery} IN (${
-            "'" + secondQueryTarget.join("', '") + "'"
-          })`;
+          query.where = `${firstQuery} IN (${"'" + secondQueryTarget.join("', '") + "'"})`;
             connector_function({
               layerView,
               query,
@@ -1457,6 +1469,7 @@ setQueryConstructor = (queryRequest,firstQuery,secondQueryTarget)=>{
               layer,
               AndOr,
               field: firstQuery,
+              source:"singleQuery"
             });
         } else {
           if (this.checkParenthesis(secondQueryTarget.join(","))) {
@@ -1465,7 +1478,7 @@ setQueryConstructor = (queryRequest,firstQuery,secondQueryTarget)=>{
           } else {
             query.where = `${firstQuery} IN (${secondQueryTarget.join(",")})`;
           }
-            connector_function({
+          connector_function({
               layerView,
               query,
               queryRequest,
@@ -1473,14 +1486,13 @@ setQueryConstructor = (queryRequest,firstQuery,secondQueryTarget)=>{
               layer,
               AndOr,
               field: firstQuery,
+              source:"singleQuery"
             });
         }
         break;
       case "NOT_IN":
         if (this.containsAnyLetters(secondQueryTarget)) {
-          query.where = `NOT ${firstQuery} IN (${
-            "'" + secondQueryTarget.join("', '") + "'"
-          })`;
+          query.where = `NOT ${firstQuery} IN (${"'" + secondQueryTarget.join("', '") + "'"})`;
           query.outFields = [`${firstQuery}`];
             connector_function({
               layerView,
@@ -1490,15 +1502,14 @@ setQueryConstructor = (queryRequest,firstQuery,secondQueryTarget)=>{
               layer,
               AndOr,
               field: firstQuery,
+              source:"singleQuery"
             });
         } else {
           if (this.checkParenthesis(secondQueryTarget.join(","))) {
             const stringFiedValue = this.loopToGetString(secondQueryTarget);
             query.where = `NOT  ${firstQuery} IN (${stringFiedValue})`;
           } else {
-            query.where = `NOT  ${firstQuery} IN (${secondQueryTarget.join(
-              ","
-            )})`;
+            query.where = `NOT  ${firstQuery} IN (${secondQueryTarget.join( ",")})`;
           }
           query.outFields = [`${firstQuery}`];
             connector_function({
@@ -1509,6 +1520,7 @@ setQueryConstructor = (queryRequest,firstQuery,secondQueryTarget)=>{
               layer,
               AndOr,
               field: firstQuery,
+              source:"singleQuery"
             });
         }
         break;
@@ -1522,6 +1534,7 @@ setQueryConstructor = (queryRequest,firstQuery,secondQueryTarget)=>{
             layer,
             AndOr,
             field: firstQuery,
+            source:"singleQuery"
           });
         break;
       case "is_not_included":
@@ -1534,6 +1547,7 @@ setQueryConstructor = (queryRequest,firstQuery,secondQueryTarget)=>{
             layer,
             AndOr,
             field: firstQuery,
+            source:"singleQuery"
           });
         break;
       default:
@@ -1547,6 +1561,7 @@ setQueryConstructor = (queryRequest,firstQuery,secondQueryTarget)=>{
               layer,
               AndOr,
               field: firstQuery,
+              source:"singleQuery"
             });
         } else {
           query.where = `${firstQuery} ${queryRequest} ${secondQueryTarget}`;
@@ -1559,6 +1574,7 @@ setQueryConstructor = (queryRequest,firstQuery,secondQueryTarget)=>{
               layer,
               AndOr,
               field: firstQuery,
+              source:"singleQuery"
             });
         }
     }
@@ -1668,33 +1684,38 @@ setQueryConstructor = (queryRequest,firstQuery,secondQueryTarget)=>{
   };
 
   connector_function = async (data) => {
-    const { layerView, query, queryRequest, values, layer, AndOr, field } =
-      data;
+    const { layerView, query, queryRequest, values, layer, AndOr, field,source } = data;
     if (this.state.higlightSelected.length) {
       this.clearHighlights(layerView);
-      // layerView._highlightIds.clear();
       this.state.higlightSelected.forEach((highlight) => {
         highlight.remove();
       });
     }
     let results = { features: [] };
-    let additionalQuery = query.where;
-    if (this.queryArray.length < this.state.whereClauses.length - 1) {
-      additionalQuery = query.where + " " + AndOr;
+    let additionalQuery = null
+    if (source === "singleQuery"){
+      additionalQuery = query.where;
+      if (this.queryArray.length < this.state.whereClauses.length - 1) {
+        additionalQuery = query.where + " " + AndOr;
+      }
+      this.queryArray.push(additionalQuery);
+      this.outfields.push(`${field}`);
     }
-    this.queryArray.push(additionalQuery);
-    this.outfields.push(`${field}`);
-    if (this.queryArray.length >= this.state.whereClauses.length){
-      let currentQuery = this.queryArray.join(" ");
+    if (this.queryArray.length >= this.state.whereClauses.length || source === "setQuery"){
+      let currentQuery = null;
+      if (this.queryArray.length)currentQuery = this.queryArray.join(" ");
       if (this.state.whereClauseSet?.length){
         const {setQueryString,outFields} = this.sendQuerySet();
-        if (setQueryString){
-          currentQuery += " " + AndOr + " " +  setQueryString;
-        }
-        if (outFields?.length){
-          this.outfields = this.outfields.concat(outFields)
-          const set = new Set(this.outfields);
-          this.outfields = Array.from(set);
+        if (source === "singleQuery"){
+          if (setQueryString)currentQuery += " " + AndOr + " " +  "(" + setQueryString + ")";
+          if (outFields?.length){
+            this.outfields = this.outfields.concat(outFields)
+            const set = new Set(this.outfields);
+            this.outfields = Array.from(set);
+          }
+        }else{
+          if (setQueryString)currentQuery = setQueryString;
+          if (outFields?.length)this.outfields = outFields
         }
       }
       if (!this.outfields.includes("OBJECTID")) {
@@ -1808,6 +1829,7 @@ setQueryConstructor = (queryRequest,firstQuery,secondQueryTarget)=>{
 
   //TODO config abilitare tab true/false
   render() {
+    console.log(this.state.whereClauseSet,this.state.whereClauses,"check where set")
     if (this.props.state === "CLOSED" && !this.state.widgetStateClosedChecked) {
       const jimuMapView = this.state.jimuMapView;
       const view = jimuMapView.view;
