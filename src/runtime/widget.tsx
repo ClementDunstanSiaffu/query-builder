@@ -2002,9 +2002,9 @@ setQueryConstructor = (queryRequest,firstQuery,secondQueryTarget)=>{
                   />
                 ))}
                 <br />
-                <div style={{width:'100%',background:'#005eca',height:'10px'}}></div>
+                {/* <div style={{width:'100%',background:'#005eca',height:'10px'}}></div> */}
                 <br />
-                {this.state.tablesSet.length < 2 ? (
+                {[1,2,3].map(el=><div>{this.state.tablesSet.length < 2 ? (
                   this.state.tablesSet.length == 1 ? <p>
                     Visualizza le feature nel layer corrispondenti alla seguente
                     espressione
@@ -2064,7 +2064,8 @@ setQueryConstructor = (queryRequest,firstQuery,secondQueryTarget)=>{
                     dropdownsSet={this.state.dropDownsSet}
                     itemNotFound={this.state.itemNotFound}
                   />
-                ))}
+                ))}</div>)}
+                
                 <br />
                 <br />
                 {this.state.itemNotFound && (
