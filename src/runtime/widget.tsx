@@ -520,9 +520,7 @@ export default class Widget extends React.PureComponent<
               );
             }
             if (this.containsAnyLetters(value)) {
-              let queryIn = `${attributeQuery} IN (${
-                "'" + value.join("', '") + "'"
-              })`;
+              let queryIn = `${attributeQuery} IN (${"'" + value.join("', '") + "'"})`;
               query.where = queryIn;
               normalizedWhereToSendQuery.push(queryIn);
             } else {
@@ -558,11 +556,6 @@ export default class Widget extends React.PureComponent<
             this.state.jimuMapView.view.map.allLayers.forEach((f, index) => {
               if (f.title === this.state.currentTargetText) {
                 this.state.jimuMapView.view.whenLayerView(f).then((layerView) => {
-                  // layerView.filter = {
-                  //   where: query.where,
-                  // };
-                  // layerView.visible = true;
-                  // displaying  data to table
                   this.connector_function({
                     layerView,
                     query,
@@ -583,11 +576,6 @@ export default class Widget extends React.PureComponent<
         this.state.jimuMapView.view.map.allLayers.forEach((f, index) => {
           if (f.title === this.state.currentTargetText) {
             this.state.jimuMapView.view.whenLayerView(f).then((layerView) => {
-              // layerView.filter = {
-              //   where: query.where,
-              // };
-              // layerView.visible = true;
-              // displaying  data to table
               this.connector_function({
                 layerView,
                 query:new Query(),
@@ -746,7 +734,6 @@ setQueryConstructor = (queryRequest,firstQuery,secondQueryTarget)=>{
   }
 
   async thirdQuery(e) {
-    // const arrChoose = []
     const currentQueryTest = e.currentTarget.textContent;
     this.state.jimuMapView.view.map.allLayers.forEach((f, index) => {
       if (f.title === this.state.currentTargetText) {
@@ -880,7 +867,6 @@ setQueryConstructor = (queryRequest,firstQuery,secondQueryTarget)=>{
         const updateState = this.state.whereClauses.map((obj) => {
           if (obj.id === queryIndex.toString()) {
             obj = { ...obj, value: { txt: txt } };
-            // return this.state.whereClauses[queryIndex] = obj
             let filteredWhereClauses = this.state.whereClauses.filter(
               (a) => a.id !== obj.id
             );
@@ -909,7 +895,6 @@ setQueryConstructor = (queryRequest,firstQuery,secondQueryTarget)=>{
             input === "first"
               ? (obj = { ...obj, firstTxt: { value: txt } })
               : (obj = { ...obj, secondTxt: { value: txt } });
-            // return this.state.whereClauses[queryIndex] = obj
             let filteredWhereClauses = this.state.whereClauses.filter(
               (a) => a.id !== obj.id
             );
@@ -939,7 +924,6 @@ setQueryConstructor = (queryRequest,firstQuery,secondQueryTarget)=>{
       const updateState = this.state.whereClauses.map((obj) => {
         if (obj.id === queryIndex.toString()) {
           obj = { ...obj, dropdownValueQuery: clickedValue };
-          // return this.state.whereClauses[queryIndex] = obj
           let filteredWhereClauses = this.state.whereClauses.filter(
             (a) => a.id !== obj.id
           );
@@ -989,7 +973,6 @@ setQueryConstructor = (queryRequest,firstQuery,secondQueryTarget)=>{
                                   ifInOrNotInQueryValue: detailThirdQuery,
                                   dropdownValueQuery: clickedValue,
                                 };
-                                // return this.state.whereClauses[queryIndex] = obj
                                 let filteredWhereClauses =
                                   this.state.whereClauses.filter(
                                     (a) => a.id !== obj.id
@@ -1056,7 +1039,6 @@ setQueryConstructor = (queryRequest,firstQuery,secondQueryTarget)=>{
               whereClauses: filteredWhereClauses,
             });
           }
-          // return this.state.whereClauses[queryIndex] = obj
         }
         return { obj };
       });
@@ -1675,7 +1657,6 @@ setQueryConstructor = (queryRequest,firstQuery,secondQueryTarget)=>{
     const { layerView, query, queryRequest, values, layer, AndOr, field,source } = data;
     if (this.state.higlightSelected.length) {
       this.clearHighlights(layerView);
-      // layerView._highlightIds.clear();
       this.state.higlightSelected.forEach((highlight) => {
         highlight.remove();
       });
@@ -1690,16 +1671,9 @@ setQueryConstructor = (queryRequest,firstQuery,secondQueryTarget)=>{
       this.queryArray.push(additionalQuery);
       this.outfields.push(`${field}`);
     }
-    // let additionalQuery = query.where;
-    // if (this.queryArray.length < this.state.whereClauses.length - 1) {
-    //   additionalQuery = query.where + " " + AndOr;
-    // }
-    // this.queryArray.push(additionalQuery);
-    // this.outfields.push(`${field}`);
     if (this.queryArray.length >= this.state.whereClauses.length || source === "setQuery"){
       let currentQuery = null;
       if (this.queryArray.length)currentQuery = this.queryArray.join(" ");
-      // let currentQuery = this.queryArray.join(" ");
       if (this.state.whereClauseSet?.length){
         const {setQueryString,outFields} = this.sendQuerySet();
         if (source === "singleQuery"){
@@ -1713,19 +1687,10 @@ setQueryConstructor = (queryRequest,firstQuery,secondQueryTarget)=>{
           if (setQueryString)currentQuery = setQueryString;
           if (outFields?.length)this.outfields = outFields
         }
-        // if (setQueryString){
-        //   currentQuery += " " + AndOr + " " +  setQueryString;
-        // }
-        // if (outFields?.length){
-        //   this.outfields = this.outfields.concat(outFields)
-        //   const set = new Set(this.outfields);
-        //   this.outfields = Array.from(set);
-        // }
       }
       if (!this.outfields.includes("OBJECTID")) {
         this.outfields.push("OBJECTID");
       }
-      console.log(currentQuery,"check current where query")
       query.outFields = this.outfields;
       query.returnGeometry = true;
       query.where = currentQuery;
@@ -1834,6 +1799,7 @@ setQueryConstructor = (queryRequest,firstQuery,secondQueryTarget)=>{
 
   //TODO config abilitare tab true/false
   render() {
+    console.log(this.state.whereClauseSet,this.state.whereClauses,"check where set")
     if (this.props.state === "CLOSED" && !this.state.widgetStateClosedChecked) {
       const jimuMapView = this.state.jimuMapView;
       const view = jimuMapView.view;
