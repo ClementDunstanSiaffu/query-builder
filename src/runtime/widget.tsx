@@ -224,9 +224,7 @@ export default class Widget extends React.PureComponent<
         attributeQueryType: e.currentTarget.attributes.datatype.value,
         queryValue: "=",
       };
-      this.setState({
-        whereClauseSet: [whereClauseSet],
-      });
+      this.setState({whereClauseSet: [whereClauseSet]});
     }
     if (this.state.whereClauseSet.length) {
       const queryIndex = this.state.whereClauseSet
@@ -859,7 +857,7 @@ return el;
     let newBlock=[...this.state.SetBlock];
     newBlock.push({
       blockId:this.state.SetBlock.length,
-      [this.state.SetBlock.length]:this.state.whereClauseSet,
+      [`${this.state.SetBlock.length}`]:[],
       tablesSet:[ { id: idOne }, { id: idTwo }],
       tableCounterSet: this.state.tableCounterSet + 2,
       dropDownsSet: {
@@ -874,7 +872,7 @@ return el;
         ...this.state.dropDownsSet,
         [`${currentId}-${this.state.SetBlock.length}`]:false,
         [`${nextCurrentId}-${this.state.SetBlock.length}`]:false 
-      }
+      },
     });
 
     //  adding field ..
@@ -1318,7 +1316,41 @@ return el;
     }
   };
 
+  addCurrentWherClauseBlock = (currentId,currentWhereClause)=>{
+    const blockId = currentId.split("-")[1];
+    const currentSetBlock = [...this.state.SetBlock];
+    let currentBlockIndex = -1;
+    let currentBlock;
+    currentBlockIndex = currentSetBlock.findIndex((item)=>`${item?.blockId}` === blockId);
+    if (currentBlockIndex !== -1)currentBlock = currentSetBlock[currentBlockIndex]
+    // const currentBlock = currentSetBlock.find((item)=>`${item?.blockId}` === blockId);
+    let currentWhereSetClause = null;
+    if (currentBlock){
+      currentWhereSetClause = currentBlock[`${blockId}`];
+      console.log(currentBlock,currentWhereSetClause,blockId,"check current block currentWhereSetClause")
+      if (currentWhereSetClause?.length){
+        let index = -1;
+        index = currentWhereSetClause.findIndex((item)=>item.id === currentId);
+        if (index !== -1){
+          currentWhereSetClause[index] = currentWhereClause;
+          // currentBlock[blockId] = currentWhereSetClause;
+          // this.setState({SetBlock:currentBlock});
+        }else{
+          currentWhereSetClause = [...currentWhereSetClause,currentWhereClause]
+        }
+        currentBlock[blockId] = currentWhereSetClause;
+        currentSetBlock[currentBlockIndex] = currentBlock;
+        this.setState({SetBlock:currentSetBlock});
+      }else{
+        currentBlock[blockId] = [currentWhereClause];
+        currentSetBlock[currentBlockIndex] = currentBlock;
+        this.setState({SetBlock:currentSetBlock});
+      }
+    }
+  }
+
   onChangeCheckBoxSet = (event) => {
+    let newWhereSetClause;
     let currentId = event.target.attributes.id.value;
     let objectId = event.target.attributes.value.value;
     let queryIndex;
@@ -1343,6 +1375,7 @@ return el;
                 (a) => a.id !== obj.id
               );
               filteredWhereClauseSet.push(obj);
+              newWhereSetClause = filteredWhereClauseSet;
               this.setState(
                 {
                   whereClauseSet: filteredWhereClauseSet,
@@ -1351,10 +1384,9 @@ return el;
                   this.state.whereClauseSet.sort(function (a, b) {
                     return a.id < b.id ? -1 : a.id == b.id ? 0 : 1;
                   });
+                  // newWhereSetClause = Array.from(new Set(this.state.whereClauseSet));
                   // Remove duplicate entries from the whereClauses array
-                  this.setState({
-                    whereClauseSet: Array.from(new Set(this.state.whereClauseSet)),
-                  });
+                  this.setState({whereClauseSet: Array.from(new Set(this.state.whereClauseSet)),});
                 }
               );
             } else {
@@ -1380,6 +1412,7 @@ return el;
                 this.state.whereClauseSet.splice(index, 1);
                 // Add the updated obj object to the whereClauses array
                 this.state.whereClauseSet.push(obj);
+                newWhereSetClause = this.state.whereClauseSet
                 this.setState(
                   {
                     whereClauseSet: this.state.whereClauseSet,
@@ -1388,12 +1421,9 @@ return el;
                     this.state.whereClauseSet.sort(function (a, b) {
                       return a.id < b.id ? -1 : a.id == b.id ? 0 : 1;
                     });
-
+                    // newWhereSetClause = Array.from(new Set(this.state.whereClauseSet))
                     // Remove duplicate entries from the whereClauses array
-                    this.setState({
-                      whereClauseSet: Array.from(
-                        new Set(this.state.whereClauseSet)
-                      ),
+                    this.setState({whereClauseSet: Array.from(new Set(this.state.whereClauseSet)),
                     });
                   }
                 );
@@ -1424,12 +1454,17 @@ return el;
           this.state.whereClauseSet.sort(function (a, b) {
             return a.id < b.id ? -1 : a.id == b.id ? 0 : 1;
           });
+          newWhereSetClause =  Array.from(new Set(this.state.whereClauseSet));
           // Remove duplicate entries from the whereClauses array
           this.setState({
             whereClauseSet: Array.from(new Set(this.state.whereClauseSet)),
           });
         }
       );
+    }
+    if (newWhereSetClause?.length){
+      const currentNewWhereSetClause = newWhereSetClause.find((item)=>item.id === currentId);
+      this.addCurrentWherClauseBlock(currentId,currentNewWhereSetClause)
     }
   };
 
@@ -1914,6 +1949,7 @@ return el;
 
   //TODO config abilitare tab true/false
   render() {
+    console.log(this.state.SetBlock,"set block")
     if (this.props.state === "CLOSED" && !this.state.widgetStateClosedChecked) {
       const jimuMapView = this.state.jimuMapView;
       const view = jimuMapView.view;
