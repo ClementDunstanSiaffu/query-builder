@@ -60,6 +60,7 @@ function AddSetTable(props) {
     blockId
   } = props;
 
+  const currentwhereClausesSet = whereClausesSet.find((item)=>item.id === tablesSetId);
   return (
     <div className="my-1">
       {list.fields ? (
@@ -106,8 +107,7 @@ function AddSetTable(props) {
                 onChange={(e) => getQuery(e, "set")}
                 placeholder="Seleziona campo"
               >
-                {whereClausesSet[tablesSetId] &&
-                whereClausesSet[tablesSetId].attributeQueryType === "string"
+                {currentwhereClausesSet && currentwhereClausesSet.attributeQueryType === "string"
                   ? queryConstructorString.map((o, i) => {
                       return (
                         <Option
@@ -209,7 +209,6 @@ const SecondConstructor = (props) => {
   let checked = 0;
   let au = true;
   // valueThirdQuery.map((el, i) => { normalizedThirdQuery.push({ label: el.label[0].toString(), value: el.value[0].toString() }) })
-  
   if (whereClausesSet.length){
     const currentItem = whereClausesSet.find((item)=>item.id === tablesSetId);
     if (currentItem?.ifInOrNotInQueryValue){
@@ -277,7 +276,7 @@ const SecondConstructor = (props) => {
       <div value={"="} className="d-flex col-md-4">
         {dropdownValueQuery === "univoco" ? (
           <Select
-            onChange={univocoSelectHandler}
+            onChange={(e)=>univocoSelectHandler(e,"set")}
             placeholder="Seleziona il Layer"
           >
             {normalizedThirdQuery.map((el, i) => {
@@ -290,7 +289,7 @@ const SecondConstructor = (props) => {
           </Select>
         ) : (
           <TextInput
-            onChange={textInputHandler}
+            onChange={(e)=>textInputHandler(e,"set")}
             onAcceptValue={function noRefCheck() {}}
             type="text"
             className=" w-100"
@@ -335,7 +334,7 @@ const SecondConstructor = (props) => {
       <div value={"<>"} className="d-flex col-md-4">
         {dropdownValueQuery === "univoco" ? (
           <Select
-            onChange={univocoSelectHandler}
+            onChange={(e)=>univocoSelectHandler(e,"set")}
             placeholder="Seleziona il Layer"
           >
             {normalizedThirdQuery.map((el, i) => {
@@ -348,7 +347,7 @@ const SecondConstructor = (props) => {
           </Select>
         ) : (
           <TextInput
-            onChange={textInputHandler}
+            onChange={(e)=>textInputHandler(e,"set")}
             onAcceptValue={function noRefCheck() {}}
             type="text"
             className=" w-100"
@@ -479,7 +478,7 @@ const SecondConstructor = (props) => {
           </Select>
         ) : (
           <TextInput
-            onChange={textInputHandler}
+            onChange={(e)=>textInputHandler(e,"set")}
             onAcceptValue={function noRefCheck() {}}
             type="text"
             className=" w-100"
@@ -533,7 +532,7 @@ const SecondConstructor = (props) => {
           </Select>
         ) : (
           <TextInput
-            onChange={textInputHandler}
+            onChange={(e)=>textInputHandler(e,"set")}
             onAcceptValue={function noRefCheck() {}}
             type="text"
             className=" w-100"
@@ -587,7 +586,7 @@ const SecondConstructor = (props) => {
           </Select>
         ) : (
           <TextInput
-            onChange={textInputHandler}
+            onChange={(e)=>textInputHandler(e,"set")}
             onAcceptValue={function noRefCheck() {}}
             type="text"
             className=" w-100"
@@ -641,7 +640,7 @@ const SecondConstructor = (props) => {
           </Select>
         ) : (
           <TextInput
-            onChange={textInputHandler}
+            onChange={(e)=>textInputHandler(e,"set")}
             onAcceptValue={function noRefCheck() {}}
             type="text"
             className=" w-100"
@@ -687,7 +686,7 @@ const SecondConstructor = (props) => {
       <div value={"included"} className="d-flex col-md-4">
         <div className="include">
           <TextInput
-            onChange={textFirstIncludedHandler}
+            onChange={(e)=>textFirstIncludedHandler(e,"set")}
             onAcceptValue={function noRefCheck() {}}
             type="text"
             data-table-id={tablesSetId}
@@ -697,7 +696,7 @@ const SecondConstructor = (props) => {
             e
           </p>
           <TextInput
-            onChange={textSecondIncludedHandler}
+            onChange={(e)=>textSecondIncludedHandler(e,"set")}
             onAcceptValue={function noRefCheck() {}}
             type="text"
             data-table-id={tablesSetId}
@@ -708,7 +707,7 @@ const SecondConstructor = (props) => {
       <div value={"is_not_included"} className="d-flex col-md-4">
         <div className="include">
           <TextInput
-            onChange={textFirstIncludedHandler}
+            onChange={(e)=>textFirstIncludedHandler(e,"set")}
             onAcceptValue={function noRefCheck() {}}
             type="text"
             id="inputs"
@@ -716,7 +715,7 @@ const SecondConstructor = (props) => {
           />
           <p className="col-sm-2 text-center">e</p>
           <TextInput
-            onChange={textSecondIncludedHandler}
+            onChange={(e)=>textSecondIncludedHandler(e,"set")}
             onAcceptValue={function noRefCheck() {}}
             type="text"
             id="inputs"
@@ -726,7 +725,7 @@ const SecondConstructor = (props) => {
       </div>
       <div value={"LIKE%"} className="d-flex col-md-4">
         <TextInput
-          onChange={textInputHandler}
+          onChange={(e)=>textInputHandler(e,"set")}
           onAcceptValue={function noRefCheck() {}}
           type="text"
           className=" w-100"
@@ -735,7 +734,7 @@ const SecondConstructor = (props) => {
       </div>
       <div value={"%LIKE"} className="d-flex col-md-4">
         <TextInput
-          onChange={textInputHandler}
+          onChange={(e)=>textInputHandler(e,"set")}
           onAcceptValue={function noRefCheck() {}}
           type="text"
           className=" w-100"
@@ -744,7 +743,7 @@ const SecondConstructor = (props) => {
       </div>
       <div value={"LIKE%"} className="d-flex col-md-4">
         <TextInput
-          onChange={textInputHandler}
+          onChange={(e)=>textInputHandler(e,"set")}
           onAcceptValue={function noRefCheck() {}}
           type="text"
           className=" w-100"
@@ -753,7 +752,7 @@ const SecondConstructor = (props) => {
       </div>
       <div value={"%LIKE%"} className="d-flex col-md-4">
         <TextInput
-          onChange={textInputHandler}
+          onChange={(e)=>textInputHandler(e,"set")}
           onAcceptValue={function noRefCheck() {}}
           type="text"
           className=" w-100"
@@ -762,7 +761,7 @@ const SecondConstructor = (props) => {
       </div>
       <div value={"NOT LIKE"} className="d-flex col-md-4">
         <TextInput
-          onChange={textInputHandler}
+          onChange={(e)=>textInputHandler(e,"set")}
           onAcceptValue={function noRefCheck() {}}
           type="text"
           className=" w-100"

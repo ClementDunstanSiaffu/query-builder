@@ -232,7 +232,7 @@ export default class Widget extends React.PureComponent<
         .indexOf(e.currentTarget.attributes[1].value);
       if (queryIndex !== -1) {
         const updateState = this.state.whereClauseSet.map((obj) => {
-          if (obj.id === queryIndex.toString()) {
+          if (obj.id === e.currentTarget.attributes[1].value) {
             obj = {
               ...obj,
               attributeQuery: e.currentTarget.name,
@@ -938,43 +938,43 @@ return el;
     } 
   };
 
-  textInputHandler = (e) => {
+  textInputHandler = (e,queryType="single") => {
     let txt = e.target.value;
     let currentTableId = e.target.attributes[0].value;
-    this.queryTextConstructor(txt, currentTableId);
+    this.queryTextConstructor(txt, currentTableId,queryType);
   };
-  textFirstIncludedHandler = (e) => {
+  textFirstIncludedHandler = (e,queryType="single") => {
     let txt = e.target.value;
     let currentTableId = e.target.attributes[0].value;
     let input = "first";
-    this.queryTextIncludedConstructor(txt, currentTableId, input);
+    this.queryTextIncludedConstructor(txt, currentTableId, input,queryType);
   };
 
-  textSecondIncludedHandler = (e) => {
+  textSecondIncludedHandler = (e,queryType="single") => {
     let txt = e.target.value;
     let currentTableId = e.target.attributes[0].value;
     let input = "second";
-    this.queryTextIncludedConstructor(txt, currentTableId, input);
+    this.queryTextIncludedConstructor(txt, currentTableId, input,queryType);
   };
-  univocoSelectHandler = (e) => {
+  univocoSelectHandler = (e,queryType="single") => {
     let txt = e.currentTarget.textContent;
     let currentTableId = e.currentTarget.attributes[2].value;
-    this.queryTextConstructor(txt, currentTableId);
+    this.queryTextConstructor(txt, currentTableId,queryType);
   };
 
   containsAnyLetters = (str) => {
     return /[a-zA-Z]/.test(str);
   };
 
-  queryTextConstructor = (txt, currentTableId) => {
+  queryTextConstructor = (txt, currentTableId,queryType) => {
     let queryIndex;
-    if (this.state.whereClauses.length) {
-      queryIndex = this.state.whereClauses
-        .map((obj) => obj.id)
-        .indexOf(currentTableId);
+    let newWhereSetClause;
+    const keyType = queryType === "single" ? "whereClauses":"whereClauseSet";
+    if (this.state[keyType].length) {
+      queryIndex = this.state[keyType].map((obj) => obj.id).indexOf(currentTableId);
       if (queryIndex !== -1) {
-        const updateState = this.state.whereClauses.map((obj) => {
-          if (obj.id === queryIndex.toString()) {
+        const updateState = this.state[keyType].map((obj) => {
+          if (obj.id === currentTableId) {
             obj = { ...obj, value: { txt: txt } };
             let filteredWhereClauses = this.state.whereClauses.filter(
               (a) => a.id !== obj.id
@@ -983,40 +983,46 @@ return el;
             filteredWhereClauses.sort(function (a, b) {
               return a.id < b.id ? -1 : a.id == b.id ? 0 : 1;
             });
-            return this.setState({
-              whereClauses: filteredWhereClauses,
-            });
+            newWhereSetClause = filteredWhereClauses;
+            return this.setState({[keyType]: filteredWhereClauses,});
           }
           return { obj };
         });
       }
+      if (newWhereSetClause?.length){
+        const currentNewWhereSetClause = newWhereSetClause.find((item)=>item.id === currentTableId);
+        this.addCurrentWherClauseBlock(currentTableId,currentNewWhereSetClause)
+      }
     }
   };
-  queryTextIncludedConstructor = (txt, currentTableId, input) => {
+  queryTextIncludedConstructor = (txt, currentTableId, input,queryType) => {
     let queryIndex;
+    let newWhereSetClause;
+    const keyType = queryType === "single" ? "whereClauses":"whereClauseSet";
     if (this.state.whereClauses.length) {
-      queryIndex = this.state.whereClauses
+      queryIndex = this.state[keyType]
         .map((obj) => obj.id)
         .indexOf(currentTableId);
       if (queryIndex !== -1) {
-        const updateState = this.state.whereClauses.map((obj) => {
+        const updateState = this.state[keyType].map((obj) => {
           if (obj.id === queryIndex.toString()) {
             input === "first"
               ? (obj = { ...obj, firstTxt: { value: txt } })
               : (obj = { ...obj, secondTxt: { value: txt } });
-            let filteredWhereClauses = this.state.whereClauses.filter(
+            let filteredWhereClauses = this.state[keyType].filter(
               (a) => a.id !== obj.id
             );
             filteredWhereClauses.push(obj);
-            filteredWhereClauses.sort(function (a, b) {
-              return a.id < b.id ? -1 : a.id == b.id ? 0 : 1;
-            });
-            return this.setState({
-              whereClauses: filteredWhereClauses,
-            });
+            filteredWhereClauses.sort(function (a, b) {return a.id < b.id ? -1 : a.id == b.id ? 0 : 1;});
+            newWhereSetClause = filteredWhereClauses;
+            return this.setState({whereClauses: filteredWhereClauses,});
           }
           return { obj };
         });
+      }
+      if (newWhereSetClause?.length){
+        const currentNewWhereSetClause = newWhereSetClause.find((item)=>item.id === currentTableId);
+        this.addCurrentWherClauseBlock(currentTableId,currentNewWhereSetClause)
       }
     }
   };
@@ -1328,7 +1334,6 @@ return el;
     let currentWhereSetClause = null;
     if (currentBlock){
       currentWhereSetClause = currentBlock[`${blockId}`];
-      console.log(currentBlock,currentWhereSetClause,blockId,"check current block currentWhereSetClause")
       if (currentWhereSetClause?.length){
         let index = -1;
         index = currentWhereSetClause.findIndex((item)=>item.id === currentId);
@@ -1958,7 +1963,6 @@ return el;
 
   //TODO config abilitare tab true/false
   render() {
-    console.log(this.state.SetBlock,"set block")
     if (this.props.state === "CLOSED" && !this.state.widgetStateClosedChecked) {
       const jimuMapView = this.state.jimuMapView;
       const view = jimuMapView.view;
