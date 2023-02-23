@@ -56,6 +56,7 @@ function AddSetTable(props) {
     mouseleave,
     onmouseLeave,
     dropdownsSet,
+    showDelete
   } = props;
 
   return (
@@ -63,7 +64,7 @@ function AddSetTable(props) {
       {list.fields ? (
         <div className="d-flex flex-column">
           <div className="row m-0">
-            <div className="row w-100 d-flex justify-content-end">
+            {showDelete&&<div className="row w-100 d-flex justify-content-end">
               <Button
                 className="mb-2 col-1 self-end"
                 onClick={deleteTable}
@@ -71,7 +72,7 @@ function AddSetTable(props) {
               >
                 <CloseOutlined />
               </Button>
-            </div>
+            </div>}
             <Select
               className="col-md-4 mb-2"
               onChange={getQueryAttribute}
