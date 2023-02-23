@@ -13,6 +13,8 @@ import Polygon from "esri/geometry/Polygon";
 import AttributeTableConnector from "../connector/attribute_table_connector";
 import geometryEngine from "esri/geometry/geometryEngine";
 import AddSetTable from "./components/AddSetTable";
+import { CloseOutlined } from "jimu-icons/outlined/editor/close";
+
 
 export default class Widget extends React.PureComponent<
   AllWidgetProps<IMConfig>,
@@ -111,6 +113,7 @@ export default class Widget extends React.PureComponent<
       widgetStateClosedChecked: false,
       widgetStateOpenedChecked: false,
       showAddSelect:true,
+      SetBlock:[]
     };
   };
 
@@ -785,7 +788,7 @@ setQueryConstructor = (queryRequest,firstQuery,secondQueryTarget)=>{
     }
   };
 
-  addTwoTable = () => {
+  addTwoTablef = () => {
     const currentId = this.state.tableCounterSet;
     let idOne = this.state.tableCounterSet;
     let idTwo = idOne + 1;
@@ -798,6 +801,87 @@ setQueryConstructor = (queryRequest,firstQuery,secondQueryTarget)=>{
       this.setState({showAddSelect:false});
     }
   };
+
+  addTwoTable = (ev) => {
+  let newblock=this.state.SetBlock.map((el)=>{
+  if(ev.target.id==el.blockId){
+  let idOne = el.tableCounterSet;
+  let idTwo = idOne + 1;
+  const currentId = this.state.tableCounterSet;
+return {...el,tablesSet:[...el.tablesSet, { id: idOne }, { id: idTwo }],tableCounterSet: this.state.tableCounterSet + 2,dropDownsSet: { ...el.dropDownsSet, [currentId]: false }
+}
+}
+return el;
+
+});
+    if(this.state.tables.length > 0){
+      this.setState({showAddSelect:false});
+    }
+    this.setState({SetBlock:newblock});
+
+
+//     let newBlock = this.state.SetBlock.reduce((acc,el)=>{
+//       if(ev.target.id==el.blockId){
+//         let idOne = el.tableCounterSet;
+//         let idTwo = idOne + 1;
+//         const currentId = this.state.tableCounterSet;
+//         let newBlock=[...this.state.SetBlock];
+//         newBlock.push({tablesSet:[ { id: idOne }, { id: idTwo }],tableCounterSet: this.state.tableCounterSet + 2,dropDownsSet: { ...this.state.dropDownsSet, [currentId]: false }})
+//         this.setState({SetBlock:newBlock});
+//       acc.push()
+//         if(this.state.tables.length > 0){
+//           this.setState({showAddSelect:false});
+//         }
+//       }
+// return acc;
+//     },[]);
+  };
+
+
+  addBlockf = ()=>{
+    let newBlock=[...this.state.SetBlock];
+    newBlock.push({[this.state.SetBlock.length]:this.state.whereClauseSet})
+    this.setState({SetBlock:newBlock});
+     const currentId = this.state.tableCounterSet;
+
+    //  adding field ..
+
+    let idOne = this.state.tableCounterSet;
+    let idTwo = idOne + 1;
+    this.setState({
+      tablesSet: [{ id: idOne }, { id: idTwo }],
+      tableCounterSet: this.state.tableCounterSet + 2,
+      dropDownsSet: { ...this.state.dropDownsSet, [currentId]: false },
+    });
+    if(this.state.tables.length > 0){
+      this.setState({showAddSelect:false});
+    }
+
+  }
+
+  addBlock = ()=>{
+    let idOne = this.state.SetBlock.tableCounterSet;
+    let idTwo = idOne + 1;
+     // this.setState({
+    //   tablesSet: [{ id: idOne }, { id: idTwo }],
+    //   tableCounterSet: this.state.tableCounterSet + 2,
+    //   dropDownsSet: { ...this.state.dropDownsSet, [currentId]: false },
+    // });
+    const currentId = this.state.SetBlock.tableCounterSet;
+    let newBlock=[...this.state.SetBlock];
+    newBlock.push({blockId:this.state.SetBlock.length,[this.state.SetBlock.length]:this.state.whereClauseSet,tablesSet:[ { id: idOne }, { id: idTwo }],tableCounterSet: this.state.tableCounterSet + 2,dropDownsSet: { ...this.state.dropDownsSet, [currentId]: false }})
+    this.setState({SetBlock:newBlock});
+
+    //  adding field ..
+    
+    // let idOne = this.state.tableCounterSet;
+    // let idTwo = idOne + 1;
+   
+    if(this.state.tables.length > 0){
+      this.setState({showAddSelect:false});
+    }
+
+  }
 
   deleteTable = (id) => {
     const copiedTable = [...this.state.tables];
@@ -829,7 +913,7 @@ setQueryConstructor = (queryRequest,firstQuery,secondQueryTarget)=>{
   deleteSetTable = (id) => {
     const copiedTable = [...this.state.tablesSet];
     const newTables = copiedTable.filter((el) => el.id !== id);
-    this.setState({tableCounterSet:this.state.tableCounterSet-1});
+    this.setState({tableCounterSet:this.state.tableCounterSet-2});
     const copiedWhereClauses = [...this.state.whereClauseSet];
     const deletedWhereClauses = copiedWhereClauses.filter(
       (el) => el.id !== id.toString()
@@ -1951,7 +2035,7 @@ setQueryConstructor = (queryRequest,firstQuery,secondQueryTarget)=>{
                 </Button>
                 <Button
                   disabled={!this.state.currentTargetText}
-                  onClick={this.addTwoTable}
+                  onClick={this.addBlock}
                   size="default"
                   className="d-flex align-items-center  mb-2"
                   type="secondary"
@@ -2024,30 +2108,46 @@ setQueryConstructor = (queryRequest,firstQuery,secondQueryTarget)=>{
                   />
                 ))}
                 <br />
-                {/* <div style={{width:'100%',background:'#005eca',height:'10px'}}></div> */}
+                <div style={{width:'100%',background:'#005eca',height:'10px'}}></div>
                 <br />
-                {[1,2,3].map(el=><div>{this.state.tablesSet.length < 2 ? (
-                  this.state.tablesSet.length == 1 ? <p>
+                {this.state.SetBlock.map((el,index)=>
+                <div id={index}>{el.tablesSet.length < 2 ? (
+                  el.tablesSet.length == 1 ? <p>
                     Visualizza le feature nel layer corrispondenti alla seguente
                     espressione
                   </p>:''
                 ) : (
-                  <Select
-                    onChange={this.chooseAndOrSet}
-                    placeholder=" Visualizza le feature nel layer che corrispondono a tutte le espressioni seguenti"
-                    defaultValue="AND"
-                  >
-                    <Option value="AND">
-                      Visualizza le feature nel layer che corrispondono a tutte
-                      le espressioni seguenti
-                    </Option>
-                    <Option value="OR">
-                      Visualizza le feature nel layer che corrispondono ad una
-                      qualsiasi delle espressioni seguenti
-                    </Option>
-                  </Select>
+                  
+                  <div style={{display:'flex',flexDirection:'row'}}><Select
+                  onChange={this.chooseAndOrSet}
+                  placeholder=" Visualizza le feature nel layer che corrispondono a tutte le espressioni seguenti"
+                  defaultValue="AND"
+                >
+                  <Option value="AND">
+                    Visualizza le feature nel layer che corrispondono a tutte
+                    le espressioni seguenti
+                  </Option>
+                  <Option value="OR">
+                    Visualizza le feature nel layer che corrispondono ad una
+                    qualsiasi delle espressioni seguenti
+                  </Option>
+                </Select> <div style={{display:'flex',gap:'5px'}} className="row w-100 d-flex justify-content-end">
+                <Button
+                  id={el.blockId}
+                  onClick={this.addTwoTable}
+                  size="default"
+                  className="d-flex align-items-center  mb-2"
+                  type="secondary"
+                >
+                  <Icon
+                    icon='<svg viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M7.5 0a.5.5 0 0 0-.5.5V7H.5a.5.5 0 0 0 0 1H7v6.5a.5.5 0 0 0 1 0V8h6.5a.5.5 0 0 0 0-1H8V.5a.5.5 0 0 0-.5-.5Z" fill="#000"></path></svg>'
+                    size="m"
+                  />
+                </Button>
+            
+            </div></div>
                 )}
-                {this.state.tablesSet.map((el, i) => (
+                {el.tablesSet.map((el, i) => (
                   <AddSetTable
                     className="w-100"
                     key={i}
@@ -2085,6 +2185,7 @@ setQueryConstructor = (queryRequest,firstQuery,secondQueryTarget)=>{
                     functionCounterIsChecked={this.functionCounterIsChecked}
                     dropdownsSet={this.state.dropDownsSet}
                     itemNotFound={this.state.itemNotFound}
+                    showDelete={(i+1)%2==0?false:true}
                   />
                 ))}</div>)}
                 
