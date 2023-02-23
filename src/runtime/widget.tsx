@@ -358,6 +358,7 @@ export default class Widget extends React.PureComponent<
       queryIndex = this.state.whereClauseSet
         .map((obj) => obj.id)
         .indexOf(clickedQueryTableId);
+        console.log(queryIndex,this.state.whereClauseSet,clickedQueryTableId,"check for set")
       if (queryIndex !== -1) {
         const updateState = this.state.whereClauseSet.map((obj) => {
           if (obj.id === queryIndex.toString()) {
@@ -842,16 +843,24 @@ return el;
   // }
 
   addBlock = ()=>{
-    let idOne = this.state.SetBlock.tableCounterSet;
+    let idOne = this.state.SetBlock.tableCounterSet??0;
     let idTwo = idOne + 1;
      // this.setState({
     //   tablesSet: [{ id: idOne }, { id: idTwo }],
     //   tableCounterSet: this.state.tableCounterSet + 2,
     //   dropDownsSet: { ...this.state.dropDownsSet, [currentId]: false },
     // });
-    const currentId = this.state.SetBlock.tableCounterSet;
+    // const currentId = this.state.SetBlock.tableCounterSet;
+    const currentId = idOne;
+    const nextCurrentId = idTwo;
     let newBlock=[...this.state.SetBlock];
-    newBlock.push({blockId:this.state.SetBlock.length,[this.state.SetBlock.length]:this.state.whereClauseSet,tablesSet:[ { id: idOne }, { id: idTwo }],tableCounterSet: this.state.tableCounterSet + 2,dropDownsSet: { ...this.state.dropDownsSet, [currentId]: false }})
+    newBlock.push({
+      blockId:this.state.SetBlock.length,
+      [this.state.SetBlock.length]:this.state.whereClauseSet,
+      tablesSet:[ { id: idOne }, { id: idTwo }],
+      tableCounterSet: this.state.tableCounterSet + 2,
+      dropDownsSet: { ...this.state.dropDownsSet, [currentId]: false,[nextCurrentId]:false }
+    })
     this.setState({SetBlock:newBlock});
 
     //  adding field ..
@@ -1895,7 +1904,7 @@ return el;
 
   //TODO config abilitare tab true/false
   render() {
-    console.log(this.state.whereClauseSet,this.state.whereClauses,"check where set")
+    console.log(this.state.SetBlock,"check where set")
     if (this.props.state === "CLOSED" && !this.state.widgetStateClosedChecked) {
       const jimuMapView = this.state.jimuMapView;
       const view = jimuMapView.view;
