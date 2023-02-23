@@ -56,7 +56,8 @@ function AddSetTable(props) {
     mouseleave,
     onmouseLeave,
     dropdownsSet,
-    showDelete
+    showDelete,
+    blockId
   } = props;
 
   return (
@@ -160,6 +161,7 @@ function AddSetTable(props) {
               mouseleave={mouseleave}
               onmouseLeave={onmouseLeave}
               dropdownsSet={dropdownsSet}
+              blockId = {blockId}
             />
           </div>
         </div>
@@ -198,6 +200,7 @@ const SecondConstructor = (props) => {
     autOpen,
     onmouseLeave,
     dropdownsSet,
+    blockId
   } = props;
   const normalizedThirdQuery = [];
   let defaultValue = "=";
@@ -372,7 +375,7 @@ const SecondConstructor = (props) => {
               isOpen={dropdownsSet[tablesSetId]}
               toggle={() => dropDown}
             >
-              <DropdownButton onClick={() => openDrop(tablesSetId)}>
+              <DropdownButton onClick={() => openDrop(tablesSetId,blockId)}>
                 {checked} elementi selezionati
               </DropdownButton>
               <DropdownMenu>

@@ -358,7 +358,6 @@ export default class Widget extends React.PureComponent<
       queryIndex = this.state.whereClauseSet
         .map((obj) => obj.id)
         .indexOf(clickedQueryTableId);
-        console.log(queryIndex,this.state.whereClauseSet,clickedQueryTableId,"check for set")
       if (queryIndex !== -1) {
         const updateState = this.state.whereClauseSet.map((obj) => {
           if (obj.id === queryIndex.toString()) {
@@ -804,14 +803,18 @@ setQueryConstructor = (queryRequest,firstQuery,secondQueryTarget)=>{
   // };
 
   addTwoTable = (ev) => {
-  let newblock=this.state.SetBlock.map((el)=>{
-  if(ev.target.id==el.blockId){
-  let idOne = el.tableCounterSet;
-  let idTwo = idOne + 1;
-  const currentId = this.state.tableCounterSet;
-return {...el,tablesSet:[...el.tablesSet, { id: idOne }, { id: idTwo }],tableCounterSet: this.state.tableCounterSet + 2,dropDownsSet: { ...el.dropDownsSet, [currentId]: false }
-}
-}
+    let newblock=this.state.SetBlock.map((el)=>{
+    if(ev.target.id==el.blockId){
+      let idOne = el.tableCounterSet;
+      let idTwo = idOne + 1;
+      const currentId = this.state.tableCounterSet;
+      return {
+        ...el,
+        tablesSet:[...el.tablesSet, { id: idOne }, { id: idTwo }],
+        tableCounterSet: this.state.tableCounterSet + 2,
+        dropDownsSet: { ...el.dropDownsSet, [currentId]: false }
+    }
+  }
 return el;
 
 });
@@ -859,7 +862,11 @@ return el;
       [this.state.SetBlock.length]:this.state.whereClauseSet,
       tablesSet:[ { id: idOne }, { id: idTwo }],
       tableCounterSet: this.state.tableCounterSet + 2,
-      dropDownsSet: { ...this.state.dropDownsSet, [currentId]: false,[nextCurrentId]:false }
+      dropDownsSet: {
+        ...this.state.dropDownsSet,
+        [`${currentId}-${this.state.SetBlock.length}`]:false,
+        [`${nextCurrentId}-${this.state.SetBlock.length}`]:false 
+      }
     })
     this.setState({SetBlock:newBlock});
 
@@ -1671,18 +1678,15 @@ return el;
     }
   };
 
-  openDropSet = (id) => {
+  openDropSet = (id,blockId) => {
+    const currentId = `${id}`+"-"+`${blockId}`;
     this.setState({ mouseleave: false });
-    this.setState({ dropIdSet: id });
+    this.setState({ dropIdSet:currentId });
     const dropDownsSet = { ...this.state.dropDownsSet };
-    if (dropDownsSet[id]) {
-      this.setState({
-        dropDownsSet: { ...this.state.dropDownsSet, [id]: false },
-      });
+    if (dropDownsSet[currentId]) {
+      this.setState({dropDownsSet: { ...this.state.dropDownsSet, [currentId]: false },});
     } else {
-      this.setState({
-        dropDownsSet: { ...this.state.dropDownsSet, [id]: true },
-      });
+      this.setState({dropDownsSet: { ...this.state.dropDownsSet, [currentId]: true }});
     }
   };
 
@@ -1904,7 +1908,6 @@ return el;
 
   //TODO config abilitare tab true/false
   render() {
-    console.log(this.state.SetBlock,"check where set")
     if (this.props.state === "CLOSED" && !this.state.widgetStateClosedChecked) {
       const jimuMapView = this.state.jimuMapView;
       const view = jimuMapView.view;
@@ -2138,7 +2141,7 @@ return el;
             
             </div></div>
                 )}
-                {el.tablesSet.map((el, i) => (
+                {el.tablesSet.map((innerEl, i) => (
                   <AddSetTable
                     className="w-100"
                     key={i}
@@ -2152,7 +2155,7 @@ return el;
                     checkedToQuery={this.state.checkedToQuery}
                     // for Add set table............................
                     tablesSet={this.state.tablesSet}
-                    tablesSetId={el.id}
+                    tablesSetId={innerEl.id}
                     whereClausesSet={this.state.whereClauseSet}
                     // End for Add set table............................
                     getQueryAttribute={this.getQueryAttributeSet}
@@ -2164,7 +2167,7 @@ return el;
                     textSecondIncludedHandler={this.textSecondIncludedHandler}
                     dropDownToggler={this.dropDownSet}
                     handleCheckBox={this.handleCheckBox}
-                    deleteTable={() => this.deleteSetTable(el.id)}
+                    deleteTable={() => this.deleteSetTable(innerEl.id)}
                     univocoSelectHandler={this.univocoSelectHandler}
                     onChangeCheckBox={this.onChangeCheckBoxSet}
                     openDrop={this.openDropSet}
@@ -2177,6 +2180,7 @@ return el;
                     dropdownsSet={this.state.dropDownsSet}
                     itemNotFound={this.state.itemNotFound}
                     showDelete={(i+1)%2==0?false:true}
+                    blockId = {el.blockId}
                   />
                 ))}</div>)}
                 
