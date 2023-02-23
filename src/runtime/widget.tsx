@@ -788,19 +788,19 @@ setQueryConstructor = (queryRequest,firstQuery,secondQueryTarget)=>{
     }
   };
 
-  addTwoTablef = () => {
-    const currentId = this.state.tableCounterSet;
-    let idOne = this.state.tableCounterSet;
-    let idTwo = idOne + 1;
-    this.setState({
-      tablesSet: [...this.state.tablesSet, { id: idOne }, { id: idTwo }],
-      tableCounterSet: this.state.tableCounterSet + 2,
-      dropDownsSet: { ...this.state.dropDownsSet, [currentId]: false },
-    });
-    if(this.state.tables.length > 0){
-      this.setState({showAddSelect:false});
-    }
-  };
+  // addTwoTablef = () => {
+  //   const currentId = this.state.tableCounterSet;
+  //   let idOne = this.state.tableCounterSet;
+  //   let idTwo = idOne + 1;
+  //   this.setState({
+  //     tablesSet: [...this.state.tablesSet, { id: idOne }, { id: idTwo }],
+  //     tableCounterSet: this.state.tableCounterSet + 2,
+  //     dropDownsSet: { ...this.state.dropDownsSet, [currentId]: false },
+  //   });
+  //   if(this.state.tables.length > 0){
+  //     this.setState({showAddSelect:false});
+  //   }
+  // };
 
   addTwoTable = (ev) => {
   let newblock=this.state.SetBlock.map((el)=>{
@@ -818,46 +818,28 @@ return el;
       this.setState({showAddSelect:false});
     }
     this.setState({SetBlock:newblock});
-
-
-//     let newBlock = this.state.SetBlock.reduce((acc,el)=>{
-//       if(ev.target.id==el.blockId){
-//         let idOne = el.tableCounterSet;
-//         let idTwo = idOne + 1;
-//         const currentId = this.state.tableCounterSet;
-//         let newBlock=[...this.state.SetBlock];
-//         newBlock.push({tablesSet:[ { id: idOne }, { id: idTwo }],tableCounterSet: this.state.tableCounterSet + 2,dropDownsSet: { ...this.state.dropDownsSet, [currentId]: false }})
-//         this.setState({SetBlock:newBlock});
-//       acc.push()
-//         if(this.state.tables.length > 0){
-//           this.setState({showAddSelect:false});
-//         }
-//       }
-// return acc;
-//     },[]);
   };
 
 
-  addBlockf = ()=>{
-    let newBlock=[...this.state.SetBlock];
-    newBlock.push({[this.state.SetBlock.length]:this.state.whereClauseSet})
-    this.setState({SetBlock:newBlock});
-     const currentId = this.state.tableCounterSet;
+  // addBlockf = ()=>{
+  //   let newBlock=[...this.state.SetBlock];
+  //   newBlock.push({[this.state.SetBlock.length]:this.state.whereClauseSet})
+  //   this.setState({SetBlock:newBlock});
+  //    const currentId = this.state.tableCounterSet;
 
-    //  adding field ..
+  //   //  adding field ..
 
-    let idOne = this.state.tableCounterSet;
-    let idTwo = idOne + 1;
-    this.setState({
-      tablesSet: [{ id: idOne }, { id: idTwo }],
-      tableCounterSet: this.state.tableCounterSet + 2,
-      dropDownsSet: { ...this.state.dropDownsSet, [currentId]: false },
-    });
-    if(this.state.tables.length > 0){
-      this.setState({showAddSelect:false});
-    }
-
-  }
+  //   let idOne = this.state.tableCounterSet;
+  //   let idTwo = idOne + 1;
+  //   this.setState({
+  //     tablesSet: [{ id: idOne }, { id: idTwo }],
+  //     tableCounterSet: this.state.tableCounterSet + 2,
+  //     dropDownsSet: { ...this.state.dropDownsSet, [currentId]: false },
+  //   });
+  //   if(this.state.tables.length > 0){
+  //     this.setState({showAddSelect:false});
+  //   }
+  // }
 
   addBlock = ()=>{
     let idOne = this.state.SetBlock.tableCounterSet;
