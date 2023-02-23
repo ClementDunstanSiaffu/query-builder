@@ -56,7 +56,7 @@ function AddSetTable(props) {
     mouseleave,
     onmouseLeave,
     dropdownsSet,
-    showDelete
+    showDelete,blockId
   } = props;
 
   return (
@@ -69,8 +69,9 @@ function AddSetTable(props) {
                 className="mb-2 col-1 self-end"
                 onClick={deleteTable}
                 icon
+                id={'pwamly'}
               >
-                <CloseOutlined />
+                <CloseOutlined className={'pwamly'}/>
               </Button>
             </div>}
             <Select

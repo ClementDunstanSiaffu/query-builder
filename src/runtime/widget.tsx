@@ -15,7 +15,6 @@ import geometryEngine from "esri/geometry/geometryEngine";
 import AddSetTable from "./components/AddSetTable";
 import { CloseOutlined } from "jimu-icons/outlined/editor/close";
 
-
 export default class Widget extends React.PureComponent<
   AllWidgetProps<IMConfig>,
   any
@@ -35,7 +34,6 @@ export default class Widget extends React.PureComponent<
   setQueryArray = [];
   setOutFields = [];
   setQueryString = null;
- 
 
   constructor(props) {
     super(props);
@@ -95,7 +93,7 @@ export default class Widget extends React.PureComponent<
       tablesId: null,
       isOpen: false,
       AndOr: "AND",
-      AndOrSet:"AND",
+      AndOrSet: "AND",
       opened: false,
       autOpen: true,
       mouseleave: false,
@@ -112,8 +110,8 @@ export default class Widget extends React.PureComponent<
       isAttributeTableClosed: false,
       widgetStateClosedChecked: false,
       widgetStateOpenedChecked: false,
-      showAddSelect:true,
-      SetBlock:[]
+      showAddSelect: true,
+      SetBlock: [],
     };
   };
 
@@ -150,15 +148,17 @@ export default class Widget extends React.PureComponent<
       });
       Widget.activeV = jmv;
       Widget.jimuLayerViewz = jmv?.jimuLayerViews;
-      this.setState({resultLayerList: resultLayerList,jimuMapView: jmv});
+      this.setState({ resultLayerList: resultLayerList, jimuMapView: jmv });
       this.attributeTableConnector = new AttributeTableConnector(jmv, this);
       Widget.initialZoom = jmv.view.zoom;
     }
   }
 
   componentDidUpdate(prevProps, prevState) {
-    if (this.state.isLayerSelected !== prevProps.isLayerSelected) {}
-    if (this.state.whereClauses !== prevProps.whereClauses) {}
+    if (this.state.isLayerSelected !== prevProps.isLayerSelected) {
+    }
+    if (this.state.whereClauses !== prevProps.whereClauses) {
+    }
   }
 
   componentWillUnmount(): void {}
@@ -174,7 +174,7 @@ export default class Widget extends React.PureComponent<
         attributeQueryType: e.currentTarget.attributes.datatype.value,
         queryValue: "=",
       };
-      this.setState({whereClauses: [whereClause]});
+      this.setState({ whereClauses: [whereClause] });
     }
     if (this.state.whereClauses.length) {
       const queryIndex = this.state.whereClauses
@@ -188,7 +188,9 @@ export default class Widget extends React.PureComponent<
               attributeQuery: e.currentTarget.name,
               attributeQueryType: e.currentTarget.attributes.datatype.value,
             };
-            let filteredWhereClauses = this.state.whereClauses.filter((a) => a.id !== obj.id);
+            let filteredWhereClauses = this.state.whereClauses.filter(
+              (a) => a.id !== obj.id
+            );
             filteredWhereClauses.push(obj);
             filteredWhereClauses.sort(function (a, b) {
               return a.id < b.id ? -1 : a.id == b.id ? 0 : 1;
@@ -240,7 +242,9 @@ export default class Widget extends React.PureComponent<
               attributeQuery: e.currentTarget.name,
               attributeQueryType: e.currentTarget.attributes.datatype.value,
             };
-            let filteredWhereClauseSet = this.state.whereClauseSet.filter((a) => a.id !== obj.id);
+            let filteredWhereClauseSet = this.state.whereClauseSet.filter(
+              (a) => a.id !== obj.id
+            );
             filteredWhereClauseSet.push(obj);
             filteredWhereClauseSet.sort(function (a, b) {
               return a.id < b.id ? -1 : a.id == b.id ? 0 : 1;
@@ -257,7 +261,9 @@ export default class Widget extends React.PureComponent<
           attributeQuery: e.currentTarget.name,
           attributeQueryType: e.currentTarget.attributes.datatype.value,
         };
-        this.setState({whereClauseSet: [...this.state.whereClauseSet, whereClauseSet],});
+        this.setState({
+          whereClauseSet: [...this.state.whereClauseSet, whereClauseSet],
+        });
         this.state.whereClauseSet.sort(function (a, b) {
           return a.id < b.id ? -1 : a.id == b.id ? 0 : 1;
         });
@@ -451,8 +457,8 @@ export default class Widget extends React.PureComponent<
       "is_not_included",
     ];
     const likelyQuery = ["LIKE%", "%LIKE", "%LIKE%", "NOT LIKE"];
-    if (this.state.whereClauses.length){
-      if (this.state.AndOr === "AND") { 
+    if (this.state.whereClauses.length) {
+      if (this.state.AndOr === "AND") {
         this.state.whereClauses.forEach((el, id) => {
           let attributeQuery = el.attributeQuery;
           let queryValue = el.queryValue;
@@ -483,18 +489,20 @@ export default class Widget extends React.PureComponent<
           if (this.state.jimuMapView) {
             this.state.jimuMapView.view.map.allLayers.forEach((f, index) => {
               if (f.title === this.state.currentTargetText) {
-                this.state.jimuMapView.view.whenLayerView(f).then((layerView) => {
-                  this.queryConstructor(
-                    //step 2 start querying
-                    layerView,
-                    attributeQuery,
-                    queryValue,
-                    value,
-                    this.state.AndOr,
-                    this.connector_function,
-                    f
-                  );
-                });
+                this.state.jimuMapView.view
+                  .whenLayerView(f)
+                  .then((layerView) => {
+                    this.queryConstructor(
+                      //step 2 start querying
+                      layerView,
+                      attributeQuery,
+                      queryValue,
+                      value,
+                      this.state.AndOr,
+                      this.connector_function,
+                      f
+                    );
+                  });
               }
             });
           }
@@ -524,7 +532,9 @@ export default class Widget extends React.PureComponent<
               );
             }
             if (this.containsAnyLetters(value)) {
-              let queryIn = `${attributeQuery} IN (${"'" + value.join("', '") + "'"})`;
+              let queryIn = `${attributeQuery} IN (${
+                "'" + value.join("', '") + "'"
+              })`;
               query.where = queryIn;
               normalizedWhereToSendQuery.push(queryIn);
             } else {
@@ -543,7 +553,11 @@ export default class Widget extends React.PureComponent<
           } else if (!checkedQuery.includes(queryValue)) {
             value = el.value?.txt ?? "";
             if (likelyQuery.includes(queryValue)) {
-              query.where = helper.likelyQuery(attributeQuery, queryValue, value);
+              query.where = helper.likelyQuery(
+                attributeQuery,
+                queryValue,
+                value
+              );
             } else {
               if (this.containsAnyLetters(value)) {
                 let queryInput = `${attributeQuery} ${queryValue} '${value}'`;
@@ -559,35 +573,37 @@ export default class Widget extends React.PureComponent<
           if (this.state.jimuMapView) {
             this.state.jimuMapView.view.map.allLayers.forEach((f, index) => {
               if (f.title === this.state.currentTargetText) {
-                this.state.jimuMapView.view.whenLayerView(f).then((layerView) => {
-                  this.connector_function({
-                    layerView,
-                    query,
-                    queryRequest: "OR",
-                    layer: f,
-                    AndOr: this.state.AndOr,
-                    field: attributeQuery,
-                    source:"singleQuery"
+                this.state.jimuMapView.view
+                  .whenLayerView(f)
+                  .then((layerView) => {
+                    this.connector_function({
+                      layerView,
+                      query,
+                      queryRequest: "OR",
+                      layer: f,
+                      AndOr: this.state.AndOr,
+                      field: attributeQuery,
+                      source: "singleQuery",
+                    });
                   });
-                });
               }
             });
           }
         });
       }
-    }else if (this.state.whereClauseSet.length){
+    } else if (this.state.whereClauseSet.length) {
       if (this.state.jimuMapView) {
         this.state.jimuMapView.view.map.allLayers.forEach((f, index) => {
           if (f.title === this.state.currentTargetText) {
             this.state.jimuMapView.view.whenLayerView(f).then((layerView) => {
               this.connector_function({
                 layerView,
-                query:new Query(),
-                queryRequest:null,
+                query: new Query(),
+                queryRequest: null,
                 layer: f,
                 AndOr: this.state.AndOr,
                 field: null,
-                source:"setQuery"
+                source: "setQuery",
               });
             });
           }
@@ -596,55 +612,58 @@ export default class Widget extends React.PureComponent<
     }
   }
 
-
-setQueryConstructor = (queryRequest,firstQuery,secondQueryTarget)=>{
-  switch (queryRequest) {
+  setQueryConstructor = (queryRequest, firstQuery, secondQueryTarget) => {
+    switch (queryRequest) {
       case "LIKE%":
-          return  `${firstQuery} LIKE '${secondQueryTarget}%'`;       
+        return `${firstQuery} LIKE '${secondQueryTarget}%'`;
       case "%LIKE":
-          return `${firstQuery} LIKE '%${secondQueryTarget}'`;
+        return `${firstQuery} LIKE '%${secondQueryTarget}'`;
       case "%LIKE%":
-          return`${firstQuery} LIKE '%${secondQueryTarget}%'`;
+        return `${firstQuery} LIKE '%${secondQueryTarget}%'`;
       case "NOT LIKE":
-          return `${firstQuery} NOT LIKE '%${secondQueryTarget}%'`;
+        return `${firstQuery} NOT LIKE '%${secondQueryTarget}%'`;
       case "is null":
-          return `${firstQuery} is null`;        
+        return `${firstQuery} is null`;
       case "is not null":
-          return `${firstQuery} is not null`;
+        return `${firstQuery} is not null`;
       case "IN":
         if (this.containsAnyLetters(secondQueryTarget)) {
-          return `${firstQuery} IN (${"'" + secondQueryTarget.join("', '") + "'"})`;
+          return `${firstQuery} IN (${
+            "'" + secondQueryTarget.join("', '") + "'"
+          })`;
         } else {
           if (this.checkParenthesis(secondQueryTarget.join(","))) {
-              const stringFiedValue = this.loopToGetString(secondQueryTarget);
-              return `${firstQuery} IN (${stringFiedValue})`;
+            const stringFiedValue = this.loopToGetString(secondQueryTarget);
+            return `${firstQuery} IN (${stringFiedValue})`;
           } else {
-              return `${firstQuery} IN (${secondQueryTarget.join(",")})`;
+            return `${firstQuery} IN (${secondQueryTarget.join(",")})`;
           }
         }
       case "NOT_IN":
         if (this.containsAnyLetters(secondQueryTarget)) {
-          return`NOT ${firstQuery} IN (${"'" + secondQueryTarget.join("', '") + "'"})`;
+          return `NOT ${firstQuery} IN (${
+            "'" + secondQueryTarget.join("', '") + "'"
+          })`;
         } else {
           if (this.checkParenthesis(secondQueryTarget.join(","))) {
             const stringFiedValue = this.loopToGetString(secondQueryTarget);
             return `NOT  ${firstQuery} IN (${stringFiedValue})`;
           } else {
-              return `NOT  ${firstQuery} IN (${secondQueryTarget.join(",")})`;
+            return `NOT  ${firstQuery} IN (${secondQueryTarget.join(",")})`;
           }
         }
       case "included":
-          return`(${firstQuery} > ${secondQueryTarget.firstTxt} AND ${firstQuery} < ${secondQueryTarget.secondTxt})`;
+        return `(${firstQuery} > ${secondQueryTarget.firstTxt} AND ${firstQuery} < ${secondQueryTarget.secondTxt})`;
       case "is_not_included":
-          return `(${firstQuery} < ${secondQueryTarget.firstTxt} OR ${firstQuery} > ${secondQueryTarget.secondTxt})`;
+        return `(${firstQuery} < ${secondQueryTarget.firstTxt} OR ${firstQuery} > ${secondQueryTarget.secondTxt})`;
       default:
-          if (this.containsAnyLetters(secondQueryTarget)) {
-              return `${firstQuery} ${queryRequest} '${secondQueryTarget}'`;
-          } else {
-              return `${firstQuery} ${queryRequest} ${secondQueryTarget}`;
-          }
-  }
-}
+        if (this.containsAnyLetters(secondQueryTarget)) {
+          return `${firstQuery} ${queryRequest} '${secondQueryTarget}'`;
+        } else {
+          return `${firstQuery} ${queryRequest} ${secondQueryTarget}`;
+        }
+    }
+  };
 
   sendQuerySet() {
     const checkedQuery = [
@@ -658,83 +677,99 @@ setQueryConstructor = (queryRequest,firstQuery,secondQueryTarget)=>{
     const likelyQuery = ["LIKE%", "%LIKE", "%LIKE%", "NOT LIKE"];
     let setQueryString = null;
     let outFields = [];
-      if (this.state.AndOrSet === "AND") { 
-        this.state.whereClauseSet.forEach((el,i) => {
-          let attributeQuery = el.attributeQuery;
-          let queryValue = el.queryValue;
-          let value;
-          if (queryValue === "is null" || queryValue === "is not null") {
-            value = el.value?.txt ?? "";
-          } else if (queryValue === "IN" || queryValue === "NOT_IN") {
-            value = [];
-            if (queryValue === "IN" && el.checkedListSet.length) {
-              el.checkedListSet.forEach((el) => value.push(el.checkValue));
-            } else if (
-              queryValue === "NOT_IN" &&
-              this.state.counterIsChecked.length
-            ) {
-              this.state.counterIsChecked.forEach((el) => value.push(el));
-            }
+    if (this.state.AndOrSet === "AND") {
+      this.state.whereClauseSet.forEach((el, i) => {
+        let attributeQuery = el.attributeQuery;
+        let queryValue = el.queryValue;
+        let value;
+        if (queryValue === "is null" || queryValue === "is not null") {
+          value = el.value?.txt ?? "";
+        } else if (queryValue === "IN" || queryValue === "NOT_IN") {
+          value = [];
+          if (queryValue === "IN" && el.checkedListSet.length) {
+            el.checkedListSet.forEach((el) => value.push(el.checkValue));
           } else if (
-            queryValue === "included" ||
-            queryValue === "is_not_included"
+            queryValue === "NOT_IN" &&
+            this.state.counterIsChecked.length
           ) {
-            value = {
-              firstTxt: el.firstTxt.value,
-              secondTxt: el.secondTxt.value,
-            };
-          } else if (!checkedQuery.includes(queryValue)) {
-            value = el.value?.txt ?? "";
+            this.state.counterIsChecked.forEach((el) => value.push(el));
           }
-          if (setQueryString){
-            setQueryString += this.setQueryConstructor(queryValue,attributeQuery,value);
-          }else{
-            setQueryString = this.setQueryConstructor(queryValue,attributeQuery,value)
+        } else if (
+          queryValue === "included" ||
+          queryValue === "is_not_included"
+        ) {
+          value = {
+            firstTxt: el.firstTxt.value,
+            secondTxt: el.secondTxt.value,
+          };
+        } else if (!checkedQuery.includes(queryValue)) {
+          value = el.value?.txt ?? "";
+        }
+        if (setQueryString) {
+          setQueryString += this.setQueryConstructor(
+            queryValue,
+            attributeQuery,
+            value
+          );
+        } else {
+          setQueryString = this.setQueryConstructor(
+            queryValue,
+            attributeQuery,
+            value
+          );
+        }
+        if (i < this.state.whereClauseSet.length - 1) {
+          setQueryString += "  " + this.state.AndOrSet + "  ";
+        }
+        outFields.push(`${attributeQuery}`);
+      });
+    } else {
+      let normalizedWhereToSendQuery: any = [];
+      this.state.whereClauseSet.forEach((el, i) => {
+        let attributeQuery = el.attributeQuery;
+        let queryValue = el.queryValue;
+        let value;
+        if (queryValue === "IN" || queryValue === "NOT_IN") {
+          value = [];
+          if (queryValue === "IN" && el.checkedListSet.length) {
+            el.checkedListSet.forEach((el) => value.push(el.checkValue));
+          } else if (
+            queryValue === "NOT_IN" &&
+            this.state.counterIsChecked.length
+          ) {
+            this.state.counterIsChecked.forEach((el) =>
+              value.push(el.checkValue)
+            );
           }
-          if (i < this.state.whereClauseSet.length-1){
-            setQueryString += "  " +  this.state.AndOrSet + "  ";
-          }
-          outFields.push(`${attributeQuery}`);
-        });
-      } else {
-        let normalizedWhereToSendQuery: any = [];
-        this.state.whereClauseSet.forEach((el,i) => {
-          let attributeQuery = el.attributeQuery;
-          let queryValue = el.queryValue;
-          let value;
-          if (queryValue === "IN" || queryValue === "NOT_IN") {
-            value = [];
-            if (queryValue === "IN" && el.checkedListSet.length) {
-              el.checkedListSet.forEach((el) => value.push(el.checkValue));
-            } else if (
-              queryValue === "NOT_IN" &&
-              this.state.counterIsChecked.length
-            ) {
-              this.state.counterIsChecked.forEach((el) =>
-                value.push(el.checkValue)
-              );
-            }
-          }
-          if (queryValue === "included" || queryValue === "is_not_included") {
-            value = {
-              firstTxt: el.firstTxt.value,
-              secondTxt: el.secondTxt.value,
-            };
-          } else if (!checkedQuery.includes(queryValue)) {
-              value = el.value?.txt ?? "";
-          }
-          if (setQueryString){
-            setQueryString += this.setQueryConstructor(queryValue,attributeQuery,value);
-          }else{
-            setQueryString = this.setQueryConstructor(queryValue,attributeQuery,value)
-          }
-          if (i < this.state.whereClauseSet.length-1){
-            setQueryString += "  " +  this.state.AndOrSet + "  ";
-          }
-          outFields.push(`${attributeQuery}`);
-        });
-      }
-    return {setQueryString,outFields}
+        }
+        if (queryValue === "included" || queryValue === "is_not_included") {
+          value = {
+            firstTxt: el.firstTxt.value,
+            secondTxt: el.secondTxt.value,
+          };
+        } else if (!checkedQuery.includes(queryValue)) {
+          value = el.value?.txt ?? "";
+        }
+        if (setQueryString) {
+          setQueryString += this.setQueryConstructor(
+            queryValue,
+            attributeQuery,
+            value
+          );
+        } else {
+          setQueryString = this.setQueryConstructor(
+            queryValue,
+            attributeQuery,
+            value
+          );
+        }
+        if (i < this.state.whereClauseSet.length - 1) {
+          setQueryString += "  " + this.state.AndOrSet + "  ";
+        }
+        outFields.push(`${attributeQuery}`);
+      });
+    }
+    return { setQueryString, outFields };
   }
 
   async thirdQuery(e) {
@@ -780,11 +815,11 @@ setQueryConstructor = (queryRequest,firstQuery,secondQueryTarget)=>{
       tableCounter: this.state.tableCounter + 1,
       dropDowns: { ...this.state.dropDowns, [currentId]: false },
     });
-    if(this.state.tables.length > 0){
-      this.setState({showAddSelect:false});
-    } 
-    if(this.state.tablesSet.length > 0){
-      this.setState({showAddSelect:false});
+    if (this.state.tables.length > 0) {
+      this.setState({ showAddSelect: false });
+    }
+    if (this.state.tablesSet.length > 0) {
+      this.setState({ showAddSelect: false });
     }
   };
 
@@ -803,23 +838,27 @@ setQueryConstructor = (queryRequest,firstQuery,secondQueryTarget)=>{
   // };
 
   addTwoTable = (ev) => {
-  let newblock=this.state.SetBlock.map((el)=>{
-  if(ev.target.id==el.blockId){
-  let idOne = el.tableCounterSet;
-  let idTwo = idOne + 1;
-  const currentId = this.state.tableCounterSet;
-return {...el,tablesSet:[...el.tablesSet, { id: idOne }, { id: idTwo }],tableCounterSet: this.state.tableCounterSet + 2,dropDownsSet: { ...el.dropDownsSet, [currentId]: false }
-}
-}
-return el;
-
-});
-    if(this.state.tables.length > 0){
-      this.setState({showAddSelect:false});
+    let newblock = this.state.SetBlock.map((el) => {
+      if (ev.target.id == el.blockId) {
+        let idOne = this.state.tableCounterSet;
+        let idTwo = idOne + 1;
+        const currentId = this.state.tableCounterSet;
+        const newcounter =this.state.tableCounterSet + 2
+        this.setState({tableCounterSet:newcounter})
+        return {
+          ...el,
+          tablesSet: [...el.tablesSet, { id: idOne }, { id: idTwo }],
+          tableCounterSet: newcounter,
+          dropDownsSet: { ...el.dropDownsSet, [currentId]: false },
+        };
+      }
+      return el;
+    });
+    if (this.state.tables.length > 0) {
+      this.setState({ showAddSelect: false });
     }
-    this.setState({SetBlock:newblock});
+    this.setState({ SetBlock: newblock });
   };
-
 
   // addBlockf = ()=>{
   //   let newBlock=[...this.state.SetBlock];
@@ -841,34 +880,30 @@ return el;
   //   }
   // }
 
-  addBlock = ()=>{
-    let idOne = this.state.SetBlock.tableCounterSet;
+  addBlock = () => {
+    let idOne = this.state.tableCounterSet;
     let idTwo = idOne + 1;
-     // this.setState({
-    //   tablesSet: [{ id: idOne }, { id: idTwo }],
-    //   tableCounterSet: this.state.tableCounterSet + 2,
-    //   dropDownsSet: { ...this.state.dropDownsSet, [currentId]: false },
-    // });
-    const currentId = this.state.SetBlock.tableCounterSet;
-    let newBlock=[...this.state.SetBlock];
-    newBlock.push({blockId:this.state.SetBlock.length,[this.state.SetBlock.length]:this.state.whereClauseSet,tablesSet:[ { id: idOne }, { id: idTwo }],tableCounterSet: this.state.tableCounterSet + 2,dropDownsSet: { ...this.state.dropDownsSet, [currentId]: false }})
-    this.setState({SetBlock:newBlock});
-
+    const currentId = this.state.tableCounterSet;
+    let newBlock = [...this.state.SetBlock];
+    const newcounter= this.state.tableCounterSet + 2
+    newBlock.push({
+      blockId: this.state.SetBlock.length,
+      [this.state.SetBlock.length]: this.state.whereClauseSet,
+      tablesSet: [{ id: idOne }, { id: idTwo }],
+      tableCounterSet: newcounter,
+      dropDownsSet: { ...this.state.dropDownsSet, [currentId]: false },
+    });
+    this.setState({ SetBlock: newBlock,tableCounterSet:newcounter });
     //  adding field ..
-    
-    // let idOne = this.state.tableCounterSet;
-    // let idTwo = idOne + 1;
-   
-    if(this.state.tables.length > 0){
-      this.setState({showAddSelect:false});
+    if (this.state.tables.length > 0) {
+      this.setState({ showAddSelect: false });
     }
-
-  }
+  };
 
   deleteTable = (id) => {
     const copiedTable = [...this.state.tables];
     const newTables = copiedTable.filter((el) => el.id !== id);
-    this.setState({tableCounter:this.state.tableCounter-1});
+    this.setState({ tableCounter: this.state.tableCounter - 1 });
     const copiedWhereClauses = [...this.state.whereClauses];
     const deletedWhereClauses = copiedWhereClauses.filter(
       (el) => el.id !== id.toString()
@@ -884,18 +919,18 @@ return el;
       });
     }
 
-    if(this.state.tables.length == 2 && this.state.tablesSet.length == 0){
-      this.setState({showAddSelect:true});
-    }  
-    if(this.state.tables.length == 1 && this.state.tablesSet.length > 0){
-      this.setState({showAddSelect:true});
-    }   
+    if (this.state.tables.length == 2 && this.state.tablesSet.length == 0) {
+      this.setState({ showAddSelect: true });
+    }
+    if (this.state.tables.length == 1 && this.state.tablesSet.length > 0) {
+      this.setState({ showAddSelect: true });
+    }
   };
 
-  deleteSetTable = (id) => {
+  deleteSetTablef = (id) => {
     const copiedTable = [...this.state.tablesSet];
     const newTables = copiedTable.filter((el) => el.id !== id);
-    this.setState({tableCounterSet:this.state.tableCounterSet-2});
+    this.setState({ tableCounterSet: this.state.tableCounterSet - 2 });
     const copiedWhereClauses = [...this.state.whereClauseSet];
     const deletedWhereClauses = copiedWhereClauses.filter(
       (el) => el.id !== id.toString()
@@ -910,10 +945,34 @@ return el;
         whereClausesSet: [],
       });
     }
-    
-    if(this.state.tables.length == 1 && this.state.tablesSet.length == 1){
-      this.setState({showAddSelect:true});
-    } 
+
+    if (this.state.tables.length == 1 && this.state.tablesSet.length == 1) {
+      this.setState({ showAddSelect: true });
+    }
+  };
+
+  deleteSetTable = (e) => {
+let newcounter=this.state.tableCounterSet;
+    console.log('',e.i)
+    const copiedBlock = [...this.state.SetBlock];
+    let newblock = copiedBlock.map((el) => {
+      if (e.el.blockId== el.blockId) {
+        newcounter= newcounter - 2;
+        let copiedTablesSet = [...el.tablesSet];
+         const removeItems = [e.i,e.i+1]
+         removeItems.filter(function(r) {
+          copiedTablesSet = copiedTablesSet.filter(function(oa) {
+              return oa.id !== r;
+          });
+
+      });
+        // const newTables = copiedTablesSet.filter((el) => el.id !== id);
+        
+        return {...el,tablesSet:copiedTablesSet};
+      }
+      return el;
+    });
+    this.setState({SetBlock:newblock,tableCounterSet:newcounter});
   };
 
   textInputHandler = (e) => {
@@ -1089,7 +1148,7 @@ return el;
         });
       }
     }
-    this.setState({dropdownValueQuery: e.target.value});
+    this.setState({ dropdownValueQuery: e.target.value });
   };
 
   dropDown = (id) => {
@@ -1331,7 +1390,9 @@ return el;
 
                   // Remove duplicate entries from the whereClauses array
                   this.setState({
-                    whereClauseSet: Array.from(new Set(this.state.whereClauseSet)),
+                    whereClauseSet: Array.from(
+                      new Set(this.state.whereClauseSet)
+                    ),
                   });
                 }
               );
@@ -1448,71 +1509,87 @@ return el;
     switch (queryRequest) {
       case "LIKE%":
         query.where = `${firstQuery} LIKE '${secondQueryTarget}%'`;
-          connector_function({
-            layerView,
-            query,
-            queryRequest,
-            values,
-            layer,
-            AndOr,
-            field: firstQuery,
-            source:"singleQuery"
-          });
+        connector_function({
+          layerView,
+          query,
+          queryRequest,
+          values,
+          layer,
+          AndOr,
+          field: firstQuery,
+          source: "singleQuery",
+        });
         break;
       case "%LIKE":
         query.where = `${firstQuery} LIKE '%${secondQueryTarget}'`;
-          connector_function({
-            layerView,
-            query,
-            queryRequest,
-            values,
-            layer,
-            AndOr,
-            field: firstQuery,
-            source:"singleQuery"
-          });
+        connector_function({
+          layerView,
+          query,
+          queryRequest,
+          values,
+          layer,
+          AndOr,
+          field: firstQuery,
+          source: "singleQuery",
+        });
         break;
       case "%LIKE%":
         query.where = `${firstQuery} LIKE '%${secondQueryTarget}%'`;
-          connector_function({
-            layerView,
-            query,
-            queryRequest,
-            values,
-            layer,
-            AndOr,
-            field: firstQuery,
-            source:"singleQuery"
-          });
+        connector_function({
+          layerView,
+          query,
+          queryRequest,
+          values,
+          layer,
+          AndOr,
+          field: firstQuery,
+          source: "singleQuery",
+        });
         break;
       case "NOT LIKE":
         query.where = `${firstQuery} NOT LIKE '%${secondQueryTarget}%'`;
-          connector_function({
-            layerView,
-            query,
-            queryRequest,
-            values,
-            layer,
-            AndOr,
-            field: firstQuery,
-            source:"singleQuery"
-          });
+        connector_function({
+          layerView,
+          query,
+          queryRequest,
+          values,
+          layer,
+          AndOr,
+          field: firstQuery,
+          source: "singleQuery",
+        });
         break;
       case "is null":
         query.where = `${firstQuery} is null`;
-          connector_function({
-            layerView,
-            query,
-            queryRequest,
-            values,
-            layer,
-            AndOr,
-            field: firstQuery,
-            source:"singleQuery"
-          });
+        connector_function({
+          layerView,
+          query,
+          queryRequest,
+          values,
+          layer,
+          AndOr,
+          field: firstQuery,
+          source: "singleQuery",
+        });
         break;
       case "is not null":
         query.where = `${firstQuery} is not null`;
+        connector_function({
+          layerView,
+          query,
+          queryRequest,
+          values,
+          layer,
+          AndOr,
+          field: firstQuery,
+          source: "singleQuery",
+        });
+        break;
+      case "IN":
+        if (this.containsAnyLetters(secondQueryTarget)) {
+          query.where = `${firstQuery} IN (${
+            "'" + secondQueryTarget.join("', '") + "'"
+          })`;
           connector_function({
             layerView,
             query,
@@ -1521,22 +1598,8 @@ return el;
             layer,
             AndOr,
             field: firstQuery,
-            source:"singleQuery"
+            source: "singleQuery",
           });
-        break;
-      case "IN":
-        if (this.containsAnyLetters(secondQueryTarget)) {
-          query.where = `${firstQuery} IN (${"'" + secondQueryTarget.join("', '") + "'"})`;
-            connector_function({
-              layerView,
-              query,
-              queryRequest,
-              values,
-              layer,
-              AndOr,
-              field: firstQuery,
-              source:"singleQuery"
-            });
         } else {
           if (this.checkParenthesis(secondQueryTarget.join(","))) {
             const stringFiedValue = this.loopToGetString(secondQueryTarget);
@@ -1545,103 +1608,107 @@ return el;
             query.where = `${firstQuery} IN (${secondQueryTarget.join(",")})`;
           }
           connector_function({
-              layerView,
-              query,
-              queryRequest,
-              values,
-              layer,
-              AndOr,
-              field: firstQuery,
-              source:"singleQuery"
-            });
+            layerView,
+            query,
+            queryRequest,
+            values,
+            layer,
+            AndOr,
+            field: firstQuery,
+            source: "singleQuery",
+          });
         }
         break;
       case "NOT_IN":
         if (this.containsAnyLetters(secondQueryTarget)) {
-          query.where = `NOT ${firstQuery} IN (${"'" + secondQueryTarget.join("', '") + "'"})`;
+          query.where = `NOT ${firstQuery} IN (${
+            "'" + secondQueryTarget.join("', '") + "'"
+          })`;
           query.outFields = [`${firstQuery}`];
-            connector_function({
-              layerView,
-              query,
-              queryRequest,
-              values,
-              layer,
-              AndOr,
-              field: firstQuery,
-              source:"singleQuery"
-            });
+          connector_function({
+            layerView,
+            query,
+            queryRequest,
+            values,
+            layer,
+            AndOr,
+            field: firstQuery,
+            source: "singleQuery",
+          });
         } else {
           if (this.checkParenthesis(secondQueryTarget.join(","))) {
             const stringFiedValue = this.loopToGetString(secondQueryTarget);
             query.where = `NOT  ${firstQuery} IN (${stringFiedValue})`;
           } else {
-            query.where = `NOT  ${firstQuery} IN (${secondQueryTarget.join( ",")})`;
+            query.where = `NOT  ${firstQuery} IN (${secondQueryTarget.join(
+              ","
+            )})`;
           }
           query.outFields = [`${firstQuery}`];
-            connector_function({
-              layerView,
-              query,
-              queryRequest,
-              values,
-              layer,
-              AndOr,
-              field: firstQuery,
-              source:"singleQuery"
-            });
+          connector_function({
+            layerView,
+            query,
+            queryRequest,
+            values,
+            layer,
+            AndOr,
+            field: firstQuery,
+            source: "singleQuery",
+          });
         }
         break;
       case "included":
         query.where = `(${firstQuery} > ${secondQueryTarget.firstTxt} AND ${firstQuery} < ${secondQueryTarget.secondTxt})`;
-          connector_function({
-            layerView,
-            query,
-            queryRequest,
-            values,
-            layer,
-            AndOr,
-            field: firstQuery,
-            source:"singleQuery"
-          });
+        connector_function({
+          layerView,
+          query,
+          queryRequest,
+          values,
+          layer,
+          AndOr,
+          field: firstQuery,
+          source: "singleQuery",
+        });
         break;
       case "is_not_included":
         query.where = `(${firstQuery} < ${secondQueryTarget.firstTxt} OR ${firstQuery} > ${secondQueryTarget.secondTxt})`;
-          connector_function({
-            layerView,
-            query,
-            queryRequest,
-            values,
-            layer,
-            AndOr,
-            field: firstQuery,
-            source:"singleQuery"
-          });
+        connector_function({
+          layerView,
+          query,
+          queryRequest,
+          values,
+          layer,
+          AndOr,
+          field: firstQuery,
+          source: "singleQuery",
+        });
         break;
       default:
         if (this.containsAnyLetters(secondQueryTarget)) {
           query.where = `${firstQuery} ${queryRequest} '${secondQueryTarget}'`;
-            connector_function({
-              layerView,
-              query,
-              queryRequest,
-              values,
-              layer,
-              AndOr,
-              field: firstQuery,
-              source:"singleQuery"
-            });
+          connector_function({
+            layerView,
+            query,
+            queryRequest,
+            values,
+            layer,
+            AndOr,
+            field: firstQuery,
+            source: "singleQuery",
+          });
         } else {
           query.where = `${firstQuery} ${queryRequest} ${secondQueryTarget}`;
           query.outFields = [`${firstQuery}`];
-            connector_function({
-              layerView,
-              query,
-              queryRequest,
-              values,
-              layer,
-              AndOr,
-              field: firstQuery,
-              source:"singleQuery"
-            });
+          connector_function({
+            layerView,
+            query,
+            queryRequest,
+            values,
+            layer,
+            AndOr,
+            field: firstQuery,
+            source: "singleQuery",
+          });
         }
     }
   };
@@ -1649,7 +1716,6 @@ return el;
   chooseAndOr = (e) => this.setState({ AndOr: e.target.value });
 
   chooseAndOrSet = (e) => this.setState({ AndOrSet: e.target.value });
-
 
   openDrop = (id) => {
     this.setState({ mouseleave: false });
@@ -1750,7 +1816,16 @@ return el;
   };
 
   connector_function = async (data) => {
-    const { layerView, query, queryRequest, values, layer, AndOr, field,source } = data;
+    const {
+      layerView,
+      query,
+      queryRequest,
+      values,
+      layer,
+      AndOr,
+      field,
+      source,
+    } = data;
     if (this.state.higlightSelected.length) {
       this.clearHighlights(layerView);
       this.state.higlightSelected.forEach((highlight) => {
@@ -1758,8 +1833,8 @@ return el;
       });
     }
     let results = { features: [] };
-    let additionalQuery = null
-    if (source === "singleQuery"){
+    let additionalQuery = null;
+    if (source === "singleQuery") {
       additionalQuery = query.where;
       if (this.queryArray.length < this.state.whereClauses.length - 1) {
         additionalQuery = query.where + " " + AndOr;
@@ -1767,21 +1842,25 @@ return el;
       this.queryArray.push(additionalQuery);
       this.outfields.push(`${field}`);
     }
-    if (this.queryArray.length >= this.state.whereClauses.length || source === "setQuery"){
+    if (
+      this.queryArray.length >= this.state.whereClauses.length ||
+      source === "setQuery"
+    ) {
       let currentQuery = null;
-      if (this.queryArray.length)currentQuery = this.queryArray.join(" ");
-      if (this.state.whereClauseSet?.length){
-        const {setQueryString,outFields} = this.sendQuerySet();
-        if (source === "singleQuery"){
-          if (setQueryString)currentQuery += " " + AndOr + " " +  "(" + setQueryString + ")";
-          if (outFields?.length){
-            this.outfields = this.outfields.concat(outFields)
+      if (this.queryArray.length) currentQuery = this.queryArray.join(" ");
+      if (this.state.whereClauseSet?.length) {
+        const { setQueryString, outFields } = this.sendQuerySet();
+        if (source === "singleQuery") {
+          if (setQueryString)
+            currentQuery += " " + AndOr + " " + "(" + setQueryString + ")";
+          if (outFields?.length) {
+            this.outfields = this.outfields.concat(outFields);
             const set = new Set(this.outfields);
             this.outfields = Array.from(set);
           }
-        }else{
-          if (setQueryString)currentQuery = setQueryString;
-          if (outFields?.length)this.outfields = outFields
+        } else {
+          if (setQueryString) currentQuery = setQueryString;
+          if (outFields?.length) this.outfields = outFields;
         }
       }
       if (!this.outfields.includes("OBJECTID")) {
@@ -1895,7 +1974,11 @@ return el;
 
   //TODO config abilitare tab true/false
   render() {
-    console.log(this.state.whereClauseSet,this.state.whereClauses,"check where set")
+    console.log(
+      this.state.whereClauseSet,
+      this.state.whereClauses,
+      "check where set"
+    );
     if (this.props.state === "CLOSED" && !this.state.widgetStateClosedChecked) {
       const jimuMapView = this.state.jimuMapView;
       const view = jimuMapView.view;
@@ -2090,87 +2173,107 @@ return el;
                   />
                 ))}
                 <br />
-                <div style={{width:'100%',background:'#005eca',height:'10px'}}></div>
+                <div
+                  style={{
+                    width: "100%",
+                    background: "#005eca",
+                    height: "10px",
+                  }}
+                ></div>
                 <br />
-                {this.state.SetBlock.map((el,index)=>
-                <div id={index}>{el.tablesSet.length < 2 ? (
-                  el.tablesSet.length == 1 ? <p>
-                    Visualizza le feature nel layer corrispondenti alla seguente
-                    espressione
-                  </p>:''
-                ) : (
-                  
-                  <div style={{display:'flex',flexDirection:'row'}}><Select
-                  onChange={this.chooseAndOrSet}
-                  placeholder=" Visualizza le feature nel layer che corrispondono a tutte le espressioni seguenti"
-                  defaultValue="AND"
-                >
-                  <Option value="AND">
-                    Visualizza le feature nel layer che corrispondono a tutte
-                    le espressioni seguenti
-                  </Option>
-                  <Option value="OR">
-                    Visualizza le feature nel layer che corrispondono ad una
-                    qualsiasi delle espressioni seguenti
-                  </Option>
-                </Select> <div style={{display:'flex',gap:'5px'}} className="row w-100 d-flex justify-content-end">
-                <Button
-                  id={el.blockId}
-                  onClick={this.addTwoTable}
-                  size="default"
-                  className="d-flex align-items-center  mb-2"
-                  type="secondary"
-                >
-                  <Icon
-                    icon='<svg viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M7.5 0a.5.5 0 0 0-.5.5V7H.5a.5.5 0 0 0 0 1H7v6.5a.5.5 0 0 0 1 0V8h6.5a.5.5 0 0 0 0-1H8V.5a.5.5 0 0 0-.5-.5Z" fill="#000"></path></svg>'
-                    size="m"
-                  />
-                </Button>
-            
-            </div></div>
-                )}
-                {el.tablesSet.map((el, i) => (
-                  <AddSetTable
-                    className="w-100"
-                    key={i}
-                    id={`row-${i}`}
-                    list={this.state.resultsLayerSelected}
-                    isOpenDropD={this.state.isOpen}
-                    dropDown={() => this.dropDownSet(el.id)}
-                    dropdownValueQuery={this.state.dropdownValueQuery}
-                    isChecked={this.state.isChecked}
-                    counterIsChecked={this.state.counterIsChecked}
-                    checkedToQuery={this.state.checkedToQuery}
-                    // for Add set table............................
-                    tablesSet={this.state.tablesSet}
-                    tablesSetId={el.id}
-                    whereClausesSet={this.state.whereClauseSet}
-                    // End for Add set table............................
-                    getQueryAttribute={this.getQueryAttributeSet}
-                    getQuery={this.getQuerySet}
-                    handleThirdQuery={this.thirdQuery}
-                    textInputHandler={this.textInputHandler}
-                    dropdownItemHandler={this.dropdownItemClick}
-                    textFirstIncludedHandler={this.textFirstIncludedHandler}
-                    textSecondIncludedHandler={this.textSecondIncludedHandler}
-                    dropDownToggler={this.dropDownSet}
-                    handleCheckBox={this.handleCheckBox}
-                    deleteTable={() => this.deleteSetTable(el.id)}
-                    univocoSelectHandler={this.univocoSelectHandler}
-                    onChangeCheckBox={this.onChangeCheckBoxSet}
-                    openDrop={this.openDropSet}
-                    closeDrop={this.closeDrop}
-                    opened={this.state.opened}
-                    autOpen={this.state.autOpen}
-                    mouseleave={this.state.mouseleave}
-                    onmouseLeave={this.onmouseLeave}
-                    functionCounterIsChecked={this.functionCounterIsChecked}
-                    dropdownsSet={this.state.dropDownsSet}
-                    itemNotFound={this.state.itemNotFound}
-                    showDelete={(i+1)%2==0?false:true}
-                  />
-                ))}</div>)}
-                
+                {this.state.SetBlock.map((el, index) => (
+                  <div id={index}>
+                    {el.tablesSet.length < 2 ? (
+                      el.tablesSet.length == 1 ? (
+                        <p>
+                          Visualizza le feature nel layer corrispondenti alla
+                          seguente espressione
+                        </p>
+                      ) : (
+                        ""
+                      )
+                    ) : (
+                      <div style={{ display: "flex", flexDirection: "row" }}>
+                        <Select
+                          onChange={this.chooseAndOrSet}
+                          placeholder=" Visualizza le feature nel layer che corrispondono a tutte le espressioni seguenti"
+                          defaultValue="AND"
+                        >
+                          <Option value="AND">
+                            Visualizza le feature nel layer che corrispondono a
+                            tutte le espressioni seguenti
+                          </Option>
+                          <Option value="OR">
+                            Visualizza le feature nel layer che corrispondono ad
+                            una qualsiasi delle espressioni seguenti
+                          </Option>
+                        </Select>{" "}
+                        <div
+                          style={{ display: "flex", gap: "5px" }}
+                          className="row w-100 d-flex justify-content-end"
+                        >
+                          <Button
+                            id={el.blockId}
+                            onClick={this.addTwoTable}
+                            size="default"
+                            className="d-flex align-items-center  mb-2"
+                            type="secondary"
+                          >
+                            <Icon
+                              icon='<svg viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M7.5 0a.5.5 0 0 0-.5.5V7H.5a.5.5 0 0 0 0 1H7v6.5a.5.5 0 0 0 1 0V8h6.5a.5.5 0 0 0 0-1H8V.5a.5.5 0 0 0-.5-.5Z" fill="#000"></path></svg>'
+                              size="m"
+                            />
+                          </Button>
+                        </div>
+                      </div>
+                    )}
+                    {el.tablesSet.map((e, i) => (
+                      <AddSetTable
+                        className="w-100"
+                        key={el.blockId}
+                        id={`row-${el.blockId}`}
+                        list={this.state.resultsLayerSelected}
+                        isOpenDropD={this.state.isOpen}
+                        dropDown={() => this.dropDownSet(e.id)}
+                        dropdownValueQuery={this.state.dropdownValueQuery}
+                        isChecked={this.state.isChecked}
+                        counterIsChecked={this.state.counterIsChecked}
+                        checkedToQuery={this.state.checkedToQuery}
+                        // for Add set table............................
+                        tablesSet={this.state.tablesSet}
+                        tablesSetId={e.id}
+                        whereClausesSet={this.state.whereClauseSet}
+                        // End for Add set table............................
+                        getQueryAttribute={this.getQueryAttributeSet}
+                        getQuery={this.getQuerySet}
+                        handleThirdQuery={this.thirdQuery}
+                        textInputHandler={this.textInputHandler}
+                        dropdownItemHandler={this.dropdownItemClick}
+                        textFirstIncludedHandler={this.textFirstIncludedHandler}
+                        textSecondIncludedHandler={
+                          this.textSecondIncludedHandler
+                        }
+                        dropDownToggler={this.dropDownSet}
+                        handleCheckBox={this.handleCheckBox}
+                        deleteTable={()=>this.deleteSetTable({i,el})}
+                        univocoSelectHandler={this.univocoSelectHandler}
+                        onChangeCheckBox={this.onChangeCheckBoxSet}
+                        openDrop={this.openDropSet}
+                        closeDrop={this.closeDrop}
+                        opened={this.state.opened}
+                        autOpen={this.state.autOpen}
+                        mouseleave={this.state.mouseleave}
+                        onmouseLeave={this.onmouseLeave}
+                        functionCounterIsChecked={this.functionCounterIsChecked}
+                        dropdownsSet={this.state.dropDownsSet}
+                        itemNotFound={this.state.itemNotFound}
+                        showDelete={(i + 1) % 2 == 0 ? false : true}
+                        blockId={el.blockId}
+                      />
+                    ))}
+                  </div>
+                ))}
+
                 <br />
                 <br />
                 {this.state.itemNotFound && (
