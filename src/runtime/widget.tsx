@@ -353,14 +353,14 @@ export default class Widget extends React.PureComponent<
   async getQuerySet(e, type = "single") {
     let clickedQueryTableId = e.currentTarget.attributes[1].value;
     let currentClickedQueryAttribute;
-    let queryIndex;
+    let queryIndex = -1;
     if (this.state.whereClauseSet.length) {
-      queryIndex = this.state.whereClauseSet
-        .map((obj) => obj.id)
-        .indexOf(clickedQueryTableId);
+      const tableIdsArr = this.state.whereClauseSet.map((obj) => obj.id);
+      queryIndex = tableIdsArr.indexOf(clickedQueryTableId);
+      // queryIndex = this.state.whereClauseSet.map((obj) => obj.id).indexOf(clickedQueryTableId);
       if (queryIndex !== -1) {
         const updateState = this.state.whereClauseSet.map((obj) => {
-          if (obj.id === queryIndex.toString()) {
+          if (obj.id === clickedQueryTableId) {
             currentClickedQueryAttribute = obj.attributeQuery;
             obj = { ...obj, queryValue: e.currentTarget.name };
             let filteredWhereClauseSet = this.state.whereClauseSet.filter(
@@ -407,7 +407,7 @@ export default class Widget extends React.PureComponent<
                     );
                   }
                   const updateState = this.state.whereClauseSet.map((obj) => {
-                    if (obj.id === queryIndex.toString()) {
+                    if (obj.id === clickedQueryTableId) {
                       obj = { ...obj, ifInOrNotInQueryValue: detailThirdQuery };
                       // return this.state.whereClauseSet[queryIndex] = obj
                       let filteredWhereClauseSet =
@@ -868,7 +868,14 @@ return el;
         [`${nextCurrentId}-${this.state.SetBlock.length}`]:false 
       }
     })
-    this.setState({SetBlock:newBlock});
+    this.setState({
+      SetBlock:newBlock,    
+      dropDownsSet: {
+        ...this.state.dropDownsSet,
+        [`${currentId}-${this.state.SetBlock.length}`]:false,
+        [`${nextCurrentId}-${this.state.SetBlock.length}`]:false 
+      }
+    });
 
     //  adding field ..
     
@@ -1321,7 +1328,7 @@ return el;
         .indexOf(currentId);
       if (queryIndex !== -1) {
         this.state.whereClauseSet.map((obj) => {
-          if (obj.id === queryIndex.toString()) {
+          if (obj.id === currentId) {
             if (!obj.checkedListSet) {
               obj = {
                 ...obj,
@@ -1344,7 +1351,6 @@ return el;
                   this.state.whereClauseSet.sort(function (a, b) {
                     return a.id < b.id ? -1 : a.id == b.id ? 0 : 1;
                   });
-
                   // Remove duplicate entries from the whereClauses array
                   this.setState({
                     whereClauseSet: Array.from(new Set(this.state.whereClauseSet)),
@@ -1678,8 +1684,8 @@ return el;
     }
   };
 
-  openDropSet = (id,blockId) => {
-    const currentId = `${id}`+"-"+`${blockId}`;
+  openDropSet = (id) => {
+    const currentId = id;
     this.setState({ mouseleave: false });
     this.setState({ dropIdSet:currentId });
     const dropDownsSet = { ...this.state.dropDownsSet };
@@ -2155,7 +2161,7 @@ return el;
                     checkedToQuery={this.state.checkedToQuery}
                     // for Add set table............................
                     tablesSet={this.state.tablesSet}
-                    tablesSetId={innerEl.id}
+                    tablesSetId={`${innerEl.id}`+ "-"+`${el.blockId}`}
                     whereClausesSet={this.state.whereClauseSet}
                     // End for Add set table............................
                     getQueryAttribute={this.getQueryAttributeSet}

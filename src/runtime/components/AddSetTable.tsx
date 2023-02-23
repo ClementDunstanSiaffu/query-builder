@@ -208,46 +208,68 @@ const SecondConstructor = (props) => {
   let opened = false;
   let checked = 0;
   let au = true;
-
   // valueThirdQuery.map((el, i) => { normalizedThirdQuery.push({ label: el.label[0].toString(), value: el.value[0].toString() }) })
-  if (
-    whereClausesSet[tablesSetId] &&
-    whereClausesSet[tablesSetId].ifInOrNotInQueryValue
-  ) {
-    whereClausesSet[tablesSetId].ifInOrNotInQueryValue.map((el, i) => {
-      normalizedThirdQuery.push({
-        id: tablesSetId.toString(),
-        label: el.label.toString(),
-        value: el.value.toString(),
-        listel: whereClausesSet[tablesSetId].checkedListSet,
-      });
-      // normalizedThirdQuery.push({
-      //   id: tablesSetId.toString(),
-      //   label: el.label[0].toString(),
-      //   value: el.value[0].toString(),
-      //   listel: whereClausesSet[tablesSetId].checkedListSet,
-      // });
-    });
-  }
-  if (whereClausesSet[tablesSetId] && whereClausesSet[tablesSetId].queryValue) {
-    defaultValue = whereClausesSet[tablesSetId].queryValue;
-  }
-  if (
-    whereClausesSet[tablesSetId] &&
-    whereClausesSet[tablesSetId].dropdownValueQuery
-  ) {
-    dropdownValueQuery = whereClausesSet[tablesSetId].dropdownValueQuery;
-  }
-  if (whereClausesSet[tablesSetId] && whereClausesSet[tablesSetId].isOpen) {
-    // opened = whereClausesSet[tablesSetId].isOpen;
-  }
+  
+  if (whereClausesSet.length){
+    const currentItem = whereClausesSet.find((item)=>item.id === tablesSetId);
+    if (currentItem?.ifInOrNotInQueryValue){
+      currentItem.ifInOrNotInQueryValue.map((el,i)=>{
+        normalizedThirdQuery.push({
+          id: tablesSetId.toString(),
+          label: el.label.toString(),
+          value: el.value.toString(),
+          listel: currentItem.checkedListSet,
+        });
+      })
+    }
 
-  if (
-    whereClausesSet[tablesSetId] &&
-    whereClausesSet[tablesSetId].checkedListSet
-  ) {
-    checked = whereClausesSet[tablesSetId].checkedListSet.length;
+    if (currentItem?.queryValue)defaultValue = currentItem.queryValue;
+    if (currentItem?.dropdownValueQuery) dropdownValueQuery = currentItem.dropdownValueQuery;
+    if (currentItem?.isOpen) {
+      // opened = whereClausesSet[tablesSetId].isOpen;
+    }
+    if (currentItem?.checkedListSet)checked = currentItem.checkedListSet.length;
+    
   }
+  
+  // if (
+  //   whereClausesSet[tablesSetId] &&
+  //   whereClausesSet[tablesSetId].ifInOrNotInQueryValue
+  // ) {
+  //   whereClausesSet[tablesSetId].ifInOrNotInQueryValue.map((el, i) => {
+  //     normalizedThirdQuery.push({
+  //       id: tablesSetId.toString(),
+  //       label: el.label.toString(),
+  //       value: el.value.toString(),
+  //       listel: whereClausesSet[tablesSetId].checkedListSet,
+  //     });
+  //     // normalizedThirdQuery.push({
+  //     //   id: tablesSetId.toString(),
+  //     //   label: el.label[0].toString(),
+  //     //   value: el.value[0].toString(),
+  //     //   listel: whereClausesSet[tablesSetId].checkedListSet,
+  //     // });
+  //   });
+  // }
+  // if (whereClausesSet[tablesSetId] && whereClausesSet[tablesSetId].queryValue) {
+  //   defaultValue = whereClausesSet[tablesSetId].queryValue;
+  // }
+  // if (
+  //   whereClausesSet[tablesSetId] &&
+  //   whereClausesSet[tablesSetId].dropdownValueQuery
+  // ) {
+  //   dropdownValueQuery = whereClausesSet[tablesSetId].dropdownValueQuery;
+  // }
+  // if (whereClausesSet[tablesSetId] && whereClausesSet[tablesSetId].isOpen) {
+  //   // opened = whereClausesSet[tablesSetId].isOpen;
+  // }
+
+  // if (
+  //   whereClausesSet[tablesSetId] &&
+  //   whereClausesSet[tablesSetId].checkedListSet
+  // ) {
+  //   checked = whereClausesSet[tablesSetId].checkedListSet.length;
+  // }
 
   const test = (props) => {};
   return (
@@ -372,10 +394,10 @@ const SecondConstructor = (props) => {
           {
             <Dropdown
               activeIcon
-              isOpen={dropdownsSet[tablesSetId]}
+              isOpen={dropdownsSet[tablesSetId]??false}
               toggle={() => dropDown}
             >
-              <DropdownButton onClick={() => openDrop(tablesSetId,blockId)}>
+              <DropdownButton onClick={() => openDrop(tablesSetId)}>
                 {checked} elementi selezionati
               </DropdownButton>
               <DropdownMenu>

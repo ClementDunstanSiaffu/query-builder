@@ -216,6 +216,7 @@ const SecondConstructor = (props) => {
       // });
     });
   }
+  console.log(normalizedThirdQuery,dropdowns[tablesId],dropdowns,tablesId,"for single")
   if (whereClauses[tablesId] && whereClauses[tablesId].queryValue) {
     defaultValue = whereClauses[tablesId].queryValue;
   }
