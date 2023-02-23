@@ -864,7 +864,8 @@ return el;
         ...this.state.dropDownsSet,
         [`${currentId}-${this.state.SetBlock.length}`]:false,
         [`${nextCurrentId}-${this.state.SetBlock.length}`]:false 
-      }
+      },
+      AndOrSet:this.state.AndOrSet
     })
     this.setState({
       SetBlock:newBlock,    
@@ -1705,8 +1706,16 @@ return el;
 
   chooseAndOr = (e) => this.setState({ AndOr: e.target.value });
 
-  chooseAndOrSet = (e) => this.setState({ AndOrSet: e.target.value });
-
+  chooseAndOrSet = (e,blockId) =>{
+    const currentSetBlock = [...this.state.SetBlock];
+    const index = currentSetBlock.findIndex((item)=>item.blockId === blockId);
+    if (index !== -1){
+      const currentSetBlockItem = currentSetBlock[index];
+      currentSetBlockItem["AndOrSet"] = e.target.value;
+      currentSetBlock[index] = currentSetBlockItem
+    }
+     this.setState({ AndOrSet: e.target.value,SetBlock:currentSetBlock});
+  }
 
   openDrop = (id) => {
     this.setState({ mouseleave: false });
@@ -2155,7 +2164,7 @@ return el;
                 ) : (
                   
                   <div style={{display:'flex',flexDirection:'row'}}><Select
-                  onChange={this.chooseAndOrSet}
+                  onChange={(e)=>this.chooseAndOrSet(e,el.blockId)}
                   placeholder=" Visualizza le feature nel layer che corrispondono a tutte le espressioni seguenti"
                   defaultValue="AND"
                 >
