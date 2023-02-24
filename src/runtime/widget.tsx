@@ -2115,7 +2115,7 @@ setQueryConstructor = (queryRequest,firstQuery,secondQueryTarget)=>{
                 <br />
                 <div
                   style={{
-                    width: "100%",
+                    width: "98%",
                     background: "#005eca",
                     height: "10px",
                   }}
@@ -2142,7 +2142,7 @@ setQueryConstructor = (queryRequest,firstQuery,secondQueryTarget)=>{
                     Visualizza le feature nel layer che corrispondono ad una
                     qualsiasi delle espressioni seguenti
                   </Option>
-                </Select> <div style={{display:'flex',gap:'5px'}} className="row w-100 d-flex justify-content-end">
+                </Select> <div style={{marginLeft:"4px"}} className=" ">
                 <Button
                   id={el.blockId}
                   onClick={this.addTwoTable}
