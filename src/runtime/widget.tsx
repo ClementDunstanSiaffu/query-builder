@@ -573,8 +573,9 @@ export default class Widget extends React.PureComponent<
           }
         });
       }
-    }else if (this.state.whereClauseSet.length){
+    }else if (this.state.SetBlock.length){
       if (this.state.jimuMapView) {
+        this.queryArray = [];
         this.state.jimuMapView.view.map.allLayers.forEach((f, index) => {
           if (f.title === this.state.currentTargetText) {
             this.state.jimuMapView.view.whenLayerView(f).then((layerView) => {
@@ -656,82 +657,177 @@ setQueryConstructor = (queryRequest,firstQuery,secondQueryTarget)=>{
     const likelyQuery = ["LIKE%", "%LIKE", "%LIKE%", "NOT LIKE"];
     let setQueryString = null;
     let outFields = [];
-      if (this.state.AndOrSet === "AND") { 
-        this.state.whereClauseSet.forEach((el,i) => {
-          let attributeQuery = el.attributeQuery;
-          let queryValue = el.queryValue;
-          let value;
-          if (queryValue === "is null" || queryValue === "is not null") {
-            value = el.value?.txt ?? "";
-          } else if (queryValue === "IN" || queryValue === "NOT_IN") {
-            value = [];
-            if (queryValue === "IN" && el.checkedListSet.length) {
-              el.checkedListSet.forEach((el) => value.push(el.checkValue));
-            } else if (
-              queryValue === "NOT_IN" &&
-              this.state.counterIsChecked.length
-            ) {
-              this.state.counterIsChecked.forEach((el) => value.push(el));
-            }
-          } else if (
-            queryValue === "included" ||
-            queryValue === "is_not_included"
-          ) {
-            value = {
-              firstTxt: el.firstTxt.value,
-              secondTxt: el.secondTxt.value,
-            };
-          } else if (!checkedQuery.includes(queryValue)) {
-            value = el.value?.txt ?? "";
+    if (this.state.SetBlock.length){
+      this.state.SetBlock.forEach((block,i)=>{
+        const blockId = block?.blockId;
+        const whereClauseSet = block[`${blockId}`];
+        const AndOrSet = block?.AndOrSet;
+        console.log(blockId,whereClauseSet,AndOrSet)
+        if (AndOrSet === "AND"){
+          if (whereClauseSet?.length){
+            whereClauseSet.forEach((el,j) => {
+              let attributeQuery = el.attributeQuery;
+              let queryValue = el.queryValue;
+              let value;
+              if (queryValue === "is null" || queryValue === "is not null") {
+                value = el.value?.txt ?? "";
+              } else if (queryValue === "IN" || queryValue === "NOT_IN") {
+                value = [];
+                if (queryValue === "IN" && el.checkedListSet.length) {
+                  el.checkedListSet.forEach((el) => value.push(el.checkValue));
+                } else if (
+                  queryValue === "NOT_IN" &&
+                  this.state.counterIsChecked.length
+                ) {
+                  this.state.counterIsChecked.forEach((el) => value.push(el));
+                }
+              } else if (
+                queryValue === "included" ||
+                queryValue === "is_not_included"
+              ) {
+                value = {
+                  firstTxt: el.firstTxt.value,
+                  secondTxt: el.secondTxt.value,
+                };
+              } else if (!checkedQuery.includes(queryValue)) {
+                value = el.value?.txt ?? "";
+              }
+              if (setQueryString){
+                setQueryString += this.setQueryConstructor(queryValue,attributeQuery,value);
+              }else{
+                setQueryString = this.setQueryConstructor(queryValue,attributeQuery,value)
+              }
+              if (j < whereClauseSet.length-1)setQueryString += "  " +  AndOrSet + "  ";
+              outFields.push(`${attributeQuery}`);
+            });
           }
-          if (setQueryString){
-            setQueryString += this.setQueryConstructor(queryValue,attributeQuery,value);
-          }else{
-            setQueryString = this.setQueryConstructor(queryValue,attributeQuery,value)
+        }else{
+          let normalizedWhereToSendQuery: any = [];
+          if (whereClauseSet?.length){
+            whereClauseSet.forEach((el,j) => {
+              let attributeQuery = el.attributeQuery;
+              let queryValue = el.queryValue;
+              let value;
+              if (queryValue === "IN" || queryValue === "NOT_IN") {
+                value = [];
+                if (queryValue === "IN" && el.checkedListSet.length) {
+                  el.checkedListSet.forEach((el) => value.push(el.checkValue));
+                } else if (
+                  queryValue === "NOT_IN" &&
+                  this.state.counterIsChecked.length
+                ) {
+                  this.state.counterIsChecked.forEach((el) =>
+                    value.push(el.checkValue)
+                  );
+                }
+              }
+              if (queryValue === "included" || queryValue === "is_not_included") {
+                value = {
+                  firstTxt: el.firstTxt.value,
+                  secondTxt: el.secondTxt.value,
+                };
+              } else if (!checkedQuery.includes(queryValue)) {
+                  value = el.value?.txt ?? "";
+              }
+              if (setQueryString){
+                setQueryString += this.setQueryConstructor(queryValue,attributeQuery,value);
+              }else{
+                setQueryString = this.setQueryConstructor(queryValue,attributeQuery,value)
+              }
+              if (j < whereClauseSet.length-1)setQueryString += "  " +  AndOrSet + "  ";
+              outFields.push(`${attributeQuery}`);
+            });
           }
-          if (i < this.state.whereClauseSet.length-1){
-            setQueryString += "  " +  this.state.AndOrSet + "  ";
-          }
-          outFields.push(`${attributeQuery}`);
-        });
-      } else {
-        let normalizedWhereToSendQuery: any = [];
-        this.state.whereClauseSet.forEach((el,i) => {
-          let attributeQuery = el.attributeQuery;
-          let queryValue = el.queryValue;
-          let value;
-          if (queryValue === "IN" || queryValue === "NOT_IN") {
-            value = [];
-            if (queryValue === "IN" && el.checkedListSet.length) {
-              el.checkedListSet.forEach((el) => value.push(el.checkValue));
-            } else if (
-              queryValue === "NOT_IN" &&
-              this.state.counterIsChecked.length
-            ) {
-              this.state.counterIsChecked.forEach((el) =>
-                value.push(el.checkValue)
-              );
-            }
-          }
-          if (queryValue === "included" || queryValue === "is_not_included") {
-            value = {
-              firstTxt: el.firstTxt.value,
-              secondTxt: el.secondTxt.value,
-            };
-          } else if (!checkedQuery.includes(queryValue)) {
-              value = el.value?.txt ?? "";
-          }
-          if (setQueryString){
-            setQueryString += this.setQueryConstructor(queryValue,attributeQuery,value);
-          }else{
-            setQueryString = this.setQueryConstructor(queryValue,attributeQuery,value)
-          }
-          if (i < this.state.whereClauseSet.length-1){
-            setQueryString += "  " +  this.state.AndOrSet + "  ";
-          }
-          outFields.push(`${attributeQuery}`);
-        });
-      }
+        }
+        if (i === 0 && this.state.SetBlock.length >= 2 ){
+          setQueryString = "(" + setQueryString;
+        }
+        if (i < this.state.SetBlock.length-1){
+          // setQueryString = "(" +setQueryString+ ")"
+          setQueryString += " ) " + this.state.AndOr + " ( ";
+        }
+        if (this.state.SetBlock.length >= 2 && i === this.state.SetBlock.length-1){
+          setQueryString = setQueryString + ")"
+        }
+      })
+    }
+      // if (this.state.AndOrSet === "AND") { 
+      //   this.state.whereClauseSet.forEach((el,i) => {
+      //     let attributeQuery = el.attributeQuery;
+      //     let queryValue = el.queryValue;
+      //     let value;
+      //     if (queryValue === "is null" || queryValue === "is not null") {
+      //       value = el.value?.txt ?? "";
+      //     } else if (queryValue === "IN" || queryValue === "NOT_IN") {
+      //       value = [];
+      //       if (queryValue === "IN" && el.checkedListSet.length) {
+      //         el.checkedListSet.forEach((el) => value.push(el.checkValue));
+      //       } else if (
+      //         queryValue === "NOT_IN" &&
+      //         this.state.counterIsChecked.length
+      //       ) {
+      //         this.state.counterIsChecked.forEach((el) => value.push(el));
+      //       }
+      //     } else if (
+      //       queryValue === "included" ||
+      //       queryValue === "is_not_included"
+      //     ) {
+      //       value = {
+      //         firstTxt: el.firstTxt.value,
+      //         secondTxt: el.secondTxt.value,
+      //       };
+      //     } else if (!checkedQuery.includes(queryValue)) {
+      //       value = el.value?.txt ?? "";
+      //     }
+      //     if (setQueryString){
+      //       setQueryString += this.setQueryConstructor(queryValue,attributeQuery,value);
+      //     }else{
+      //       setQueryString = this.setQueryConstructor(queryValue,attributeQuery,value)
+      //     }
+      //     if (i < this.state.whereClauseSet.length-1){
+      //       setQueryString += "  " +  this.state.AndOrSet + "  ";
+      //     }
+      //     outFields.push(`${attributeQuery}`);
+      //   });
+      // } else {
+      //   let normalizedWhereToSendQuery: any = [];
+      //   this.state.whereClauseSet.forEach((el,i) => {
+      //     let attributeQuery = el.attributeQuery;
+      //     let queryValue = el.queryValue;
+      //     let value;
+      //     if (queryValue === "IN" || queryValue === "NOT_IN") {
+      //       value = [];
+      //       if (queryValue === "IN" && el.checkedListSet.length) {
+      //         el.checkedListSet.forEach((el) => value.push(el.checkValue));
+      //       } else if (
+      //         queryValue === "NOT_IN" &&
+      //         this.state.counterIsChecked.length
+      //       ) {
+      //         this.state.counterIsChecked.forEach((el) =>
+      //           value.push(el.checkValue)
+      //         );
+      //       }
+      //     }
+      //     if (queryValue === "included" || queryValue === "is_not_included") {
+      //       value = {
+      //         firstTxt: el.firstTxt.value,
+      //         secondTxt: el.secondTxt.value,
+      //       };
+      //     } else if (!checkedQuery.includes(queryValue)) {
+      //         value = el.value?.txt ?? "";
+      //     }
+      //     if (setQueryString){
+      //       setQueryString += this.setQueryConstructor(queryValue,attributeQuery,value);
+      //     }else{
+      //       setQueryString = this.setQueryConstructor(queryValue,attributeQuery,value)
+      //     }
+      //     if (i < this.state.whereClauseSet.length-1){
+      //       setQueryString += "  " +  this.state.AndOrSet + "  ";
+      //     }
+      //     outFields.push(`${attributeQuery}`);
+      //   });
+      // }
+      console.log(setQueryString,"set query string")
     return {setQueryString,outFields}
   }
 
@@ -1963,6 +2059,7 @@ return el;
 
   //TODO config abilitare tab true/false
   render() {
+    console.log(this.state.SetBlock,this.queryArray,"set block val")
     if (this.props.state === "CLOSED" && !this.state.widgetStateClosedChecked) {
       const jimuMapView = this.state.jimuMapView;
       const view = jimuMapView.view;
