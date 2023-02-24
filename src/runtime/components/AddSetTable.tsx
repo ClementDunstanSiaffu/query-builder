@@ -230,49 +230,7 @@ const SecondConstructor = (props) => {
     if (currentItem?.checkedListSet)checked = currentItem.checkedListSet.length;
     
   }
-  
-  // if (
-  //   whereClausesSet[tablesSetId] &&
-  //   whereClausesSet[tablesSetId].ifInOrNotInQueryValue
-  // ) {
-  //   whereClausesSet[tablesSetId].ifInOrNotInQueryValue.map((el, i) => {
-  //     normalizedThirdQuery.push({
-  //       id: tablesSetId.toString(),
-  //       label: el.label.toString(),
-  //       value: el.value.toString(),
-  //       listel: whereClausesSet[tablesSetId].checkedListSet,
-  //     });
-  //     // normalizedThirdQuery.push({
-  //     //   id: tablesSetId.toString(),
-  //     //   label: el.label[0].toString(),
-  //     //   value: el.value[0].toString(),
-  //     //   listel: whereClausesSet[tablesSetId].checkedListSet,
-  //     // });
-  //   });
-  // }
-  // if (whereClausesSet[tablesSetId] && whereClausesSet[tablesSetId].queryValue) {
-  //   defaultValue = whereClausesSet[tablesSetId].queryValue;
-  // }
-  // if (
-  //   whereClausesSet[tablesSetId] &&
-  //   whereClausesSet[tablesSetId].dropdownValueQuery
-  // ) {
-  //   dropdownValueQuery = whereClausesSet[tablesSetId].dropdownValueQuery;
-  // }
-  // if (whereClausesSet[tablesSetId] && whereClausesSet[tablesSetId].isOpen) {
-  //   // opened = whereClausesSet[tablesSetId].isOpen;
-  // }
 
-  // if (
-  //   whereClausesSet[tablesSetId] &&
-  //   whereClausesSet[tablesSetId].checkedListSet
-  // ) {
-  //   checked = whereClausesSet[tablesSetId].checkedListSet.length;
-  // }
-
-  const test = (e) => {
-    console.log(e,"from testing")
-  };
   return (
     <Switch queryValues={defaultValue}>
       <div value={"="} className="d-flex col-md-4">
@@ -443,14 +401,6 @@ const SecondConstructor = (props) => {
               </DropdownMenu>
             </Dropdown>
           }
-          {/*<MultiSelect*/}
-          {/*    displayByValues={function myFunction (e) { return `${counterIsChecked.length} elementi selezionati` }}*/}
-          {/*    items={normalizedThirdQuery}*/}
-          {/*    onClickItem={functionCounterIsChecked}*/}
-          {/*    placeholder={'0 elementi selezionati'}*/}
-          {/*    data-table-id={tablesSetId}*/}
-          {/*    onClick={test}*/}
-          {/*/>*/}
         </div>
       </div>
       <div value={"NOT_IN"} className="d-flex justify-content-between">
@@ -506,27 +456,7 @@ const SecondConstructor = (props) => {
               </DropdownMenu>
             </Dropdown>
           }
-          {/*<MultiSelect*/}
-          {/*    displayByValues={function myFunction (e) { return `${counterIsChecked.length} elementi selezionati` }}*/}
-          {/*    items={normalizedThirdQuery}*/}
-          {/*    onClickItem={functionCounterIsChecked}*/}
-          {/*    placeholder={'0 elementi selezionati'}*/}
-          {/*    data-table-id={tablesSetId}*/}
-          {/*    onClick={test}*/}
-          {/*/>*/}
         </div>
-        {/* <div className="w-100">
-          <MultiSelect
-            displayByValues={function myFunction(e) {
-              return `${counterIsChecked.length} elementi selezionati`;
-            }}
-            items={normalizedThirdQuery}
-            onClickItem={functionCounterIsChecked}
-            onClick={test}
-            placeholder={"0 elementi selezionati"}
-            id={tablesSetId}
-          />
-        </div> */}
       </div>
       <div value={"<="} className="d-flex  col-md-4">
         {dropdownValueQuery === "univoco" ? (

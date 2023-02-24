@@ -13,13 +13,9 @@ import Polygon from "esri/geometry/Polygon";
 import AttributeTableConnector from "../connector/attribute_table_connector";
 import geometryEngine from "esri/geometry/geometryEngine";
 import AddSetTable from "./components/AddSetTable";
-import { CloseOutlined } from "jimu-icons/outlined/editor/close";
 
-
-export default class Widget extends React.PureComponent<
-  AllWidgetProps<IMConfig>,
-  any
-> {
+export default class Widget extends React.PureComponent<AllWidgetProps<IMConfig>,any> {
+  
   graphicLayerFound = new GraphicsLayer({ listMode: "hide", visible: true });
   graphicLayerSelected = new GraphicsLayer({ listMode: "hide", visible: true });
 
@@ -36,7 +32,6 @@ export default class Widget extends React.PureComponent<
   setOutFields = [];
   setQueryString = null;
  
-
   constructor(props) {
     super(props);
     this.init();
@@ -118,12 +113,7 @@ export default class Widget extends React.PureComponent<
   };
 
   nls = (id: string) => {
-    return this.props.intl
-      ? this.props.intl.formatMessage({
-          id: id,
-          defaultMessage: defaultMessages[id],
-        })
-      : id;
+    return this.props.intl? this.props.intl.formatMessage({id: id,defaultMessage: defaultMessages[id],}): id;
   };
 
   activeViewChangeHandler(jmv: JimuMapView) {
@@ -323,7 +313,6 @@ export default class Widget extends React.PureComponent<
                   const updateState = this.state.whereClauses.map((obj) => {
                     if (obj.id === queryIndex.toString()) {
                       obj = { ...obj, ifInOrNotInQueryValue: detailThirdQuery };
-                      // return this.state.whereClauses[queryIndex] = obj
                       let filteredWhereClauses = this.state.whereClauses.filter(
                         (a) => a.id !== obj.id
                       );
@@ -356,7 +345,6 @@ export default class Widget extends React.PureComponent<
     if (this.state.whereClauseSet.length) {
       const tableIdsArr = this.state.whereClauseSet.map((obj) => obj.id);
       queryIndex = tableIdsArr.indexOf(clickedQueryTableId);
-      // queryIndex = this.state.whereClauseSet.map((obj) => obj.id).indexOf(clickedQueryTableId);
       if (queryIndex !== -1) {
         const updateState = this.state.whereClauseSet.map((obj) => {
           if (obj.id === clickedQueryTableId) {
@@ -409,11 +397,7 @@ export default class Widget extends React.PureComponent<
                   const updateState = this.state.whereClauseSet.map((obj) => {
                     if (obj.id === clickedQueryTableId) {
                       obj = { ...obj, ifInOrNotInQueryValue: detailThirdQuery };
-                      // return this.state.whereClauseSet[queryIndex] = obj
-                      let filteredWhereClauseSet =
-                        this.state.whereClauseSet.filter(
-                          (a) => a.id !== obj.id
-                        );
+                      let filteredWhereClauseSet =this.state.whereClauseSet.filter((a) => a.id !== obj.id);
                       filteredWhereClauseSet.push(obj);
                       filteredWhereClauseSet.sort(function (a, b) {
                         return a.id < b.id ? -1 : a.id == b.id ? 0 : 1;
@@ -468,14 +452,6 @@ export default class Widget extends React.PureComponent<
           } else if (queryValue === "IN" || queryValue === "NOT_IN") {
             value = [];
             el.checkedList.forEach((el) => value.push(el.checkValue));
-            // if (queryValue === "IN" && el.checkedList.length) {
-            //   el.checkedList.forEach((el) => value.push(el.checkValue));
-            // } else if (
-            //   queryValue === "NOT_IN" &&
-            //   this.state.counterIsChecked.length
-            // ) {
-            //   this.state.counterIsChecked.forEach((el) => value.push(el));
-            // }
           } else if (
             queryValue === "included" ||
             queryValue === "is_not_included"
@@ -606,7 +582,7 @@ export default class Widget extends React.PureComponent<
 
 
 setQueryConstructor = (queryRequest,firstQuery,secondQueryTarget)=>{
-  switch (queryRequest) {
+    switch (queryRequest) {
       case "LIKE%":
           return  `${firstQuery} LIKE '${secondQueryTarget}%'`;       
       case "%LIKE":
@@ -651,8 +627,8 @@ setQueryConstructor = (queryRequest,firstQuery,secondQueryTarget)=>{
           } else {
               return `${firstQuery} ${queryRequest} ${secondQueryTarget}`;
           }
+    }
   }
-}
 
   sendQuerySet() {
     const checkedQuery = [
@@ -671,7 +647,6 @@ setQueryConstructor = (queryRequest,firstQuery,secondQueryTarget)=>{
         const blockId = block?.blockId;
         const whereClauseSet = block[`${blockId}`];
         const AndOrSet = block?.AndOrSet;
-        console.log(whereClauseSet,"single whereClauseSet")
         if (AndOrSet === "AND"){
           if (whereClauseSet?.length){
             whereClauseSet.forEach((el,j) => {
@@ -683,14 +658,6 @@ setQueryConstructor = (queryRequest,firstQuery,secondQueryTarget)=>{
               } else if (queryValue === "IN" || queryValue === "NOT_IN") {
                 value = [];
                 el.checkedListSet.forEach((el) => value.push(el.checkValue));
-                // if (queryValue === "IN" && el.checkedListSet.length) {
-                //   el.checkedListSet.forEach((el) => value.push(el.checkValue));
-                // } else if (
-                //   queryValue === "NOT_IN" &&
-                //   this.state.counterIsChecked.length
-                // ) {
-                //   this.state.counterIsChecked.forEach((el) => value.push(el));
-                // }
               } else if (
                 queryValue === "included" ||
                 queryValue === "is_not_included"
@@ -749,95 +716,14 @@ setQueryConstructor = (queryRequest,firstQuery,secondQueryTarget)=>{
             });
           }
         }
-        if (i === 0 && this.state.SetBlock.length >= 2 ){
-          setQueryString = "(" + setQueryString;
-        }
-        if (i < this.state.SetBlock.length-1){
-          // setQueryString = "(" +setQueryString+ ")"
-          setQueryString += " ) " + this.state.AndOr + " ( ";
-        }
-        if (this.state.SetBlock.length >= 2 && i === this.state.SetBlock.length-1){
-          setQueryString = setQueryString + ")"
-        }
+        if (i === 0 && this.state.SetBlock.length >= 2 )setQueryString = "(" + setQueryString;
+        
+        if (i < this.state.SetBlock.length-1)setQueryString += " ) " + this.state.AndOr + " ( ";
+        
+        if (this.state.SetBlock.length >= 2 && i === this.state.SetBlock.length-1)setQueryString = setQueryString + ")"
+        
       })
     }
-      // if (this.state.AndOrSet === "AND") { 
-      //   this.state.whereClauseSet.forEach((el,i) => {
-      //     let attributeQuery = el.attributeQuery;
-      //     let queryValue = el.queryValue;
-      //     let value;
-      //     if (queryValue === "is null" || queryValue === "is not null") {
-      //       value = el.value?.txt ?? "";
-      //     } else if (queryValue === "IN" || queryValue === "NOT_IN") {
-      //       value = [];
-      //       if (queryValue === "IN" && el.checkedListSet.length) {
-      //         el.checkedListSet.forEach((el) => value.push(el.checkValue));
-      //       } else if (
-      //         queryValue === "NOT_IN" &&
-      //         this.state.counterIsChecked.length
-      //       ) {
-      //         this.state.counterIsChecked.forEach((el) => value.push(el));
-      //       }
-      //     } else if (
-      //       queryValue === "included" ||
-      //       queryValue === "is_not_included"
-      //     ) {
-      //       value = {
-      //         firstTxt: el.firstTxt.value,
-      //         secondTxt: el.secondTxt.value,
-      //       };
-      //     } else if (!checkedQuery.includes(queryValue)) {
-      //       value = el.value?.txt ?? "";
-      //     }
-      //     if (setQueryString){
-      //       setQueryString += this.setQueryConstructor(queryValue,attributeQuery,value);
-      //     }else{
-      //       setQueryString = this.setQueryConstructor(queryValue,attributeQuery,value)
-      //     }
-      //     if (i < this.state.whereClauseSet.length-1){
-      //       setQueryString += "  " +  this.state.AndOrSet + "  ";
-      //     }
-      //     outFields.push(`${attributeQuery}`);
-      //   });
-      // } else {
-      //   let normalizedWhereToSendQuery: any = [];
-      //   this.state.whereClauseSet.forEach((el,i) => {
-      //     let attributeQuery = el.attributeQuery;
-      //     let queryValue = el.queryValue;
-      //     let value;
-      //     if (queryValue === "IN" || queryValue === "NOT_IN") {
-      //       value = [];
-      //       if (queryValue === "IN" && el.checkedListSet.length) {
-      //         el.checkedListSet.forEach((el) => value.push(el.checkValue));
-      //       } else if (
-      //         queryValue === "NOT_IN" &&
-      //         this.state.counterIsChecked.length
-      //       ) {
-      //         this.state.counterIsChecked.forEach((el) =>
-      //           value.push(el.checkValue)
-      //         );
-      //       }
-      //     }
-      //     if (queryValue === "included" || queryValue === "is_not_included") {
-      //       value = {
-      //         firstTxt: el.firstTxt.value,
-      //         secondTxt: el.secondTxt.value,
-      //       };
-      //     } else if (!checkedQuery.includes(queryValue)) {
-      //         value = el.value?.txt ?? "";
-      //     }
-      //     if (setQueryString){
-      //       setQueryString += this.setQueryConstructor(queryValue,attributeQuery,value);
-      //     }else{
-      //       setQueryString = this.setQueryConstructor(queryValue,attributeQuery,value)
-      //     }
-      //     if (i < this.state.whereClauseSet.length-1){
-      //       setQueryString += "  " +  this.state.AndOrSet + "  ";
-      //     }
-      //     outFields.push(`${attributeQuery}`);
-      //   });
-      // }
-      console.log(setQueryString,"set query string")
     return {setQueryString,outFields}
   }
 
@@ -892,72 +778,30 @@ setQueryConstructor = (queryRequest,firstQuery,secondQueryTarget)=>{
     }
   };
 
-  // addTwoTablef = () => {
-  //   const currentId = this.state.tableCounterSet;
-  //   let idOne = this.state.tableCounterSet;
-  //   let idTwo = idOne + 1;
-  //   this.setState({
-  //     tablesSet: [...this.state.tablesSet, { id: idOne }, { id: idTwo }],
-  //     tableCounterSet: this.state.tableCounterSet + 2,
-  //     dropDownsSet: { ...this.state.dropDownsSet, [currentId]: false },
-  //   });
-  //   if(this.state.tables.length > 0){
-  //     this.setState({showAddSelect:false});
-  //   }
-  // };
-
   addTwoTable = (ev) => {
     let newblock=this.state.SetBlock.map((el)=>{
-    if(ev.target.id==el.blockId){
-      let idOne = el.tableCounterSet;
-      let idTwo = idOne + 1;
-      const currentId = this.state.tableCounterSet;
-      return {
-        ...el,
-        tablesSet:[...el.tablesSet, { id: idOne }, { id: idTwo }],
-        tableCounterSet: this.state.tableCounterSet + 2,
-        dropDownsSet: { ...el.dropDownsSet, [currentId]: false }
-    }
-  }
-return el;
-
-});
+      if(ev.target.id==el.blockId){
+        let idOne = el.tableCounterSet;
+        let idTwo = idOne + 1;
+        const currentId = this.state.tableCounterSet;
+        return {
+          ...el,
+          tablesSet:[...el.tablesSet, { id: idOne }, { id: idTwo }],
+          tableCounterSet: this.state.tableCounterSet + 2,
+          dropDownsSet: { ...el.dropDownsSet, [currentId]: false }
+        }
+      }
+      return el;
+    });
     if(this.state.tables.length > 0){
       this.setState({showAddSelect:false});
     }
     this.setState({SetBlock:newblock});
   };
 
-
-  // addBlockf = ()=>{
-  //   let newBlock=[...this.state.SetBlock];
-  //   newBlock.push({[this.state.SetBlock.length]:this.state.whereClauseSet})
-  //   this.setState({SetBlock:newBlock});
-  //    const currentId = this.state.tableCounterSet;
-
-  //   //  adding field ..
-
-  //   let idOne = this.state.tableCounterSet;
-  //   let idTwo = idOne + 1;
-  //   this.setState({
-  //     tablesSet: [{ id: idOne }, { id: idTwo }],
-  //     tableCounterSet: this.state.tableCounterSet + 2,
-  //     dropDownsSet: { ...this.state.dropDownsSet, [currentId]: false },
-  //   });
-  //   if(this.state.tables.length > 0){
-  //     this.setState({showAddSelect:false});
-  //   }
-  // }
-
   addBlock = ()=>{
     let idOne = this.state.SetBlock.tableCounterSet??0;
     let idTwo = idOne + 1;
-     // this.setState({
-    //   tablesSet: [{ id: idOne }, { id: idTwo }],
-    //   tableCounterSet: this.state.tableCounterSet + 2,
-    //   dropDownsSet: { ...this.state.dropDownsSet, [currentId]: false },
-    // });
-    // const currentId = this.state.SetBlock.tableCounterSet;
     const currentId = idOne;
     const nextCurrentId = idTwo;
     let newBlock=[...this.state.SetBlock];
@@ -982,14 +826,7 @@ return el;
       },
     });
 
-    //  adding field ..
-    
-    // let idOne = this.state.tableCounterSet;
-    // let idTwo = idOne + 1;
-   
-    if(this.state.tables.length > 0){
-      this.setState({showAddSelect:false});
-    }
+    if(this.state.tables.length > 0)this.setState({showAddSelect:false});
 
   }
 
@@ -1045,14 +882,12 @@ return el;
   };
 
   textInputHandler = (e,queryType="single") => {
-    console.log("text input handler is called")
     let txt = e.target.value;
     let currentTableId = e.target.attributes[0].value;
     this.queryTextConstructor(txt, currentTableId,queryType);
   };
 
   textFirstIncludedHandler = (e,queryType="single") => {
-    
     let txt = e.target.value;
     let currentTableId = e.target.attributes[0].value;
     let input = "first";
@@ -1066,16 +901,13 @@ return el;
     this.queryTextIncludedConstructor(txt, currentTableId, input,queryType);
   };
   univocoSelectHandler = (e,queryType="single") => {
-    console.log("univocoSelectHandler is called")
     let txt = e.currentTarget.textContent;
     let currentTableId = e.currentTarget.attributes[2].value;
     this.queryTextConstructor(txt, currentTableId,queryType);
   };
 
-  containsAnyLetters = (str) => {
-    return /[a-zA-Z]/.test(str);
-  };
-
+  containsAnyLetters = (str) => /[a-zA-Z]/.test(str);
+  
   queryTextConstructor = (txt, currentTableId,queryType) => {
     let queryIndex;
     let newWhereSetClause;
@@ -1103,6 +935,7 @@ return el;
       }
     }
   };
+
   queryTextIncludedConstructor = (txt, currentTableId, input,queryType) => {
     let queryIndex;
     let newWhereSetClause;
@@ -1128,7 +961,6 @@ return el;
           return { obj };
         });
       }
-      console.log(newWhereSetClause,"check included")
       if (newWhereSetClause?.length){
         const currentNewWhereSetClause = newWhereSetClause.find((item)=>item.id === currentTableId);
         this.addCurrentWherClauseBlock(currentTableId,currentNewWhereSetClause)
@@ -1303,7 +1135,6 @@ return el;
               whereClauseSet: filteredWhereClauseSet,
             });
           }
-          // return this.state.whereClauses[queryIndex] = obj
         }
         return { obj };
       });
@@ -1439,7 +1270,6 @@ return el;
     let currentBlock;
     currentBlockIndex = currentSetBlock.findIndex((item)=>`${item?.blockId}` === blockId);
     if (currentBlockIndex !== -1)currentBlock = currentSetBlock[currentBlockIndex]
-    // const currentBlock = currentSetBlock.find((item)=>`${item?.blockId}` === blockId);
     let currentWhereSetClause = null;
     if (currentBlock){
       currentWhereSetClause = currentBlock[`${blockId}`];
@@ -1448,8 +1278,6 @@ return el;
         index = currentWhereSetClause.findIndex((item)=>item.id === currentId);
         if (index !== -1){
           currentWhereSetClause[index] = currentWhereClause;
-          // currentBlock[blockId] = currentWhereSetClause;
-          // this.setState({SetBlock:currentBlock});
         }else{
           currentWhereSetClause = [...currentWhereSetClause,currentWhereClause]
         }
@@ -1499,7 +1327,6 @@ return el;
                   this.state.whereClauseSet.sort(function (a, b) {
                     return a.id < b.id ? -1 : a.id == b.id ? 0 : 1;
                   });
-                  // newWhereSetClause = Array.from(new Set(this.state.whereClauseSet));
                   // Remove duplicate entries from the whereClauses array
                   this.setState({whereClauseSet: Array.from(new Set(this.state.whereClauseSet)),});
                 }
@@ -1536,7 +1363,6 @@ return el;
                     this.state.whereClauseSet.sort(function (a, b) {
                       return a.id < b.id ? -1 : a.id == b.id ? 0 : 1;
                     });
-                    // newWhereSetClause = Array.from(new Set(this.state.whereClauseSet))
                     // Remove duplicate entries from the whereClauses array
                     this.setState({whereClauseSet: Array.from(new Set(this.state.whereClauseSet)),
                     });
@@ -1854,45 +1680,22 @@ return el;
     }
   };
 
-  closeDrop = () => {
-    this.setState({
-      opened: false,
-      autOpen: false,
-    });
-
-    // this.autOpen=false;
-  };
+  closeDrop = () => this.setState({opened: false,autOpen: false,});
 
   closeDropOnclickOutside = () => {
     if (this.state.dropId !== null && this.state.mouseleave) {
-      this.setState({
-        dropDowns: { ...this.state.dropDowns, [this.state.dropId]: false },
-      });
-      this.setState({
-        dropDownsSet: {
-          ...this.state.dropDownsSet,
-          [this.state.dropIdSet]: false,
-        },
-      });
+      this.setState({dropDowns: { ...this.state.dropDowns, [this.state.dropId]: false },});
+      this.setState({dropDownsSet: {...this.state.dropDownsSet,[this.state.dropIdSet]: false,},});
       this.setState({ mouseleave: false });
     }
     if (this.state.dropIdSet !== null && this.state.mouseleave) {
-      this.setState({
-        dropDownsSet: {
-          ...this.state.dropDownsSet,
-          [this.state.dropIdSet]: false,
-        },
-      });
+      this.setState({dropDownsSet: {...this.state.dropDownsSet,[this.state.dropIdSet]: false,},});
       this.setState({ mouseleave: false });
     }
   };
 
-  onmouseLeave = () => {
-    this.setState({
-      mouseleave: true,
-    });
-  };
-
+  onmouseLeave = () => this.setState({mouseleave: true});
+  
   // methods for attribute table
   getAllCheckedLayers = () => {
     const activeView = Widget.activeV;
@@ -2043,7 +1846,6 @@ return el;
   };
 
   functionCounterIsChecked = (e, val) => {
-    console.log(e,"check e value")
     let counter = [...this.state.counterIsChecked];
     if (e.target.checked) {
       counter.push(val);
@@ -2073,7 +1875,6 @@ return el;
 
   //TODO config abilitare tab true/false
   render() {
-    console.log(this.state.SetBlock,this.queryArray,"set block val")
     if (this.props.state === "CLOSED" && !this.state.widgetStateClosedChecked) {
       const jimuMapView = this.state.jimuMapView;
       const view = jimuMapView.view;
