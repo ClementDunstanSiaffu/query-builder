@@ -57,8 +57,11 @@ function AddSetTable(props) {
     onmouseLeave,
     dropdownsSet,
     showDelete,blockId
+    showDelete,
+    blockId
   } = props;
 
+  const currentwhereClausesSet = whereClausesSet.find((item)=>item.id === tablesSetId);
   return (
     <div className="my-1">
       {list.fields ? (
@@ -105,8 +108,7 @@ function AddSetTable(props) {
                 onChange={(e) => getQuery(e, "set")}
                 placeholder="Seleziona campo"
               >
-                {whereClausesSet[tablesSetId] &&
-                whereClausesSet[tablesSetId].attributeQueryType === "string"
+                {currentwhereClausesSet && currentwhereClausesSet.attributeQueryType === "string"
                   ? queryConstructorString.map((o, i) => {
                       return (
                         <Option
@@ -160,6 +162,7 @@ function AddSetTable(props) {
               mouseleave={mouseleave}
               onmouseLeave={onmouseLeave}
               dropdownsSet={dropdownsSet}
+              blockId = {blockId}
             />
           </div>
         </div>
@@ -198,6 +201,7 @@ const SecondConstructor = (props) => {
     autOpen,
     onmouseLeave,
     dropdownsSet,
+    blockId
   } = props;
   const normalizedThirdQuery = [];
   let defaultValue = "=";
@@ -205,54 +209,35 @@ const SecondConstructor = (props) => {
   let opened = false;
   let checked = 0;
   let au = true;
-
   // valueThirdQuery.map((el, i) => { normalizedThirdQuery.push({ label: el.label[0].toString(), value: el.value[0].toString() }) })
-  if (
-    whereClausesSet[tablesSetId] &&
-    whereClausesSet[tablesSetId].ifInOrNotInQueryValue
-  ) {
-    whereClausesSet[tablesSetId].ifInOrNotInQueryValue.map((el, i) => {
-      normalizedThirdQuery.push({
-        id: tablesSetId.toString(),
-        label: el.label.toString(),
-        value: el.value.toString(),
-        listel: whereClausesSet[tablesSetId].checkedListSet,
-      });
-      // normalizedThirdQuery.push({
-      //   id: tablesSetId.toString(),
-      //   label: el.label[0].toString(),
-      //   value: el.value[0].toString(),
-      //   listel: whereClausesSet[tablesSetId].checkedListSet,
-      // });
-    });
-  }
-  if (whereClausesSet[tablesSetId] && whereClausesSet[tablesSetId].queryValue) {
-    defaultValue = whereClausesSet[tablesSetId].queryValue;
-  }
-  if (
-    whereClausesSet[tablesSetId] &&
-    whereClausesSet[tablesSetId].dropdownValueQuery
-  ) {
-    dropdownValueQuery = whereClausesSet[tablesSetId].dropdownValueQuery;
-  }
-  if (whereClausesSet[tablesSetId] && whereClausesSet[tablesSetId].isOpen) {
-    // opened = whereClausesSet[tablesSetId].isOpen;
+  if (whereClausesSet.length){
+    const currentItem = whereClausesSet.find((item)=>item.id === tablesSetId);
+    if (currentItem?.ifInOrNotInQueryValue){
+      currentItem.ifInOrNotInQueryValue.map((el,i)=>{
+        normalizedThirdQuery.push({
+          id: tablesSetId.toString(),
+          label: el.label.toString(),
+          value: el.value.toString(),
+          listel: currentItem.checkedListSet,
+        });
+      })
+    }
+
+    if (currentItem?.queryValue)defaultValue = currentItem.queryValue;
+    if (currentItem?.dropdownValueQuery) dropdownValueQuery = currentItem.dropdownValueQuery;
+    if (currentItem?.isOpen) {
+      // opened = whereClausesSet[tablesSetId].isOpen;
+    }
+    if (currentItem?.checkedListSet)checked = currentItem.checkedListSet.length;
+    
   }
 
-  if (
-    whereClausesSet[tablesSetId] &&
-    whereClausesSet[tablesSetId].checkedListSet
-  ) {
-    checked = whereClausesSet[tablesSetId].checkedListSet.length;
-  }
-
-  const test = (props) => {};
   return (
     <Switch queryValues={defaultValue}>
       <div value={"="} className="d-flex col-md-4">
         {dropdownValueQuery === "univoco" ? (
           <Select
-            onChange={univocoSelectHandler}
+            onChange={(e)=>univocoSelectHandler(e,"set")}
             placeholder="Seleziona il Layer"
           >
             {normalizedThirdQuery.map((el, i) => {
@@ -265,7 +250,7 @@ const SecondConstructor = (props) => {
           </Select>
         ) : (
           <TextInput
-            onChange={textInputHandler}
+            onChange={(e)=>textInputHandler(e,"set")}
             onAcceptValue={function noRefCheck() {}}
             type="text"
             className=" w-100"
@@ -310,7 +295,7 @@ const SecondConstructor = (props) => {
       <div value={"<>"} className="d-flex col-md-4">
         {dropdownValueQuery === "univoco" ? (
           <Select
-            onChange={univocoSelectHandler}
+            onChange={(e)=>univocoSelectHandler(e,"set")}
             placeholder="Seleziona il Layer"
           >
             {normalizedThirdQuery.map((el, i) => {
@@ -323,7 +308,7 @@ const SecondConstructor = (props) => {
           </Select>
         ) : (
           <TextInput
-            onChange={textInputHandler}
+            onChange={(e)=>textInputHandler(e,"set")}
             onAcceptValue={function noRefCheck() {}}
             type="text"
             className=" w-100"
@@ -369,7 +354,7 @@ const SecondConstructor = (props) => {
           {
             <Dropdown
               activeIcon
-              isOpen={dropdownsSet[tablesSetId]}
+              isOpen={dropdownsSet[tablesSetId]??false}
               toggle={() => dropDown}
             >
               <DropdownButton onClick={() => openDrop(tablesSetId)}>
@@ -417,28 +402,61 @@ const SecondConstructor = (props) => {
               </DropdownMenu>
             </Dropdown>
           }
-          {/*<MultiSelect*/}
-          {/*    displayByValues={function myFunction (e) { return `${counterIsChecked.length} elementi selezionati` }}*/}
-          {/*    items={normalizedThirdQuery}*/}
-          {/*    onClickItem={functionCounterIsChecked}*/}
-          {/*    placeholder={'0 elementi selezionati'}*/}
-          {/*    data-table-id={tablesSetId}*/}
-          {/*    onClick={test}*/}
-          {/*/>*/}
         </div>
       </div>
       <div value={"NOT_IN"} className="d-flex justify-content-between">
-        <div className="w-100">
-          <MultiSelect
-            displayByValues={function myFunction(e) {
-              return `${counterIsChecked.length} elementi selezionati`;
-            }}
-            items={normalizedThirdQuery}
-            onClickItem={functionCounterIsChecked}
-            onClick={test}
-            placeholder={"0 elementi selezionati"}
-            id={tablesSetId}
-          />
+      <div className="w-100">
+          {
+            <Dropdown
+              activeIcon
+              isOpen={dropdownsSet[tablesSetId]??false}
+              toggle={() => dropDown}
+            >
+              <DropdownButton onClick={() => openDrop(tablesSetId)}>
+                {checked} elementi selezionati
+              </DropdownButton>
+              <DropdownMenu>
+                <DropdownItem header>Multi selezione attiva</DropdownItem>
+                <DropdownItem divider />
+                {normalizedThirdQuery.map((el, i) => {
+                  return (
+                    <div>
+                      <DropdownItem
+                        value={i}
+                        data-table-id={tablesSetId}
+                        className="d-flex justify-content-start"
+                        strategy={"fixed"}
+                      >
+                        {
+                          <Input
+                            onChange={onChangeCheckBox}
+                            type="checkbox"
+                            id={tablesSetId}
+                            name={el.label}
+                            value={el.value}
+                            defaultChecked={
+                              el.listel &&
+                              el.listel.filter(function (e) {
+                                return e.checkValue === el.label;
+                              }).length > 0
+                            }
+                          />
+                        }
+                        <label
+                          htmlFor={tablesSetId}
+                          className="ml-3 mb-0"
+                          id={tablesSetId}
+                        >
+                          {" "}
+                          {el.label}
+                        </label>
+                      </DropdownItem>
+                    </div>
+                  );
+                })}
+              </DropdownMenu>
+            </Dropdown>
+          }
         </div>
       </div>
       <div value={"<="} className="d-flex  col-md-4">
@@ -454,7 +472,7 @@ const SecondConstructor = (props) => {
           </Select>
         ) : (
           <TextInput
-            onChange={textInputHandler}
+            onChange={(e)=>textInputHandler(e,"set")}
             onAcceptValue={function noRefCheck() {}}
             type="text"
             className=" w-100"
@@ -508,7 +526,7 @@ const SecondConstructor = (props) => {
           </Select>
         ) : (
           <TextInput
-            onChange={textInputHandler}
+            onChange={(e)=>textInputHandler(e,"set")}
             onAcceptValue={function noRefCheck() {}}
             type="text"
             className=" w-100"
@@ -562,7 +580,7 @@ const SecondConstructor = (props) => {
           </Select>
         ) : (
           <TextInput
-            onChange={textInputHandler}
+            onChange={(e)=>textInputHandler(e,"set")}
             onAcceptValue={function noRefCheck() {}}
             type="text"
             className=" w-100"
@@ -616,7 +634,7 @@ const SecondConstructor = (props) => {
           </Select>
         ) : (
           <TextInput
-            onChange={textInputHandler}
+            onChange={(e)=>textInputHandler(e,"set")}
             onAcceptValue={function noRefCheck() {}}
             type="text"
             className=" w-100"
@@ -662,7 +680,7 @@ const SecondConstructor = (props) => {
       <div value={"included"} className="d-flex col-md-4">
         <div className="include">
           <TextInput
-            onChange={textFirstIncludedHandler}
+            onChange={(e)=>textFirstIncludedHandler(e,"set")}
             onAcceptValue={function noRefCheck() {}}
             type="text"
             data-table-id={tablesSetId}
@@ -672,7 +690,7 @@ const SecondConstructor = (props) => {
             e
           </p>
           <TextInput
-            onChange={textSecondIncludedHandler}
+            onChange={(e)=>textSecondIncludedHandler(e,"set")}
             onAcceptValue={function noRefCheck() {}}
             type="text"
             data-table-id={tablesSetId}
@@ -683,7 +701,7 @@ const SecondConstructor = (props) => {
       <div value={"is_not_included"} className="d-flex col-md-4">
         <div className="include">
           <TextInput
-            onChange={textFirstIncludedHandler}
+            onChange={(e)=>textFirstIncludedHandler(e,"set")}
             onAcceptValue={function noRefCheck() {}}
             type="text"
             id="inputs"
@@ -691,7 +709,7 @@ const SecondConstructor = (props) => {
           />
           <p className="col-sm-2 text-center">e</p>
           <TextInput
-            onChange={textSecondIncludedHandler}
+            onChange={(e)=>textSecondIncludedHandler(e,"set")}
             onAcceptValue={function noRefCheck() {}}
             type="text"
             id="inputs"
@@ -701,7 +719,7 @@ const SecondConstructor = (props) => {
       </div>
       <div value={"LIKE%"} className="d-flex col-md-4">
         <TextInput
-          onChange={textInputHandler}
+          onChange={(e)=>textInputHandler(e,"set")}
           onAcceptValue={function noRefCheck() {}}
           type="text"
           className=" w-100"
@@ -710,7 +728,7 @@ const SecondConstructor = (props) => {
       </div>
       <div value={"%LIKE"} className="d-flex col-md-4">
         <TextInput
-          onChange={textInputHandler}
+          onChange={(e)=>textInputHandler(e,"set")}
           onAcceptValue={function noRefCheck() {}}
           type="text"
           className=" w-100"
@@ -719,7 +737,7 @@ const SecondConstructor = (props) => {
       </div>
       <div value={"LIKE%"} className="d-flex col-md-4">
         <TextInput
-          onChange={textInputHandler}
+          onChange={(e)=>textInputHandler(e,"set")}
           onAcceptValue={function noRefCheck() {}}
           type="text"
           className=" w-100"
@@ -728,7 +746,7 @@ const SecondConstructor = (props) => {
       </div>
       <div value={"%LIKE%"} className="d-flex col-md-4">
         <TextInput
-          onChange={textInputHandler}
+          onChange={(e)=>textInputHandler(e,"set")}
           onAcceptValue={function noRefCheck() {}}
           type="text"
           className=" w-100"
@@ -737,7 +755,7 @@ const SecondConstructor = (props) => {
       </div>
       <div value={"NOT LIKE"} className="d-flex col-md-4">
         <TextInput
-          onChange={textInputHandler}
+          onChange={(e)=>textInputHandler(e,"set")}
           onAcceptValue={function noRefCheck() {}}
           type="text"
           className=" w-100"

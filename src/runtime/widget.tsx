@@ -13,13 +13,9 @@ import Polygon from "esri/geometry/Polygon";
 import AttributeTableConnector from "../connector/attribute_table_connector";
 import geometryEngine from "esri/geometry/geometryEngine";
 import AddSetTable from "./components/AddSetTable";
-import { CloseOutlined } from "jimu-icons/outlined/editor/close";
-import { useEffect } from "react";
 
-export default class Widget extends React.PureComponent<
-  AllWidgetProps<IMConfig>,
-  any
-> {
+export default class Widget extends React.PureComponent<AllWidgetProps<IMConfig>,any> {
+  
   graphicLayerFound = new GraphicsLayer({ listMode: "hide", visible: true });
   graphicLayerSelected = new GraphicsLayer({ listMode: "hide", visible: true });
 
@@ -35,7 +31,7 @@ export default class Widget extends React.PureComponent<
   setQueryArray = [];
   setOutFields = [];
   setQueryString = null;
-
+ 
   constructor(props) {
     super(props);
     this.init();
@@ -117,12 +113,7 @@ export default class Widget extends React.PureComponent<
   };
 
   nls = (id: string) => {
-    return this.props.intl
-      ? this.props.intl.formatMessage({
-          id: id,
-          defaultMessage: defaultMessages[id],
-        })
-      : id;
+    return this.props.intl? this.props.intl.formatMessage({id: id,defaultMessage: defaultMessages[id],}): id;
   };
 
   activeViewChangeHandler(jmv: JimuMapView) {
@@ -227,9 +218,7 @@ export default class Widget extends React.PureComponent<
         attributeQueryType: e.currentTarget.attributes.datatype.value,
         queryValue: "=",
       };
-      this.setState({
-        whereClauseSet: [whereClauseSet],
-      });
+      this.setState({whereClauseSet: [whereClauseSet]});
     }
     if (this.state.whereClauseSet.length) {
       const queryIndex = this.state.whereClauseSet
@@ -237,7 +226,7 @@ export default class Widget extends React.PureComponent<
         .indexOf(e.currentTarget.attributes[1].value);
       if (queryIndex !== -1) {
         const updateState = this.state.whereClauseSet.map((obj) => {
-          if (obj.id === queryIndex.toString()) {
+          if (obj.id === e.currentTarget.attributes[1].value) {
             obj = {
               ...obj,
               attributeQuery: e.currentTarget.name,
@@ -332,7 +321,6 @@ export default class Widget extends React.PureComponent<
                   const updateState = this.state.whereClauses.map((obj) => {
                     if (obj.id === queryIndex.toString()) {
                       obj = { ...obj, ifInOrNotInQueryValue: detailThirdQuery };
-                      // return this.state.whereClauses[queryIndex] = obj
                       let filteredWhereClauses = this.state.whereClauses.filter(
                         (a) => a.id !== obj.id
                       );
@@ -360,14 +348,14 @@ export default class Widget extends React.PureComponent<
   async getQuerySet(e, type = "single") {
     let clickedQueryTableId = e.currentTarget.attributes[1].value;
     let currentClickedQueryAttribute;
-    let queryIndex;
+    let newWhereSetClause;
+    let queryIndex = -1;
     if (this.state.whereClauseSet.length) {
-      queryIndex = this.state.whereClauseSet
-        .map((obj) => obj.id)
-        .indexOf(clickedQueryTableId);
+      const tableIdsArr = this.state.whereClauseSet.map((obj) => obj.id);
+      queryIndex = tableIdsArr.indexOf(clickedQueryTableId);
       if (queryIndex !== -1) {
         const updateState = this.state.whereClauseSet.map((obj) => {
-          if (obj.id === queryIndex.toString()) {
+          if (obj.id === clickedQueryTableId) {
             currentClickedQueryAttribute = obj.attributeQuery;
             obj = { ...obj, queryValue: e.currentTarget.name };
             let filteredWhereClauseSet = this.state.whereClauseSet.filter(
@@ -377,6 +365,7 @@ export default class Widget extends React.PureComponent<
             filteredWhereClauseSet.sort(function (a, b) {
               return a.id < b.id ? -1 : a.id == b.id ? 0 : 1;
             });
+            newWhereSetClause = filteredWhereClauseSet;
             return this.setState({
               whereClauseSet: filteredWhereClauseSet,
             });
@@ -414,13 +403,9 @@ export default class Widget extends React.PureComponent<
                     );
                   }
                   const updateState = this.state.whereClauseSet.map((obj) => {
-                    if (obj.id === queryIndex.toString()) {
+                    if (obj.id === clickedQueryTableId) {
                       obj = { ...obj, ifInOrNotInQueryValue: detailThirdQuery };
-                      // return this.state.whereClauseSet[queryIndex] = obj
-                      let filteredWhereClauseSet =
-                        this.state.whereClauseSet.filter(
-                          (a) => a.id !== obj.id
-                        );
+                      let filteredWhereClauseSet =this.state.whereClauseSet.filter((a) => a.id !== obj.id);
                       filteredWhereClauseSet.push(obj);
                       filteredWhereClauseSet.sort(function (a, b) {
                         return a.id < b.id ? -1 : a.id == b.id ? 0 : 1;
@@ -438,6 +423,12 @@ export default class Widget extends React.PureComponent<
             });
           }
         });
+      }
+    }
+    if (e.currentTarget.name === "is not null" || e.currentTarget.name === "is null"){
+      if (newWhereSetClause?.length){
+        const currentNewWhereSetClause = newWhereSetClause.find((item)=>item.id === clickedQueryTableId);
+        this.addCurrentWherClauseBlock(clickedQueryTableId,currentNewWhereSetClause)
       }
     }
   }
@@ -468,14 +459,7 @@ export default class Widget extends React.PureComponent<
             value = el.value?.txt ?? "";
           } else if (queryValue === "IN" || queryValue === "NOT_IN") {
             value = [];
-            if (queryValue === "IN" && el.checkedList.length) {
-              el.checkedList.forEach((el) => value.push(el.checkValue));
-            } else if (
-              queryValue === "NOT_IN" &&
-              this.state.counterIsChecked.length
-            ) {
-              this.state.counterIsChecked.forEach((el) => value.push(el));
-            }
+            el.checkedList.forEach((el) => value.push(el.checkValue));
           } else if (
             queryValue === "included" ||
             queryValue === "is_not_included"
@@ -592,8 +576,9 @@ export default class Widget extends React.PureComponent<
           }
         });
       }
-    } else if (this.state.whereClauseSet.length) {
+    }else if (this.state.SetBlock.length){
       if (this.state.jimuMapView) {
+        this.queryArray = [];
         this.state.jimuMapView.view.map.allLayers.forEach((f, index) => {
           if (f.title === this.state.currentTargetText) {
             this.state.jimuMapView.view.whenLayerView(f).then((layerView) => {
@@ -613,7 +598,8 @@ export default class Widget extends React.PureComponent<
     }
   }
 
-  setQueryConstructor = (queryRequest, firstQuery, secondQueryTarget) => {
+
+setQueryConstructor = (queryRequest,firstQuery,secondQueryTarget)=>{
     switch (queryRequest) {
       case "LIKE%":
         return `${firstQuery} LIKE '${secondQueryTarget}%'`;
@@ -658,13 +644,13 @@ export default class Widget extends React.PureComponent<
       case "is_not_included":
         return `(${firstQuery} < ${secondQueryTarget.firstTxt} OR ${firstQuery} > ${secondQueryTarget.secondTxt})`;
       default:
-        if (this.containsAnyLetters(secondQueryTarget)) {
-          return `${firstQuery} ${queryRequest} '${secondQueryTarget}'`;
-        } else {
-          return `${firstQuery} ${queryRequest} ${secondQueryTarget}`;
-        }
+          if (this.containsAnyLetters(secondQueryTarget)) {
+              return `${firstQuery} ${queryRequest} '${secondQueryTarget}'`;
+          } else {
+              return `${firstQuery} ${queryRequest} ${secondQueryTarget}`;
+          }
     }
-  };
+  }
 
   sendQuerySet() {
     const checkedQuery = [
@@ -678,99 +664,89 @@ export default class Widget extends React.PureComponent<
     const likelyQuery = ["LIKE%", "%LIKE", "%LIKE%", "NOT LIKE"];
     let setQueryString = null;
     let outFields = [];
-    if (this.state.AndOrSet === "AND") {
-      this.state.whereClauseSet.forEach((el, i) => {
-        let attributeQuery = el.attributeQuery;
-        let queryValue = el.queryValue;
-        let value;
-        if (queryValue === "is null" || queryValue === "is not null") {
-          value = el.value?.txt ?? "";
-        } else if (queryValue === "IN" || queryValue === "NOT_IN") {
-          value = [];
-          if (queryValue === "IN" && el.checkedListSet.length) {
-            el.checkedListSet.forEach((el) => value.push(el.checkValue));
-          } else if (
-            queryValue === "NOT_IN" &&
-            this.state.counterIsChecked.length
-          ) {
-            this.state.counterIsChecked.forEach((el) => value.push(el));
+    if (this.state.SetBlock.length){
+      this.state.SetBlock.forEach((block,i)=>{
+        const blockId = block?.blockId;
+        const whereClauseSet = block[`${blockId}`];
+        const AndOrSet = block?.AndOrSet;
+        if (AndOrSet === "AND"){
+          if (whereClauseSet?.length){
+            whereClauseSet.forEach((el,j) => {
+              let attributeQuery = el.attributeQuery;
+              let queryValue = el.queryValue;
+              let value;
+              if (queryValue === "is null" || queryValue === "is not null") {
+                value = el.value?.txt ?? "";
+              } else if (queryValue === "IN" || queryValue === "NOT_IN") {
+                value = [];
+                el.checkedListSet.forEach((el) => value.push(el.checkValue));
+              } else if (
+                queryValue === "included" ||
+                queryValue === "is_not_included"
+              ) {
+                value = {
+                  firstTxt: el.firstTxt.value,
+                  secondTxt: el.secondTxt.value,
+                };
+              } else if (!checkedQuery.includes(queryValue)) {
+                value = el.value?.txt ?? "";
+              }
+              if (setQueryString){
+                setQueryString += this.setQueryConstructor(queryValue,attributeQuery,value);
+              }else{
+                setQueryString = this.setQueryConstructor(queryValue,attributeQuery,value)
+              }
+              if (j < whereClauseSet.length-1)setQueryString += "  " +  AndOrSet + "  ";
+              outFields.push(`${attributeQuery}`);
+            });
           }
-        } else if (
-          queryValue === "included" ||
-          queryValue === "is_not_included"
-        ) {
-          value = {
-            firstTxt: el.firstTxt.value,
-            secondTxt: el.secondTxt.value,
-          };
-        } else if (!checkedQuery.includes(queryValue)) {
-          value = el.value?.txt ?? "";
-        }
-        if (setQueryString) {
-          setQueryString += this.setQueryConstructor(
-            queryValue,
-            attributeQuery,
-            value
-          );
-        } else {
-          setQueryString = this.setQueryConstructor(
-            queryValue,
-            attributeQuery,
-            value
-          );
-        }
-        if (i < this.state.whereClauseSet.length - 1) {
-          setQueryString += "  " + this.state.AndOrSet + "  ";
-        }
-        outFields.push(`${attributeQuery}`);
-      });
-    } else {
-      let normalizedWhereToSendQuery: any = [];
-      this.state.whereClauseSet.forEach((el, i) => {
-        let attributeQuery = el.attributeQuery;
-        let queryValue = el.queryValue;
-        let value;
-        if (queryValue === "IN" || queryValue === "NOT_IN") {
-          value = [];
-          if (queryValue === "IN" && el.checkedListSet.length) {
-            el.checkedListSet.forEach((el) => value.push(el.checkValue));
-          } else if (
-            queryValue === "NOT_IN" &&
-            this.state.counterIsChecked.length
-          ) {
-            this.state.counterIsChecked.forEach((el) =>
-              value.push(el.checkValue)
-            );
+        }else{
+          let normalizedWhereToSendQuery: any = [];
+          if (whereClauseSet?.length){
+            whereClauseSet.forEach((el,j) => {
+              let attributeQuery = el.attributeQuery;
+              let queryValue = el.queryValue;
+              let value;
+              if (queryValue === "IN" || queryValue === "NOT_IN") {
+                value = [];
+                if (queryValue === "IN" && el.checkedListSet.length) {
+                  el.checkedListSet.forEach((el) => value.push(el.checkValue));
+                } else if (
+                  queryValue === "NOT_IN" &&
+                  this.state.counterIsChecked.length
+                ) {
+                  this.state.counterIsChecked.forEach((el) =>
+                    value.push(el.checkValue)
+                  );
+                }
+              }
+              if (queryValue === "included" || queryValue === "is_not_included") {
+                value = {
+                  firstTxt: el.firstTxt.value,
+                  secondTxt: el.secondTxt.value,
+                };
+              } else if (!checkedQuery.includes(queryValue)) {
+                  value = el.value?.txt ?? "";
+              }
+              if (setQueryString){
+                setQueryString += this.setQueryConstructor(queryValue,attributeQuery,value);
+              }else{
+                setQueryString = this.setQueryConstructor(queryValue,attributeQuery,value)
+              }
+              if (j < whereClauseSet.length-1)setQueryString += "  " +  AndOrSet + "  ";
+              outFields.push(`${attributeQuery}`);
+            });
           }
         }
-        if (queryValue === "included" || queryValue === "is_not_included") {
-          value = {
-            firstTxt: el.firstTxt.value,
-            secondTxt: el.secondTxt.value,
-          };
-        } else if (!checkedQuery.includes(queryValue)) {
-          value = el.value?.txt ?? "";
-        }
-        if (setQueryString) {
-          setQueryString += this.setQueryConstructor(
-            queryValue,
-            attributeQuery,
-            value
-          );
-        } else {
-          setQueryString = this.setQueryConstructor(
-            queryValue,
-            attributeQuery,
-            value
-          );
-        }
-        if (i < this.state.whereClauseSet.length - 1) {
-          setQueryString += "  " + this.state.AndOrSet + "  ";
-        }
-        outFields.push(`${attributeQuery}`);
-      });
+        if (i === 0 && this.state.SetBlock.length >= 2 )setQueryString = "(" + setQueryString;
+        
+        if (i < this.state.SetBlock.length-1)setQueryString += " ) " + this.state.AndOr + " ( ";
+        
+        if (this.state.SetBlock.length >= 2 && i === this.state.SetBlock.length-1)setQueryString = setQueryString + ")"
+        
+      })
     }
-    return { setQueryString, outFields };
+    return {setQueryString,outFields}
   }
 
   async thirdQuery(e) {
@@ -824,82 +800,57 @@ export default class Widget extends React.PureComponent<
     }
   };
 
-  // addTwoTablef = () => {
-  //   const currentId = this.state.tableCounterSet;
-  //   let idOne = this.state.tableCounterSet;
-  //   let idTwo = idOne + 1;
-  //   this.setState({
-  //     tablesSet: [...this.state.tablesSet, { id: idOne }, { id: idTwo }],
-  //     tableCounterSet: this.state.tableCounterSet + 2,
-  //     dropDownsSet: { ...this.state.dropDownsSet, [currentId]: false },
-  //   });
-  //   if(this.state.tables.length > 0){
-  //     this.setState({showAddSelect:false});
-  //   }
-  // };
-
   addTwoTable = (ev) => {
-    let newblock = this.state.SetBlock.map((el) => {
-      if (ev.target.id == el.blockId) {
-        let idOne = this.state.tableCounterSet;
+    let newblock=this.state.SetBlock.map((el)=>{
+      if(ev.target.id==el.blockId){
+        let idOne = el.tableCounterSet;
         let idTwo = idOne + 1;
         const currentId = this.state.tableCounterSet;
-        const newcounter = this.state.tableCounterSet + 2;
-        this.setState({ tableCounterSet: newcounter });
         return {
           ...el,
-          tablesSet: [...el.tablesSet, { id: idOne }, { id: idTwo }],
-          tableCounterSet: newcounter,
-          dropDownsSet: { ...el.dropDownsSet, [currentId]: false },
-        };
+          tablesSet:[...el.tablesSet, { id: idOne }, { id: idTwo }],
+          tableCounterSet: this.state.tableCounterSet + 2,
+          dropDownsSet: { ...el.dropDownsSet, [currentId]: false }
+        }
       }
       return el;
     });
-    if (this.state.tables.length > 0) {
-      this.setState({ showAddSelect: false });
+    if(this.state.tables.length > 0){
+      this.setState({showAddSelect:false});
     }
     this.setState({ SetBlock: newblock });
   };
 
-  // addBlockf = ()=>{
-  //   let newBlock=[...this.state.SetBlock];
-  //   newBlock.push({[this.state.SetBlock.length]:this.state.whereClauseSet})
-  //   this.setState({SetBlock:newBlock});
-  //    const currentId = this.state.tableCounterSet;
-
-  //   //  adding field ..
-
-  //   let idOne = this.state.tableCounterSet;
-  //   let idTwo = idOne + 1;
-  //   this.setState({
-  //     tablesSet: [{ id: idOne }, { id: idTwo }],
-  //     tableCounterSet: this.state.tableCounterSet + 2,
-  //     dropDownsSet: { ...this.state.dropDownsSet, [currentId]: false },
-  //   });
-  //   if(this.state.tables.length > 0){
-  //     this.setState({showAddSelect:false});
-  //   }
-  // }
-
-  addBlock = () => {
-    let idOne = this.state.tableCounterSet;
+  addBlock = ()=>{
+    let idOne = this.state.SetBlock.tableCounterSet??0;
     let idTwo = idOne + 1;
-    const currentId = this.state.tableCounterSet;
-    let newBlock = [...this.state.SetBlock];
-    const newcounter = this.state.tableCounterSet + 2;
+    const currentId = idOne;
+    const nextCurrentId = idTwo;
+    let newBlock=[...this.state.SetBlock];
     newBlock.push({
-      blockId: this.state.SetBlock.length,
-      [this.state.SetBlock.length]: this.state.whereClauseSet,
-      tablesSet: [{ id: idOne }, { id: idTwo }],
-      tableCounterSet: newcounter,
-      dropDownsSet: { ...this.state.dropDownsSet, [currentId]: false },
+      blockId:this.state.SetBlock.length,
+      [`${this.state.SetBlock.length}`]:[],
+      tablesSet:[ { id: idOne }, { id: idTwo }],
+      tableCounterSet: this.state.tableCounterSet + 2,
+      dropDownsSet: {
+        ...this.state.dropDownsSet,
+        [`${currentId}-${this.state.SetBlock.length}`]:false,
+        [`${nextCurrentId}-${this.state.SetBlock.length}`]:false 
+      },
+      AndOrSet:this.state.AndOrSet
+    })
+    this.setState({
+      SetBlock:newBlock,    
+      dropDownsSet: {
+        ...this.state.dropDownsSet,
+        [`${currentId}-${this.state.SetBlock.length}`]:false,
+        [`${nextCurrentId}-${this.state.SetBlock.length}`]:false 
+      },
     });
-    this.setState({ SetBlock: newBlock, tableCounterSet: newcounter });
-    //  adding field ..
-    if (this.state.tables.length > 0) {
-      this.setState({ showAddSelect: false });
-    }
-  };
+
+    if(this.state.tables.length > 0)this.setState({showAddSelect:false});
+
+  }
 
   deleteTable = (id) => {
     const copiedTable = [...this.state.tables];
@@ -952,109 +903,89 @@ export default class Widget extends React.PureComponent<
     }
   };
 
-  deleteSetTable = (e) => {
-    let newcounter = this.state.tableCounterSet;
-    const copiedBlock = [...this.state.SetBlock];
-    let newblock = copiedBlock.map((el) => {
-      if (e.el.blockId == el.blockId) {
-        let copiedTablesSet = [...el.tablesSet];
-        const removeItems = [e.i, e.i + 1];
-        removeItems.filter(function (r) {
-          copiedTablesSet = copiedTablesSet.filter(function (oa) {
-            if (oa.id !== r) {
-              newcounter = newcounter - 1;
-            }
-            return oa.id !== r;
-          });
-        });
-        // const newTables = copiedTablesSet.filter((el) => el.id !== id);
-
-        return { ...el, tablesSet: copiedTablesSet };
-      }
-      return el;
-    });
-    this.setState({ SetBlock: newblock, tableCounterSet: newcounter });
-  };
-
-  textInputHandler = (e) => {
+  textInputHandler = (e,queryType="single") => {
     let txt = e.target.value;
     let currentTableId = e.target.attributes[0].value;
-    this.queryTextConstructor(txt, currentTableId);
+    this.queryTextConstructor(txt, currentTableId,queryType);
   };
-  textFirstIncludedHandler = (e) => {
+
+  textFirstIncludedHandler = (e,queryType="single") => {
     let txt = e.target.value;
     let currentTableId = e.target.attributes[0].value;
     let input = "first";
-    this.queryTextIncludedConstructor(txt, currentTableId, input);
+    this.queryTextIncludedConstructor(txt, currentTableId, input,queryType);
   };
 
-  textSecondIncludedHandler = (e) => {
+  textSecondIncludedHandler = (e,queryType="single") => {
     let txt = e.target.value;
     let currentTableId = e.target.attributes[0].value;
     let input = "second";
-    this.queryTextIncludedConstructor(txt, currentTableId, input);
+    this.queryTextIncludedConstructor(txt, currentTableId, input,queryType);
   };
-  univocoSelectHandler = (e) => {
+  univocoSelectHandler = (e,queryType="single") => {
     let txt = e.currentTarget.textContent;
     let currentTableId = e.currentTarget.attributes[2].value;
-    this.queryTextConstructor(txt, currentTableId);
+    this.queryTextConstructor(txt, currentTableId,queryType);
   };
 
-  containsAnyLetters = (str) => {
-    return /[a-zA-Z]/.test(str);
-  };
-
-  queryTextConstructor = (txt, currentTableId) => {
+  containsAnyLetters = (str) => /[a-zA-Z]/.test(str);
+  
+  queryTextConstructor = (txt, currentTableId,queryType) => {
     let queryIndex;
-    if (this.state.whereClauses.length) {
-      queryIndex = this.state.whereClauses
-        .map((obj) => obj.id)
-        .indexOf(currentTableId);
+    let newWhereSetClause;
+    const keyType = queryType === "single" ? "whereClauses":"whereClauseSet";
+    if (this.state[keyType].length) {
+      queryIndex = this.state[keyType].map((obj) => obj.id).indexOf(currentTableId);
       if (queryIndex !== -1) {
-        const updateState = this.state.whereClauses.map((obj) => {
-          if (obj.id === queryIndex.toString()) {
+        const updateState = this.state[keyType].map((obj) => {
+          if (obj.id === currentTableId) {
             obj = { ...obj, value: { txt: txt } };
-            let filteredWhereClauses = this.state.whereClauses.filter(
-              (a) => a.id !== obj.id
-            );
+            let filteredWhereClauses = this.state[keyType].filter((a) => a.id !== obj.id);
             filteredWhereClauses.push(obj);
             filteredWhereClauses.sort(function (a, b) {
               return a.id < b.id ? -1 : a.id == b.id ? 0 : 1;
             });
-            return this.setState({
-              whereClauses: filteredWhereClauses,
-            });
+            newWhereSetClause = filteredWhereClauses;
+            return this.setState({[keyType]: filteredWhereClauses,});
           }
           return { obj };
         });
       }
+      if (newWhereSetClause?.length){
+        const currentNewWhereSetClause = newWhereSetClause.find((item)=>item.id === currentTableId);
+        this.addCurrentWherClauseBlock(currentTableId,currentNewWhereSetClause)
+      }
     }
   };
-  queryTextIncludedConstructor = (txt, currentTableId, input) => {
+
+  queryTextIncludedConstructor = (txt, currentTableId, input,queryType) => {
     let queryIndex;
-    if (this.state.whereClauses.length) {
-      queryIndex = this.state.whereClauses
+    let newWhereSetClause;
+    const keyType = queryType === "single" ? "whereClauses":"whereClauseSet";
+    if (this.state[keyType].length) {
+      queryIndex = this.state[keyType]
         .map((obj) => obj.id)
         .indexOf(currentTableId);
       if (queryIndex !== -1) {
-        const updateState = this.state.whereClauses.map((obj) => {
-          if (obj.id === queryIndex.toString()) {
+        const updateState = this.state[keyType].map((obj) => {
+          if (obj.id === currentTableId) {
             input === "first"
               ? (obj = { ...obj, firstTxt: { value: txt } })
               : (obj = { ...obj, secondTxt: { value: txt } });
-            let filteredWhereClauses = this.state.whereClauses.filter(
+            let filteredWhereClauses = this.state[keyType].filter(
               (a) => a.id !== obj.id
             );
             filteredWhereClauses.push(obj);
-            filteredWhereClauses.sort(function (a, b) {
-              return a.id < b.id ? -1 : a.id == b.id ? 0 : 1;
-            });
-            return this.setState({
-              whereClauses: filteredWhereClauses,
-            });
+            filteredWhereClauses.sort(function (a, b) {return a.id < b.id ? -1 : a.id == b.id ? 0 : 1;});
+            newWhereSetClause = filteredWhereClauses;
+            return this.setState({[keyType]: filteredWhereClauses,});
           }
           return { obj };
         });
+      }
+      if (newWhereSetClause?.length){
+        const currentNewWhereSetClause = newWhereSetClause.find((item)=>item.id === currentTableId);
+        this.addCurrentWherClauseBlock(currentTableId,currentNewWhereSetClause)
       }
     }
   };
@@ -1226,7 +1157,6 @@ export default class Widget extends React.PureComponent<
               whereClauseSet: filteredWhereClauseSet,
             });
           }
-          // return this.state.whereClauses[queryIndex] = obj
         }
         return { obj };
       });
@@ -1355,7 +1285,37 @@ export default class Widget extends React.PureComponent<
     }
   };
 
+  addCurrentWherClauseBlock = (currentId,currentWhereClause)=>{
+    const blockId = currentId.split("-")[1];
+    const currentSetBlock = [...this.state.SetBlock];
+    let currentBlockIndex = -1;
+    let currentBlock;
+    currentBlockIndex = currentSetBlock.findIndex((item)=>`${item?.blockId}` === blockId);
+    if (currentBlockIndex !== -1)currentBlock = currentSetBlock[currentBlockIndex]
+    let currentWhereSetClause = null;
+    if (currentBlock){
+      currentWhereSetClause = currentBlock[`${blockId}`];
+      if (currentWhereSetClause?.length){
+        let index = -1;
+        index = currentWhereSetClause.findIndex((item)=>item.id === currentId);
+        if (index !== -1){
+          currentWhereSetClause[index] = currentWhereClause;
+        }else{
+          currentWhereSetClause = [...currentWhereSetClause,currentWhereClause]
+        }
+        currentBlock[blockId] = currentWhereSetClause;
+        currentSetBlock[currentBlockIndex] = currentBlock;
+        this.setState({SetBlock:currentSetBlock});
+      }else{
+        currentBlock[blockId] = [currentWhereClause];
+        currentSetBlock[currentBlockIndex] = currentBlock;
+        this.setState({SetBlock:currentSetBlock});
+      }
+    }
+  }
+
   onChangeCheckBoxSet = (event) => {
+    let newWhereSetClause;
     let currentId = event.target.attributes.id.value;
     let objectId = event.target.attributes.value.value;
     let queryIndex;
@@ -1365,7 +1325,7 @@ export default class Widget extends React.PureComponent<
         .indexOf(currentId);
       if (queryIndex !== -1) {
         this.state.whereClauseSet.map((obj) => {
-          if (obj.id === queryIndex.toString()) {
+          if (obj.id === currentId) {
             if (!obj.checkedListSet) {
               obj = {
                 ...obj,
@@ -1380,6 +1340,7 @@ export default class Widget extends React.PureComponent<
                 (a) => a.id !== obj.id
               );
               filteredWhereClauseSet.push(obj);
+              newWhereSetClause = filteredWhereClauseSet;
               this.setState(
                 {
                   whereClauseSet: filteredWhereClauseSet,
@@ -1388,13 +1349,8 @@ export default class Widget extends React.PureComponent<
                   this.state.whereClauseSet.sort(function (a, b) {
                     return a.id < b.id ? -1 : a.id == b.id ? 0 : 1;
                   });
-
                   // Remove duplicate entries from the whereClauses array
-                  this.setState({
-                    whereClauseSet: Array.from(
-                      new Set(this.state.whereClauseSet)
-                    ),
-                  });
+                  this.setState({whereClauseSet: Array.from(new Set(this.state.whereClauseSet)),});
                 }
               );
             } else {
@@ -1420,6 +1376,7 @@ export default class Widget extends React.PureComponent<
                 this.state.whereClauseSet.splice(index, 1);
                 // Add the updated obj object to the whereClauses array
                 this.state.whereClauseSet.push(obj);
+                newWhereSetClause = this.state.whereClauseSet
                 this.setState(
                   {
                     whereClauseSet: this.state.whereClauseSet,
@@ -1428,12 +1385,8 @@ export default class Widget extends React.PureComponent<
                     this.state.whereClauseSet.sort(function (a, b) {
                       return a.id < b.id ? -1 : a.id == b.id ? 0 : 1;
                     });
-
                     // Remove duplicate entries from the whereClauses array
-                    this.setState({
-                      whereClauseSet: Array.from(
-                        new Set(this.state.whereClauseSet)
-                      ),
+                    this.setState({whereClauseSet: Array.from(new Set(this.state.whereClauseSet)),
                     });
                   }
                 );
@@ -1464,12 +1417,17 @@ export default class Widget extends React.PureComponent<
           this.state.whereClauseSet.sort(function (a, b) {
             return a.id < b.id ? -1 : a.id == b.id ? 0 : 1;
           });
+          newWhereSetClause =  Array.from(new Set(this.state.whereClauseSet));
           // Remove duplicate entries from the whereClauses array
           this.setState({
             whereClauseSet: Array.from(new Set(this.state.whereClauseSet)),
           });
         }
       );
+    }
+    if (newWhereSetClause?.length){
+      const currentNewWhereSetClause = newWhereSetClause.find((item)=>item.id === currentId);
+      this.addCurrentWherClauseBlock(currentId,currentNewWhereSetClause)
     }
   };
 
@@ -1716,7 +1674,16 @@ export default class Widget extends React.PureComponent<
 
   chooseAndOr = (e) => this.setState({ AndOr: e.target.value });
 
-  chooseAndOrSet = (e) => this.setState({ AndOrSet: e.target.value });
+  chooseAndOrSet = (e,blockId) =>{
+    const currentSetBlock = [...this.state.SetBlock];
+    const index = currentSetBlock.findIndex((item)=>item.blockId === blockId);
+    if (index !== -1){
+      const currentSetBlockItem = currentSetBlock[index];
+      currentSetBlockItem["AndOrSet"] = e.target.value;
+      currentSetBlock[index] = currentSetBlockItem
+    }
+     this.setState({ AndOrSet: e.target.value,SetBlock:currentSetBlock});
+  }
 
   openDrop = (id) => {
     this.setState({ mouseleave: false });
@@ -1730,59 +1697,33 @@ export default class Widget extends React.PureComponent<
   };
 
   openDropSet = (id) => {
+    const currentId = id;
     this.setState({ mouseleave: false });
-    this.setState({ dropIdSet: id });
+    this.setState({ dropIdSet:currentId });
     const dropDownsSet = { ...this.state.dropDownsSet };
-    if (dropDownsSet[id]) {
-      this.setState({
-        dropDownsSet: { ...this.state.dropDownsSet, [id]: false },
-      });
+    if (dropDownsSet[currentId]) {
+      this.setState({dropDownsSet: { ...this.state.dropDownsSet, [currentId]: false },});
     } else {
-      this.setState({
-        dropDownsSet: { ...this.state.dropDownsSet, [id]: true },
-      });
+      this.setState({dropDownsSet: { ...this.state.dropDownsSet, [currentId]: true }});
     }
   };
 
-  closeDrop = () => {
-    this.setState({
-      opened: false,
-      autOpen: false,
-    });
-
-    // this.autOpen=false;
-  };
+  closeDrop = () => this.setState({opened: false,autOpen: false,});
 
   closeDropOnclickOutside = () => {
     if (this.state.dropId !== null && this.state.mouseleave) {
-      this.setState({
-        dropDowns: { ...this.state.dropDowns, [this.state.dropId]: false },
-      });
-      this.setState({
-        dropDownsSet: {
-          ...this.state.dropDownsSet,
-          [this.state.dropIdSet]: false,
-        },
-      });
+      this.setState({dropDowns: { ...this.state.dropDowns, [this.state.dropId]: false },});
+      this.setState({dropDownsSet: {...this.state.dropDownsSet,[this.state.dropIdSet]: false,},});
       this.setState({ mouseleave: false });
     }
     if (this.state.dropIdSet !== null && this.state.mouseleave) {
-      this.setState({
-        dropDownsSet: {
-          ...this.state.dropDownsSet,
-          [this.state.dropIdSet]: false,
-        },
-      });
+      this.setState({dropDownsSet: {...this.state.dropDownsSet,[this.state.dropIdSet]: false,},});
       this.setState({ mouseleave: false });
     }
   };
 
-  onmouseLeave = () => {
-    this.setState({
-      mouseleave: true,
-    });
-  };
-
+  onmouseLeave = () => this.setState({mouseleave: true});
+  
   // methods for attribute table
   getAllCheckedLayers = () => {
     const activeView = Widget.activeV;
@@ -1975,11 +1916,6 @@ export default class Widget extends React.PureComponent<
 
   //TODO config abilitare tab true/false
   render() {
-    console.log(
-      this.state.whereClauseSet,
-      this.state.whereClauses,
-      "check where set"
-    );
     if (this.props.state === "CLOSED" && !this.state.widgetStateClosedChecked) {
       const jimuMapView = this.state.jimuMapView;
       const view = jimuMapView.view;
@@ -2183,102 +2119,86 @@ export default class Widget extends React.PureComponent<
                   }}
                 ></div>
                 <br />
-                {this.state.SetBlock.map((el, index) => (
-                  <div id={index}>
-                    {el.tablesSet.length < 2 ? (
-                      el.tablesSet.length == 1 ? (
-                        <p>
-                          Visualizza le feature nel layer corrispondenti alla
-                          seguente espressione
-                        </p>
-                      ) : (
-                        ""
-                      )
-                    ) : (
-                      <div
-                        style={{
-                          display: "flex",
-                          flexDirection: "row",
-                          marginTop: "30px",
-                        }}
-                      >
-                        <Select
-                          onChange={this.chooseAndOrSet}
-                          placeholder=" Visualizza le feature nel layer che corrispondono a tutte le espressioni seguenti"
-                          defaultValue="AND"
-                        >
-                          <Option value="AND">
-                            Visualizza le feature nel layer che corrispondono a
-                            tutte le espressioni seguenti
-                          </Option>
-                          <Option value="OR">
-                            Visualizza le feature nel layer che corrispondono ad
-                            una qualsiasi delle espressioni seguenti
-                          </Option>
-                        </Select>{" "}
-                        <div style={{ marginLeft: "2px" }} className="">
-                          <Button
-                            id={el.blockId}
-                            onClick={this.addTwoTable}
-                            size="default"
-                            className="d-flex align-items-center  mb-2"
-                            type="secondary"
-                          >
-                            <Icon
-                              icon='<svg viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M7.5 0a.5.5 0 0 0-.5.5V7H.5a.5.5 0 0 0 0 1H7v6.5a.5.5 0 0 0 1 0V8h6.5a.5.5 0 0 0 0-1H8V.5a.5.5 0 0 0-.5-.5Z" fill="#000"></path></svg>'
-                              size="m"
-                            />
-                          </Button>
-                        </div>
-                      </div>
-                    )}
-                    {el.tablesSet.map((e, i) => (
-                      <AddSetTable
-                        className="w-100"
-                        key={el.blockId}
-                        id={`row-${el.blockId}`}
-                        list={this.state.resultsLayerSelected}
-                        isOpenDropD={this.state.isOpen}
-                        dropDown={() => this.dropDownSet(e.id)}
-                        dropdownValueQuery={this.state.dropdownValueQuery}
-                        isChecked={this.state.isChecked}
-                        counterIsChecked={this.state.counterIsChecked}
-                        checkedToQuery={this.state.checkedToQuery}
-                        // for Add set table............................
-                        tablesSet={this.state.tablesSet}
-                        tablesSetId={e.id}
-                        whereClausesSet={this.state.whereClauseSet}
-                        // End for Add set table............................
-                        getQueryAttribute={this.getQueryAttributeSet}
-                        getQuery={this.getQuerySet}
-                        handleThirdQuery={this.thirdQuery}
-                        textInputHandler={this.textInputHandler}
-                        dropdownItemHandler={this.dropdownItemClick}
-                        textFirstIncludedHandler={this.textFirstIncludedHandler}
-                        textSecondIncludedHandler={
-                          this.textSecondIncludedHandler
-                        }
-                        dropDownToggler={this.dropDownSet}
-                        handleCheckBox={this.handleCheckBox}
-                        deleteTable={() => this.deleteSetTable({ i, el })}
-                        univocoSelectHandler={this.univocoSelectHandler}
-                        onChangeCheckBox={this.onChangeCheckBoxSet}
-                        openDrop={this.openDropSet}
-                        closeDrop={this.closeDrop}
-                        opened={this.state.opened}
-                        autOpen={this.state.autOpen}
-                        mouseleave={this.state.mouseleave}
-                        onmouseLeave={this.onmouseLeave}
-                        functionCounterIsChecked={this.functionCounterIsChecked}
-                        dropdownsSet={this.state.dropDownsSet}
-                        itemNotFound={this.state.itemNotFound}
-                        showDelete={(i + 1) % 2 == 0 ? false : true}
-                        blockId={el.blockId}
-                      />
-                    ))}
-                  </div>
-                ))}
-
+                {this.state.SetBlock.map((el,index)=>
+                <div id={index}>{el.tablesSet.length < 2 ? (
+                  el.tablesSet.length == 1 ? <p>
+                    Visualizza le feature nel layer corrispondenti alla seguente
+                    espressione
+                  </p>:''
+                ) : (
+                  
+                  <div style={{display:'flex',flexDirection:'row'}}><Select
+                  onChange={(e)=>this.chooseAndOrSet(e,el.blockId)}
+                  placeholder=" Visualizza le feature nel layer che corrispondono a tutte le espressioni seguenti"
+                  defaultValue="AND"
+                >
+                  <Option value="AND">
+                    Visualizza le feature nel layer che corrispondono a tutte
+                    le espressioni seguenti
+                  </Option>
+                  <Option value="OR">
+                    Visualizza le feature nel layer che corrispondono ad una
+                    qualsiasi delle espressioni seguenti
+                  </Option>
+                </Select> <div style={{display:'flex',gap:'5px'}} className="row w-100 d-flex justify-content-end">
+                <Button
+                  id={el.blockId}
+                  onClick={this.addTwoTable}
+                  size="default"
+                  className="d-flex align-items-center  mb-2"
+                  type="secondary"
+                >
+                  <Icon
+                    icon='<svg viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M7.5 0a.5.5 0 0 0-.5.5V7H.5a.5.5 0 0 0 0 1H7v6.5a.5.5 0 0 0 1 0V8h6.5a.5.5 0 0 0 0-1H8V.5a.5.5 0 0 0-.5-.5Z" fill="#000"></path></svg>'
+                    size="m"
+                  />
+                </Button>
+            
+            </div></div>
+                )}
+                {el.tablesSet.map((innerEl, i) => (
+                  <AddSetTable
+                    className="w-100"
+                    key={i}
+                    id={`row-${i}`}
+                    list={this.state.resultsLayerSelected}
+                    isOpenDropD={this.state.isOpen}
+                    dropDown={() => this.dropDownSet(el.id)}
+                    dropdownValueQuery={this.state.dropdownValueQuery}
+                    isChecked={this.state.isChecked}
+                    counterIsChecked={this.state.counterIsChecked}
+                    checkedToQuery={this.state.checkedToQuery}
+                    // for Add set table............................
+                    tablesSet={this.state.tablesSet}
+                    tablesSetId={`${innerEl.id}`+ "-"+`${el.blockId}`}
+                    whereClausesSet={this.state.whereClauseSet}
+                    // End for Add set table............................
+                    getQueryAttribute={this.getQueryAttributeSet}
+                    getQuery={this.getQuerySet}
+                    handleThirdQuery={this.thirdQuery}
+                    textInputHandler={this.textInputHandler}
+                    dropdownItemHandler={this.dropdownItemClick}
+                    textFirstIncludedHandler={this.textFirstIncludedHandler}
+                    textSecondIncludedHandler={this.textSecondIncludedHandler}
+                    dropDownToggler={this.dropDownSet}
+                    handleCheckBox={this.handleCheckBox}
+                    deleteTable={() => this.deleteSetTable(innerEl.id)}
+                    univocoSelectHandler={this.univocoSelectHandler}
+                    onChangeCheckBox={this.onChangeCheckBoxSet}
+                    openDrop={this.openDropSet}
+                    closeDrop={this.closeDrop}
+                    opened={this.state.opened}
+                    autOpen={this.state.autOpen}
+                    mouseleave={this.state.mouseleave}
+                    onmouseLeave={this.onmouseLeave}
+                    functionCounterIsChecked={this.functionCounterIsChecked}
+                    dropdownsSet={this.state.dropDownsSet}
+                    itemNotFound={this.state.itemNotFound}
+                    showDelete={(i+1)%2==0?false:true}
+                    blockId = {el.blockId}
+                  />
+                ))}</div>)}
+                
                 <br />
                 <br />
                 {this.state.itemNotFound && (
