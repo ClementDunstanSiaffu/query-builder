@@ -779,6 +779,7 @@ setQueryConstructor = (queryRequest,firstQuery,secondQueryTarget)=>{
   };
 
   addTwoTable = (ev) => {
+    console.log("add two table")
     let newblock=this.state.SetBlock.map((el)=>{
       if(ev.target.id==el.blockId){
         let idOne = el.tableCounterSet;
@@ -786,10 +787,16 @@ setQueryConstructor = (queryRequest,firstQuery,secondQueryTarget)=>{
         const currentId = this.state.tableCounterSet;
         return {
           ...el,
-          tablesSet:[...el.tablesSet, { id: idOne }, { id: idTwo }],
-          tableCounterSet: this.state.tableCounterSet + 2,
+          tablesSet:[...el.tablesSet, { id: idOne }],
+          tableCounterSet: this.state.tableCounterSet + 1,
           dropDownsSet: { ...el.dropDownsSet, [currentId]: false }
         }
+        // return {
+        //   ...el,
+        //   tablesSet:[...el.tablesSet, { id: idOne }, { id: idTwo }],
+        //   tableCounterSet: this.state.tableCounterSet + 2,
+        //   dropDownsSet: { ...el.dropDownsSet, [currentId]: false }
+        // }
       }
       return el;
     });
@@ -825,9 +832,58 @@ setQueryConstructor = (queryRequest,firstQuery,secondQueryTarget)=>{
         [`${nextCurrentId}-${this.state.SetBlock.length}`]:false 
       },
     });
-
     if(this.state.tables.length > 0)this.setState({showAddSelect:false});
+  }
 
+  //delete block
+  deleteBlock = (blockId:string)=>{
+    const copiedBlock = [...this.state.SetBlock];
+    const copiedWhereclauseSet = [...this.state.whereClauseSet];
+    const index = copiedBlock.findIndex((item)=>item.blockId === blockId);
+    if (index !== -1){
+      copiedBlock.splice(index,1);
+      this.setState({SetBlock:copiedBlock});
+    }
+    if (copiedWhereclauseSet?.length){
+      copiedWhereclauseSet.filter((item)=>(item.id).split("-")[1] === blockId);
+      this.setState({whereClauseSet:copiedWhereclauseSet});
+    }
+  }
+
+  // for delete table on the block
+  deleteBlockTable = (tableBlockId:string,blockId:string)=>{
+    const tableId = tableBlockId.split("-")[0];
+    const copiedBlock = [...this.state.SetBlock];
+    const copiedWhereclauseSet = [...this.state.whereClauseSet];
+    const currentBlocIndex = copiedBlock.findIndex((block)=>`${block.blockId}`=== blockId);
+    let currentBlock;
+    if (currentBlocIndex === -1)currentBlock = copiedBlock[currentBlocIndex]
+    if (currentBlock){
+      const currentWhereClauseSet = currentBlock[blockId];
+      const currentTableSets = currentBlock["tablesSet"];
+      if (currentWhereClauseSet?.length){
+        const copiedCurrentWhereClauseSet = [...currentWhereClauseSet];
+        const whereClauseSetIndex = copiedCurrentWhereClauseSet.findIndex((item)=>item.id === tableBlockId);
+        if (whereClauseSetIndex !== -1){
+          copiedCurrentWhereClauseSet.splice(whereClauseSetIndex,1);
+          currentBlock[blockId] = copiedCurrentWhereClauseSet;
+        }
+      }
+      if (currentTableSets?.length){
+        const copiedTableSets = [...currentTableSets];
+        const tableSetIndex = copiedTableSets.findIndex((item)=>item.id === tableId);
+        if (tableSetIndex !== -1){
+          copiedTableSets.splice(tableSetIndex,1);
+          currentBlock["tablesSet"] = copiedTableSets;
+        }
+      }
+      copiedBlock[currentBlocIndex] = currentBlock;
+      this.setState({SetBlock:copiedBlock});
+    }
+    if (copiedWhereclauseSet?.length){
+      copiedWhereclauseSet.filter((item)=>item.id === tableBlockId);
+      this.setState({whereClauseSet:copiedWhereclauseSet});
+    }
   }
 
   deleteTable = (id) => {
@@ -1875,6 +1931,7 @@ setQueryConstructor = (queryRequest,firstQuery,secondQueryTarget)=>{
 
   //TODO config abilitare tab true/false
   render() {
+    console.log(this.state.SetBlock,this.state.whereClauseSet,"check set block")
     if (this.props.state === "CLOSED" && !this.state.widgetStateClosedChecked) {
       const jimuMapView = this.state.jimuMapView;
       const view = jimuMapView.view;
