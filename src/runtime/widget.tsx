@@ -879,29 +879,54 @@ setQueryConstructor = (queryRequest,firstQuery,secondQueryTarget)=>{
     }
   };
 
-  deleteSetTablef = (id) => {
-    const copiedTable = [...this.state.tablesSet];
-    const newTables = copiedTable.filter((el) => el.id !== id);
-    this.setState({ tableCounterSet: this.state.tableCounterSet - 2 });
-    const copiedWhereClauses = [...this.state.whereClauseSet];
-    const deletedWhereClauses = copiedWhereClauses.filter(
-      (el) => el.id !== id.toString()
-    );
-    this.setState({
-      tablesSet: newTables,
-      whereClauseSet: deletedWhereClauses,
-      tableCounterSet: this.state.tableCounter - 1,
-    });
-    if (this.state.tablesSet.length === 0) {
-      this.setState({
-        whereClausesSet: [],
-      });
+  deleteBlock = (blockId) => {
+    const copiedBlock = [...this.state.SetBlock];
+    const copiedWhereclauseSet = [...this.state.whereClauseSet];
+    const index = copiedBlock.findIndex((item)=>item.blockId === blockId);
+    if (index !== -1){
+      copiedBlock.splice(index,1);
+      this.setState({SetBlock:copiedBlock});
     }
-
-    if (this.state.tables.length == 1 && this.state.tablesSet.length == 1) {
-      this.setState({ showAddSelect: true });
+    if (copiedWhereclauseSet?.length){
+      copiedWhereclauseSet.filter((item)=>(item.id).split("-")[1] === blockId);
+      this.setState({whereClauseSet:copiedWhereclauseSet});
     }
   };
+
+  // deleteSetTable = (id) => {
+  //   const copiedBlock = [...this.state.SetBlock];
+  //   const copiedWhereclauseSet = [...this.state.whereClauseSet];
+  //   const index = copiedBlock.findIndex((item)=>item.blockId === blockId);
+  //   if (index !== -1){
+  //     copiedBlock.splice(index,1);
+  //     this.setState({SetBlock:copiedBlock});
+  //   }
+  //   if (copiedWhereclauseSet?.length){
+  //     copiedWhereclauseSet.filter((item)=>(item.id).split("-")[1] === blockId);
+  //     this.setState({whereClauseSet:copiedWhereclauseSet});
+  //   }
+  //   // const copiedTable = [...this.state.tablesSet];
+  //   // const newTables = copiedTable.filter((el) => el.id !== id);
+  //   // this.setState({ tableCounterSet: this.state.tableCounterSet - 2 });
+  //   // const copiedWhereClauses = [...this.state.whereClauseSet];
+  //   // const deletedWhereClauses = copiedWhereClauses.filter(
+  //   //   (el) => el.id !== id.toString()
+  //   // );
+  //   // this.setState({
+  //   //   tablesSet: newTables,
+  //   //   whereClauseSet: deletedWhereClauses,
+  //   //   tableCounterSet: this.state.tableCounter - 1,
+  //   // });
+  //   // if (this.state.tablesSet.length === 0) {
+  //   //   this.setState({
+  //   //     whereClausesSet: [],
+  //   //   });
+  //   // }
+
+  //   // if (this.state.tables.length == 1 && this.state.tablesSet.length == 1) {
+  //   //   this.setState({ showAddSelect: true });
+  //   // }
+  // };
 
   textInputHandler = (e,queryType="single") => {
     let txt = e.target.value;
@@ -2182,7 +2207,7 @@ setQueryConstructor = (queryRequest,firstQuery,secondQueryTarget)=>{
                     textSecondIncludedHandler={this.textSecondIncludedHandler}
                     dropDownToggler={this.dropDownSet}
                     handleCheckBox={this.handleCheckBox}
-                    deleteTable={() => this.deleteSetTable(innerEl.id)}
+                    deleteTable={() => this.deleteBlock(el.blockId)}
                     univocoSelectHandler={this.univocoSelectHandler}
                     onChangeCheckBox={this.onChangeCheckBoxSet}
                     openDrop={this.openDropSet}
