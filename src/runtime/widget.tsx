@@ -14,6 +14,7 @@ import AttributeTableConnector from "../connector/attribute_table_connector";
 import geometryEngine from "esri/geometry/geometryEngine";
 import AddSetTable from "./components/AddSetTable";
 import { CloseOutlined } from "jimu-icons/outlined/editor/close";
+import { useEffect } from "react";
 
 export default class Widget extends React.PureComponent<
   AllWidgetProps<IMConfig>,
@@ -843,8 +844,8 @@ export default class Widget extends React.PureComponent<
         let idOne = this.state.tableCounterSet;
         let idTwo = idOne + 1;
         const currentId = this.state.tableCounterSet;
-        const newcounter =this.state.tableCounterSet + 2
-        this.setState({tableCounterSet:newcounter})
+        const newcounter = this.state.tableCounterSet + 2;
+        this.setState({ tableCounterSet: newcounter });
         return {
           ...el,
           tablesSet: [...el.tablesSet, { id: idOne }, { id: idTwo }],
@@ -885,7 +886,7 @@ export default class Widget extends React.PureComponent<
     let idTwo = idOne + 1;
     const currentId = this.state.tableCounterSet;
     let newBlock = [...this.state.SetBlock];
-    const newcounter= this.state.tableCounterSet + 2
+    const newcounter = this.state.tableCounterSet + 2;
     newBlock.push({
       blockId: this.state.SetBlock.length,
       [this.state.SetBlock.length]: this.state.whereClauseSet,
@@ -893,7 +894,7 @@ export default class Widget extends React.PureComponent<
       tableCounterSet: newcounter,
       dropDownsSet: { ...this.state.dropDownsSet, [currentId]: false },
     });
-    this.setState({ SetBlock: newBlock,tableCounterSet:newcounter });
+    this.setState({ SetBlock: newBlock, tableCounterSet: newcounter });
     //  adding field ..
     if (this.state.tables.length > 0) {
       this.setState({ showAddSelect: false });
@@ -952,27 +953,27 @@ export default class Widget extends React.PureComponent<
   };
 
   deleteSetTable = (e) => {
-let newcounter=this.state.tableCounterSet;
-    console.log('',e.i)
+    let newcounter = this.state.tableCounterSet;
     const copiedBlock = [...this.state.SetBlock];
     let newblock = copiedBlock.map((el) => {
-      if (e.el.blockId== el.blockId) {
-        newcounter= newcounter - 2;
+      if (e.el.blockId == el.blockId) {
         let copiedTablesSet = [...el.tablesSet];
-         const removeItems = [e.i,e.i+1]
-         removeItems.filter(function(r) {
-          copiedTablesSet = copiedTablesSet.filter(function(oa) {
-              return oa.id !== r;
+        const removeItems = [e.i, e.i + 1];
+        removeItems.filter(function (r) {
+          copiedTablesSet = copiedTablesSet.filter(function (oa) {
+            if (oa.id !== r) {
+              newcounter = newcounter - 1;
+            }
+            return oa.id !== r;
           });
-
-      });
+        });
         // const newTables = copiedTablesSet.filter((el) => el.id !== id);
-        
-        return {...el,tablesSet:copiedTablesSet};
+
+        return { ...el, tablesSet: copiedTablesSet };
       }
       return el;
     });
-    this.setState({SetBlock:newblock,tableCounterSet:newcounter});
+    this.setState({ SetBlock: newblock, tableCounterSet: newcounter });
   };
 
   textInputHandler = (e) => {
@@ -2006,6 +2007,7 @@ let newcounter=this.state.tableCounterSet;
       <div
         className="widget-attribute-table jimu-widget"
         id="wrap"
+        ref="wrap"
         onClick={(e) => {
           this.closeDropOnclickOutside();
           e.stopPropagation();
@@ -2193,7 +2195,13 @@ let newcounter=this.state.tableCounterSet;
                         ""
                       )
                     ) : (
-                      <div style={{ display: "flex", flexDirection: "row" }}>
+                      <div
+                        style={{
+                          display: "flex",
+                          flexDirection: "row",
+                          marginTop: "30px",
+                        }}
+                      >
                         <Select
                           onChange={this.chooseAndOrSet}
                           placeholder=" Visualizza le feature nel layer che corrispondono a tutte le espressioni seguenti"
@@ -2208,10 +2216,7 @@ let newcounter=this.state.tableCounterSet;
                             una qualsiasi delle espressioni seguenti
                           </Option>
                         </Select>{" "}
-                        <div
-                          style={{ display: "flex", gap: "5px" }}
-                          className="row w-100 d-flex justify-content-end"
-                        >
+                        <div style={{ marginLeft: "2px" }} className="">
                           <Button
                             id={el.blockId}
                             onClick={this.addTwoTable}
@@ -2255,7 +2260,7 @@ let newcounter=this.state.tableCounterSet;
                         }
                         dropDownToggler={this.dropDownSet}
                         handleCheckBox={this.handleCheckBox}
-                        deleteTable={()=>this.deleteSetTable({i,el})}
+                        deleteTable={() => this.deleteSetTable({ i, el })}
                         univocoSelectHandler={this.univocoSelectHandler}
                         onChangeCheckBox={this.onChangeCheckBoxSet}
                         openDrop={this.openDropSet}

@@ -69,9 +69,8 @@ function AddSetTable(props) {
                 className="mb-2 col-1 self-end"
                 onClick={deleteTable}
                 icon
-                id={'pwamly'}
               >
-                <CloseOutlined className={'pwamly'}/>
+                <CloseOutlined />
               </Button>
             </div>}
             <Select
