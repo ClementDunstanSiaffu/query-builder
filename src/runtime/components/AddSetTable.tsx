@@ -270,7 +270,9 @@ const SecondConstructor = (props) => {
   //   checked = whereClausesSet[tablesSetId].checkedListSet.length;
   // }
 
-  const test = (props) => {};
+  const test = (e) => {
+    console.log(e,"from testing")
+  };
   return (
     <Switch queryValues={defaultValue}>
       <div value={"="} className="d-flex col-md-4">
@@ -452,7 +454,68 @@ const SecondConstructor = (props) => {
         </div>
       </div>
       <div value={"NOT_IN"} className="d-flex justify-content-between">
-        <div className="w-100">
+      <div className="w-100">
+          {
+            <Dropdown
+              activeIcon
+              isOpen={dropdownsSet[tablesSetId]??false}
+              toggle={() => dropDown}
+            >
+              <DropdownButton onClick={() => openDrop(tablesSetId)}>
+                {checked} elementi selezionati
+              </DropdownButton>
+              <DropdownMenu>
+                <DropdownItem header>Multi selezione attiva</DropdownItem>
+                <DropdownItem divider />
+                {normalizedThirdQuery.map((el, i) => {
+                  return (
+                    <div>
+                      <DropdownItem
+                        value={i}
+                        data-table-id={tablesSetId}
+                        className="d-flex justify-content-start"
+                        strategy={"fixed"}
+                      >
+                        {
+                          <Input
+                            onChange={onChangeCheckBox}
+                            type="checkbox"
+                            id={tablesSetId}
+                            name={el.label}
+                            value={el.value}
+                            defaultChecked={
+                              el.listel &&
+                              el.listel.filter(function (e) {
+                                return e.checkValue === el.label;
+                              }).length > 0
+                            }
+                          />
+                        }
+                        <label
+                          htmlFor={tablesSetId}
+                          className="ml-3 mb-0"
+                          id={tablesSetId}
+                        >
+                          {" "}
+                          {el.label}
+                        </label>
+                      </DropdownItem>
+                    </div>
+                  );
+                })}
+              </DropdownMenu>
+            </Dropdown>
+          }
+          {/*<MultiSelect*/}
+          {/*    displayByValues={function myFunction (e) { return `${counterIsChecked.length} elementi selezionati` }}*/}
+          {/*    items={normalizedThirdQuery}*/}
+          {/*    onClickItem={functionCounterIsChecked}*/}
+          {/*    placeholder={'0 elementi selezionati'}*/}
+          {/*    data-table-id={tablesSetId}*/}
+          {/*    onClick={test}*/}
+          {/*/>*/}
+        </div>
+        {/* <div className="w-100">
           <MultiSelect
             displayByValues={function myFunction(e) {
               return `${counterIsChecked.length} elementi selezionati`;
@@ -463,7 +526,7 @@ const SecondConstructor = (props) => {
             placeholder={"0 elementi selezionati"}
             id={tablesSetId}
           />
-        </div>
+        </div> */}
       </div>
       <div value={"<="} className="d-flex  col-md-4">
         {dropdownValueQuery === "univoco" ? (

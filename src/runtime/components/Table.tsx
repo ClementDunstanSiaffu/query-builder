@@ -408,7 +408,56 @@ const SecondConstructor = (props) => {
         </div>
       </div>
       <div value={"NOT_IN"} className="d-flex justify-content-between">
-        <div className="w-100">
+      <div className="w-100">
+          {
+            <Dropdown activeIcon isOpen={dropdowns[tablesId]} toggle={() => dropDown}>
+              <DropdownButton onClick={() => openDrop(tablesId)}>
+                {checked} elementi selezionati
+              </DropdownButton>
+              <DropdownMenu>
+                <DropdownItem header>Multi selezione attiva</DropdownItem>
+                <DropdownItem divider />
+                {normalizedThirdQuery.map((el, i) => {
+                  return (
+                    <div>
+                      <DropdownItem
+                        value={i}
+                        data-table-id={tablesId}
+                        className="d-flex justify-content-start"
+                        strategy={"fixed"}
+                      >
+                        {
+                          <Input
+                            onChange={onChangeCheckBox}
+                            type="checkbox"
+                            id={tablesId}
+                            name={el.label}
+                            value={el.value}
+                            defaultChecked={
+                              el.listel &&
+                              el.listel.filter(function (e) {
+                                return e.checkValue === el.label;
+                              }).length > 0
+                            }
+                          />
+                        }
+                        <label
+                          htmlFor={tablesId}
+                          className="ml-3 mb-0"
+                          id={tablesId}
+                        >
+                          {" "}
+                          {el.label}
+                        </label>
+                      </DropdownItem>
+                    </div>
+                  );
+                })}
+              </DropdownMenu>
+            </Dropdown>
+          }
+        </div>
+        {/* <div className="w-100">
           <MultiSelect
             displayByValues={function myFunction(e) {
               return `${counterIsChecked.length} elementi selezionati`;
@@ -419,7 +468,7 @@ const SecondConstructor = (props) => {
             placeholder={"0 elementi selezionati"}
             id={tablesId}
           />
-        </div>
+        </div> */}
       </div>
       <div value={"<="} className="d-flex  col-md-4">
         {dropdownValueQuery === "univoco" ? (
