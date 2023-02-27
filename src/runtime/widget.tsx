@@ -1,6 +1,8 @@
 /** @jsx jsx */
 import { React, AllWidgetProps, jsx, appActions } from "jimu-core";
 import { JimuMapViewComponent, JimuMapView } from "jimu-arcgis";
+import { CloseOutlined } from "jimu-icons/outlined/editor/close";
+import { PlusOutlined } from 'jimu-icons/outlined/editor/plus'
 import "../style.css";
 import { Select, Option, Alert, Button, Icon } from "jimu-ui";
 import defaultMessages from "./translations/default";
@@ -825,6 +827,7 @@ setQueryConstructor = (queryRequest,firstQuery,secondQueryTarget)=>{
   };
 
   addBlock = ()=>{
+    console.log('llllllllllllllllllllllllllll',this.state.SetBlock)
     let idOne = this.state.SetBlock.tableCounterSet??0;
     let idTwo = idOne + 1;
     const currentId = idOne;
@@ -914,21 +917,9 @@ setQueryConstructor = (queryRequest,firstQuery,secondQueryTarget)=>{
   };
 
   deleteBlockAll = (blockData) => {
-    const {el:blockDetails,innerEl }=blockData; 
+    const {el:blockDetails }=blockData; 
     let copiedBlock = [...this.state.SetBlock];
-    copiedBlock= copiedBlock.map((el)=>{
-      if(el.blockId==blockDetails.blockId){
-        let {tablesSet} =blockDetails; 
-        let newTableSetcounter=blockDetails.tableCounterSet;
-          newTableSetcounter=0;
-          el.tableCounterSet = newTableSetcounter;
-          this.setState({tableCounterSet:newTableSetcounter});
-        tablesSet = []
-        el.tablesSet=tablesSet;
-        return el;        
-      }
-      return el;
-    });
+    copiedBlock = copiedBlock.filter(e => e.blockId != blockDetails.blockId);
     const copiedWhereclauseSet = [...this.state.whereClauseSet];
     // const index = copiedBlock.findIndex((item)=>item.blockId === el.blockId);
     // if (index !== -1){
@@ -2187,18 +2178,27 @@ setQueryConstructor = (queryRequest,firstQuery,secondQueryTarget)=>{
                     Visualizza le feature nel layer che corrispondono ad una
                     qualsiasi delle espressioni seguenti
                   </Option>
-                </Select> <div style={{marginLeft:"4px"}} className=" ">
+                </Select> 
+                <div className="">
+              <Button
+                className=""
+                onClick={()=>this.deleteBlockAll({el})}
+                icon
+                type='secondary'
+              >
+                <CloseOutlined />
+              </Button>
+            </div>
+                
+                <div className=" ">
                 <Button
                   id={el.blockId}
                   onClick={this.addTwoTable}
-                  size="default"
-                  className="d-flex align-items-center  mb-2"
+                  className=""
+                  icon
                   type="secondary"
                 >
-                  <Icon
-                    icon='<svg viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M7.5 0a.5.5 0 0 0-.5.5V7H.5a.5.5 0 0 0 0 1H7v6.5a.5.5 0 0 0 1 0V8h6.5a.5.5 0 0 0 0-1H8V.5a.5.5 0 0 0-.5-.5Z" fill="#000"></path></svg>'
-                    size="m"
-                  />
+                  <PlusOutlined />
                 </Button>
             
             </div></div>
