@@ -158,7 +158,29 @@ export default class Widget extends React.PureComponent<AllWidgetProps<IMConfig>
    * EVENT CLICK SELECT
    ==============================================*/
 
+  removeValueFromObject(obj){
+    let newWhereClause = obj;
+    if (obj?.ifInOrNotInQueryValue){
+      newWhereClause = {
+        id:obj.id,
+        attributeQuery:obj.attributeQuery,
+        attributeQueryType:obj.attributeQueryType,
+        queryValue:obj.queryValue,
+        ifInOrNotInQueryValue:obj.ifInOrNotInQueryValue
+      }
+    }else{
+      newWhereClause = {
+        id:obj.id,
+        attributeQuery:obj.attributeQuery,
+        attributeQueryType:obj.attributeQueryType,
+        queryValue:obj.queryValue,
+      }
+    }
+    return newWhereClause;
+  }
+
   async getQueryAttribute(e) {
+    let currentWhereClause;
     if (!this.state.whereClauses.length) {
       let whereClause = {
         id: e.currentTarget.attributes[1].value,
@@ -166,6 +188,7 @@ export default class Widget extends React.PureComponent<AllWidgetProps<IMConfig>
         attributeQueryType: e.currentTarget.attributes.datatype.value,
         queryValue: "=",
       };
+      currentWhereClause = whereClause;
       this.setState({ whereClauses: [whereClause] });
     }
     if (this.state.whereClauses.length) {
@@ -174,12 +197,13 @@ export default class Widget extends React.PureComponent<AllWidgetProps<IMConfig>
         .indexOf(e.currentTarget.attributes[1].value);
       if (queryIndex !== -1) {
         const updateState = this.state.whereClauses.map((obj) => {
-          if (obj.id === queryIndex.toString()) {
+          if (obj.id === e.currentTarget.attributes[1].value) {
             obj = {
               ...obj,
               attributeQuery: e.currentTarget.name,
               attributeQueryType: e.currentTarget.attributes.datatype.value,
             };
+            obj = this.removeValueFromObject(obj)
             let filteredWhereClauses = this.state.whereClauses.filter(
               (a) => a.id !== obj.id
             );
@@ -187,9 +211,9 @@ export default class Widget extends React.PureComponent<AllWidgetProps<IMConfig>
             filteredWhereClauses.sort(function (a, b) {
               return a.id < b.id ? -1 : a.id == b.id ? 0 : 1;
             });
-            return this.setState({
-              whereClauses: filteredWhereClauses,
-            });
+            currentWhereClause = obj;
+            console.log(filteredWhereClauses,"check filterredClause")
+            return this.setState({whereClauses: filteredWhereClauses});
           }
           return { obj };
         });
@@ -199,15 +223,17 @@ export default class Widget extends React.PureComponent<AllWidgetProps<IMConfig>
           attributeQuery: e.currentTarget.name,
           attributeQueryType: e.currentTarget.attributes.datatype.value,
         };
-        this.setState({
-          whereClauses: [...this.state.whereClauses, whereClause],
-        });
+        // whereClause = this.removeValueFromObject(whereClause)
+        currentWhereClause = whereClause;
+        this.setState({whereClauses: [...this.state.whereClauses, whereClause],});
         this.state.whereClauses.sort(function (a, b) {
           return a.id < b.id ? -1 : a.id == b.id ? 0 : 1;
         });
       }
     }
-    this.setState({ selectedField: e.currentTarget.name });
+    this.setState({ selectedField: e.currentTarget.name },()=>{
+      if (currentWhereClause)this.manipulateFieldQuery(currentWhereClause.queryValue,currentWhereClause.id,"single")
+    });
   }
 
   async getQueryAttributeSet(e) {
@@ -264,9 +290,93 @@ export default class Widget extends React.PureComponent<AllWidgetProps<IMConfig>
 
   // for called on drop select list
   async getQuery(e, type = "single") {
-    let clickedQueryTableId = e.currentTarget.attributes[1].value;
-    let currentClickedQueryAttribute;
-    let queryIndex;
+    const clickedQueryTableId = e.currentTarget.attributes[1].value;
+    const currentTargetName = e.currentTarget.name;
+    this.manipulateFieldQuery(currentTargetName,clickedQueryTableId,type)
+    // let clickedQueryTableId = e.currentTarget.attributes[1].value;
+    // let currentClickedQueryAttribute;
+    // let queryIndex;
+    // if (this.state.whereClauses.length) {
+    //   queryIndex = this.state.whereClauses
+    //     .map((obj) => obj.id)
+    //     .indexOf(clickedQueryTableId);
+    //   if (queryIndex !== -1) {
+    //     const updateState = this.state.whereClauses.map((obj) => {
+    //       if (obj.id === queryIndex.toString()) {
+    //         currentClickedQueryAttribute = obj.attributeQuery;
+    //         obj = { ...obj, queryValue: e.currentTarget.name };
+    //         let filteredWhereClauses = this.state.whereClauses.filter(
+    //           (a) => a.id !== obj.id
+    //         );
+    //         filteredWhereClauses.push(obj);
+    //         filteredWhereClauses.sort(function (a, b) {
+    //           return a.id < b.id ? -1 : a.id == b.id ? 0 : 1;
+    //         });
+    //         return this.setState({
+    //           whereClauses: filteredWhereClauses,
+    //         });
+    //       }
+    //       return { obj };
+    //     });
+    //   }
+    // }
+    // if (e.currentTarget.name === "IN" || e.currentTarget.name === "NOT_IN") {
+    //   if (this.state.jimuMapView) {
+    //     this.state.jimuMapView.view.map.allLayers.forEach((f, index) => {
+    //       if (f.title === this.state.currentTargetText) {
+    //         this.state.jimuMapView.view.whenLayerView(f).then((layerView) => {
+    //           const query = new Query();
+    //           query.where = `${currentClickedQueryAttribute} is not null`;
+    //           query.outFields = [`${currentClickedQueryAttribute}`];
+    //           const results = f.queryFeatures(query);
+    //           results.then((result) => {
+    //             const detailThirdQuery = [];
+    //             result.features.forEach((el) => {
+    //               detailThirdQuery.push({
+    //                 label: el.attributes[currentClickedQueryAttribute],
+    //                 value: el.attributes[currentClickedQueryAttribute],
+    //               });
+    //             });
+    //             if (queryIndex !== -1) {
+    //               if (typeof detailThirdQuery[0].value !== "number") {
+    //                 detailThirdQuery.sort((a, b) =>
+    //                   a.label < b.label ? -1 : a.label > b.label ? 1 : 0
+    //                 );
+    //               } else {
+    //                 detailThirdQuery.sort((a, b) =>
+    //                   a.value - b.value < 0 ? -1 : a.value === b.value ? 0 : 1
+    //                 );
+    //               }
+    //               const updateState = this.state.whereClauses.map((obj) => {
+    //                 if (obj.id === queryIndex.toString()) {
+    //                   obj = { ...obj, ifInOrNotInQueryValue: detailThirdQuery };
+    //                   let filteredWhereClauses = this.state.whereClauses.filter(
+    //                     (a) => a.id !== obj.id
+    //                   );
+    //                   filteredWhereClauses.push(obj);
+    //                   filteredWhereClauses.sort(function (a, b) {
+    //                     return a.id < b.id ? -1 : a.id == b.id ? 0 : 1;
+    //                   });
+    //                   const keytype =
+    //                     type === "single" ? "whereClauses" : "whereClausesSet";
+    //                   return this.setState({
+    //                     [keytype]: filteredWhereClauses,
+    //                   });
+    //                 }
+    //                 return { obj };
+    //               });
+    //             }
+    //           });
+    //         });
+    //       }
+    //     });
+    //   }
+    // }
+  }
+
+  async manipulateFieldQuery(currentTargetName:string,clickedQueryTableId:string,type:string){
+    let queryIndex = -1;
+    let currentClickedQueryAttribute = " ";
     if (this.state.whereClauses.length) {
       queryIndex = this.state.whereClauses
         .map((obj) => obj.id)
@@ -275,7 +385,7 @@ export default class Widget extends React.PureComponent<AllWidgetProps<IMConfig>
         const updateState = this.state.whereClauses.map((obj) => {
           if (obj.id === queryIndex.toString()) {
             currentClickedQueryAttribute = obj.attributeQuery;
-            obj = { ...obj, queryValue: e.currentTarget.name };
+            obj = { ...obj, queryValue:currentTargetName };
             let filteredWhereClauses = this.state.whereClauses.filter(
               (a) => a.id !== obj.id
             );
@@ -291,7 +401,7 @@ export default class Widget extends React.PureComponent<AllWidgetProps<IMConfig>
         });
       }
     }
-    if (e.currentTarget.name === "IN" || e.currentTarget.name === "NOT_IN") {
+    if (currentTargetName === "IN" || currentTargetName === "NOT_IN") {
       if (this.state.jimuMapView) {
         this.state.jimuMapView.view.map.allLayers.forEach((f, index) => {
           if (f.title === this.state.currentTargetText) {
