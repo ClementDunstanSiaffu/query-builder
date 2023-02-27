@@ -900,18 +900,42 @@ setQueryConstructor = (queryRequest,firstQuery,secondQueryTarget)=>{
       }
       return el;
     });
-
-
-
     const copiedWhereclauseSet = [...this.state.whereClauseSet];
     // const index = copiedBlock.findIndex((item)=>item.blockId === el.blockId);
     // if (index !== -1){
     //   copiedBlock.splice(index,1);
     //   this.setState({SetBlock:copiedBlock});
     // }
-      
     this.setState({SetBlock:copiedBlock});
+    if (copiedWhereclauseSet?.length){
+      copiedWhereclauseSet.filter((item)=>(item.id).split("-")[1] === 'blockId');
+      this.setState({whereClauseSet:copiedWhereclauseSet});
+    }
+  };
 
+  deleteBlockAll = (blockData) => {
+    const {el:blockDetails,innerEl }=blockData; 
+    let copiedBlock = [...this.state.SetBlock];
+    copiedBlock= copiedBlock.map((el)=>{
+      if(el.blockId==blockDetails.blockId){
+        let {tablesSet} =blockDetails; 
+        let newTableSetcounter=blockDetails.tableCounterSet;
+          newTableSetcounter=0;
+          el.tableCounterSet = newTableSetcounter;
+          this.setState({tableCounterSet:newTableSetcounter});
+        tablesSet = []
+        el.tablesSet=tablesSet;
+        return el;        
+      }
+      return el;
+    });
+    const copiedWhereclauseSet = [...this.state.whereClauseSet];
+    // const index = copiedBlock.findIndex((item)=>item.blockId === el.blockId);
+    // if (index !== -1){
+    //   copiedBlock.splice(index,1);
+    //   this.setState({SetBlock:copiedBlock});
+    // }
+    this.setState({SetBlock:copiedBlock});
     if (copiedWhereclauseSet?.length){
       copiedWhereclauseSet.filter((item)=>(item.id).split("-")[1] === 'blockId');
       this.setState({whereClauseSet:copiedWhereclauseSet});
@@ -2179,7 +2203,7 @@ setQueryConstructor = (queryRequest,firstQuery,secondQueryTarget)=>{
             
             </div></div>
                 )}
-                {el.tablesSet.map((innerEl, i) => (
+                {el.tablesSet.map((innerEl, i,TableArray) => (
                   <AddSetTable
                     className="w-100"
                     key={i}
@@ -2217,8 +2241,10 @@ setQueryConstructor = (queryRequest,firstQuery,secondQueryTarget)=>{
                     functionCounterIsChecked={this.functionCounterIsChecked}
                     dropdownsSet={this.state.dropDownsSet}
                     itemNotFound={this.state.itemNotFound}
-                    showDelete={true}
+                    showDelete={TableArray.length > 2 ? true:false}
+                    showBlockDelete={TableArray.length === 2 && i==0 ? true:false }
                     blockId = {el.blockId}
+                    deleteBlockAll={()=>this.deleteBlockAll({el,innerEl})}
                   />
                 ))}</div>)}
                 

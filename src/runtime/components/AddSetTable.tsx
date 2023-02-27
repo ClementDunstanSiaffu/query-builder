@@ -56,7 +56,7 @@ function AddSetTable(props) {
     mouseleave,
     onmouseLeave,
     dropdownsSet,
-    showDelete,blockId
+    showDelete,blockId,showBlockDelete,deleteBlockAll
   } = props;
 
   const currentwhereClausesSet = whereClausesSet.find((item)=>item.id === tablesSetId);
@@ -69,6 +69,15 @@ function AddSetTable(props) {
               <Button
                 className="mb-2 col-1 self-end"
                 onClick={deleteTable}
+                icon
+              >
+                <CloseOutlined />
+              </Button>
+            </div>}
+            {showBlockDelete&&<div className="row w-100 d-flex justify-content-end">
+              <Button
+                className="mb-2 col-1 self-end"
+                onClick={deleteBlockAll}
                 icon
               >
                 <CloseOutlined />
