@@ -55,7 +55,6 @@ function Table(props) {
     dropdowns,
   } = props;
 
-  console.log(whereClauses,"attribute type")
   return (
     <div className="my-1">
       {list.fields ? (
