@@ -60,6 +60,7 @@ function AddSetTable(props) {
   } = props;
 
   const currentwhereClausesSet = whereClausesSet.find((item)=>item.id === tablesSetId);
+  console.log(whereClausesSet,currentwhereClausesSet,tablesSetId,"add table")
   return (
     <div className="my-1">
       {list.fields ? (

@@ -860,10 +860,16 @@ setQueryConstructor = (queryRequest,firstQuery,secondQueryTarget)=>{
     if (currentBlocIndex !== -1)currentBlock = copiedBlock[currentBlocIndex];
     if (currentBlock){
       const currentWhereClauseSet = currentBlock[blockId];
+      // console.log(currentWhereClauseSet,"current where clause")
       const currentTableSets = currentBlock["tablesSet"];
       if (currentWhereClauseSet?.length){
         const copiedCurrentWhereClauseSet = [...currentWhereClauseSet];
-        const whereClauseSetIndex = copiedCurrentWhereClauseSet.findIndex((item)=>item.id === tableBlockId);
+        const whereClauseSetIndex = copiedCurrentWhereClauseSet.findIndex((item)=>{
+          if ( item.id === tableBlockId){
+            return item;
+          }
+         
+        });
         if (whereClauseSetIndex !== -1){
           copiedCurrentWhereClauseSet.splice(whereClauseSetIndex,1);
           currentBlock[blockId] = copiedCurrentWhereClauseSet;
@@ -878,12 +884,27 @@ setQueryConstructor = (queryRequest,firstQuery,secondQueryTarget)=>{
         }
       }
       copiedBlock[currentBlocIndex] = currentBlock;
-      console.log(copiedBlock,"copiedBlock")
       this.setState({SetBlock:copiedBlock});
     }
     if (copiedWhereclauseSet?.length){
-      copiedWhereclauseSet.filter((item)=>item.id === tableBlockId);
-      this.setState({whereClauseSet:copiedWhereclauseSet});
+      const index = copiedWhereclauseSet.findIndex((item)=>{
+        if (item.id === tableBlockId){
+          return item;
+        }
+      });
+      if (index !== -1){
+        copiedWhereclauseSet.splice(index,1);
+        this.setState({whereClauseSet:copiedWhereclauseSet});
+      }
+      // copiedWhereclauseSet.filter((item)=>{
+      //   console.log(item.id !== tableBlockId,item.id,tableBlockId)
+      //   if (item.id !== tableBlockId){
+      //     console.log("not true")
+      //     return item;
+      //   }
+      // });
+      // console.log(copiedWhereclauseSet,"check copied")
+      // this.setState({whereClauseSet:copiedWhereclauseSet});
     }
   }
   
@@ -1962,6 +1983,7 @@ setQueryConstructor = (queryRequest,firstQuery,secondQueryTarget)=>{
 
   //TODO config abilitare tab true/false
   render() {
+    console.log(this.state.SetBlock,this.state.whereClauseSet,"check Set block")
     if (this.props.state === "CLOSED" && !this.state.widgetStateClosedChecked) {
       const jimuMapView = this.state.jimuMapView;
       const view = jimuMapView.view;
