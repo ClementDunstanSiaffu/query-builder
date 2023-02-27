@@ -260,14 +260,14 @@ const SecondConstructor = (props) => {
               <DropdownItem divider />
               <DropdownItem
                 value="valore"
-                onClick={dropdownItemHandler}
+                onClick={(e)=>dropdownItemHandler(e,"single")}
                 data-table-id={tablesId}
               >
                 Valore
               </DropdownItem>
               <DropdownItem
                 value="campo"
-                onClick={dropdownItemHandler}
+                onClick={(e)=>dropdownItemHandler(e,"single")}
                 disabled
                 data-table-id={tablesId}
               >
@@ -275,7 +275,7 @@ const SecondConstructor = (props) => {
               </DropdownItem>
               <DropdownItem
                 value="univoco"
-                onClick={dropdownItemHandler}
+                onClick={(e)=>dropdownItemHandler(e,"single")}
                 data-table-id={tablesId}
               >
                 Univoci
@@ -317,14 +317,14 @@ const SecondConstructor = (props) => {
               <DropdownItem divider />
               <DropdownItem
                 value="valore"
-                onClick={dropdownItemHandler}
+                onClick={(e)=>dropdownItemHandler(e,"single")}
                 data-table-id={tablesId}
               >
                 Valore
               </DropdownItem>
               <DropdownItem
                 value="campo"
-                onClick={dropdownItemHandler}
+                onClick={(e)=>dropdownItemHandler(e,"single")}
                 disabled
                 data-table-id={tablesId}
               >
@@ -332,7 +332,7 @@ const SecondConstructor = (props) => {
               </DropdownItem>
               <DropdownItem
                 value="univoco"
-                onClick={dropdownItemHandler}
+                onClick={(e)=>dropdownItemHandler(e,"single")}
                 data-table-id={tablesId}
               >
                 Univoci
@@ -473,14 +473,14 @@ const SecondConstructor = (props) => {
               <DropdownItem divider />
               <DropdownItem
                 value="valore"
-                onClick={dropdownItemHandler}
+                onClick={(e)=>dropdownItemHandler(e,"single")}
                 data-table-id={tablesId}
               >
                 Valore
               </DropdownItem>
               <DropdownItem
                 value="campo"
-                onClick={dropdownItemHandler}
+                onClick={(e)=>dropdownItemHandler(e,"single")}
                 disabled
                 data-table-id={tablesId}
               >
@@ -488,7 +488,7 @@ const SecondConstructor = (props) => {
               </DropdownItem>
               <DropdownItem
                 value="univoco"
-                onClick={dropdownItemHandler}
+                onClick={(e)=>dropdownItemHandler(e,"single")}
                 data-table-id={tablesId}
               >
                 Univoci
@@ -527,14 +527,14 @@ const SecondConstructor = (props) => {
               <DropdownItem divider />
               <DropdownItem
                 value="valore"
-                onClick={dropdownItemHandler}
+                onClick={(e)=>dropdownItemHandler(e,"single")}
                 data-table-id={tablesId}
               >
                 Valore
               </DropdownItem>
               <DropdownItem
                 value="campo"
-                onClick={dropdownItemHandler}
+                onClick={(e)=>dropdownItemHandler(e,"single")}
                 disabled
                 data-table-id={tablesId}
               >
@@ -542,7 +542,7 @@ const SecondConstructor = (props) => {
               </DropdownItem>
               <DropdownItem
                 value="univoco"
-                onClick={dropdownItemHandler}
+                onClick={(e)=>dropdownItemHandler(e,"single")}
                 data-table-id={tablesId}
               >
                 Univoci
@@ -581,14 +581,14 @@ const SecondConstructor = (props) => {
               <DropdownItem divider />
               <DropdownItem
                 value="valore"
-                onClick={dropdownItemHandler}
+                onClick={(e)=>dropdownItemHandler(e,"single")}
                 data-table-id={tablesId}
               >
                 Valore
               </DropdownItem>
               <DropdownItem
                 value="campo"
-                onClick={dropdownItemHandler}
+                onClick={(e)=>dropdownItemHandler(e,"single")}
                 disabled
                 data-table-id={tablesId}
               >
@@ -596,7 +596,7 @@ const SecondConstructor = (props) => {
               </DropdownItem>
               <DropdownItem
                 value="univoco"
-                onClick={dropdownItemHandler}
+                onClick={(e)=>dropdownItemHandler(e,"single")}
                 data-table-id={tablesId}
               >
                 Univoci
@@ -635,14 +635,14 @@ const SecondConstructor = (props) => {
               <DropdownItem divider />
               <DropdownItem
                 value="valore"
-                onClick={dropdownItemHandler}
+                onClick={(e)=>dropdownItemHandler(e,"single")}
                 data-table-id={tablesId}
               >
                 Valore
               </DropdownItem>
               <DropdownItem
                 value="campo"
-                onClick={dropdownItemHandler}
+                onClick={(e)=>dropdownItemHandler(e,"single")}
                 disabled
                 data-table-id={tablesId}
               >
@@ -650,7 +650,7 @@ const SecondConstructor = (props) => {
               </DropdownItem>
               <DropdownItem
                 value="univoco"
-                onClick={dropdownItemHandler}
+                onClick={(e)=>dropdownItemHandler(e,"single")}
                 data-table-id={tablesId}
               >
                 Univoci

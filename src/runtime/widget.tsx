@@ -938,35 +938,36 @@ setQueryConstructor = (queryRequest,firstQuery,secondQueryTarget)=>{
     }
   };
 
-  dropdownItemClick = (e) => {
+  dropdownItemClick = (e,type="single") => {
     let clickedQueryTableId = e.currentTarget.attributes[2].value;
     let clickedValue = e.currentTarget.value;
     let currentClickedQueryAttribute;
+    let newWhereSetClause;
+    let currentNewWhereSetClause;
+    const keytype = type === "single" ? "whereClauses" : "whereClauseSet";
     let queryIndex;
-    queryIndex = this.state.whereClauses
-      .map((obj) => obj.id)
-      .indexOf(clickedQueryTableId);
+    queryIndex = this.state[keytype].map((obj) => obj.id).indexOf(clickedQueryTableId);
     if (queryIndex !== -1) {
-      const updateState = this.state.whereClauses.map((obj) => {
+      const updateState = this.state[keytype].map((obj) => {
         if (obj.id === clickedQueryTableId) {
           obj = { ...obj, dropdownValueQuery: clickedValue };
-          let filteredWhereClauses = this.state.whereClauses.filter(
+          let filteredWhereClauses = this.state[keytype].filter(
             (a) => a.id !== obj.id
           );
           filteredWhereClauses.push(obj);
           filteredWhereClauses.sort(function (a, b) {
             return a.id < b.id ? -1 : a.id == b.id ? 0 : 1;
           });
-          return this.setState({
-            whereClauses: filteredWhereClauses,
-          });
+          currentNewWhereSetClause = obj;
+          // newWhereSetClause = filteredWhereClauses
+          return this.setState({[keytype]: filteredWhereClauses,});
         }
         return { obj };
       });
     }
     if (e.currentTarget.value === "univoco") {
       if (queryIndex !== -1) {
-        const updateState = this.state.whereClauses.map((obj) => {
+        const updateState = this.state[keytype].map((obj) => {
           if (obj.id === clickedQueryTableId) {
             currentClickedQueryAttribute = obj.attributeQuery;
             if (this.state.jimuMapView) {
@@ -978,9 +979,7 @@ setQueryConstructor = (queryRequest,firstQuery,secondQueryTarget)=>{
                       const query = new Query();
                       query.where = `${currentClickedQueryAttribute} is not null`;
                       query.outFields = [`${currentClickedQueryAttribute}`];
-                      layerView.filter = {
-                        where: query.where,
-                      };
+                      layerView.filter = {where: query.where,};
                       const results = f.queryFeatures(query);
                       results.then((result) => {
                         const detailThirdQuery = [];
@@ -991,16 +990,18 @@ setQueryConstructor = (queryRequest,firstQuery,secondQueryTarget)=>{
                           });
                         });
                         if (queryIndex !== -1) {
-                          const updateState = this.state.whereClauses.map(
+                          const updateState = this.state[keytype].map(
                             (obj) => {
-                              if (obj.id === queryIndex.toString()) {
+                              if (obj.id === clickedQueryTableId) {
                                 obj = {
                                   ...obj,
                                   ifInOrNotInQueryValue: detailThirdQuery,
                                   dropdownValueQuery: clickedValue,
                                 };
+                                currentNewWhereSetClause = obj;
+                                console.log(obj,"check obj")
                                 let filteredWhereClauses =
-                                  this.state.whereClauses.filter(
+                                  this.state[keytype].filter(
                                     (a) => a.id !== obj.id
                                   );
                                 filteredWhereClauses.push(obj);
@@ -1011,9 +1012,8 @@ setQueryConstructor = (queryRequest,firstQuery,secondQueryTarget)=>{
                                     ? 0
                                     : 1;
                                 });
-                                return this.setState({
-                                  whereClauses: filteredWhereClauses,
-                                });
+                                // newWhereSetClause = filteredWhereClauses
+                                return this.setState({[keytype]: filteredWhereClauses,});
                               }
                               return { obj };
                             }
@@ -1028,7 +1028,17 @@ setQueryConstructor = (queryRequest,firstQuery,secondQueryTarget)=>{
         });
       }
     }
-    this.setState({ dropdownValueQuery: e.target.value });
+    this.setState({ dropdownValueQuery: e.target.value },()=>{
+
+    });
+    if (keytype === "whereClauseSet"){
+      if (currentNewWhereSetClause)this.addCurrentWherClauseBlock(clickedQueryTableId,currentNewWhereSetClause)
+      // if (newWhereSetClause?.length){
+      //   const currentNewWhereSetClause = newWhereSetClause.find((item)=>item.id === clickedQueryTableId);
+      //   console.log(currentNewWhereSetClause,"current new where clause set")
+      //   this.addCurrentWherClauseBlock(clickedQueryTableId,currentNewWhereSetClause)
+      // }
+    }
   };
 
   dropDown = (id) => {
