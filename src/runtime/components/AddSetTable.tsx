@@ -56,7 +56,7 @@ function AddSetTable(props) {
     mouseleave,
     onmouseLeave,
     dropdownsSet,
-    showDelete,blockId
+    showDelete,blockId,showBlockDelete
   } = props;
 
   const currentwhereClausesSet = whereClausesSet.find((item)=>item.id === tablesSetId);

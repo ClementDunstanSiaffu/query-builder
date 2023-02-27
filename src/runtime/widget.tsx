@@ -1,6 +1,8 @@
 /** @jsx jsx */
 import { React, AllWidgetProps, jsx, appActions } from "jimu-core";
 import { JimuMapViewComponent, JimuMapView } from "jimu-arcgis";
+import { CloseOutlined } from "jimu-icons/outlined/editor/close";
+import { PlusOutlined } from 'jimu-icons/outlined/editor/plus'
 import "../style.css";
 import { Select, Option, Alert, Button, Icon } from "jimu-ui";
 import defaultMessages from "./translations/default";
@@ -759,13 +761,12 @@ setQueryConstructor = (queryRequest,firstQuery,secondQueryTarget)=>{
   addTwoTable = (ev) => {
     let newblock=this.state.SetBlock.map((el)=>{
       if(ev.target.id==el.blockId){
-        let idOne = el.tableCounterSet;
-        let idTwo = idOne + 1;
+        let id = el.tableCounterSet;
         const currentId = this.state.tableCounterSet;
         return {
           ...el,
-          tablesSet:[...el.tablesSet, { id: idOne }, { id: idTwo }],
-          tableCounterSet: this.state.tableCounterSet + 2,
+          tablesSet:[...el.tablesSet, { id: id }],
+          tableCounterSet: this.state.tableCounterSet + 1,
           dropDownsSet: { ...el.dropDownsSet, [currentId]: false }
         }
       }
@@ -778,6 +779,7 @@ setQueryConstructor = (queryRequest,firstQuery,secondQueryTarget)=>{
   };
 
   addBlock = ()=>{
+    console.log('llllllllllllllllllllllllllll',this.state.SetBlock)
     let idOne = this.state.SetBlock.tableCounterSet??0;
     let idTwo = idOne + 1;
     const currentId = idOne;
@@ -835,16 +837,50 @@ setQueryConstructor = (queryRequest,firstQuery,secondQueryTarget)=>{
     }
   };
 
-  deleteBlock = (blockId) => {
-    const copiedBlock = [...this.state.SetBlock];
+  deleteBlock = (blockData) => {
+    let copiedBlock = [...this.state.SetBlock];
+    const {el:blockDetails,innerEl }=blockData; 
+    copiedBlock= copiedBlock.map((el)=>{
+      if(el.blockId==blockDetails.blockId){
+        let {tablesSet} =blockDetails; 
+        let newTableSetcounter=blockDetails.tableCounterSet;
+        if (tablesSet.length > 0){
+          newTableSetcounter=newTableSetcounter - 1
+          el.tableCounterSet = newTableSetcounter;
+          this.setState({tableCounterSet:newTableSetcounter});
+        }
+        tablesSet = tablesSet.filter(e => e.id != innerEl.id);
+        el.tablesSet=tablesSet;
+        return el;        
+      }
+      return el;
+    });
     const copiedWhereclauseSet = [...this.state.whereClauseSet];
-    const index = copiedBlock.findIndex((item)=>item.blockId === blockId);
-    if (index !== -1){
-      copiedBlock.splice(index,1);
-      this.setState({SetBlock:copiedBlock});
-    }
+    // const index = copiedBlock.findIndex((item)=>item.blockId === el.blockId);
+    // if (index !== -1){
+    //   copiedBlock.splice(index,1);
+    //   this.setState({SetBlock:copiedBlock});
+    // }
+    this.setState({SetBlock:copiedBlock});
     if (copiedWhereclauseSet?.length){
-      copiedWhereclauseSet.filter((item)=>(item.id).split("-")[1] === blockId);
+      copiedWhereclauseSet.filter((item)=>(item.id).split("-")[1] === 'blockId');
+      this.setState({whereClauseSet:copiedWhereclauseSet});
+    }
+  };
+
+  deleteBlockAll = (blockData) => {
+    const {el:blockDetails }=blockData; 
+    let copiedBlock = [...this.state.SetBlock];
+    copiedBlock = copiedBlock.filter(e => e.blockId != blockDetails.blockId);
+    const copiedWhereclauseSet = [...this.state.whereClauseSet];
+    // const index = copiedBlock.findIndex((item)=>item.blockId === el.blockId);
+    // if (index !== -1){
+    //   copiedBlock.splice(index,1);
+    //   this.setState({SetBlock:copiedBlock});
+    // }
+    this.setState({SetBlock:copiedBlock});
+    if (copiedWhereclauseSet?.length){
+      copiedWhereclauseSet.filter((item)=>(item.id).split("-")[1] === 'blockId');
       this.setState({whereClauseSet:copiedWhereclauseSet});
     }
   };
@@ -2085,7 +2121,7 @@ setQueryConstructor = (queryRequest,firstQuery,secondQueryTarget)=>{
                   </p>:''
                 ) : (
                   
-                  <div style={{display:'flex',flexDirection:'row'}}><Select
+                  <div style={{display:'flex',flexDirection:'row',marginTop:'20px'}}><Select
                   onChange={(e)=>this.chooseAndOrSet(e,el.blockId)}
                   placeholder=" Visualizza le feature nel layer che corrispondono a tutte le espressioni seguenti"
                   defaultValue="AND"
@@ -2098,23 +2134,32 @@ setQueryConstructor = (queryRequest,firstQuery,secondQueryTarget)=>{
                     Visualizza le feature nel layer che corrispondono ad una
                     qualsiasi delle espressioni seguenti
                   </Option>
-                </Select> <div style={{marginLeft:"4px"}} className=" ">
+                </Select> 
+                <div className="">
+              <Button
+                className=""
+                onClick={()=>this.deleteBlockAll({el})}
+                icon
+                type='secondary'
+              >
+                <CloseOutlined />
+              </Button>
+            </div>
+                
+                <div className=" ">
                 <Button
                   id={el.blockId}
                   onClick={this.addTwoTable}
-                  size="default"
-                  className="d-flex align-items-center  mb-2"
+                  className=""
+                  icon
                   type="secondary"
                 >
-                  <Icon
-                    icon='<svg viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M7.5 0a.5.5 0 0 0-.5.5V7H.5a.5.5 0 0 0 0 1H7v6.5a.5.5 0 0 0 1 0V8h6.5a.5.5 0 0 0 0-1H8V.5a.5.5 0 0 0-.5-.5Z" fill="#000"></path></svg>'
-                    size="m"
-                  />
+                  <PlusOutlined />
                 </Button>
             
             </div></div>
                 )}
-                {el.tablesSet.map((innerEl, i) => (
+                {el.tablesSet.map((innerEl, i,TableArray) => (
                   <AddSetTable
                     className="w-100"
                     key={i}
@@ -2140,7 +2185,7 @@ setQueryConstructor = (queryRequest,firstQuery,secondQueryTarget)=>{
                     textSecondIncludedHandler={this.textSecondIncludedHandler}
                     dropDownToggler={this.dropDownSet}
                     handleCheckBox={this.handleCheckBox}
-                    deleteTable={() => this.deleteBlock(el.blockId)}
+                    deleteTable={(e) => this.deleteBlock({el,innerEl})}
                     univocoSelectHandler={this.univocoSelectHandler}
                     onChangeCheckBox={this.onChangeCheckBoxSet}
                     openDrop={this.openDropSet}
@@ -2152,8 +2197,10 @@ setQueryConstructor = (queryRequest,firstQuery,secondQueryTarget)=>{
                     functionCounterIsChecked={this.functionCounterIsChecked}
                     dropdownsSet={this.state.dropDownsSet}
                     itemNotFound={this.state.itemNotFound}
-                    showDelete={(i+1)%2==0?false:true}
+                    showDelete={TableArray.length > 2 ? true:false}
+                    showBlockDelete={TableArray.length === 2 && i==0 ? true:false }
                     blockId = {el.blockId}
+                    deleteBlockAll={()=>this.deleteBlockAll({el,innerEl})}
                   />
                 ))}</div>)}
                 
