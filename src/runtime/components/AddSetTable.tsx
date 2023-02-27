@@ -459,7 +459,7 @@ const SecondConstructor = (props) => {
       </div>
       <div value={"<="} className="d-flex  col-md-4">
         {dropdownValueQuery === "univoco" ? (
-          <Select placeholder="Seleziona il Layer">
+          <Select placeholder="Seleziona il Layer" onChange={(e)=>univocoSelectHandler(e,"set")}>
             {normalizedThirdQuery.map((el, i) => {
               return (
                 <Option value={i} data-table-id={tablesSetId}>
@@ -513,7 +513,7 @@ const SecondConstructor = (props) => {
       </div>
       <div value={">="} className="d-flex col-md-4">
         {dropdownValueQuery === "univoco" ? (
-          <Select placeholder="Seleziona il Layer">
+          <Select placeholder="Seleziona il Layer" onChange={(e)=>univocoSelectHandler(e,"set")}>
             {normalizedThirdQuery.map((el, i) => {
               return (
                 <Option value={i} data-table-id={tablesSetId}>
@@ -567,7 +567,7 @@ const SecondConstructor = (props) => {
       </div>
       <div value={"<"} className="d-flex col-md-4">
         {dropdownValueQuery === "univoco" ? (
-          <Select placeholder="Seleziona il Layer">
+          <Select placeholder="Seleziona il Layer" onChange={(e)=>univocoSelectHandler(e,"set")}>
             {normalizedThirdQuery.map((el, i) => {
               return (
                 <Option value={i} data-table-id={tablesSetId}>
@@ -621,7 +621,7 @@ const SecondConstructor = (props) => {
       </div>
       <div value={">"} className="d-flex col-md-4">
         {dropdownValueQuery === "univoco" ? (
-          <Select placeholder="Seleziona il Layer">
+          <Select placeholder="Seleziona il Layer" onChange={(e)=>univocoSelectHandler(e,"set")}>
             {normalizedThirdQuery.map((el, i) => {
               return (
                 <Option value={i} data-table-id={tablesSetId}>
