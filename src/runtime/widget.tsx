@@ -994,7 +994,7 @@ setQueryConstructor = (queryRequest,firstQuery,secondQueryTarget)=>{
       .indexOf(clickedQueryTableId);
     if (queryIndex !== -1) {
       const updateState = this.state.whereClauses.map((obj) => {
-        if (obj.id === queryIndex.toString()) {
+        if (obj.id === clickedQueryTableId) {
           obj = { ...obj, dropdownValueQuery: clickedValue };
           let filteredWhereClauses = this.state.whereClauses.filter(
             (a) => a.id !== obj.id
@@ -1013,7 +1013,7 @@ setQueryConstructor = (queryRequest,firstQuery,secondQueryTarget)=>{
     if (e.currentTarget.value === "univoco") {
       if (queryIndex !== -1) {
         const updateState = this.state.whereClauses.map((obj) => {
-          if (obj.id === queryIndex.toString()) {
+          if (obj.id === clickedQueryTableId) {
             currentClickedQueryAttribute = obj.attributeQuery;
             if (this.state.jimuMapView) {
               this.state.jimuMapView.view.map.allLayers.forEach((f, index) => {
