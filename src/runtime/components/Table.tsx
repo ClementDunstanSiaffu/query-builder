@@ -229,7 +229,7 @@ const SecondConstructor = (props) => {
       <div value={"="} className="d-flex col-md-4">
         {dropdownValueQuery === "univoco" ? (
           <Select
-            onChange={univocoSelectHandler}
+            onChange={(e)=>univocoSelectHandler(e,"single")}
             placeholder="Seleziona il Layer"
           >
             {normalizedThirdQuery.map((el, i) => {
@@ -260,14 +260,14 @@ const SecondConstructor = (props) => {
               <DropdownItem divider />
               <DropdownItem
                 value="valore"
-                onClick={dropdownItemHandler}
+                onClick={(e)=>dropdownItemHandler(e,"single")}
                 data-table-id={tablesId}
               >
                 Valore
               </DropdownItem>
               <DropdownItem
                 value="campo"
-                onClick={dropdownItemHandler}
+                onClick={(e)=>dropdownItemHandler(e,"single")}
                 disabled
                 data-table-id={tablesId}
               >
@@ -275,7 +275,7 @@ const SecondConstructor = (props) => {
               </DropdownItem>
               <DropdownItem
                 value="univoco"
-                onClick={dropdownItemHandler}
+                onClick={(e)=>dropdownItemHandler(e,"single")}
                 data-table-id={tablesId}
               >
                 Univoci
@@ -287,7 +287,7 @@ const SecondConstructor = (props) => {
       <div value={"<>"} className="d-flex col-md-4">
         {dropdownValueQuery === "univoco" ? (
           <Select
-            onChange={univocoSelectHandler}
+            onChange={(e)=>univocoSelectHandler(e,"single")}
             placeholder="Seleziona il Layer"
           >
             {normalizedThirdQuery.map((el, i) => {
@@ -317,14 +317,14 @@ const SecondConstructor = (props) => {
               <DropdownItem divider />
               <DropdownItem
                 value="valore"
-                onClick={dropdownItemHandler}
+                onClick={(e)=>dropdownItemHandler(e,"single")}
                 data-table-id={tablesId}
               >
                 Valore
               </DropdownItem>
               <DropdownItem
                 value="campo"
-                onClick={dropdownItemHandler}
+                onClick={(e)=>dropdownItemHandler(e,"single")}
                 disabled
                 data-table-id={tablesId}
               >
@@ -332,7 +332,7 @@ const SecondConstructor = (props) => {
               </DropdownItem>
               <DropdownItem
                 value="univoco"
-                onClick={dropdownItemHandler}
+                onClick={(e)=>dropdownItemHandler(e,"single")}
                 data-table-id={tablesId}
               >
                 Univoci
@@ -445,7 +445,7 @@ const SecondConstructor = (props) => {
       </div>
       <div value={"<="} className="d-flex  col-md-4">
         {dropdownValueQuery === "univoco" ? (
-          <Select placeholder="Seleziona il Layer">
+          <Select placeholder="Seleziona il Layer" onChange={(e)=>univocoSelectHandler(e,"single")}>
             {normalizedThirdQuery.map((el, i) => {
               return (
                 <Option value={i} data-table-id={tablesId}>
@@ -473,14 +473,14 @@ const SecondConstructor = (props) => {
               <DropdownItem divider />
               <DropdownItem
                 value="valore"
-                onClick={dropdownItemHandler}
+                onClick={(e)=>dropdownItemHandler(e,"single")}
                 data-table-id={tablesId}
               >
                 Valore
               </DropdownItem>
               <DropdownItem
                 value="campo"
-                onClick={dropdownItemHandler}
+                onClick={(e)=>dropdownItemHandler(e,"single")}
                 disabled
                 data-table-id={tablesId}
               >
@@ -488,7 +488,7 @@ const SecondConstructor = (props) => {
               </DropdownItem>
               <DropdownItem
                 value="univoco"
-                onClick={dropdownItemHandler}
+                onClick={(e)=>dropdownItemHandler(e,"single")}
                 data-table-id={tablesId}
               >
                 Univoci
@@ -499,7 +499,7 @@ const SecondConstructor = (props) => {
       </div>
       <div value={">="} className="d-flex col-md-4">
         {dropdownValueQuery === "univoco" ? (
-          <Select placeholder="Seleziona il Layer">
+          <Select placeholder="Seleziona il Layer" onChange={(e)=>univocoSelectHandler(e,"single")}>
             {normalizedThirdQuery.map((el, i) => {
               return (
                 <Option value={i} data-table-id={tablesId}>
@@ -527,14 +527,14 @@ const SecondConstructor = (props) => {
               <DropdownItem divider />
               <DropdownItem
                 value="valore"
-                onClick={dropdownItemHandler}
+                onClick={(e)=>dropdownItemHandler(e,"single")}
                 data-table-id={tablesId}
               >
                 Valore
               </DropdownItem>
               <DropdownItem
                 value="campo"
-                onClick={dropdownItemHandler}
+                onClick={(e)=>dropdownItemHandler(e,"single")}
                 disabled
                 data-table-id={tablesId}
               >
@@ -542,7 +542,7 @@ const SecondConstructor = (props) => {
               </DropdownItem>
               <DropdownItem
                 value="univoco"
-                onClick={dropdownItemHandler}
+                onClick={(e)=>dropdownItemHandler(e,"single")}
                 data-table-id={tablesId}
               >
                 Univoci
@@ -553,7 +553,7 @@ const SecondConstructor = (props) => {
       </div>
       <div value={"<"} className="d-flex col-md-4">
         {dropdownValueQuery === "univoco" ? (
-          <Select placeholder="Seleziona il Layer">
+          <Select placeholder="Seleziona il Layer" onChange={(e)=>univocoSelectHandler(e,"single")}>
             {normalizedThirdQuery.map((el, i) => {
               return (
                 <Option value={i} data-table-id={tablesId}>
@@ -581,14 +581,14 @@ const SecondConstructor = (props) => {
               <DropdownItem divider />
               <DropdownItem
                 value="valore"
-                onClick={dropdownItemHandler}
+                onClick={(e)=>dropdownItemHandler(e,"single")}
                 data-table-id={tablesId}
               >
                 Valore
               </DropdownItem>
               <DropdownItem
                 value="campo"
-                onClick={dropdownItemHandler}
+                onClick={(e)=>dropdownItemHandler(e,"single")}
                 disabled
                 data-table-id={tablesId}
               >
@@ -596,7 +596,7 @@ const SecondConstructor = (props) => {
               </DropdownItem>
               <DropdownItem
                 value="univoco"
-                onClick={dropdownItemHandler}
+                onClick={(e)=>dropdownItemHandler(e,"single")}
                 data-table-id={tablesId}
               >
                 Univoci
@@ -607,7 +607,7 @@ const SecondConstructor = (props) => {
       </div>
       <div value={">"} className="d-flex col-md-4">
         {dropdownValueQuery === "univoco" ? (
-          <Select placeholder="Seleziona il Layer">
+          <Select placeholder="Seleziona il Layer" onChange={(e)=>univocoSelectHandler(e,"single")}>
             {normalizedThirdQuery.map((el, i) => {
               return (
                 <Option value={i} data-table-id={tablesId}>
@@ -635,14 +635,14 @@ const SecondConstructor = (props) => {
               <DropdownItem divider />
               <DropdownItem
                 value="valore"
-                onClick={dropdownItemHandler}
+                onClick={(e)=>dropdownItemHandler(e,"single")}
                 data-table-id={tablesId}
               >
                 Valore
               </DropdownItem>
               <DropdownItem
                 value="campo"
-                onClick={dropdownItemHandler}
+                onClick={(e)=>dropdownItemHandler(e,"single")}
                 disabled
                 data-table-id={tablesId}
               >
@@ -650,7 +650,7 @@ const SecondConstructor = (props) => {
               </DropdownItem>
               <DropdownItem
                 value="univoco"
-                onClick={dropdownItemHandler}
+                onClick={(e)=>dropdownItemHandler(e,"single")}
                 data-table-id={tablesId}
               >
                 Univoci
