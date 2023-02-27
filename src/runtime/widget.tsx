@@ -358,8 +358,6 @@ export default class Widget extends React.PureComponent<AllWidgetProps<IMConfig>
                       filteredWhereClauses.sort(function (a, b) {
                         return a.id < b.id ? -1 : a.id == b.id ? 0 : 1;
                       });
-                      // const keytype =
-                      //   type === "single" ? "whereClauses" : "whereClausesSet";
                       return this.setState({
                         [keytype]: filteredWhereClauses,
                       });
@@ -374,12 +372,10 @@ export default class Widget extends React.PureComponent<AllWidgetProps<IMConfig>
       }
     }
     if (keytype === "whereClauseSet"){
-      // if (currentTargetName  === "is not null" || currentTargetName  === "is null"){
-        if (newWhereSetClause?.length){
-          const currentNewWhereSetClause = newWhereSetClause.find((item)=>item.id === clickedQueryTableId);
-          this.addCurrentWherClauseBlock(clickedQueryTableId,currentNewWhereSetClause)
-        }
-      // }
+      if (newWhereSetClause?.length){
+        const currentNewWhereSetClause = newWhereSetClause.find((item)=>item.id === clickedQueryTableId);
+        this.addCurrentWherClauseBlock(clickedQueryTableId,currentNewWhereSetClause)
+      }
     }
   }
 
