@@ -308,6 +308,7 @@ export default class Widget extends React.PureComponent<AllWidgetProps<IMConfig>
         const updateState = this.state[keytype].map((obj) => {
           if (obj.id === clickedQueryTableId) {
             currentClickedQueryAttribute = obj.attributeQuery;
+            // obj = this.removeValueFromObject(obj)
             obj = { ...obj, queryValue:currentTargetName };
             let filteredWhereClauses = this.state[keytype].filter((a) => a.id !== obj.id);
             filteredWhereClauses.push(obj);
@@ -348,6 +349,7 @@ export default class Widget extends React.PureComponent<AllWidgetProps<IMConfig>
                   }
                   const updateState = this.state[keytype].map((obj) => {
                     if (obj.id === clickedQueryTableId ) {
+                      // obj = this.removeValueFromObject(obj)
                       obj = { ...obj, ifInOrNotInQueryValue: detailThirdQuery };
                       let filteredWhereClauses = this.state[keytype].filter(
                         (a) => a.id !== obj.id
@@ -372,12 +374,12 @@ export default class Widget extends React.PureComponent<AllWidgetProps<IMConfig>
       }
     }
     if (keytype === "whereClauseSet"){
-      if (currentTargetName  === "is not null" || currentTargetName  === "is null"){
+      // if (currentTargetName  === "is not null" || currentTargetName  === "is null"){
         if (newWhereSetClause?.length){
           const currentNewWhereSetClause = newWhereSetClause.find((item)=>item.id === clickedQueryTableId);
           this.addCurrentWherClauseBlock(clickedQueryTableId,currentNewWhereSetClause)
         }
-      }
+      // }
     }
   }
 
