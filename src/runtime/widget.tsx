@@ -837,52 +837,104 @@ setQueryConstructor = (queryRequest,firstQuery,secondQueryTarget)=>{
     }
   };
 
-  deleteBlock = (blockData) => {
-    let copiedBlock = [...this.state.SetBlock];
-    const {el:blockDetails,innerEl }=blockData; 
-    copiedBlock= copiedBlock.map((el)=>{
-      if(el.blockId==blockDetails.blockId){
-        let {tablesSet} =blockDetails; 
-        let newTableSetcounter=blockDetails.tableCounterSet;
-        if (tablesSet.length > 0){
-          newTableSetcounter=newTableSetcounter - 1
-          el.tableCounterSet = newTableSetcounter;
-          this.setState({tableCounterSet:newTableSetcounter});
-        }
-        tablesSet = tablesSet.filter(e => e.id != innerEl.id);
-        el.tablesSet=tablesSet;
-        return el;        
-      }
-      return el;
-    });
+  deleteBlock = (blockId:string)=>{
+    const copiedBlock = [...this.state.SetBlock];
     const copiedWhereclauseSet = [...this.state.whereClauseSet];
-    // const index = copiedBlock.findIndex((item)=>item.blockId === el.blockId);
-    // if (index !== -1){
-    //   copiedBlock.splice(index,1);
-    //   this.setState({SetBlock:copiedBlock});
-    // }
-    this.setState({SetBlock:copiedBlock});
+    const index = copiedBlock.findIndex((item)=>item.blockId === blockId);
+    if (index !== -1){
+      copiedBlock.splice(index,1);
+      this.setState({SetBlock:copiedBlock});
+    }
     if (copiedWhereclauseSet?.length){
-      copiedWhereclauseSet.filter((item)=>(item.id).split("-")[1] === 'blockId');
+      copiedWhereclauseSet.filter((item)=>(item.id).split("-")[1] === blockId);
       this.setState({whereClauseSet:copiedWhereclauseSet});
     }
-  };
+  }
+
+  deleteBlockTable = (tableBlockId:string,blockId:string)=>{
+    const tableId = tableBlockId.split("-")[0];
+    const copiedBlock = [...this.state.SetBlock];
+    const copiedWhereclauseSet = [...this.state.whereClauseSet];
+    const currentBlocIndex = copiedBlock.findIndex((block)=>`${block.blockId}`=== blockId);
+    let currentBlock;
+    if (currentBlocIndex !== -1)currentBlock = copiedBlock[currentBlocIndex];
+    if (currentBlock){
+      const currentWhereClauseSet = currentBlock[blockId];
+      const currentTableSets = currentBlock["tablesSet"];
+      if (currentWhereClauseSet?.length){
+        const copiedCurrentWhereClauseSet = [...currentWhereClauseSet];
+        const whereClauseSetIndex = copiedCurrentWhereClauseSet.findIndex((item)=>item.id === tableBlockId);
+        if (whereClauseSetIndex !== -1){
+          copiedCurrentWhereClauseSet.splice(whereClauseSetIndex,1);
+          currentBlock[blockId] = copiedCurrentWhereClauseSet;
+        }
+      }
+      if (currentTableSets?.length){
+        const copiedTableSets = [...currentTableSets];
+        const tableSetIndex = copiedTableSets.findIndex((item)=>`${item.id}` === tableId);
+        if (tableSetIndex !== -1){
+          copiedTableSets.splice(tableSetIndex,1);
+          currentBlock["tablesSet"] = copiedTableSets;
+        }
+      }
+      copiedBlock[currentBlocIndex] = currentBlock;
+      console.log(copiedBlock,"copiedBlock")
+      this.setState({SetBlock:copiedBlock});
+    }
+    if (copiedWhereclauseSet?.length){
+      copiedWhereclauseSet.filter((item)=>item.id === tableBlockId);
+      this.setState({whereClauseSet:copiedWhereclauseSet});
+    }
+  }
+  
+
+  // deleteBlock = (blockData) => {
+  //   console.log(blockData,"check block data")
+  //   let copiedBlock = [...this.state.SetBlock];
+  //   const {el:blockDetails,innerEl }=blockData; 
+  //   copiedBlock= copiedBlock.map((el)=>{
+  //     if(el.blockId==blockDetails.blockId){
+  //       let {tablesSet} =blockDetails; 
+  //       let newTableSetcounter=blockDetails.tableCounterSet;
+  //       if (tablesSet.length > 0){
+  //         newTableSetcounter=newTableSetcounter - 1
+  //         el.tableCounterSet = newTableSetcounter;
+  //         this.setState({tableCounterSet:newTableSetcounter});
+  //       }
+  //       tablesSet = tablesSet.filter(e => e.id != innerEl.id);
+  //       el.tablesSet=tablesSet;
+  //       return el;        
+  //     }
+  //     return el;
+  //   });
+  //   const copiedWhereclauseSet = [...this.state.whereClauseSet];
+  //   // const index = copiedBlock.findIndex((item)=>item.blockId === el.blockId);
+  //   // if (index !== -1){
+  //   //   copiedBlock.splice(index,1);
+  //   //   this.setState({SetBlock:copiedBlock});
+  //   // }
+  //   this.setState({SetBlock:copiedBlock});
+  //   if (copiedWhereclauseSet?.length){
+  //     copiedWhereclauseSet.filter((item)=>(item.id).split("-")[1] === 'blockId');
+  //     this.setState({whereClauseSet:copiedWhereclauseSet});
+  //   }
+  // };
 
   deleteBlockAll = (blockData) => {
-    const {el:blockDetails }=blockData; 
-    let copiedBlock = [...this.state.SetBlock];
-    copiedBlock = copiedBlock.filter(e => e.blockId != blockDetails.blockId);
-    const copiedWhereclauseSet = [...this.state.whereClauseSet];
-    // const index = copiedBlock.findIndex((item)=>item.blockId === el.blockId);
-    // if (index !== -1){
-    //   copiedBlock.splice(index,1);
-    //   this.setState({SetBlock:copiedBlock});
+    // const {el:blockDetails }=blockData; 
+    // let copiedBlock = [...this.state.SetBlock];
+    // copiedBlock = copiedBlock.filter(e => e.blockId != blockDetails.blockId);
+    // const copiedWhereclauseSet = [...this.state.whereClauseSet];
+    // // const index = copiedBlock.findIndex((item)=>item.blockId === el.blockId);
+    // // if (index !== -1){
+    // //   copiedBlock.splice(index,1);
+    // //   this.setState({SetBlock:copiedBlock});
+    // // }
+    // this.setState({SetBlock:copiedBlock});
+    // if (copiedWhereclauseSet?.length){
+    //   copiedWhereclauseSet.filter((item)=>(item.id).split("-")[1] === 'blockId');
+    //   this.setState({whereClauseSet:copiedWhereclauseSet});
     // }
-    this.setState({SetBlock:copiedBlock});
-    if (copiedWhereclauseSet?.length){
-      copiedWhereclauseSet.filter((item)=>(item.id).split("-")[1] === 'blockId');
-      this.setState({whereClauseSet:copiedWhereclauseSet});
-    }
   };
 
   textInputHandler = (e,queryType="single") => {
@@ -2138,7 +2190,8 @@ setQueryConstructor = (queryRequest,firstQuery,secondQueryTarget)=>{
                 <div className="">
               <Button
                 className=""
-                onClick={()=>this.deleteBlockAll({el})}
+                onClick={()=>this.deleteBlock(el.blockId)}
+                // onClick={()=>this.deleteBlockAll({el})}
                 icon
                 type='secondary'
               >
@@ -2185,7 +2238,7 @@ setQueryConstructor = (queryRequest,firstQuery,secondQueryTarget)=>{
                     textSecondIncludedHandler={this.textSecondIncludedHandler}
                     dropDownToggler={this.dropDownSet}
                     handleCheckBox={this.handleCheckBox}
-                    deleteTable={(e) => this.deleteBlock({el,innerEl})}
+                    deleteTable={(e) => this.deleteBlockTable(`${innerEl.id}`+ "-"+`${el.blockId}`,`${el.blockId}`)}
                     univocoSelectHandler={this.univocoSelectHandler}
                     onChangeCheckBox={this.onChangeCheckBoxSet}
                     openDrop={this.openDropSet}
