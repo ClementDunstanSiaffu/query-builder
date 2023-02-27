@@ -999,7 +999,6 @@ setQueryConstructor = (queryRequest,firstQuery,secondQueryTarget)=>{
                                   dropdownValueQuery: clickedValue,
                                 };
                                 currentNewWhereSetClause = obj;
-                                console.log(obj,"check obj")
                                 let filteredWhereClauses =
                                   this.state[keytype].filter(
                                     (a) => a.id !== obj.id
@@ -1033,11 +1032,6 @@ setQueryConstructor = (queryRequest,firstQuery,secondQueryTarget)=>{
     });
     if (keytype === "whereClauseSet"){
       if (currentNewWhereSetClause)this.addCurrentWherClauseBlock(clickedQueryTableId,currentNewWhereSetClause)
-      // if (newWhereSetClause?.length){
-      //   const currentNewWhereSetClause = newWhereSetClause.find((item)=>item.id === clickedQueryTableId);
-      //   console.log(currentNewWhereSetClause,"current new where clause set")
-      //   this.addCurrentWherClauseBlock(clickedQueryTableId,currentNewWhereSetClause)
-      // }
     }
   };
 
