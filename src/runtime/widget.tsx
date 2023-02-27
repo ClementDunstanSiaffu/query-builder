@@ -807,13 +807,12 @@ setQueryConstructor = (queryRequest,firstQuery,secondQueryTarget)=>{
   addTwoTable = (ev) => {
     let newblock=this.state.SetBlock.map((el)=>{
       if(ev.target.id==el.blockId){
-        let idOne = el.tableCounterSet;
-        let idTwo = idOne + 1;
+        let id = el.tableCounterSet;
         const currentId = this.state.tableCounterSet;
         return {
           ...el,
-          tablesSet:[...el.tablesSet, { id: idOne }, { id: idTwo }],
-          tableCounterSet: this.state.tableCounterSet + 2,
+          tablesSet:[...el.tablesSet, { id: id }],
+          tableCounterSet: this.state.tableCounterSet + 1,
           dropDownsSet: { ...el.dropDownsSet, [currentId]: false }
         }
       }
@@ -883,16 +882,38 @@ setQueryConstructor = (queryRequest,firstQuery,secondQueryTarget)=>{
     }
   };
 
-  deleteBlock = (blockId) => {
-    const copiedBlock = [...this.state.SetBlock];
+  deleteBlock = (blockData) => {
+    let copiedBlock = [...this.state.SetBlock];
+    const {el:blockDetails,innerEl }=blockData; 
+    copiedBlock= copiedBlock.map((el)=>{
+      if(el.blockId==blockDetails.blockId){
+        let {tablesSet} =blockDetails; 
+        let newTableSetcounter=blockDetails.tableCounterSet;
+        if (tablesSet.length > 0){
+          newTableSetcounter=newTableSetcounter - 1
+          el.tableCounterSet = newTableSetcounter;
+          this.setState({tableCounterSet:newTableSetcounter});
+        }
+        tablesSet = tablesSet.filter(e => e.id != innerEl.id);
+        el.tablesSet=tablesSet;
+        return el;        
+      }
+      return el;
+    });
+
+
+
     const copiedWhereclauseSet = [...this.state.whereClauseSet];
-    const index = copiedBlock.findIndex((item)=>item.blockId === blockId);
-    if (index !== -1){
-      copiedBlock.splice(index,1);
-      this.setState({SetBlock:copiedBlock});
-    }
+    // const index = copiedBlock.findIndex((item)=>item.blockId === el.blockId);
+    // if (index !== -1){
+    //   copiedBlock.splice(index,1);
+    //   this.setState({SetBlock:copiedBlock});
+    // }
+      
+    this.setState({SetBlock:copiedBlock});
+
     if (copiedWhereclauseSet?.length){
-      copiedWhereclauseSet.filter((item)=>(item.id).split("-")[1] === blockId);
+      copiedWhereclauseSet.filter((item)=>(item.id).split("-")[1] === 'blockId');
       this.setState({whereClauseSet:copiedWhereclauseSet});
     }
   };
@@ -2184,7 +2205,7 @@ setQueryConstructor = (queryRequest,firstQuery,secondQueryTarget)=>{
                     textSecondIncludedHandler={this.textSecondIncludedHandler}
                     dropDownToggler={this.dropDownSet}
                     handleCheckBox={this.handleCheckBox}
-                    deleteTable={() => this.deleteBlock(el.blockId)}
+                    deleteTable={(e) => this.deleteBlock({el,innerEl})}
                     univocoSelectHandler={this.univocoSelectHandler}
                     onChangeCheckBox={this.onChangeCheckBoxSet}
                     openDrop={this.openDropSet}
@@ -2196,7 +2217,7 @@ setQueryConstructor = (queryRequest,firstQuery,secondQueryTarget)=>{
                     functionCounterIsChecked={this.functionCounterIsChecked}
                     dropdownsSet={this.state.dropDownsSet}
                     itemNotFound={this.state.itemNotFound}
-                    showDelete={(i+1)%2==0?false:true}
+                    showDelete={true}
                     blockId = {el.blockId}
                   />
                 ))}</div>)}
