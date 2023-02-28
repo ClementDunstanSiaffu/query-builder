@@ -689,12 +689,28 @@ setQueryConstructor = (queryRequest,firstQuery,secondQueryTarget)=>{
             });
           }
         }
-        if (i === 0 && this.state.SetBlock.length >= 2 )setQueryString = "(" + setQueryString;
-        
-        if (i < this.state.SetBlock.length-1)setQueryString += " ) " + this.state.AndOr + " ( ";
-        
-        if (this.state.SetBlock.length >= 2 && i === this.state.SetBlock.length-1)setQueryString = setQueryString + ")"
-        
+        if (this.state.SetBlock[i+1]){
+          const nextBlock = this.state.SetBlock[i+1]
+          const nextBlockId = nextBlock?.blockId;
+          const nextWhereClauseSet = nextBlock[`${nextBlockId}`];
+          if (i === 0 && this.state.SetBlock.length >= 2 && nextWhereClauseSet?.length ){
+            setQueryString = "(" + setQueryString;
+          }
+          if (i < this.state.SetBlock.length-1 && nextWhereClauseSet?.length){
+            setQueryString += " ) " + this.state.AndOr + " ( ";
+          }
+        }
+        if (this.state.SetBlock[i-1]){
+          const prevBlock = this.state.SetBlock[i-1]
+          const prevBlockId = prevBlock?.blockId;
+          const prevWhereClauseSet = prevBlock[`${prevBlockId}`];
+          if (
+            this.state.SetBlock.length >= 2 && i === this.state.SetBlock.length-1 &&
+            prevWhereClauseSet.length 
+          ){
+            setQueryString = setQueryString + ")"
+          }
+        }
       })
     }
     return {setQueryString,outFields}
@@ -762,19 +778,6 @@ setQueryConstructor = (queryRequest,firstQuery,secondQueryTarget)=>{
       currentBlock["tableCounterSet"] = currentBlock["tableCounterSet"]+1;
       newStateBlock[index] = currentBlock;
     }
-    // let newblock=this.state.SetBlock.map((el)=>{
-    //   if(blockId==el.blockId){
-    //     let id = el.tableCounterSet;
-    //     const currentId = this.state.tableCounterSet;
-    //     return {
-    //       ...el,
-    //       tablesSet:[...el.tablesSet, { id: id,deleted:false }],
-    //       tableCounterSet: this.state.tableCounterSet + 1,
-    //       dropDownsSet: { ...el.dropDownsSet, [currentId]: false }
-    //     }
-    //   }
-    //   return el;
-    // });
     if(this.state.tables.length > 0)this.setState({showAddSelect:false});
     this.setState({ SetBlock:newStateBlock });
   };
