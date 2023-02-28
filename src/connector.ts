@@ -176,7 +176,19 @@ class Helper {
         // }
     }
 
+    // tableSetCounts = (tableSetCounts:{id:string,deleted:boolean}[])=>{
+    //     let counts = 0
+    //     if (tableSetCounts.length){
+    //       const copiedTableSetCounts = [...tableSetCounts];
+    //       copiedTableSetCounts.filter((item)=>!item.deleted);
+    //       counts = copiedTableSetCounts.length
+    //     }
+    //     return counts;
+    //   }
+
     getQuerySetValue = ()=>({querySetArray:this.setQueryArray,querySetOutfields:this.setOutFields})
+
+
 
 
 }

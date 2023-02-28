@@ -56,120 +56,125 @@ function AddSetTable(props) {
     mouseleave,
     onmouseLeave,
     dropdownsSet,
-    showDelete,blockId,showBlockDelete
+    showDelete,blockId,
+    currentTable,
+    showBlockDelete
   } = props;
 
   const currentwhereClausesSet = whereClausesSet.find((item)=>item.id === tablesSetId);
-  console.log(whereClausesSet,currentwhereClausesSet,tablesSetId,"add table")
-  return (
-    <div className="my-1">
-      {list.fields ? (
-        <div className="d-flex flex-column">
-          <div className="row m-0">
-            {showDelete&&<div className="row w-100 d-flex justify-content-end">
-              <Button
-                className="mb-2 col-1 self-end"
-                onClick={deleteTable}
-                icon
-              >
-                <CloseOutlined />
-              </Button>
-            </div>}
-            <Select
-              className="col-md-4 mb-2"
-              onChange={getQueryAttribute}
-              placeholder="Seleziona campo"
-            >
-              {/* eslint-disable-next-line array-callback-return */}
-              {list.fields.map((el, i) => {
-                if (
-                  el.type === "oid" ||
-                  el.type === "small-integer" ||
-                  el.type === "integer" ||
-                  el.type === "string" ||
-                  el.type === "double"
-                ) {
-                  return (
-                    <Option
-                      data-table-id={tablesSetId}
-                      value={i}
-                      name={el.name}
-                      dataType={el.type}
-                    >
-                      {el.alias} ({el.type})
-                    </Option>
-                  );
-                }
-              })}
-            </Select>
-            <div className="col-md-4 mb-2">
+  console.log(currentTable,"check current table set")
+  if (currentTable.id === parseInt(tablesSetId.split("-")[0]) && !currentTable.deleted){
+    return (
+      <div className="my-1">
+        {list.fields ? (
+          <div className="d-flex flex-column">
+            <div className="row m-0">
+              {showDelete&&<div className="row w-100 d-flex justify-content-end">
+                <Button
+                  className="mb-2 col-1 self-end"
+                  onClick={deleteTable}
+                  icon
+                >
+                  <CloseOutlined />
+                </Button>
+              </div>}
               <Select
-                onChange={(e) => getQuery(e, "set")}
+                className="col-md-4 mb-2"
+                onChange={getQueryAttribute}
                 placeholder="Seleziona campo"
               >
-                {currentwhereClausesSet && currentwhereClausesSet.attributeQueryType === "string"
-                  ? queryConstructorString.map((o, i) => {
-                      return (
-                        <Option
-                          data-table-id={tablesSetId}
-                          value={i}
-                          name={o.value}
-                        >
-                          {o.name}
-                        </Option>
-                      );
-                    })
-                  : queryConstructorNumber.map((o, i) => {
-                      return (
-                        <Option
-                          data-table-id={tablesSetId}
-                          value={i}
-                          name={o.value}
-                        >
-                          {o.name}
-                        </Option>
-                      );
-                    })}
+                {/* eslint-disable-next-line array-callback-return */}
+                {list.fields.map((el, i) => {
+                  if (
+                    el.type === "oid" ||
+                    el.type === "small-integer" ||
+                    el.type === "integer" ||
+                    el.type === "string" ||
+                    el.type === "double"
+                  ) {
+                    return (
+                      <Option
+                        data-table-id={tablesSetId}
+                        value={i}
+                        name={el.name}
+                        dataType={el.type}
+                      >
+                        {el.alias} ({el.type})
+                      </Option>
+                    );
+                  }
+                })}
               </Select>
+              <div className="col-md-4 mb-2">
+                <Select
+                  onChange={(e) => getQuery(e, "set")}
+                  placeholder="Seleziona campo"
+                >
+                  {currentwhereClausesSet && currentwhereClausesSet.attributeQueryType === "string"
+                    ? queryConstructorString.map((o, i) => {
+                        return (
+                          <Option
+                            data-table-id={tablesSetId}
+                            value={i}
+                            name={o.value}
+                          >
+                            {o.name}
+                          </Option>
+                        );
+                      })
+                    : queryConstructorNumber.map((o, i) => {
+                        return (
+                          <Option
+                            data-table-id={tablesSetId}
+                            value={i}
+                            name={o.value}
+                          >
+                            {o.name}
+                          </Option>
+                        );
+                      })}
+                </Select>
+              </div>
+              <SecondConstructor
+                className="col-md-4"
+                handleThirdQuery={handleThirdQuery}
+                textInputHandler={textInputHandler}
+                multiSelectHandler={multiSelectHandler}
+                dropdownItemHandler={dropdownItemHandler}
+                textFirstIncludedHandler={textFirstIncludedHandler}
+                textSecondIncludedHandler={textSecondIncludedHandler}
+                dropdownValueQuery={dropdownValueQuery}
+                handleCheckBox={handleCheckBox}
+                isChecked={isChecked}
+                counterIsChecked={counterIsChecked}
+                functionCounterIsChecked={functionCounterIsChecked}
+                checkedToQuery={checkedToQuery}
+                getQueryAttribute={getQueryAttribute}
+                whereClausesSet={whereClausesSet}
+                tablesSetId={tablesSetId}
+                dropDownToggler={dropDownToggler}
+                univocoSelectHandler={univocoSelectHandler}
+                dropDown={dropDown}
+                isOpenDropD={isOpenDropD}
+                onChangeCheckBox={onChangeCheckBox}
+                openDrop={openDrop}
+                closeDrop={closeDrop}
+                opened={opened}
+                autOpen={autOpen}
+                mouseleave={mouseleave}
+                onmouseLeave={onmouseLeave}
+                dropdownsSet={dropdownsSet}
+                blockId = {blockId}
+              />
             </div>
-            <SecondConstructor
-              className="col-md-4"
-              handleThirdQuery={handleThirdQuery}
-              textInputHandler={textInputHandler}
-              multiSelectHandler={multiSelectHandler}
-              dropdownItemHandler={dropdownItemHandler}
-              textFirstIncludedHandler={textFirstIncludedHandler}
-              textSecondIncludedHandler={textSecondIncludedHandler}
-              dropdownValueQuery={dropdownValueQuery}
-              handleCheckBox={handleCheckBox}
-              isChecked={isChecked}
-              counterIsChecked={counterIsChecked}
-              functionCounterIsChecked={functionCounterIsChecked}
-              checkedToQuery={checkedToQuery}
-              getQueryAttribute={getQueryAttribute}
-              whereClausesSet={whereClausesSet}
-              tablesSetId={tablesSetId}
-              dropDownToggler={dropDownToggler}
-              univocoSelectHandler={univocoSelectHandler}
-              dropDown={dropDown}
-              isOpenDropD={isOpenDropD}
-              onChangeCheckBox={onChangeCheckBox}
-              openDrop={openDrop}
-              closeDrop={closeDrop}
-              opened={opened}
-              autOpen={autOpen}
-              mouseleave={mouseleave}
-              onmouseLeave={onmouseLeave}
-              dropdownsSet={dropdownsSet}
-              blockId = {blockId}
-            />
           </div>
-        </div>
-      ) : (
-        ""
-      )}
-    </div>
-  );
+        ) : (
+          ""
+        )}
+      </div>
+    );
+  }
+  return null;
 }
 const Switch = (props) => {
   const { queryValues, children } = props;

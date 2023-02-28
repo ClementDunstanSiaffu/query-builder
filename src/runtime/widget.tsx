@@ -111,6 +111,7 @@ export default class Widget extends React.PureComponent<AllWidgetProps<IMConfig>
       widgetStateOpenedChecked: false,
       showAddSelect: true,
       SetBlock: [],
+      selectedId:null
     };
   };
 
@@ -746,7 +747,7 @@ setQueryConstructor = (queryRequest,firstQuery,secondQueryTarget)=>{
   addTable = () => {
     const currentId = this.state.tableCounter;
     this.setState({
-      tables: [...this.state.tables, { id: this.state.tableCounter }],
+      tables: [...this.state.tables, { id: this.state.tableCounter,deleted:false }],
       tableCounter: this.state.tableCounter + 1,
       dropDowns: { ...this.state.dropDowns, [currentId]: false },
     });
@@ -765,7 +766,7 @@ setQueryConstructor = (queryRequest,firstQuery,secondQueryTarget)=>{
         const currentId = this.state.tableCounterSet;
         return {
           ...el,
-          tablesSet:[...el.tablesSet, { id: id }],
+          tablesSet:[...el.tablesSet, { id: id,deleted:false }],
           tableCounterSet: this.state.tableCounterSet + 1,
           dropDownsSet: { ...el.dropDownsSet, [currentId]: false }
         }
@@ -779,7 +780,6 @@ setQueryConstructor = (queryRequest,firstQuery,secondQueryTarget)=>{
   };
 
   addBlock = ()=>{
-    console.log('llllllllllllllllllllllllllll',this.state.SetBlock)
     let idOne = this.state.SetBlock.tableCounterSet??0;
     let idTwo = idOne + 1;
     const currentId = idOne;
@@ -788,7 +788,7 @@ setQueryConstructor = (queryRequest,firstQuery,secondQueryTarget)=>{
     newBlock.push({
       blockId:this.state.SetBlock.length,
       [`${this.state.SetBlock.length}`]:[],
-      tablesSet:[ { id: idOne }, { id: idTwo }],
+      tablesSet:[ { id: idOne,deleted:false  }, { id: idTwo,deleted:false }],
       tableCounterSet: this.state.tableCounterSet + 2,
       dropDownsSet: {
         ...this.state.dropDownsSet,
@@ -812,7 +812,14 @@ setQueryConstructor = (queryRequest,firstQuery,secondQueryTarget)=>{
 
   deleteTable = (id) => {
     const copiedTable = [...this.state.tables];
-    const newTables = copiedTable.filter((el) => el.id !== id);
+    const index = copiedTable.findIndex((item)=>item.id === id)
+    let newTables = copiedTable;
+    if (index !== -1){
+      copiedTable[index]["deleted"] = true;
+      newTables = copiedTable;
+    }
+  
+    // const newTables = copiedTable.filter((el) => el.id !== id);
     this.setState({ tableCounter: this.state.tableCounter - 1 });
     const copiedWhereClauses = [...this.state.whereClauses];
     const deletedWhereClauses = copiedWhereClauses.filter(
@@ -822,6 +829,7 @@ setQueryConstructor = (queryRequest,firstQuery,secondQueryTarget)=>{
       tables: newTables,
       whereClauses: deletedWhereClauses,
       tableCounter: this.state.tableCounter - 1,
+      selectedId:id
     });
     if (this.state.tables.length === 0) {
       this.setState({
@@ -860,7 +868,6 @@ setQueryConstructor = (queryRequest,firstQuery,secondQueryTarget)=>{
     if (currentBlocIndex !== -1)currentBlock = copiedBlock[currentBlocIndex];
     if (currentBlock){
       const currentWhereClauseSet = currentBlock[blockId];
-      // console.log(currentWhereClauseSet,"current where clause")
       const currentTableSets = currentBlock["tablesSet"];
       if (currentWhereClauseSet?.length){
         const copiedCurrentWhereClauseSet = [...currentWhereClauseSet];
@@ -879,7 +886,8 @@ setQueryConstructor = (queryRequest,firstQuery,secondQueryTarget)=>{
         const copiedTableSets = [...currentTableSets];
         const tableSetIndex = copiedTableSets.findIndex((item)=>`${item.id}` === tableId);
         if (tableSetIndex !== -1){
-          copiedTableSets.splice(tableSetIndex,1);
+          copiedTableSets[tableSetIndex]["deleted"] = true;
+          // copiedTableSets.splice(tableSetIndex,1);
           currentBlock["tablesSet"] = copiedTableSets;
         }
       }
@@ -1983,7 +1991,17 @@ setQueryConstructor = (queryRequest,firstQuery,secondQueryTarget)=>{
 
   //TODO config abilitare tab true/false
   render() {
-    console.log(this.state.SetBlock,this.state.whereClauseSet,"check Set block")
+
+    const tableSetCounts = (tableSetCounts:{id:string,deleted:boolean}[])=>{
+      let counts = 0
+      if (tableSetCounts.length){
+        const copiedTableSetCounts = [...tableSetCounts];
+        const filteredItem = copiedTableSetCounts.filter((item)=>!item.deleted);
+        counts = filteredItem.length
+      }
+      return counts;
+    }
+    
     if (this.props.state === "CLOSED" && !this.state.widgetStateClosedChecked) {
       const jimuMapView = this.state.jimuMapView;
       const view = jimuMapView.view;
@@ -2176,6 +2194,8 @@ setQueryConstructor = (queryRequest,firstQuery,secondQueryTarget)=>{
                     functionCounterIsChecked={this.functionCounterIsChecked}
                     dropdowns={this.state.dropDowns}
                     itemNotFound={this.state.itemNotFound}
+                    selectedId = {this.state.selectedId}
+                    currentTable = {el}
                   />
                 ))}
                 <br />
@@ -2187,9 +2207,12 @@ setQueryConstructor = (queryRequest,firstQuery,secondQueryTarget)=>{
                   }}
                 ></div>
                 <br />
-                {this.state.SetBlock.map((el,index)=>
-                <div id={index}>{el.tablesSet.length < 2 ? (
-                  el.tablesSet.length == 1 ? <p>
+                {this.state.SetBlock.map((el,index)=>{
+                  const counts = tableSetCounts(el.tablesSet);
+                  console.log(counts)
+                  return(
+                <div id={index}>{counts < 2 ? (
+                  counts == 1 ? <p>
                     Visualizza le feature nel layer corrispondenti alla seguente
                     espressione
                   </p>:''
@@ -2272,12 +2295,15 @@ setQueryConstructor = (queryRequest,firstQuery,secondQueryTarget)=>{
                     functionCounterIsChecked={this.functionCounterIsChecked}
                     dropdownsSet={this.state.dropDownsSet}
                     itemNotFound={this.state.itemNotFound}
-                    showDelete={TableArray.length > 2 ? true:false}
-                    showBlockDelete={TableArray.length === 2 && i==0 ? true:false }
+                    showDelete={counts > 2 ? true:false}
+                    showBlockDelete={counts === 2 && i==0 ? true:false }
+                    // showDelete={TableArray.length > 2 ? true:false}
+                    // showBlockDelete={TableArray.length === 2 && i==0 ? true:false }
                     blockId = {el.blockId}
                     deleteBlockAll={()=>this.deleteBlockAll({el,innerEl})}
+                    currentTable = {innerEl}
                   />
-                ))}</div>)}
+                ))}</div>)})}
                 
                 <br />
                 <br />

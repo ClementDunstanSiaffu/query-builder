@@ -53,8 +53,10 @@ function Table(props) {
     mouseleave,
     onmouseLeave,
     dropdowns,
+    currentTable
   } = props;
 
+  if (currentTable.id === tablesId && !currentTable.deleted){
   return (
     <div className="my-1">
       {list.fields ? (
@@ -161,6 +163,8 @@ function Table(props) {
       )}
     </div>
   );
+  }
+  return null;
 }
 const Switch = (props) => {
   const { queryValues, children } = props;
@@ -198,6 +202,10 @@ const SecondConstructor = (props) => {
   let opened = false;
   let checked = 0;
   let au = true;
+  let defaultTextValue = " ";
+
+  // console.log(whereClauses,"check whereClauses drillling")
+
 
   if (whereClauses[tablesId] && whereClauses[tablesId].ifInOrNotInQueryValue) {
     whereClauses[tablesId].ifInOrNotInQueryValue.map((el, i) => {
@@ -223,6 +231,11 @@ const SecondConstructor = (props) => {
     checked = whereClauses[tablesId].checkedList.length;
   }
 
+  // if (whereClauses[tablesId] && whereClauses[tablesId].value?.text){
+  //   defaultTextValue = whereClauses[tablesId].value.text
+  // }
+
+
   const test = (props) => {};
   return (
     <Switch queryValues={defaultValue}>
@@ -247,6 +260,7 @@ const SecondConstructor = (props) => {
             type="text"
             className=" w-100"
             data-table-id={tablesId}
+            defaultValue = {defaultTextValue}
           />
         )}
         <div className="flex-shrink-1">
