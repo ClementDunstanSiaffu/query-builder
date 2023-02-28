@@ -203,35 +203,30 @@ const SecondConstructor = (props) => {
   let checked = 0;
   let au = true;
   let defaultTextValue = " ";
-
-  if (whereClauses[tablesId] && whereClauses[tablesId].ifInOrNotInQueryValue) {
-    whereClauses[tablesId].ifInOrNotInQueryValue.map((el, i) => {
+  const currentWhereClause = whereClauses.find((item)=>item.id === `${tablesId}`);
+  if (currentWhereClause && currentWhereClause.ifInOrNotInQueryValue) {
+    currentWhereClause.ifInOrNotInQueryValue.map((el, i) => {
       normalizedThirdQuery.push({
         id: tablesId.toString(),
         label: el.label.toString(),
         value: el.value.toString(),
-        listel: whereClauses[tablesId].checkedList,
+        listel: currentWhereClause.checkedList,
       });
     });
   }
-  if (whereClauses[tablesId] && whereClauses[tablesId].queryValue) {
-    defaultValue = whereClauses[tablesId].queryValue;
+  if (currentWhereClause && currentWhereClause.queryValue) {
+    defaultValue = currentWhereClause.queryValue;
   }
-  if (whereClauses[tablesId] && whereClauses[tablesId].dropdownValueQuery) {
+  if (currentWhereClause && currentWhereClause.dropdownValueQuery) {
     dropdownValueQuery = whereClauses[tablesId].dropdownValueQuery;
   }
-  if (whereClauses[tablesId] && whereClauses[tablesId].isOpen) {
+  if (currentWhereClause && currentWhereClause.isOpen) {
     // opened = whereClauses[tablesId].isOpen;
   }
 
-  if (whereClauses[tablesId] && whereClauses[tablesId].checkedList) {
-    checked = whereClauses[tablesId].checkedList.length;
+  if (currentWhereClause && currentWhereClause.checkedList) {
+    checked = currentWhereClause.checkedList.length;
   }
-
-  // if (whereClauses[tablesId] && whereClauses[tablesId].value?.text){
-  //   defaultTextValue = whereClauses[tablesId].value.text
-  // }
-
 
   const test = (props) => {};
   return (

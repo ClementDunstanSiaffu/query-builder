@@ -692,12 +692,28 @@ setQueryConstructor = (queryRequest,firstQuery,secondQueryTarget)=>{
             });
           }
         }
-        if (i === 0 && this.state.SetBlock.length >= 2 )setQueryString = "(" + setQueryString;
-        
-        if (i < this.state.SetBlock.length-1)setQueryString += " ) " + this.state.AndOr + " ( ";
-        
-        if (this.state.SetBlock.length >= 2 && i === this.state.SetBlock.length-1)setQueryString = setQueryString + ")"
-        
+        if (this.state.SetBlock[i+1]){
+          const nextBlock = this.state.SetBlock[i+1]
+          const nextBlockId = nextBlock?.blockId;
+          const nextWhereClauseSet = nextBlock[`${nextBlockId}`];
+          if (i === 0 && this.state.SetBlock.length >= 2 && nextWhereClauseSet?.length ){
+            setQueryString = "(" + setQueryString;
+          }
+          if (i < this.state.SetBlock.length-1 && nextWhereClauseSet?.length){
+            setQueryString += " ) " + this.state.AndOr + " ( ";
+          }
+        }
+        if (this.state.SetBlock[i-1]){
+          const prevBlock = this.state.SetBlock[i-1]
+          const prevBlockId = prevBlock?.blockId;
+          const prevWhereClauseSet = prevBlock[`${prevBlockId}`];
+          if (
+            this.state.SetBlock.length >= 2 && i === this.state.SetBlock.length-1 &&
+            prevWhereClauseSet.length 
+          ){
+            setQueryString = setQueryString + ")"
+          }
+        }
       })
     }
     return {setQueryString,outFields}
@@ -754,22 +770,19 @@ setQueryConstructor = (queryRequest,firstQuery,secondQueryTarget)=>{
     }
   };
 
-  addTwoTable = (ev) => {
-    let newblock=this.state.SetBlock.map((el)=>{
-      if(ev.target.id==el.blockId){
-        let id = el.tableCounterSet;
-        const currentId = this.state.tableCounterSet;
-        return {
-          ...el,
-          tablesSet:[...el.tablesSet, { id: id,deleted:false }],
-          tableCounterSet: this.state.tableCounterSet + 1,
-          dropDownsSet: { ...el.dropDownsSet, [currentId]: false }
-        }
-      }
-      return el;
-    });
+  addTwoTable = (blockId) => {
+    let newStateBlock = [...this.state.SetBlock];
+    const index = newStateBlock.findIndex((item)=>item.blockId === blockId);
+    if (index !== -1){
+      const currentBlock = newStateBlock[index];
+      const currentId = currentBlock["tableCounterSet"];
+      currentBlock["tablesSet"] = [...currentBlock["tablesSet"],{id:currentId,deleted:false}];
+      currentBlock["dropDownsSet"] = {...currentBlock["dropDownsSet"],[currentId]:false}
+      currentBlock["tableCounterSet"] = currentBlock["tableCounterSet"]+1;
+      newStateBlock[index] = currentBlock;
+    }
     if(this.state.tables.length > 0)this.setState({showAddSelect:false});
-    this.setState({ SetBlock: newblock });
+    this.setState({ SetBlock:newStateBlock });
   };
 
   addBlock = ()=>{
@@ -2236,7 +2249,7 @@ setQueryConstructor = (queryRequest,firstQuery,secondQueryTarget)=>{
                 <div className=" ">
                 <Button
                   id={el.blockId}
-                  onClick={this.addTwoTable}
+                  onClick={()=>this.addTwoTable(el.blockId)}
                   className=""
                   icon
                   type="secondary"
