@@ -692,26 +692,32 @@ setQueryConstructor = (queryRequest,firstQuery,secondQueryTarget)=>{
             });
           }
         }
-        if (this.state.SetBlock[i+1]){
-          const nextBlock = this.state.SetBlock[i+1]
-          const nextBlockId = nextBlock?.blockId;
-          const nextWhereClauseSet = nextBlock[`${nextBlockId}`];
-          if (i === 0 && this.state.SetBlock.length >= 2 && nextWhereClauseSet?.length ){
-            setQueryString = "(" + setQueryString;
+        if (setQueryString){
+          if (this.state.SetBlock[i+1]){
+            const nextBlock = this.state.SetBlock[i+1]
+            const nextBlockId = nextBlock?.blockId;
+            const nextWhereClauseSet = nextBlock[`${nextBlockId}`];
+            if (
+              i === 0 && this.state.SetBlock.length >= 2 
+              && nextWhereClauseSet?.length ||
+              !["("].includes(setQueryString[0])
+            ){
+              setQueryString = "(" + setQueryString;
+            }
+            if (i < this.state.SetBlock.length-1 && nextWhereClauseSet?.length){
+              setQueryString += " ) " + this.state.AndOr + " ( ";
+            }
           }
-          if (i < this.state.SetBlock.length-1 && nextWhereClauseSet?.length){
-            setQueryString += " ) " + this.state.AndOr + " ( ";
-          }
-        }
-        if (this.state.SetBlock[i-1]){
-          const prevBlock = this.state.SetBlock[i-1]
-          const prevBlockId = prevBlock?.blockId;
-          const prevWhereClauseSet = prevBlock[`${prevBlockId}`];
-          if (
-            this.state.SetBlock.length >= 2 && i === this.state.SetBlock.length-1 &&
-            prevWhereClauseSet.length 
-          ){
-            setQueryString = setQueryString + ")"
+          if (this.state.SetBlock[i-1]){
+            const prevBlock = this.state.SetBlock[i-1]
+            const prevBlockId = prevBlock?.blockId;
+            const prevWhereClauseSet = prevBlock[`${prevBlockId}`];
+            if (
+              this.state.SetBlock.length >= 2 && i === this.state.SetBlock.length-1 &&
+              prevWhereClauseSet.length 
+            ){
+              setQueryString = setQueryString + ")"
+            }
           }
         }
       })
