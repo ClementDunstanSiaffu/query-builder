@@ -62,7 +62,6 @@ function AddSetTable(props) {
   } = props;
 
   const currentwhereClausesSet = whereClausesSet.find((item)=>item.id === tablesSetId);
-  console.log(currentTable,"check current table set")
   if (currentTable.id === parseInt(tablesSetId.split("-")[0]) && !currentTable.deleted){
     return (
       <div className="my-1">

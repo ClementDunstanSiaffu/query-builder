@@ -195,21 +195,13 @@ export default class Widget extends React.PureComponent<AllWidgetProps<IMConfig>
       this.setState({ whereClauses: [whereClause] });
     }
     if (this.state.whereClauses.length) {
-      const queryIndex = this.state.whereClauses
-        .map((obj) => obj.id)
-        .indexOf(e.currentTarget.attributes[1].value);
+      const queryIndex = this.state.whereClauses.map((obj) => obj.id).indexOf(e.currentTarget.attributes[1].value);
       if (queryIndex !== -1) {
         const updateState = this.state.whereClauses.map((obj) => {
           if (obj.id === e.currentTarget.attributes[1].value) {
-            obj = {
-              ...obj,
-              attributeQuery: e.currentTarget.name,
-              attributeQueryType: e.currentTarget.attributes.datatype.value,
-            };
+            obj = {...obj,attributeQuery: e.currentTarget.name,attributeQueryType: e.currentTarget.attributes.datatype.value};
             obj = this.removeValueFromObject(obj)
-            let filteredWhereClauses = this.state.whereClauses.filter(
-              (a) => a.id !== obj.id
-            );
+            let filteredWhereClauses = this.state.whereClauses.filter((a) => a.id !== obj.id);
             filteredWhereClauses.push(obj);
             filteredWhereClauses.sort(function (a, b) {
               return a.id < b.id ? -1 : a.id == b.id ? 0 : 1;
@@ -773,9 +765,7 @@ setQueryConstructor = (queryRequest,firstQuery,secondQueryTarget)=>{
       }
       return el;
     });
-    if(this.state.tables.length > 0){
-      this.setState({showAddSelect:false});
-    }
+    if(this.state.tables.length > 0)this.setState({showAddSelect:false});
     this.setState({ SetBlock: newblock });
   };
 
@@ -807,7 +797,6 @@ setQueryConstructor = (queryRequest,firstQuery,secondQueryTarget)=>{
     });
 
     if(this.state.tables.length > 0)this.setState({showAddSelect:false});
-
   }
 
   deleteTable = (id) => {
@@ -904,66 +893,10 @@ setQueryConstructor = (queryRequest,firstQuery,secondQueryTarget)=>{
         copiedWhereclauseSet.splice(index,1);
         this.setState({whereClauseSet:copiedWhereclauseSet});
       }
-      // copiedWhereclauseSet.filter((item)=>{
-      //   console.log(item.id !== tableBlockId,item.id,tableBlockId)
-      //   if (item.id !== tableBlockId){
-      //     console.log("not true")
-      //     return item;
-      //   }
-      // });
-      // console.log(copiedWhereclauseSet,"check copied")
-      // this.setState({whereClauseSet:copiedWhereclauseSet});
     }
   }
   
-
-  // deleteBlock = (blockData) => {
-  //   console.log(blockData,"check block data")
-  //   let copiedBlock = [...this.state.SetBlock];
-  //   const {el:blockDetails,innerEl }=blockData; 
-  //   copiedBlock= copiedBlock.map((el)=>{
-  //     if(el.blockId==blockDetails.blockId){
-  //       let {tablesSet} =blockDetails; 
-  //       let newTableSetcounter=blockDetails.tableCounterSet;
-  //       if (tablesSet.length > 0){
-  //         newTableSetcounter=newTableSetcounter - 1
-  //         el.tableCounterSet = newTableSetcounter;
-  //         this.setState({tableCounterSet:newTableSetcounter});
-  //       }
-  //       tablesSet = tablesSet.filter(e => e.id != innerEl.id);
-  //       el.tablesSet=tablesSet;
-  //       return el;        
-  //     }
-  //     return el;
-  //   });
-  //   const copiedWhereclauseSet = [...this.state.whereClauseSet];
-  //   // const index = copiedBlock.findIndex((item)=>item.blockId === el.blockId);
-  //   // if (index !== -1){
-  //   //   copiedBlock.splice(index,1);
-  //   //   this.setState({SetBlock:copiedBlock});
-  //   // }
-  //   this.setState({SetBlock:copiedBlock});
-  //   if (copiedWhereclauseSet?.length){
-  //     copiedWhereclauseSet.filter((item)=>(item.id).split("-")[1] === 'blockId');
-  //     this.setState({whereClauseSet:copiedWhereclauseSet});
-  //   }
-  // };
-
   deleteBlockAll = (blockData) => {
-    // const {el:blockDetails }=blockData; 
-    // let copiedBlock = [...this.state.SetBlock];
-    // copiedBlock = copiedBlock.filter(e => e.blockId != blockDetails.blockId);
-    // const copiedWhereclauseSet = [...this.state.whereClauseSet];
-    // // const index = copiedBlock.findIndex((item)=>item.blockId === el.blockId);
-    // // if (index !== -1){
-    // //   copiedBlock.splice(index,1);
-    // //   this.setState({SetBlock:copiedBlock});
-    // // }
-    // this.setState({SetBlock:copiedBlock});
-    // if (copiedWhereclauseSet?.length){
-    //   copiedWhereclauseSet.filter((item)=>(item.id).split("-")[1] === 'blockId');
-    //   this.setState({whereClauseSet:copiedWhereclauseSet});
-    // }
   };
 
   textInputHandler = (e,queryType="single") => {
@@ -2209,7 +2142,6 @@ setQueryConstructor = (queryRequest,firstQuery,secondQueryTarget)=>{
                 <br />
                 {this.state.SetBlock.map((el,index)=>{
                   const counts = tableSetCounts(el.tablesSet);
-                  console.log(counts)
                   return(
                 <div id={index}>{counts < 2 ? (
                   counts == 1 ? <p>

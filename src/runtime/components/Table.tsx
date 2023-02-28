@@ -204,9 +204,6 @@ const SecondConstructor = (props) => {
   let au = true;
   let defaultTextValue = " ";
 
-  // console.log(whereClauses,"check whereClauses drillling")
-
-
   if (whereClauses[tablesId] && whereClauses[tablesId].ifInOrNotInQueryValue) {
     whereClauses[tablesId].ifInOrNotInQueryValue.map((el, i) => {
       normalizedThirdQuery.push({
