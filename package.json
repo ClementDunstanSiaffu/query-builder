@@ -1,0 +1,22 @@
+{
+  "name": "query-builder",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ClementDunstanSiaffu/query-builder.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/ClementDunstanSiaffu/query-builder/issues"
+  },
+  "homepage": "https://github.com/ClementDunstanSiaffu/query-builder#readme",
+  "dependencies": {
+    "react-resize-detector": "^8.0.4"
+  }
+}

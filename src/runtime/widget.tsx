@@ -12,6 +12,7 @@ import GraphicsLayer from "esri/layers/GraphicsLayer";
 import Table from "./components/Table";
 import helper from "../connector";
 import Polygon from "esri/geometry/Polygon";
+import ReactResizeDetector from 'react-resize-detector';
 import AttributeTableConnector from "../connector/attribute_table_connector";
 import geometryEngine from "esri/geometry/geometryEngine";
 import AddSetTable from "./components/AddSetTable";
@@ -111,7 +112,9 @@ export default class Widget extends React.PureComponent<AllWidgetProps<IMConfig>
       widgetStateOpenedChecked: false,
       showAddSelect: true,
       SetBlock: [],
-      selectedId:null
+      selectedId:null,
+      width: 0,
+      height:0
     };
   };
 
@@ -1959,7 +1962,9 @@ setQueryConstructor = (queryRequest,firstQuery,secondQueryTarget)=>{
       });
     }
     return (
-      <div
+
+<ReactResizeDetector handleWidth handleHeight> 
+{({ width, height }) => <div
         className="widget-attribute-table jimu-widget"
         id="wrap"
         ref="wrap"
@@ -2037,7 +2042,7 @@ setQueryConstructor = (queryRequest,firstQuery,secondQueryTarget)=>{
                 </div>
               </div>
             </div>
-            <div className="row mt-1 mb-3 justify-content-around">
+            {width >600&&<div className="row mt-1 mb-3 justify-content-around">
               <div
                 className="col-md-5 d-flex justify-content-center text-center"
                 style={{ gap: "2%" }}
@@ -2088,7 +2093,59 @@ setQueryConstructor = (queryRequest,firstQuery,secondQueryTarget)=>{
                   <p className="m-0 p-0">Ricaricare</p>
                 </Button>
               </div>
-            </div>
+            </div>}
+            {(590 > width)&&<div style={{display:'flex',flexDirection:'column'}}>
+              <div
+                className=""
+                style={{ gap: "2%",width:'100%' ,display:'flex',justifyContent:'center'}}
+              >
+                <Button
+                  disabled={!this.state.currentTargetText}
+                  onClick={this.addTable}
+                  size="default"
+                  className="d-flex align-items-center  mb-2"
+                  type="secondary"
+                >
+                  <Icon
+                    icon='<svg viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M7.5 0a.5.5 0 0 0-.5.5V7H.5a.5.5 0 0 0 0 1H7v6.5a.5.5 0 0 0 1 0V8h6.5a.5.5 0 0 0 0-1H8V.5a.5.5 0 0 0-.5-.5Z" fill="#000"></path></svg>'
+                    size="m"
+                  />
+                  <p className="m-0 p-0">Aggiungi espressione</p>
+                </Button>
+                <Button
+                  disabled={!this.state.currentTargetText}
+                  onClick={this.addBlock}
+                  size="default"
+                  className="d-flex align-items-center  mb-2"
+                  type="secondary"
+                >
+                  <Icon
+                    icon='<svg viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M7.5 0a.5.5 0 0 0-.5.5V7H.5a.5.5 0 0 0 0 1H7v6.5a.5.5 0 0 0 1 0V8h6.5a.5.5 0 0 0 0-1H8V.5a.5.5 0 0 0-.5-.5Z" fill="#000"></path></svg>'
+                    size="m"
+                  />
+                  <p className="m-0 p-0">Aggiungi set di espressioni</p>
+                </Button>
+              </div>
+              <div className="" style={{width:'100%' ,display:'flex',justifyContent:'center'}}>
+                <Button
+                  size="default"
+                  className="d-flex align-items-center mb-2"
+                  type="secondary"
+                  onClick={this.sendQuery}
+                >
+                  <p className="m-0 p-0">Applica</p>
+                </Button>
+                <Button
+                  size="default"
+                  className="d-flex align-items-center mb-2"
+                  style={{ marginLeft: "5px" }}
+                  type="secondary"
+                  onClick={this.functionRefresh}
+                >
+                  <p className="m-0 p-0">Ricaricare</p>
+                </Button>
+              </div>
+            </div>}
             <div className="row" style={{ height: "50%", overflowY: "scroll" }}>
               <div className="col-md-12">
                 {this.state.tables.map((el, i) => (
@@ -2253,7 +2310,8 @@ setQueryConstructor = (queryRequest,firstQuery,secondQueryTarget)=>{
             </div>
           </div>
         </div>
-      </div>
+      </div>}
+</ReactResizeDetector>
     );
   }
 }
