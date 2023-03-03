@@ -2,7 +2,7 @@
 import { React, AllWidgetProps, jsx, appActions } from "jimu-core";
 import { JimuMapViewComponent, JimuMapView } from "jimu-arcgis";
 import { CloseOutlined } from "jimu-icons/outlined/editor/close";
-import { PlusOutlined } from 'jimu-icons/outlined/editor/plus'
+import { PlusOutlined } from "jimu-icons/outlined/editor/plus";
 import "../style.css";
 import { Select, Option, Alert, Button, Icon } from "jimu-ui";
 import defaultMessages from "./translations/default";
@@ -12,13 +12,15 @@ import GraphicsLayer from "esri/layers/GraphicsLayer";
 import Table from "./components/Table";
 import helper from "../connector";
 import Polygon from "esri/geometry/Polygon";
-import ReactResizeDetector from './lib/ResizeDetector';
+import ReactResizeDetector from "./lib/ResizeDetector";
 import AttributeTableConnector from "../connector/attribute_table_connector";
 import geometryEngine from "esri/geometry/geometryEngine";
 import AddSetTable from "./components/AddSetTable";
 
-export default class Widget extends React.PureComponent<AllWidgetProps<IMConfig>,any> {
-  
+export default class Widget extends React.PureComponent<
+  AllWidgetProps<IMConfig>,
+  any
+> {
   graphicLayerFound = new GraphicsLayer({ listMode: "hide", visible: true });
   graphicLayerSelected = new GraphicsLayer({ listMode: "hide", visible: true });
 
@@ -34,7 +36,7 @@ export default class Widget extends React.PureComponent<AllWidgetProps<IMConfig>
   setQueryArray = [];
   setOutFields = [];
   setQueryString = null;
- 
+
   constructor(props) {
     super(props);
     this.init();
@@ -112,14 +114,19 @@ export default class Widget extends React.PureComponent<AllWidgetProps<IMConfig>
       widgetStateOpenedChecked: false,
       showAddSelect: true,
       SetBlock: [],
-      selectedId:null,
+      selectedId: null,
       width: 0,
-      height:0
+      height: 0,
     };
   };
 
   nls = (id: string) => {
-    return this.props.intl? this.props.intl.formatMessage({id: id,defaultMessage: defaultMessages[id],}): id;
+    return this.props.intl
+      ? this.props.intl.formatMessage({
+          id: id,
+          defaultMessage: defaultMessages[id],
+        })
+      : id;
   };
 
   activeViewChangeHandler(jmv: JimuMapView) {
@@ -164,23 +171,23 @@ export default class Widget extends React.PureComponent<AllWidgetProps<IMConfig>
    * EVENT CLICK SELECT
    ==============================================*/
 
-  removeValueFromObject(obj){
+  removeValueFromObject(obj) {
     let newWhereClause = obj;
-    if (obj?.ifInOrNotInQueryValue){
+    if (obj?.ifInOrNotInQueryValue) {
       newWhereClause = {
-        id:obj.id,
-        attributeQuery:obj.attributeQuery,
-        attributeQueryType:obj.attributeQueryType,
-        queryValue:obj.queryValue,
-        ifInOrNotInQueryValue:obj.ifInOrNotInQueryValue
-      }
-    }else{
+        id: obj.id,
+        attributeQuery: obj.attributeQuery,
+        attributeQueryType: obj.attributeQueryType,
+        queryValue: obj.queryValue,
+        ifInOrNotInQueryValue: obj.ifInOrNotInQueryValue,
+      };
+    } else {
       newWhereClause = {
-        id:obj.id,
-        attributeQuery:obj.attributeQuery,
-        attributeQueryType:obj.attributeQueryType,
-        queryValue:obj.queryValue,
-      }
+        id: obj.id,
+        attributeQuery: obj.attributeQuery,
+        attributeQueryType: obj.attributeQueryType,
+        queryValue: obj.queryValue,
+      };
     }
     return newWhereClause;
   }
@@ -198,19 +205,27 @@ export default class Widget extends React.PureComponent<AllWidgetProps<IMConfig>
       this.setState({ whereClauses: [whereClause] });
     }
     if (this.state.whereClauses.length) {
-      const queryIndex = this.state.whereClauses.map((obj) => obj.id).indexOf(e.currentTarget.attributes[1].value);
+      const queryIndex = this.state.whereClauses
+        .map((obj) => obj.id)
+        .indexOf(e.currentTarget.attributes[1].value);
       if (queryIndex !== -1) {
         const updateState = this.state.whereClauses.map((obj) => {
           if (obj.id === e.currentTarget.attributes[1].value) {
-            obj = {...obj,attributeQuery: e.currentTarget.name,attributeQueryType: e.currentTarget.attributes.datatype.value};
-            obj = this.removeValueFromObject(obj)
-            let filteredWhereClauses = this.state.whereClauses.filter((a) => a.id !== obj.id);
+            obj = {
+              ...obj,
+              attributeQuery: e.currentTarget.name,
+              attributeQueryType: e.currentTarget.attributes.datatype.value,
+            };
+            obj = this.removeValueFromObject(obj);
+            let filteredWhereClauses = this.state.whereClauses.filter(
+              (a) => a.id !== obj.id
+            );
             filteredWhereClauses.push(obj);
             filteredWhereClauses.sort(function (a, b) {
               return a.id < b.id ? -1 : a.id == b.id ? 0 : 1;
             });
             currentWhereClause = obj;
-            return this.setState({whereClauses: filteredWhereClauses});
+            return this.setState({ whereClauses: filteredWhereClauses });
           }
           return { obj };
         });
@@ -222,14 +237,21 @@ export default class Widget extends React.PureComponent<AllWidgetProps<IMConfig>
         };
         // whereClause = this.removeValueFromObject(whereClause)
         currentWhereClause = whereClause;
-        this.setState({whereClauses: [...this.state.whereClauses, whereClause],});
+        this.setState({
+          whereClauses: [...this.state.whereClauses, whereClause],
+        });
         this.state.whereClauses.sort(function (a, b) {
           return a.id < b.id ? -1 : a.id == b.id ? 0 : 1;
         });
       }
     }
-    this.setState({ selectedField: e.currentTarget.name },()=>{
-      if (currentWhereClause)this.manipulateFieldQuery(currentWhereClause.queryValue,currentWhereClause.id,"single")
+    this.setState({ selectedField: e.currentTarget.name }, () => {
+      if (currentWhereClause)
+        this.manipulateFieldQuery(
+          currentWhereClause.queryValue,
+          currentWhereClause.id,
+          "single"
+        );
     });
   }
 
@@ -243,7 +265,7 @@ export default class Widget extends React.PureComponent<AllWidgetProps<IMConfig>
         queryValue: "=",
       };
       currentWhereClause = whereClauseSet;
-      this.setState({whereClauseSet: [whereClauseSet]});
+      this.setState({ whereClauseSet: [whereClauseSet] });
     }
     if (this.state.whereClauseSet.length) {
       const queryIndex = this.state.whereClauseSet
@@ -257,7 +279,7 @@ export default class Widget extends React.PureComponent<AllWidgetProps<IMConfig>
               attributeQuery: e.currentTarget.name,
               attributeQueryType: e.currentTarget.attributes.datatype.value,
             };
-            obj = this.removeValueFromObject(obj)
+            obj = this.removeValueFromObject(obj);
             let filteredWhereClauseSet = this.state.whereClauseSet.filter(
               (a) => a.id !== obj.id
             );
@@ -266,7 +288,7 @@ export default class Widget extends React.PureComponent<AllWidgetProps<IMConfig>
               return a.id < b.id ? -1 : a.id == b.id ? 0 : 1;
             });
             currentWhereClause = obj;
-            return this.setState({whereClauseSet: filteredWhereClauseSet,});
+            return this.setState({ whereClauseSet: filteredWhereClauseSet });
           }
           return { obj };
         });
@@ -277,14 +299,20 @@ export default class Widget extends React.PureComponent<AllWidgetProps<IMConfig>
           attributeQueryType: e.currentTarget.attributes.datatype.value,
         };
         currentWhereClause = whereClauseSet;
-        this.setState({whereClauseSet: [...this.state.whereClauseSet, whereClauseSet],});
+        this.setState({
+          whereClauseSet: [...this.state.whereClauseSet, whereClauseSet],
+        });
         this.state.whereClauseSet.sort(function (a, b) {
           return a.id < b.id ? -1 : a.id == b.id ? 0 : 1;
         });
       }
     }
-    this.setState({ selectedField: e.currentTarget.name },()=>{
-      this.manipulateFieldQuery(currentWhereClause.queryValue,currentWhereClause.id,"set")
+    this.setState({ selectedField: e.currentTarget.name }, () => {
+      this.manipulateFieldQuery(
+        currentWhereClause.queryValue,
+        currentWhereClause.id,
+        "set"
+      );
     });
   }
 
@@ -292,27 +320,37 @@ export default class Widget extends React.PureComponent<AllWidgetProps<IMConfig>
   async getQuery(e, type = "single") {
     const clickedQueryTableId = e.currentTarget.attributes[1].value;
     const currentTargetName = e.currentTarget.name;
-    this.manipulateFieldQuery(currentTargetName,clickedQueryTableId,type)
+    this.manipulateFieldQuery(currentTargetName, clickedQueryTableId, type);
   }
 
-  async manipulateFieldQuery(currentTargetName:string,clickedQueryTableId:string,type:string){
+  async manipulateFieldQuery(
+    currentTargetName: string,
+    clickedQueryTableId: string,
+    type: string
+  ) {
     let queryIndex = -1;
     let currentClickedQueryAttribute = " ";
     let newWhereSetClause;
     const keytype = type === "single" ? "whereClauses" : "whereClauseSet";
     if (this.state[keytype].length) {
-      queryIndex = this.state[keytype].map((obj) => obj.id).indexOf(clickedQueryTableId);
+      queryIndex = this.state[keytype]
+        .map((obj) => obj.id)
+        .indexOf(clickedQueryTableId);
       if (queryIndex !== -1) {
         const updateState = this.state[keytype].map((obj) => {
           if (obj.id === clickedQueryTableId) {
             currentClickedQueryAttribute = obj.attributeQuery;
             // obj = this.removeValueFromObject(obj)
-            obj = { ...obj, queryValue:currentTargetName };
-            let filteredWhereClauses = this.state[keytype].filter((a) => a.id !== obj.id);
+            obj = { ...obj, queryValue: currentTargetName };
+            let filteredWhereClauses = this.state[keytype].filter(
+              (a) => a.id !== obj.id
+            );
             filteredWhereClauses.push(obj);
-            filteredWhereClauses.sort(function (a, b) {return a.id < b.id ? -1 : a.id == b.id ? 0 : 1;});
+            filteredWhereClauses.sort(function (a, b) {
+              return a.id < b.id ? -1 : a.id == b.id ? 0 : 1;
+            });
             newWhereSetClause = filteredWhereClauses;
-            return this.setState({[keytype]: filteredWhereClauses,});
+            return this.setState({ [keytype]: filteredWhereClauses });
           }
           return { obj };
         });
@@ -346,7 +384,7 @@ export default class Widget extends React.PureComponent<AllWidgetProps<IMConfig>
                     );
                   }
                   const updateState = this.state[keytype].map((obj) => {
-                    if (obj.id === clickedQueryTableId ) {
+                    if (obj.id === clickedQueryTableId) {
                       // obj = this.removeValueFromObject(obj)
                       obj = { ...obj, ifInOrNotInQueryValue: detailThirdQuery };
                       let filteredWhereClauses = this.state[keytype].filter(
@@ -369,10 +407,15 @@ export default class Widget extends React.PureComponent<AllWidgetProps<IMConfig>
         });
       }
     }
-    if (keytype === "whereClauseSet"){
-      if (newWhereSetClause?.length){
-        const currentNewWhereSetClause = newWhereSetClause.find((item)=>item.id === clickedQueryTableId);
-        this.addCurrentWherClauseBlock(clickedQueryTableId,currentNewWhereSetClause)
+    if (keytype === "whereClauseSet") {
+      if (newWhereSetClause?.length) {
+        const currentNewWhereSetClause = newWhereSetClause.find(
+          (item) => item.id === clickedQueryTableId
+        );
+        this.addCurrentWherClauseBlock(
+          clickedQueryTableId,
+          currentNewWhereSetClause
+        );
       }
     }
   }
@@ -380,7 +423,7 @@ export default class Widget extends React.PureComponent<AllWidgetProps<IMConfig>
   async getQuerySet(e, type = "single") {
     const clickedQueryTableId = e.currentTarget.attributes[1].value;
     const currentTargetName = e.currentTarget.name;
-    this.manipulateFieldQuery(currentTargetName,clickedQueryTableId,"set")
+    this.manipulateFieldQuery(currentTargetName, clickedQueryTableId, "set");
   }
 
   //TODO la sendQuery andrà risistemata quando si aggiungerà oltre all'espressione anche il set di espressioni
@@ -526,7 +569,7 @@ export default class Widget extends React.PureComponent<AllWidgetProps<IMConfig>
           }
         });
       }
-    }else if (this.state.SetBlock.length){
+    } else if (this.state.SetBlock.length) {
       if (this.state.jimuMapView) {
         this.queryArray = [];
         this.state.jimuMapView.view.map.allLayers.forEach((f, index) => {
@@ -545,15 +588,14 @@ export default class Widget extends React.PureComponent<AllWidgetProps<IMConfig>
           }
         });
       }
-    }else{
+    } else {
       this.attributeTableConnector.closeTable();
-      this.setState({isAttributeTableClosed: true});
-      this.returnToOriginalExtent()
+      this.setState({ isAttributeTableClosed: true });
+      this.returnToOriginalExtent();
     }
   }
 
-
-setQueryConstructor = (queryRequest,firstQuery,secondQueryTarget)=>{
+  setQueryConstructor = (queryRequest, firstQuery, secondQueryTarget) => {
     switch (queryRequest) {
       case "LIKE%":
         return `${firstQuery} LIKE '${secondQueryTarget}%'`;
@@ -598,13 +640,13 @@ setQueryConstructor = (queryRequest,firstQuery,secondQueryTarget)=>{
       case "is_not_included":
         return `(${firstQuery} < ${secondQueryTarget.firstTxt} OR ${firstQuery} > ${secondQueryTarget.secondTxt})`;
       default:
-          if (this.containsAnyLetters(secondQueryTarget)) {
-              return `${firstQuery} ${queryRequest} '${secondQueryTarget}'`;
-          } else {
-              return `${firstQuery} ${queryRequest} ${secondQueryTarget}`;
-          }
+        if (this.containsAnyLetters(secondQueryTarget)) {
+          return `${firstQuery} ${queryRequest} '${secondQueryTarget}'`;
+        } else {
+          return `${firstQuery} ${queryRequest} ${secondQueryTarget}`;
+        }
     }
-  }
+  };
 
   sendQuerySet() {
     const checkedQuery = [
@@ -618,14 +660,14 @@ setQueryConstructor = (queryRequest,firstQuery,secondQueryTarget)=>{
     const likelyQuery = ["LIKE%", "%LIKE", "%LIKE%", "NOT LIKE"];
     let setQueryString = null;
     let outFields = [];
-    if (this.state.SetBlock.length){
-      this.state.SetBlock.forEach((block,i)=>{
+    if (this.state.SetBlock.length) {
+      this.state.SetBlock.forEach((block, i) => {
         const blockId = block?.blockId;
         const whereClauseSet = block[`${blockId}`];
         const AndOrSet = block?.AndOrSet;
-        if (AndOrSet === "AND"){
-          if (whereClauseSet?.length){
-            whereClauseSet.forEach((el,j) => {
+        if (AndOrSet === "AND") {
+          if (whereClauseSet?.length) {
+            whereClauseSet.forEach((el, j) => {
               let attributeQuery = el.attributeQuery;
               let queryValue = el.queryValue;
               let value;
@@ -645,19 +687,28 @@ setQueryConstructor = (queryRequest,firstQuery,secondQueryTarget)=>{
               } else if (!checkedQuery.includes(queryValue)) {
                 value = el.value?.txt ?? "";
               }
-              if (setQueryString){
-                setQueryString += this.setQueryConstructor(queryValue,attributeQuery,value);
-              }else{
-                setQueryString = this.setQueryConstructor(queryValue,attributeQuery,value)
+              if (setQueryString) {
+                setQueryString += this.setQueryConstructor(
+                  queryValue,
+                  attributeQuery,
+                  value
+                );
+              } else {
+                setQueryString = this.setQueryConstructor(
+                  queryValue,
+                  attributeQuery,
+                  value
+                );
               }
-              if (j < whereClauseSet.length-1)setQueryString += "  " +  AndOrSet + "  ";
+              if (j < whereClauseSet.length - 1)
+                setQueryString += "  " + AndOrSet + "  ";
               outFields.push(`${attributeQuery}`);
             });
           }
-        }else{
+        } else {
           let normalizedWhereToSendQuery: any = [];
-          if (whereClauseSet?.length){
-            whereClauseSet.forEach((el,j) => {
+          if (whereClauseSet?.length) {
+            whereClauseSet.forEach((el, j) => {
               let attributeQuery = el.attributeQuery;
               let queryValue = el.queryValue;
               let value;
@@ -674,55 +725,72 @@ setQueryConstructor = (queryRequest,firstQuery,secondQueryTarget)=>{
                   );
                 }
               }
-              if (queryValue === "included" || queryValue === "is_not_included") {
+              if (
+                queryValue === "included" ||
+                queryValue === "is_not_included"
+              ) {
                 value = {
                   firstTxt: el.firstTxt.value,
                   secondTxt: el.secondTxt.value,
                 };
               } else if (!checkedQuery.includes(queryValue)) {
-                  value = el.value?.txt ?? "";
+                value = el.value?.txt ?? "";
               }
-              if (setQueryString){
-                setQueryString += this.setQueryConstructor(queryValue,attributeQuery,value);
-              }else{
-                setQueryString = this.setQueryConstructor(queryValue,attributeQuery,value)
+              if (setQueryString) {
+                setQueryString += this.setQueryConstructor(
+                  queryValue,
+                  attributeQuery,
+                  value
+                );
+              } else {
+                setQueryString = this.setQueryConstructor(
+                  queryValue,
+                  attributeQuery,
+                  value
+                );
               }
-              if (j < whereClauseSet.length-1)setQueryString += "  " +  AndOrSet + "  ";
+              if (j < whereClauseSet.length - 1)
+                setQueryString += "  " + AndOrSet + "  ";
               outFields.push(`${attributeQuery}`);
             });
           }
         }
-        if (setQueryString){
-          if (this.state.SetBlock[i+1]){
-            const nextBlock = this.state.SetBlock[i+1]
+        if (setQueryString) {
+          if (this.state.SetBlock[i + 1]) {
+            const nextBlock = this.state.SetBlock[i + 1];
             const nextBlockId = nextBlock?.blockId;
             const nextWhereClauseSet = nextBlock[`${nextBlockId}`];
             if (
-              i === 0 && this.state.SetBlock.length >= 2 
-              && nextWhereClauseSet?.length ||
+              (i === 0 &&
+                this.state.SetBlock.length >= 2 &&
+                nextWhereClauseSet?.length) ||
               !["("].includes(setQueryString[0])
-            ){
+            ) {
               setQueryString = "(" + setQueryString;
             }
-            if (i < this.state.SetBlock.length-1 && nextWhereClauseSet?.length){
+            if (
+              i < this.state.SetBlock.length - 1 &&
+              nextWhereClauseSet?.length
+            ) {
               setQueryString += " ) " + this.state.AndOr + " ( ";
             }
           }
-          if (this.state.SetBlock[i-1]){
-            const prevBlock = this.state.SetBlock[i-1]
+          if (this.state.SetBlock[i - 1]) {
+            const prevBlock = this.state.SetBlock[i - 1];
             const prevBlockId = prevBlock?.blockId;
             const prevWhereClauseSet = prevBlock[`${prevBlockId}`];
             if (
-              this.state.SetBlock.length >= 2 && i === this.state.SetBlock.length-1 &&
-              prevWhereClauseSet.length 
-            ){
-              setQueryString = setQueryString + ")"
+              this.state.SetBlock.length >= 2 &&
+              i === this.state.SetBlock.length - 1 &&
+              prevWhereClauseSet.length
+            ) {
+              setQueryString = setQueryString + ")";
             }
           }
         }
-      })
+      });
     }
-    return {setQueryString,outFields}
+    return { setQueryString, outFields };
   }
 
   async thirdQuery(e) {
@@ -764,68 +832,93 @@ setQueryConstructor = (queryRequest,firstQuery,secondQueryTarget)=>{
   addTable = () => {
     const currentId = this.state.tableCounter;
     this.setState({
-      tables: [...this.state.tables, { id: this.state.tableCounter,deleted:false }],
+      tables: [
+        ...this.state.tables,
+        { id: this.state.tableCounter, deleted: false },
+      ],
       tableCounter: this.state.tableCounter + 1,
       dropDowns: { ...this.state.dropDowns, [currentId]: false },
     });
-    if (this.state.tables.length > 0) {
+    const tableLength = this.state.tables
+      .map((el, idx) => (el.deleted == false ? idx : ""))
+      .filter(String).length;
+    const tablesSetLength = this.state.SetBlock.length;
+    if (tableLength > 0) {
       this.setState({ showAddSelect: false });
     }
-    if (this.state.tablesSet.length > 0) {
+
+    if (tablesSetLength > 0) {
       this.setState({ showAddSelect: false });
     }
   };
 
   addTwoTable = (blockId) => {
     let newStateBlock = [...this.state.SetBlock];
-    const index = newStateBlock.findIndex((item)=>item.blockId === blockId);
-    if (index !== -1){
+    const index = newStateBlock.findIndex((item) => item.blockId === blockId);
+    if (index !== -1) {
       const currentBlock = newStateBlock[index];
       const currentId = currentBlock["tableCounterSet"];
-      currentBlock["tablesSet"] = [...currentBlock["tablesSet"],{id:currentId,deleted:false}];
-      currentBlock["dropDownsSet"] = {...currentBlock["dropDownsSet"],[currentId]:false}
-      currentBlock["tableCounterSet"] = currentBlock["tableCounterSet"]+1;
+      currentBlock["tablesSet"] = [
+        ...currentBlock["tablesSet"],
+        { id: currentId, deleted: false },
+      ];
+      currentBlock["dropDownsSet"] = {
+        ...currentBlock["dropDownsSet"],
+        [currentId]: false,
+      };
+      currentBlock["tableCounterSet"] = currentBlock["tableCounterSet"] + 1;
       newStateBlock[index] = currentBlock;
     }
-    if(this.state.tables.length > 0)this.setState({showAddSelect:false});
-    this.setState({ SetBlock:newStateBlock });
+    if (this.state.tables.length > 0) this.setState({ showAddSelect: false });
+    this.setState({ SetBlock: newStateBlock });
   };
 
-  addBlock = ()=>{
-    let idOne = this.state.SetBlock.tableCounterSet??0;
+  addBlock = () => {
+    let idOne = this.state.SetBlock.tableCounterSet ?? 0;
     let idTwo = idOne + 1;
     const currentId = idOne;
     const nextCurrentId = idTwo;
-    let newBlock=[...this.state.SetBlock];
+    let newBlock = [...this.state.SetBlock];
     newBlock.push({
-      blockId:this.state.SetBlock.length,
-      [`${this.state.SetBlock.length}`]:[],
-      tablesSet:[ { id: idOne,deleted:false  }, { id: idTwo,deleted:false }],
+      blockId: this.state.SetBlock.length,
+      [`${this.state.SetBlock.length}`]: [],
+      tablesSet: [
+        { id: idOne, deleted: false },
+        { id: idTwo, deleted: false },
+      ],
       tableCounterSet: this.state.tableCounterSet + 2,
       dropDownsSet: {
         ...this.state.dropDownsSet,
-        [`${currentId}-${this.state.SetBlock.length}`]:false,
-        [`${nextCurrentId}-${this.state.SetBlock.length}`]:false 
+        [`${currentId}-${this.state.SetBlock.length}`]: false,
+        [`${nextCurrentId}-${this.state.SetBlock.length}`]: false,
       },
-      AndOrSet:this.state.AndOrSet
-    })
+      AndOrSet: this.state.AndOrSet,
+    });
     this.setState({
-      SetBlock:newBlock,    
+      SetBlock: newBlock,
       dropDownsSet: {
         ...this.state.dropDownsSet,
-        [`${currentId}-${this.state.SetBlock.length}`]:false,
-        [`${nextCurrentId}-${this.state.SetBlock.length}`]:false 
+        [`${currentId}-${this.state.SetBlock.length}`]: false,
+        [`${nextCurrentId}-${this.state.SetBlock.length}`]: false,
       },
     });
 
-    if(this.state.tables.length > 0)this.setState({showAddSelect:false});
-  }
+    // if(this.state.tables.length > 0)this.setState({showAddSelect:false});
+    const tableLength = this.state.tables
+      .map((el, idx) => (el.deleted == false ? idx : ""))
+      .filter(String).length;
+    const tablesSetLength = this.state.SetBlock.length;
+
+    if (tableLength > 0) {
+      this.setState({ showAddSelect: false });
+    }
+  };
 
   deleteTable = (id) => {
     let copiedTable = [...this.state.tables];
     // const index = copiedTable.findIndex((item)=>item.id === id)
-    copiedTable = copiedTable.map((el)=>{
-      if(el.id ===id){
+    copiedTable = copiedTable.map((el) => {
+      if (el.id === id) {
         el.deleted = true;
       }
       return el;
@@ -847,7 +940,7 @@ setQueryConstructor = (queryRequest,firstQuery,secondQueryTarget)=>{
       tables: newTables,
       whereClauses: deletedWhereClauses,
       tableCounter: this.state.tableCounter - 1,
-      selectedId:id
+      selectedId: id,
     });
     if (this.state.tables.length === 0) {
       this.setState({
@@ -855,138 +948,166 @@ setQueryConstructor = (queryRequest,firstQuery,secondQueryTarget)=>{
       });
     }
 
-    if (this.state.tables.length == 2 && this.state.tablesSet.length == 0) {
+    const tableLength = this.state.tables
+      .map((el, idx) => (el.deleted == false ? idx : ""))
+      .filter(String).length;
+    const tablesSetLength = this.state.SetBlock.length;
+    if (tableLength == 2 && tablesSetLength == 0) {
+      this.setState({ showAddSelect: false });
+    }
+
+    if (tableLength == 0 && tablesSetLength > 0) {
       this.setState({ showAddSelect: true });
     }
-    if (this.state.tables.length == 1 && this.state.tablesSet.length > 0) {
+
+    if (tableLength == 1 && tablesSetLength == 0) {
       this.setState({ showAddSelect: true });
     }
   };
 
-  deleteBlock = (blockId:string)=>{
+  deleteBlock = (blockId: string) => {
     const copiedBlock = [...this.state.SetBlock];
     const copiedWhereclauseSet = [...this.state.whereClauseSet];
-    const index = copiedBlock.findIndex((item)=>item.blockId === blockId);
-    if (index !== -1){
-      copiedBlock.splice(index,1);
-      this.setState({SetBlock:copiedBlock});
+    const index = copiedBlock.findIndex((item) => item.blockId === blockId);
+    if (index !== -1) {
+      copiedBlock.splice(index, 1);
+      this.setState({ SetBlock: copiedBlock });
     }
-    if (copiedWhereclauseSet?.length){
-      copiedWhereclauseSet.filter((item)=>(item.id).split("-")[1] === blockId);
-      this.setState({whereClauseSet:copiedWhereclauseSet});
+    if (copiedWhereclauseSet?.length) {
+      copiedWhereclauseSet.filter((item) => item.id.split("-")[1] === blockId);
+      this.setState({ whereClauseSet: copiedWhereclauseSet });
     }
-  }
+    const tableLength = this.state.tables
+      .map((el, idx) => (el.deleted == false ? idx : ""))
+      .filter(String).length;
+    if (tableLength == 1 && copiedBlock.length == 0) {
+      this.setState({ showAddSelect: true });
+    }
+  };
 
-  deleteBlockTable = (tableBlockId:string,blockId:string)=>{
+  deleteBlockTable = (tableBlockId: string, blockId: string) => {
     const tableId = tableBlockId.split("-")[0];
     const copiedBlock = [...this.state.SetBlock];
     const copiedWhereclauseSet = [...this.state.whereClauseSet];
-    const currentBlocIndex = copiedBlock.findIndex((block)=>`${block.blockId}`=== blockId);
+    const currentBlocIndex = copiedBlock.findIndex(
+      (block) => `${block.blockId}` === blockId
+    );
     let currentBlock;
-    if (currentBlocIndex !== -1)currentBlock = copiedBlock[currentBlocIndex];
-    if (currentBlock){
+    if (currentBlocIndex !== -1) currentBlock = copiedBlock[currentBlocIndex];
+    if (currentBlock) {
       const currentWhereClauseSet = currentBlock[blockId];
       const currentTableSets = currentBlock["tablesSet"];
-      if (currentWhereClauseSet?.length){
+      if (currentWhereClauseSet?.length) {
         const copiedCurrentWhereClauseSet = [...currentWhereClauseSet];
-        const whereClauseSetIndex = copiedCurrentWhereClauseSet.findIndex((item)=>{
-          if ( item.id === tableBlockId){
-            return item;
+        const whereClauseSetIndex = copiedCurrentWhereClauseSet.findIndex(
+          (item) => {
+            if (item.id === tableBlockId) {
+              return item;
+            }
           }
-         
-        });
-        if (whereClauseSetIndex !== -1){
-          copiedCurrentWhereClauseSet.splice(whereClauseSetIndex,1);
+        );
+        if (whereClauseSetIndex !== -1) {
+          copiedCurrentWhereClauseSet.splice(whereClauseSetIndex, 1);
           currentBlock[blockId] = copiedCurrentWhereClauseSet;
         }
       }
-      if (currentTableSets?.length){
+      if (currentTableSets?.length) {
         const copiedTableSets = [...currentTableSets];
-        const tableSetIndex = copiedTableSets.findIndex((item)=>`${item.id}` === tableId);
-        if (tableSetIndex !== -1){
+        const tableSetIndex = copiedTableSets.findIndex(
+          (item) => `${item.id}` === tableId
+        );
+        if (tableSetIndex !== -1) {
           copiedTableSets[tableSetIndex]["deleted"] = true;
           // copiedTableSets.splice(tableSetIndex,1);
           currentBlock["tablesSet"] = copiedTableSets;
         }
       }
       copiedBlock[currentBlocIndex] = currentBlock;
-      this.setState({SetBlock:copiedBlock});
+      this.setState({ SetBlock: copiedBlock });
     }
-    if (copiedWhereclauseSet?.length){
-      const index = copiedWhereclauseSet.findIndex((item)=>{
-        if (item.id === tableBlockId){
+    if (copiedWhereclauseSet?.length) {
+      const index = copiedWhereclauseSet.findIndex((item) => {
+        if (item.id === tableBlockId) {
           return item;
         }
       });
-      if (index !== -1){
-        copiedWhereclauseSet.splice(index,1);
-        this.setState({whereClauseSet:copiedWhereclauseSet});
+      if (index !== -1) {
+        copiedWhereclauseSet.splice(index, 1);
+        this.setState({ whereClauseSet: copiedWhereclauseSet });
       }
     }
-  }
-  
-  deleteBlockAll = (blockData) => {
   };
 
-  textInputHandler = (e,queryType="single") => {
+  deleteBlockAll = (blockData) => {};
+
+  textInputHandler = (e, queryType = "single") => {
     let txt = e.target.value;
     let currentTableId = e.target.attributes[0].value;
-    this.queryTextConstructor(txt, currentTableId,queryType);
+    this.queryTextConstructor(txt, currentTableId, queryType);
   };
 
-  textFirstIncludedHandler = (e,queryType="single") => {
+  textFirstIncludedHandler = (e, queryType = "single") => {
     let txt = e.target.value;
     let currentTableId = e.target.attributes[0].value;
     let input = "first";
-    this.queryTextIncludedConstructor(txt, currentTableId, input,queryType);
+    this.queryTextIncludedConstructor(txt, currentTableId, input, queryType);
   };
 
-  textSecondIncludedHandler = (e,queryType="single") => {
+  textSecondIncludedHandler = (e, queryType = "single") => {
     let txt = e.target.value;
     let currentTableId = e.target.attributes[0].value;
     let input = "second";
-    this.queryTextIncludedConstructor(txt, currentTableId, input,queryType);
+    this.queryTextIncludedConstructor(txt, currentTableId, input, queryType);
   };
-  univocoSelectHandler = (e,queryType="single") => {
+  univocoSelectHandler = (e, queryType = "single") => {
     let txt = e.currentTarget.textContent;
     let currentTableId = e.currentTarget.attributes[2].value;
-    this.queryTextConstructor(txt, currentTableId,queryType);
+    this.queryTextConstructor(txt, currentTableId, queryType);
   };
 
   containsAnyLetters = (str) => /[a-zA-Z]/.test(str);
-  
-  queryTextConstructor = (txt, currentTableId,queryType) => {
+
+  queryTextConstructor = (txt, currentTableId, queryType) => {
     let queryIndex;
     let newWhereSetClause;
-    const keyType = queryType === "single" ? "whereClauses":"whereClauseSet";
+    const keyType = queryType === "single" ? "whereClauses" : "whereClauseSet";
     if (this.state[keyType].length) {
-      queryIndex = this.state[keyType].map((obj) => obj.id).indexOf(currentTableId);
+      queryIndex = this.state[keyType]
+        .map((obj) => obj.id)
+        .indexOf(currentTableId);
       if (queryIndex !== -1) {
         const updateState = this.state[keyType].map((obj) => {
           if (obj.id === currentTableId) {
             obj = { ...obj, value: { txt: txt } };
-            let filteredWhereClauses = this.state[keyType].filter((a) => a.id !== obj.id);
+            let filteredWhereClauses = this.state[keyType].filter(
+              (a) => a.id !== obj.id
+            );
             filteredWhereClauses.push(obj);
             filteredWhereClauses.sort(function (a, b) {
               return a.id < b.id ? -1 : a.id == b.id ? 0 : 1;
             });
             newWhereSetClause = filteredWhereClauses;
-            return this.setState({[keyType]: filteredWhereClauses,});
+            return this.setState({ [keyType]: filteredWhereClauses });
           }
           return { obj };
         });
       }
-      if (newWhereSetClause?.length){
-        const currentNewWhereSetClause = newWhereSetClause.find((item)=>item.id === currentTableId);
-        this.addCurrentWherClauseBlock(currentTableId,currentNewWhereSetClause)
+      if (newWhereSetClause?.length) {
+        const currentNewWhereSetClause = newWhereSetClause.find(
+          (item) => item.id === currentTableId
+        );
+        this.addCurrentWherClauseBlock(
+          currentTableId,
+          currentNewWhereSetClause
+        );
       }
     }
   };
 
-  queryTextIncludedConstructor = (txt, currentTableId, input,queryType) => {
+  queryTextIncludedConstructor = (txt, currentTableId, input, queryType) => {
     let queryIndex;
     let newWhereSetClause;
-    const keyType = queryType === "single" ? "whereClauses":"whereClauseSet";
+    const keyType = queryType === "single" ? "whereClauses" : "whereClauseSet";
     if (this.state[keyType].length) {
       queryIndex = this.state[keyType]
         .map((obj) => obj.id)
@@ -1001,21 +1122,28 @@ setQueryConstructor = (queryRequest,firstQuery,secondQueryTarget)=>{
               (a) => a.id !== obj.id
             );
             filteredWhereClauses.push(obj);
-            filteredWhereClauses.sort(function (a, b) {return a.id < b.id ? -1 : a.id == b.id ? 0 : 1;});
+            filteredWhereClauses.sort(function (a, b) {
+              return a.id < b.id ? -1 : a.id == b.id ? 0 : 1;
+            });
             newWhereSetClause = filteredWhereClauses;
-            return this.setState({[keyType]: filteredWhereClauses,});
+            return this.setState({ [keyType]: filteredWhereClauses });
           }
           return { obj };
         });
       }
-      if (newWhereSetClause?.length){
-        const currentNewWhereSetClause = newWhereSetClause.find((item)=>item.id === currentTableId);
-        this.addCurrentWherClauseBlock(currentTableId,currentNewWhereSetClause)
+      if (newWhereSetClause?.length) {
+        const currentNewWhereSetClause = newWhereSetClause.find(
+          (item) => item.id === currentTableId
+        );
+        this.addCurrentWherClauseBlock(
+          currentTableId,
+          currentNewWhereSetClause
+        );
       }
     }
   };
 
-  dropdownItemClick = (e,type="single") => {
+  dropdownItemClick = (e, type = "single") => {
     let clickedQueryTableId = e.currentTarget.attributes[2].value;
     let clickedValue = e.currentTarget.value;
     let currentClickedQueryAttribute;
@@ -1023,7 +1151,9 @@ setQueryConstructor = (queryRequest,firstQuery,secondQueryTarget)=>{
     let currentNewWhereSetClause;
     const keytype = type === "single" ? "whereClauses" : "whereClauseSet";
     let queryIndex;
-    queryIndex = this.state[keytype].map((obj) => obj.id).indexOf(clickedQueryTableId);
+    queryIndex = this.state[keytype]
+      .map((obj) => obj.id)
+      .indexOf(clickedQueryTableId);
     if (queryIndex !== -1) {
       const updateState = this.state[keytype].map((obj) => {
         if (obj.id === clickedQueryTableId) {
@@ -1037,7 +1167,7 @@ setQueryConstructor = (queryRequest,firstQuery,secondQueryTarget)=>{
           });
           currentNewWhereSetClause = obj;
           // newWhereSetClause = filteredWhereClauses
-          return this.setState({[keytype]: filteredWhereClauses,});
+          return this.setState({ [keytype]: filteredWhereClauses });
         }
         return { obj };
       });
@@ -1056,7 +1186,7 @@ setQueryConstructor = (queryRequest,firstQuery,secondQueryTarget)=>{
                       const query = new Query();
                       query.where = `${currentClickedQueryAttribute} is not null`;
                       query.outFields = [`${currentClickedQueryAttribute}`];
-                      layerView.filter = {where: query.where,};
+                      layerView.filter = { where: query.where };
                       const results = f.queryFeatures(query);
                       results.then((result) => {
                         const detailThirdQuery = [];
@@ -1067,33 +1197,28 @@ setQueryConstructor = (queryRequest,firstQuery,secondQueryTarget)=>{
                           });
                         });
                         if (queryIndex !== -1) {
-                          const updateState = this.state[keytype].map(
-                            (obj) => {
-                              if (obj.id === clickedQueryTableId) {
-                                obj = {
-                                  ...obj,
-                                  ifInOrNotInQueryValue: detailThirdQuery,
-                                  dropdownValueQuery: clickedValue,
-                                };
-                                currentNewWhereSetClause = obj;
-                                let filteredWhereClauses =
-                                  this.state[keytype].filter(
-                                    (a) => a.id !== obj.id
-                                  );
-                                filteredWhereClauses.push(obj);
-                                filteredWhereClauses.sort(function (a, b) {
-                                  return a.id < b.id
-                                    ? -1
-                                    : a.id == b.id
-                                    ? 0
-                                    : 1;
-                                });
-                                // newWhereSetClause = filteredWhereClauses
-                                return this.setState({[keytype]: filteredWhereClauses,});
-                              }
-                              return { obj };
+                          const updateState = this.state[keytype].map((obj) => {
+                            if (obj.id === clickedQueryTableId) {
+                              obj = {
+                                ...obj,
+                                ifInOrNotInQueryValue: detailThirdQuery,
+                                dropdownValueQuery: clickedValue,
+                              };
+                              currentNewWhereSetClause = obj;
+                              let filteredWhereClauses = this.state[
+                                keytype
+                              ].filter((a) => a.id !== obj.id);
+                              filteredWhereClauses.push(obj);
+                              filteredWhereClauses.sort(function (a, b) {
+                                return a.id < b.id ? -1 : a.id == b.id ? 0 : 1;
+                              });
+                              // newWhereSetClause = filteredWhereClauses
+                              return this.setState({
+                                [keytype]: filteredWhereClauses,
+                              });
                             }
-                          );
+                            return { obj };
+                          });
                         }
                       });
                     });
@@ -1104,11 +1229,13 @@ setQueryConstructor = (queryRequest,firstQuery,secondQueryTarget)=>{
         });
       }
     }
-    this.setState({ dropdownValueQuery: e.target.value },()=>{
-
-    });
-    if (keytype === "whereClauseSet"){
-      if (currentNewWhereSetClause)this.addCurrentWherClauseBlock(clickedQueryTableId,currentNewWhereSetClause)
+    this.setState({ dropdownValueQuery: e.target.value }, () => {});
+    if (keytype === "whereClauseSet") {
+      if (currentNewWhereSetClause)
+        this.addCurrentWherClauseBlock(
+          clickedQueryTableId,
+          currentNewWhereSetClause
+        );
     }
   };
 
@@ -1314,34 +1441,42 @@ setQueryConstructor = (queryRequest,firstQuery,secondQueryTarget)=>{
     }
   };
 
-  addCurrentWherClauseBlock = (currentId,currentWhereClause)=>{
+  addCurrentWherClauseBlock = (currentId, currentWhereClause) => {
     const blockId = currentId.split("-")[1];
     const currentSetBlock = [...this.state.SetBlock];
     let currentBlockIndex = -1;
     let currentBlock;
-    currentBlockIndex = currentSetBlock.findIndex((item)=>`${item?.blockId}` === blockId);
-    if (currentBlockIndex !== -1)currentBlock = currentSetBlock[currentBlockIndex]
+    currentBlockIndex = currentSetBlock.findIndex(
+      (item) => `${item?.blockId}` === blockId
+    );
+    if (currentBlockIndex !== -1)
+      currentBlock = currentSetBlock[currentBlockIndex];
     let currentWhereSetClause = null;
-    if (currentBlock){
+    if (currentBlock) {
       currentWhereSetClause = currentBlock[`${blockId}`];
-      if (currentWhereSetClause?.length){
+      if (currentWhereSetClause?.length) {
         let index = -1;
-        index = currentWhereSetClause.findIndex((item)=>item.id === currentId);
-        if (index !== -1){
+        index = currentWhereSetClause.findIndex(
+          (item) => item.id === currentId
+        );
+        if (index !== -1) {
           currentWhereSetClause[index] = currentWhereClause;
-        }else{
-          currentWhereSetClause = [...currentWhereSetClause,currentWhereClause]
+        } else {
+          currentWhereSetClause = [
+            ...currentWhereSetClause,
+            currentWhereClause,
+          ];
         }
         currentBlock[blockId] = currentWhereSetClause;
         currentSetBlock[currentBlockIndex] = currentBlock;
-        this.setState({SetBlock:currentSetBlock});
-      }else{
+        this.setState({ SetBlock: currentSetBlock });
+      } else {
         currentBlock[blockId] = [currentWhereClause];
         currentSetBlock[currentBlockIndex] = currentBlock;
-        this.setState({SetBlock:currentSetBlock});
+        this.setState({ SetBlock: currentSetBlock });
       }
     }
-  }
+  };
 
   onChangeCheckBoxSet = (event) => {
     let newWhereSetClause;
@@ -1379,7 +1514,11 @@ setQueryConstructor = (queryRequest,firstQuery,secondQueryTarget)=>{
                     return a.id < b.id ? -1 : a.id == b.id ? 0 : 1;
                   });
                   // Remove duplicate entries from the whereClauses array
-                  this.setState({whereClauseSet: Array.from(new Set(this.state.whereClauseSet)),});
+                  this.setState({
+                    whereClauseSet: Array.from(
+                      new Set(this.state.whereClauseSet)
+                    ),
+                  });
                 }
               );
             } else {
@@ -1405,7 +1544,7 @@ setQueryConstructor = (queryRequest,firstQuery,secondQueryTarget)=>{
                 this.state.whereClauseSet.splice(index, 1);
                 // Add the updated obj object to the whereClauses array
                 this.state.whereClauseSet.push(obj);
-                newWhereSetClause = this.state.whereClauseSet
+                newWhereSetClause = this.state.whereClauseSet;
                 this.setState(
                   {
                     whereClauseSet: this.state.whereClauseSet,
@@ -1415,7 +1554,10 @@ setQueryConstructor = (queryRequest,firstQuery,secondQueryTarget)=>{
                       return a.id < b.id ? -1 : a.id == b.id ? 0 : 1;
                     });
                     // Remove duplicate entries from the whereClauses array
-                    this.setState({whereClauseSet: Array.from(new Set(this.state.whereClauseSet)),
+                    this.setState({
+                      whereClauseSet: Array.from(
+                        new Set(this.state.whereClauseSet)
+                      ),
                     });
                   }
                 );
@@ -1446,7 +1588,7 @@ setQueryConstructor = (queryRequest,firstQuery,secondQueryTarget)=>{
           this.state.whereClauseSet.sort(function (a, b) {
             return a.id < b.id ? -1 : a.id == b.id ? 0 : 1;
           });
-          newWhereSetClause =  Array.from(new Set(this.state.whereClauseSet));
+          newWhereSetClause = Array.from(new Set(this.state.whereClauseSet));
           // Remove duplicate entries from the whereClauses array
           this.setState({
             whereClauseSet: Array.from(new Set(this.state.whereClauseSet)),
@@ -1454,9 +1596,11 @@ setQueryConstructor = (queryRequest,firstQuery,secondQueryTarget)=>{
         }
       );
     }
-    if (newWhereSetClause?.length){
-      const currentNewWhereSetClause = newWhereSetClause.find((item)=>item.id === currentId);
-      this.addCurrentWherClauseBlock(currentId,currentNewWhereSetClause)
+    if (newWhereSetClause?.length) {
+      const currentNewWhereSetClause = newWhereSetClause.find(
+        (item) => item.id === currentId
+      );
+      this.addCurrentWherClauseBlock(currentId, currentNewWhereSetClause);
     }
   };
 
@@ -1703,16 +1847,16 @@ setQueryConstructor = (queryRequest,firstQuery,secondQueryTarget)=>{
 
   chooseAndOr = (e) => this.setState({ AndOr: e.target.value });
 
-  chooseAndOrSet = (e,blockId) =>{
+  chooseAndOrSet = (e, blockId) => {
     const currentSetBlock = [...this.state.SetBlock];
-    const index = currentSetBlock.findIndex((item)=>item.blockId === blockId);
-    if (index !== -1){
+    const index = currentSetBlock.findIndex((item) => item.blockId === blockId);
+    if (index !== -1) {
       const currentSetBlockItem = currentSetBlock[index];
       currentSetBlockItem["AndOrSet"] = e.target.value;
-      currentSetBlock[index] = currentSetBlockItem
+      currentSetBlock[index] = currentSetBlockItem;
     }
-     this.setState({ AndOrSet: e.target.value,SetBlock:currentSetBlock});
-  }
+    this.setState({ AndOrSet: e.target.value, SetBlock: currentSetBlock });
+  };
 
   openDrop = (id) => {
     this.setState({ mouseleave: false });
@@ -1728,31 +1872,47 @@ setQueryConstructor = (queryRequest,firstQuery,secondQueryTarget)=>{
   openDropSet = (id) => {
     const currentId = id;
     this.setState({ mouseleave: false });
-    this.setState({ dropIdSet:currentId });
+    this.setState({ dropIdSet: currentId });
     const dropDownsSet = { ...this.state.dropDownsSet };
     if (dropDownsSet[currentId]) {
-      this.setState({dropDownsSet: { ...this.state.dropDownsSet, [currentId]: false },});
+      this.setState({
+        dropDownsSet: { ...this.state.dropDownsSet, [currentId]: false },
+      });
     } else {
-      this.setState({dropDownsSet: { ...this.state.dropDownsSet, [currentId]: true }});
+      this.setState({
+        dropDownsSet: { ...this.state.dropDownsSet, [currentId]: true },
+      });
     }
   };
 
-  closeDrop = () => this.setState({opened: false,autOpen: false,});
+  closeDrop = () => this.setState({ opened: false, autOpen: false });
 
   closeDropOnclickOutside = () => {
     if (this.state.dropId !== null && this.state.mouseleave) {
-      this.setState({dropDowns: { ...this.state.dropDowns, [this.state.dropId]: false },});
-      this.setState({dropDownsSet: {...this.state.dropDownsSet,[this.state.dropIdSet]: false,},});
+      this.setState({
+        dropDowns: { ...this.state.dropDowns, [this.state.dropId]: false },
+      });
+      this.setState({
+        dropDownsSet: {
+          ...this.state.dropDownsSet,
+          [this.state.dropIdSet]: false,
+        },
+      });
       this.setState({ mouseleave: false });
     }
     if (this.state.dropIdSet !== null && this.state.mouseleave) {
-      this.setState({dropDownsSet: {...this.state.dropDownsSet,[this.state.dropIdSet]: false,},});
+      this.setState({
+        dropDownsSet: {
+          ...this.state.dropDownsSet,
+          [this.state.dropIdSet]: false,
+        },
+      });
       this.setState({ mouseleave: false });
     }
   };
 
-  onmouseLeave = () => this.setState({mouseleave: true});
-  
+  onmouseLeave = () => this.setState({ mouseleave: true });
+
   // methods for attribute table
   getAllCheckedLayers = () => {
     const activeView = Widget.activeV;
@@ -1904,7 +2064,7 @@ setQueryConstructor = (queryRequest,firstQuery,secondQueryTarget)=>{
           if (err) this.setState({ itemNotFound: this.nls(err) });
           this.attributeTableConnector.closeTable();
           this.setState({ isAttributeTableClosed: true });
-          this.returnToOriginalExtent()
+          this.returnToOriginalExtent();
         }
       } else {
         this.attributeTableConnector.closeTable();
@@ -1912,16 +2072,16 @@ setQueryConstructor = (queryRequest,firstQuery,secondQueryTarget)=>{
           isAttributeTableClosed: true,
           itemNotFound: this.nls("noItemSelected"),
         });
-        this.returnToOriginalExtent()
+        this.returnToOriginalExtent();
       }
     }
   };
 
-  returnToOriginalExtent = ()=>{
+  returnToOriginalExtent = () => {
     const jimuMapView = this.state.jimuMapView;
     const view = jimuMapView.view;
     view.goTo({ center: view.center, zoom: Widget.initialZoom });
-  }
+  };
 
   functionCounterIsChecked = (e, val) => {
     let counter = [...this.state.counterIsChecked];
@@ -1953,17 +2113,20 @@ setQueryConstructor = (queryRequest,firstQuery,secondQueryTarget)=>{
 
   //TODO config abilitare tab true/false
   render() {
-
-    const tableSetCounts = (tableSetCounts:{id:string,deleted:boolean}[])=>{
-      let counts = 0
-      if (tableSetCounts.length){
+    const tableSetCounts = (
+      tableSetCounts: { id: string; deleted: boolean }[]
+    ) => {
+      let counts = 0;
+      if (tableSetCounts.length) {
         const copiedTableSetCounts = [...tableSetCounts];
-        const filteredItem = copiedTableSetCounts.filter((item)=>!item.deleted);
-        counts = filteredItem.length
+        const filteredItem = copiedTableSetCounts.filter(
+          (item) => !item.deleted
+        );
+        counts = filteredItem.length;
       }
       return counts;
-    }
-    
+    };
+
     if (this.props.state === "CLOSED" && !this.state.widgetStateClosedChecked) {
       const jimuMapView = this.state.jimuMapView;
       const view = jimuMapView.view;
@@ -1988,356 +2151,412 @@ setQueryConstructor = (queryRequest,firstQuery,secondQueryTarget)=>{
       });
     }
     return (
-
-<ReactResizeDetector handleWidth handleHeight> 
-{({ width, height }) => <div
-        className="widget-attribute-table jimu-widget"
-        id="wrap"
-        ref="wrap"
-        onClick={(e) => {
-          this.closeDropOnclickOutside();
-          e.stopPropagation();
-        }}
-      >
-        {this.props.hasOwnProperty("useMapWidgetIds") &&
-          this.props.useMapWidgetIds &&
-          this.props.useMapWidgetIds[0] && (
-            <JimuMapViewComponent
-              useMapWidgetId={this.props.useMapWidgetIds?.[0]}
-              onActiveViewChange={this.activeViewChangeHandler}
-            />
-          )}
-        <div id="search-advanced-tab-Ambito" title="Ambito">
+      <ReactResizeDetector handleWidth handleHeight>
+        {({ width, height }) => (
           <div
-            className="mt-4 container-fluid d-flex justify-content-between flex-column"
-            style={{ height: "100%" }}
+            className="widget-attribute-table jimu-widget"
+            id="wrap"
+            ref="wrap"
+            onClick={(e) => {
+              this.closeDropOnclickOutside();
+              e.stopPropagation();
+            }}
           >
-            <div className="row">
-              <div className="col-md-12">
-                <div className="mb-2">
-                  <Alert
-                    className="w-100"
-                    form="basic"
-                    open
-                    text="Selezionare prima il layer, poi continua con il costruttore della query"
-                    type="info"
-                    withIcon
-                  />
-                </div>
-                <div className="mb-2">
-                  <h3 className="w-100">Seleziona il layer:</h3>
-                  <Select
-                    onChange={this.onChangeSelectLayer}
-                    placeholder="Seleziona il Layer"
-                    value={this.state.currentSelectedId}
-                  >
-                    {this.state.resultLayerList.map((el, i) => {
-                      return (
-                        <Option
-                          value={el.layerID}
-                          parsedUrl={el.element.parsedUrl}
-                          id={i}
-                          key={i}
+            {this.props.hasOwnProperty("useMapWidgetIds") &&
+              this.props.useMapWidgetIds &&
+              this.props.useMapWidgetIds[0] && (
+                <JimuMapViewComponent
+                  useMapWidgetId={this.props.useMapWidgetIds?.[0]}
+                  onActiveViewChange={this.activeViewChangeHandler}
+                />
+              )}
+            <div id="search-advanced-tab-Ambito" title="Ambito">
+              <div
+                className="mt-4 container-fluid d-flex justify-content-between flex-column"
+                style={{ height: "100%" }}
+              >
+                <div className="row">
+                  <div className="col-md-12">
+                    <div className="mb-2">
+                      <Alert
+                        className="w-100"
+                        form="basic"
+                        open
+                        text="Selezionare prima il layer, poi continua con il costruttore della query"
+                        type="info"
+                        withIcon
+                      />
+                    </div>
+                    <div className="mb-2">
+                      <h3 className="w-100">Seleziona il layer:</h3>
+                      <Select
+                        onChange={this.onChangeSelectLayer}
+                        placeholder="Seleziona il Layer"
+                        value={this.state.currentSelectedId}
+                      >
+                        {this.state.resultLayerList.map((el, i) => {
+                          return (
+                            <Option
+                              value={el.layerID}
+                              parsedUrl={el.element.parsedUrl}
+                              id={i}
+                              key={i}
+                            >
+                              {el.element.title}
+                            </Option>
+                          );
+                        })}
+                      </Select>
+                      {this.state.showAddSelect ? (
+                        <p>
+                          Visualizza le feature nel layer corrispondenti alla
+                          seguente espressione
+                        </p>
+                      ) : (
+                        <Select
+                          onChange={this.chooseAndOr}
+                          placeholder=" Visualizza le feature nel layer che corrispondono a tutte le espressioni seguenti"
+                          defaultValue="AND"
                         >
-                          {el.element.title}
-                        </Option>
+                          <Option value="AND">
+                            Visualizza le feature nel layer che corrispondono a
+                            tutte le espressioni seguenti
+                          </Option>
+                          <Option value="OR">
+                            Visualizza le feature nel layer che corrispondono ad
+                            una qualsiasi delle espressioni seguenti
+                          </Option>
+                        </Select>
+                      )}
+                    </div>
+                  </div>
+                </div>
+                {width > 600 && (
+                  <div className="row mt-1 mb-3 justify-content-around">
+                    <div
+                      className="col-md-5 d-flex justify-content-center text-center"
+                      style={{ gap: "2%" }}
+                    >
+                      <Button
+                        disabled={!this.state.currentTargetText}
+                        onClick={this.addTable}
+                        size="default"
+                        className="d-flex align-items-center  mb-2"
+                        type="secondary"
+                      >
+                        <Icon
+                          icon='<svg viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M7.5 0a.5.5 0 0 0-.5.5V7H.5a.5.5 0 0 0 0 1H7v6.5a.5.5 0 0 0 1 0V8h6.5a.5.5 0 0 0 0-1H8V.5a.5.5 0 0 0-.5-.5Z" fill="#000"></path></svg>'
+                          size="m"
+                        />
+                        <p className="m-0 p-0">Aggiungi espressione</p>
+                      </Button>
+                      <Button
+                        disabled={!this.state.currentTargetText}
+                        onClick={this.addBlock}
+                        size="default"
+                        className="d-flex align-items-center  mb-2"
+                        type="secondary"
+                      >
+                        <Icon
+                          icon='<svg viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M7.5 0a.5.5 0 0 0-.5.5V7H.5a.5.5 0 0 0 0 1H7v6.5a.5.5 0 0 0 1 0V8h6.5a.5.5 0 0 0 0-1H8V.5a.5.5 0 0 0-.5-.5Z" fill="#000"></path></svg>'
+                          size="m"
+                        />
+                        <p className="m-0 p-0">Aggiungi set di espressioni</p>
+                      </Button>
+                    </div>
+                    <div className="col-md-5 d-flex justify-content-center text-center">
+                      <Button
+                        size="default"
+                        className="d-flex align-items-center mb-2"
+                        type="secondary"
+                        onClick={this.sendQuery}
+                      >
+                        <p className="m-0 p-0">Applica</p>
+                      </Button>
+                      <Button
+                        size="default"
+                        className="d-flex align-items-center mb-2"
+                        style={{ marginLeft: "5px" }}
+                        type="secondary"
+                        onClick={this.functionRefresh}
+                      >
+                        <p className="m-0 p-0">Ricaricare</p>
+                      </Button>
+                    </div>
+                  </div>
+                )}
+                {590 > width && (
+                  <div style={{ display: "flex", flexDirection: "column" }}>
+                    <div
+                      className=""
+                      style={{
+                        gap: "2%",
+                        width: "100%",
+                        display: "flex",
+                        justifyContent: "center",
+                      }}
+                    >
+                      <Button
+                        disabled={!this.state.currentTargetText}
+                        onClick={this.addTable}
+                        size="default"
+                        className="d-flex align-items-center  mb-2"
+                        type="secondary"
+                      >
+                        <Icon
+                          icon='<svg viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M7.5 0a.5.5 0 0 0-.5.5V7H.5a.5.5 0 0 0 0 1H7v6.5a.5.5 0 0 0 1 0V8h6.5a.5.5 0 0 0 0-1H8V.5a.5.5 0 0 0-.5-.5Z" fill="#000"></path></svg>'
+                          size="m"
+                        />
+                        <p className="m-0 p-0">Aggiungi espressione</p>
+                      </Button>
+                      <Button
+                        disabled={!this.state.currentTargetText}
+                        onClick={this.addBlock}
+                        size="default"
+                        className="d-flex align-items-center  mb-2"
+                        type="secondary"
+                      >
+                        <Icon
+                          icon='<svg viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M7.5 0a.5.5 0 0 0-.5.5V7H.5a.5.5 0 0 0 0 1H7v6.5a.5.5 0 0 0 1 0V8h6.5a.5.5 0 0 0 0-1H8V.5a.5.5 0 0 0-.5-.5Z" fill="#000"></path></svg>'
+                          size="m"
+                        />
+                        <p className="m-0 p-0">Aggiungi set di espressioni</p>
+                      </Button>
+                    </div>
+                    <div
+                      className=""
+                      style={{
+                        width: "100%",
+                        display: "flex",
+                        justifyContent: "center",
+                      }}
+                    >
+                      <Button
+                        size="default"
+                        className="d-flex align-items-center mb-2"
+                        type="secondary"
+                        onClick={this.sendQuery}
+                      >
+                        <p className="m-0 p-0">Applica</p>
+                      </Button>
+                      <Button
+                        size="default"
+                        className="d-flex align-items-center mb-2"
+                        style={{ marginLeft: "5px" }}
+                        type="secondary"
+                        onClick={this.functionRefresh}
+                      >
+                        <p className="m-0 p-0">Ricaricare</p>
+                      </Button>
+                    </div>
+                  </div>
+                )}
+                <div
+                  className="row"
+                  style={{ height: "50%", overflowY: "scroll" }}
+                >
+                  <div className="col-md-12">
+                    {this.state.tables.map((el, i) => (
+                      <Table
+                        className="w-100"
+                        key={i}
+                        id={`row-${i}`}
+                        list={this.state.resultsLayerSelected}
+                        isOpenDropD={this.state.isOpen}
+                        dropDown={() => this.dropDown(el.id)}
+                        dropdownValueQuery={this.state.dropdownValueQuery}
+                        isChecked={this.state.isChecked}
+                        counterIsChecked={this.state.counterIsChecked}
+                        checkedToQuery={this.state.checkedToQuery}
+                        tables={this.state.tables}
+                        tablesId={el.id}
+                        whereClauses={this.state.whereClauses}
+                        getQueryAttribute={this.getQueryAttribute}
+                        getQuery={this.getQuery}
+                        handleThirdQuery={this.thirdQuery}
+                        textInputHandler={this.textInputHandler}
+                        dropdownItemHandler={this.dropdownItemClick}
+                        textFirstIncludedHandler={this.textFirstIncludedHandler}
+                        textSecondIncludedHandler={
+                          this.textSecondIncludedHandler
+                        }
+                        dropDownToggler={this.dropDown}
+                        handleCheckBox={this.handleCheckBox}
+                        deleteTable={() => this.deleteTable(el.id)}
+                        univocoSelectHandler={this.univocoSelectHandler}
+                        onChangeCheckBox={this.onChangeCheckBox}
+                        openDrop={this.openDrop}
+                        closeDrop={this.closeDrop}
+                        opened={this.state.opened}
+                        autOpen={this.state.autOpen}
+                        mouseleave={this.state.mouseleave}
+                        onmouseLeave={this.onmouseLeave}
+                        functionCounterIsChecked={this.functionCounterIsChecked}
+                        dropdowns={this.state.dropDowns}
+                        itemNotFound={this.state.itemNotFound}
+                        selectedId={this.state.selectedId}
+                        currentTable={el}
+                      />
+                    ))}
+                    <br />
+                    <div
+                      style={{
+                        width: "98%",
+                        background: "#005eca",
+                        height: "10px",
+                      }}
+                    ></div>
+                    <br />
+                    {this.state.SetBlock.map((el, index) => {
+                      const counts = tableSetCounts(el.tablesSet);
+                      return (
+                        <div id={index}>
+                          {counts < 2 ? (
+                            counts == 1 ? (
+                              <p>
+                                Visualizza le feature nel layer corrispondenti
+                                alla seguente espressione
+                              </p>
+                            ) : (
+                              ""
+                            )
+                          ) : (
+                            <div
+                              style={{
+                                display: "flex",
+                                flexDirection: "row",
+                                marginTop: "20px",
+                              }}
+                            >
+                              <Select
+                                onChange={(e) =>
+                                  this.chooseAndOrSet(e, el.blockId)
+                                }
+                                placeholder=" Visualizza le feature nel layer che corrispondono a tutte le espressioni seguenti"
+                                defaultValue="AND"
+                              >
+                                <Option value="AND">
+                                  Visualizza le feature nel layer che
+                                  corrispondono a tutte le espressioni seguenti
+                                </Option>
+                                <Option value="OR">
+                                  Visualizza le feature nel layer che
+                                  corrispondono ad una qualsiasi delle
+                                  espressioni seguenti
+                                </Option>
+                              </Select>
+                              <div className="">
+                                <Button
+                                  className=""
+                                  onClick={() => this.deleteBlock(el.blockId)}
+                                  // onClick={()=>this.deleteBlockAll({el})}
+                                  icon
+                                  type="secondary"
+                                >
+                                  <CloseOutlined />
+                                </Button>
+                              </div>
+
+                              <div className=" ">
+                                <Button
+                                  id={el.blockId}
+                                  onClick={() => this.addTwoTable(el.blockId)}
+                                  className=""
+                                  icon
+                                  type="secondary"
+                                >
+                                  <PlusOutlined />
+                                </Button>
+                              </div>
+                            </div>
+                          )}
+                          {el.tablesSet.map((innerEl, i, TableArray) => (
+                            <AddSetTable
+                              className="w-100"
+                              key={i}
+                              id={`row-${i}`}
+                              list={this.state.resultsLayerSelected}
+                              isOpenDropD={this.state.isOpen}
+                              dropDown={() => this.dropDownSet(el.id)}
+                              dropdownValueQuery={this.state.dropdownValueQuery}
+                              isChecked={this.state.isChecked}
+                              counterIsChecked={this.state.counterIsChecked}
+                              checkedToQuery={this.state.checkedToQuery}
+                              // for Add set table............................
+                              tablesSet={this.state.tablesSet}
+                              tablesSetId={
+                                `${innerEl.id}` + "-" + `${el.blockId}`
+                              }
+                              whereClausesSet={this.state.whereClauseSet}
+                              // End for Add set table............................
+                              getQueryAttribute={this.getQueryAttributeSet}
+                              getQuery={this.getQuerySet}
+                              handleThirdQuery={this.thirdQuery}
+                              textInputHandler={this.textInputHandler}
+                              dropdownItemHandler={this.dropdownItemClick}
+                              textFirstIncludedHandler={
+                                this.textFirstIncludedHandler
+                              }
+                              textSecondIncludedHandler={
+                                this.textSecondIncludedHandler
+                              }
+                              dropDownToggler={this.dropDownSet}
+                              handleCheckBox={this.handleCheckBox}
+                              deleteTable={(e) =>
+                                this.deleteBlockTable(
+                                  `${innerEl.id}` + "-" + `${el.blockId}`,
+                                  `${el.blockId}`
+                                )
+                              }
+                              univocoSelectHandler={this.univocoSelectHandler}
+                              onChangeCheckBox={this.onChangeCheckBoxSet}
+                              openDrop={this.openDropSet}
+                              closeDrop={this.closeDrop}
+                              opened={this.state.opened}
+                              autOpen={this.state.autOpen}
+                              mouseleave={this.state.mouseleave}
+                              onmouseLeave={this.onmouseLeave}
+                              functionCounterIsChecked={
+                                this.functionCounterIsChecked
+                              }
+                              dropdownsSet={this.state.dropDownsSet}
+                              itemNotFound={this.state.itemNotFound}
+                              showDelete={counts > 2 ? true : false}
+                              showBlockDelete={
+                                counts === 2 && i == 0 ? true : false
+                              }
+                              // showDelete={TableArray.length > 2 ? true:false}
+                              // showBlockDelete={TableArray.length === 2 && i==0 ? true:false }
+                              blockId={el.blockId}
+                              deleteBlockAll={() =>
+                                this.deleteBlockAll({ el, innerEl })
+                              }
+                              currentTable={innerEl}
+                            />
+                          ))}
+                        </div>
                       );
                     })}
-                  </Select>
-                  {this.state.showAddSelect ? (
-                    <p>
-                      Visualizza le feature nel layer corrispondenti alla
-                      seguente espressione
-                    </p>
-                  ) : (
-                    <Select
-                      onChange={this.chooseAndOr}
-                      placeholder=" Visualizza le feature nel layer che corrispondono a tutte le espressioni seguenti"
-                      defaultValue="AND"
-                    >
-                      <Option value="AND">
-                        Visualizza le feature nel layer che corrispondono a
-                        tutte le espressioni seguenti
-                      </Option>
-                      <Option value="OR">
-                        Visualizza le feature nel layer che corrispondono ad una
-                        qualsiasi delle espressioni seguenti
-                      </Option>
-                    </Select>
-                  )}
+
+                    <br />
+                    <br />
+                    {this.state.itemNotFound && (
+                      <Alert
+                        className="w-100"
+                        form="basic"
+                        open
+                        text={this.state.itemNotFound}
+                        type="error"
+                        withIcon
+                      />
+                    )}
+                  </div>
                 </div>
-              </div>
-            </div>
-            {width >600&&<div className="row mt-1 mb-3 justify-content-around">
-              <div
-                className="col-md-5 d-flex justify-content-center text-center"
-                style={{ gap: "2%" }}
-              >
-                <Button
-                  disabled={!this.state.currentTargetText}
-                  onClick={this.addTable}
-                  size="default"
-                  className="d-flex align-items-center  mb-2"
-                  type="secondary"
-                >
-                  <Icon
-                    icon='<svg viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M7.5 0a.5.5 0 0 0-.5.5V7H.5a.5.5 0 0 0 0 1H7v6.5a.5.5 0 0 0 1 0V8h6.5a.5.5 0 0 0 0-1H8V.5a.5.5 0 0 0-.5-.5Z" fill="#000"></path></svg>'
-                    size="m"
-                  />
-                  <p className="m-0 p-0">Aggiungi espressione</p>
-                </Button>
-                <Button
-                  disabled={!this.state.currentTargetText}
-                  onClick={this.addBlock}
-                  size="default"
-                  className="d-flex align-items-center  mb-2"
-                  type="secondary"
-                >
-                  <Icon
-                    icon='<svg viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M7.5 0a.5.5 0 0 0-.5.5V7H.5a.5.5 0 0 0 0 1H7v6.5a.5.5 0 0 0 1 0V8h6.5a.5.5 0 0 0 0-1H8V.5a.5.5 0 0 0-.5-.5Z" fill="#000"></path></svg>'
-                    size="m"
-                  />
-                  <p className="m-0 p-0">Aggiungi set di espressioni</p>
-                </Button>
-              </div>
-              <div className="col-md-5 d-flex justify-content-center text-center">
-                <Button
-                  size="default"
-                  className="d-flex align-items-center mb-2"
-                  type="secondary"
-                  onClick={this.sendQuery}
-                >
-                  <p className="m-0 p-0">Applica</p>
-                </Button>
-                <Button
-                  size="default"
-                  className="d-flex align-items-center mb-2"
-                  style={{ marginLeft: "5px" }}
-                  type="secondary"
-                  onClick={this.functionRefresh}
-                >
-                  <p className="m-0 p-0">Ricaricare</p>
-                </Button>
-              </div>
-            </div>}
-            {(590 > width)&&<div style={{display:'flex',flexDirection:'column'}}>
-              <div
-                className=""
-                style={{ gap: "2%",width:'100%' ,display:'flex',justifyContent:'center'}}
-              >
-                <Button
-                  disabled={!this.state.currentTargetText}
-                  onClick={this.addTable}
-                  size="default"
-                  className="d-flex align-items-center  mb-2"
-                  type="secondary"
-                >
-                  <Icon
-                    icon='<svg viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M7.5 0a.5.5 0 0 0-.5.5V7H.5a.5.5 0 0 0 0 1H7v6.5a.5.5 0 0 0 1 0V8h6.5a.5.5 0 0 0 0-1H8V.5a.5.5 0 0 0-.5-.5Z" fill="#000"></path></svg>'
-                    size="m"
-                  />
-                  <p className="m-0 p-0">Aggiungi espressione</p>
-                </Button>
-                <Button
-                  disabled={!this.state.currentTargetText}
-                  onClick={this.addBlock}
-                  size="default"
-                  className="d-flex align-items-center  mb-2"
-                  type="secondary"
-                >
-                  <Icon
-                    icon='<svg viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M7.5 0a.5.5 0 0 0-.5.5V7H.5a.5.5 0 0 0 0 1H7v6.5a.5.5 0 0 0 1 0V8h6.5a.5.5 0 0 0 0-1H8V.5a.5.5 0 0 0-.5-.5Z" fill="#000"></path></svg>'
-                    size="m"
-                  />
-                  <p className="m-0 p-0">Aggiungi set di espressioni</p>
-                </Button>
-              </div>
-              <div className="" style={{width:'100%' ,display:'flex',justifyContent:'center'}}>
-                <Button
-                  size="default"
-                  className="d-flex align-items-center mb-2"
-                  type="secondary"
-                  onClick={this.sendQuery}
-                >
-                  <p className="m-0 p-0">Applica</p>
-                </Button>
-                <Button
-                  size="default"
-                  className="d-flex align-items-center mb-2"
-                  style={{ marginLeft: "5px" }}
-                  type="secondary"
-                  onClick={this.functionRefresh}
-                >
-                  <p className="m-0 p-0">Ricaricare</p>
-                </Button>
-              </div>
-            </div>}
-            <div className="row" style={{ height: "50%", overflowY: "scroll" }}>
-              <div className="col-md-12">
-                {this.state.tables.map((el, i) => (
-                  <Table
-                    className="w-100"
-                    key={i}
-                    id={`row-${i}`}
-                    list={this.state.resultsLayerSelected}
-                    isOpenDropD={this.state.isOpen}
-                    dropDown={() => this.dropDown(el.id)}
-                    dropdownValueQuery={this.state.dropdownValueQuery}
-                    isChecked={this.state.isChecked}
-                    counterIsChecked={this.state.counterIsChecked}
-                    checkedToQuery={this.state.checkedToQuery}
-                    tables={this.state.tables}
-                    tablesId={el.id}
-                    whereClauses={this.state.whereClauses}
-                    getQueryAttribute={this.getQueryAttribute}
-                    getQuery={this.getQuery}
-                    handleThirdQuery={this.thirdQuery}
-                    textInputHandler={this.textInputHandler}
-                    dropdownItemHandler={this.dropdownItemClick}
-                    textFirstIncludedHandler={this.textFirstIncludedHandler}
-                    textSecondIncludedHandler={this.textSecondIncludedHandler}
-                    dropDownToggler={this.dropDown}
-                    handleCheckBox={this.handleCheckBox}
-                    deleteTable={() => this.deleteTable(el.id)}
-                    univocoSelectHandler={this.univocoSelectHandler}
-                    onChangeCheckBox={this.onChangeCheckBox}
-                    openDrop={this.openDrop}
-                    closeDrop={this.closeDrop}
-                    opened={this.state.opened}
-                    autOpen={this.state.autOpen}
-                    mouseleave={this.state.mouseleave}
-                    onmouseLeave={this.onmouseLeave}
-                    functionCounterIsChecked={this.functionCounterIsChecked}
-                    dropdowns={this.state.dropDowns}
-                    itemNotFound={this.state.itemNotFound}
-                    selectedId = {this.state.selectedId}
-                    currentTable = {el}
-                  />
-                ))}
-                <br />
-                <div
-                  style={{
-                    width: "98%",
-                    background: "#005eca",
-                    height: "10px",
-                  }}
-                ></div>
-                <br />
-                {this.state.SetBlock.map((el,index)=>{
-                  const counts = tableSetCounts(el.tablesSet);
-                  return(
-                <div id={index}>{counts < 2 ? (
-                  counts == 1 ? <p>
-                    Visualizza le feature nel layer corrispondenti alla seguente
-                    espressione
-                  </p>:''
-                ) : (
-                  
-                  <div style={{display:'flex',flexDirection:'row',marginTop:'20px'}}><Select
-                  onChange={(e)=>this.chooseAndOrSet(e,el.blockId)}
-                  placeholder=" Visualizza le feature nel layer che corrispondono a tutte le espressioni seguenti"
-                  defaultValue="AND"
-                >
-                  <Option value="AND">
-                    Visualizza le feature nel layer che corrispondono a tutte
-                    le espressioni seguenti
-                  </Option>
-                  <Option value="OR">
-                    Visualizza le feature nel layer che corrispondono ad una
-                    qualsiasi delle espressioni seguenti
-                  </Option>
-                </Select> 
-                <div className="">
-              <Button
-                className=""
-                onClick={()=>this.deleteBlock(el.blockId)}
-                // onClick={()=>this.deleteBlockAll({el})}
-                icon
-                type='secondary'
-              >
-                <CloseOutlined />
-              </Button>
-            </div>
-                
-                <div className=" ">
-                <Button
-                  id={el.blockId}
-                  onClick={()=>this.addTwoTable(el.blockId)}
-                  className=""
-                  icon
-                  type="secondary"
-                >
-                  <PlusOutlined />
-                </Button>
-            
-            </div></div>
-                )}
-                {el.tablesSet.map((innerEl, i,TableArray) => (
-                  <AddSetTable
-                    className="w-100"
-                    key={i}
-                    id={`row-${i}`}
-                    list={this.state.resultsLayerSelected}
-                    isOpenDropD={this.state.isOpen}
-                    dropDown={() => this.dropDownSet(el.id)}
-                    dropdownValueQuery={this.state.dropdownValueQuery}
-                    isChecked={this.state.isChecked}
-                    counterIsChecked={this.state.counterIsChecked}
-                    checkedToQuery={this.state.checkedToQuery}
-                    // for Add set table............................
-                    tablesSet={this.state.tablesSet}
-                    tablesSetId={`${innerEl.id}`+ "-"+`${el.blockId}`}
-                    whereClausesSet={this.state.whereClauseSet}
-                    // End for Add set table............................
-                    getQueryAttribute={this.getQueryAttributeSet}
-                    getQuery={this.getQuerySet}
-                    handleThirdQuery={this.thirdQuery}
-                    textInputHandler={this.textInputHandler}
-                    dropdownItemHandler={this.dropdownItemClick}
-                    textFirstIncludedHandler={this.textFirstIncludedHandler}
-                    textSecondIncludedHandler={this.textSecondIncludedHandler}
-                    dropDownToggler={this.dropDownSet}
-                    handleCheckBox={this.handleCheckBox}
-                    deleteTable={(e) => this.deleteBlockTable(`${innerEl.id}`+ "-"+`${el.blockId}`,`${el.blockId}`)}
-                    univocoSelectHandler={this.univocoSelectHandler}
-                    onChangeCheckBox={this.onChangeCheckBoxSet}
-                    openDrop={this.openDropSet}
-                    closeDrop={this.closeDrop}
-                    opened={this.state.opened}
-                    autOpen={this.state.autOpen}
-                    mouseleave={this.state.mouseleave}
-                    onmouseLeave={this.onmouseLeave}
-                    functionCounterIsChecked={this.functionCounterIsChecked}
-                    dropdownsSet={this.state.dropDownsSet}
-                    itemNotFound={this.state.itemNotFound}
-                    showDelete={counts > 2 ? true:false}
-                    showBlockDelete={counts === 2 && i==0 ? true:false }
-                    // showDelete={TableArray.length > 2 ? true:false}
-                    // showBlockDelete={TableArray.length === 2 && i==0 ? true:false }
-                    blockId = {el.blockId}
-                    deleteBlockAll={()=>this.deleteBlockAll({el,innerEl})}
-                    currentTable = {innerEl}
-                  />
-                ))}</div>)})}
-                
-                <br />
-                <br />
-                {this.state.itemNotFound && (
-                  <Alert
-                    className="w-100"
-                    form="basic"
-                    open
-                    text={this.state.itemNotFound}
-                    type="error"
-                    withIcon
-                  />
-                )}
               </div>
             </div>
           </div>
-        </div>
-      </div>}
-</ReactResizeDetector>
+        )}
+      </ReactResizeDetector>
     );
   }
 }
