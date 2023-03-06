@@ -75,9 +75,12 @@ function Table(props) {
                     className=""
                     style={{
                       display: "flex",
-                      flexDirection: "column",
+                      flexDirection: "row",
                       background: "",
                       height: "fit-content",
+                      alignItems:"center",
+                      justifyContent:"space-between",
+                      // width:"100%"
                     }}
                   >
                     <div
@@ -86,6 +89,7 @@ function Table(props) {
                         display: "flex",
                         flexDirection: "column",
                         gap: "5px",
+                        width:"80%",
                       }}
                     >
                       <Select
@@ -151,13 +155,13 @@ function Table(props) {
                                 );
                               })}
                         </Select>
-                        <div className="" style={{}}>
+                        {/* <div className="" style={{}}>
                           <Button className="" onClick={deleteTable} icon>
                             <CloseOutlined />
                           </Button>
-                        </div>
+                        </div> */}
                       </div>
-                      <div style={{ width: "100%" }}>
+                      <div style={{ width: "100%"}}>
                         <SecondConstructor
                           className="col-md-4"
                           handleThirdQuery={handleThirdQuery}
@@ -189,6 +193,11 @@ function Table(props) {
                           dropdowns={dropdowns}
                         />
                       </div>
+                    </div>
+                    <div className="" style={{}}>
+                      <Button className="" onClick={deleteTable} icon>
+                        <CloseOutlined />
+                      </Button>
                     </div>
                   </div>
                 )}
@@ -377,7 +386,8 @@ const SecondConstructor = (props) => {
   const test = (props) => {};
   return (
     <Switch queryValues={defaultValue}>
-      <div value={"="} className="d-flex col-md-4">
+      {/* <div value={"="} className="d-flex col-md-4"> */}
+      <div value={"="} className="d-flex col-md-4" style={{width:"100%"}}>
         {dropdownValueQuery === "univoco" ? (
           <Select
             onChange={(e) => univocoSelectHandler(e, "single")}
@@ -396,7 +406,7 @@ const SecondConstructor = (props) => {
             onChange={textInputHandler}
             onAcceptValue={function noRefCheck() {}}
             type="text"
-            className=" w-100"
+            className="w-100"
             data-table-id={tablesId}
             defaultValue={defaultTextValue}
           />
