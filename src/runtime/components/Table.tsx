@@ -76,13 +76,10 @@ function Table(props) {
                     style={{
                       display: "flex",
                       flexDirection: "row",
-                      background: "green",
                       height: "fit-content",
                       alignItems:"center",
-                      gap:'3px',
-                      justifyContent:"space-between",
-                      // minWidth:'280px'
-                      // width:"100%"
+                      gap:'3%',
+                      minWidth:'280px'
                     }}
                   >
                     <div
@@ -206,7 +203,6 @@ function Table(props) {
                     style={{
                       display: "flex",
                       flexDirection: "row",
-                      background: "red",
                       justifyContent: "center",
                     }}
                   >
