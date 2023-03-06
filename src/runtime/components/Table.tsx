@@ -219,7 +219,7 @@ const SecondConstructor = (props) => {
     defaultValue = currentWhereClause.queryValue;
   }
   if (currentWhereClause && currentWhereClause.dropdownValueQuery) {
-    dropdownValueQuery = whereClauses[tablesId].dropdownValueQuery;
+    dropdownValueQuery = currentWhereClause.dropdownValueQuery;
   }
   if (currentWhereClause && currentWhereClause.isOpen) {
     // opened = whereClauses[tablesId].isOpen;
