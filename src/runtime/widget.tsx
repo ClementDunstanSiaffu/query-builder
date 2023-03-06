@@ -916,19 +916,11 @@ export default class Widget extends React.PureComponent<
 
   deleteTable = (id) => {
     let copiedTable = [...this.state.tables];
-    // const index = copiedTable.findIndex((item)=>item.id === id)
     copiedTable = copiedTable.map((el) => {
       if (el.id === id)el.deleted = true;
       return el;
     });
     const newTables = copiedTable;
-    // newTables = copiedTable;
-
-    // if (index !== -1){
-    //   copiedTable[index]["deleted"] = true;
-    //   newTables = copiedTable;
-    // }
-    // const newTables = copiedTable.filter((el) => el.id !== id);
     this.setState({ tableCounter: this.state.tableCounter - 1 });
     const copiedWhereClauses = [...this.state.whereClauses];
     const deletedWhereClauses = copiedWhereClauses.filter(
