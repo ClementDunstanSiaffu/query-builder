@@ -1037,20 +1037,20 @@ export default class Widget extends React.PureComponent<
   };
 
   textFirstIncludedHandler = (e, queryType = "single") => {
-    let txt = e.target.value;
+    let txt = e.target.value.trim();
     let currentTableId = e.target.attributes[0].value;
     let input = "first";
     this.queryTextIncludedConstructor(txt, currentTableId, input, queryType);
   };
 
   textSecondIncludedHandler = (e, queryType = "single") => {
-    let txt = e.target.value;
+    let txt = e.target.value.trim()
     let currentTableId = e.target.attributes[0].value;
     let input = "second";
     this.queryTextIncludedConstructor(txt, currentTableId, input, queryType);
   };
   univocoSelectHandler = (e, queryType = "single") => {
-    let txt = e.currentTarget.textContent;
+    let txt = e.currentTarget.textContent.trim();
     let currentTableId = e.currentTarget.attributes[2].value;
     this.queryTextConstructor(txt, currentTableId, queryType);
   };
