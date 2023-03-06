@@ -14,6 +14,8 @@ import {
 import { SettingOutlined } from "jimu-icons/outlined/application/setting";
 import { React } from "jimu-core";
 import { CloseOutlined } from "jimu-icons/outlined/editor/close";
+import ReactResizeDetector from "../lib/ResizeDetector";
+
 import {
   queryConstructorNumber,
   queryConstructorString,
@@ -53,117 +55,258 @@ function Table(props) {
     mouseleave,
     onmouseLeave,
     dropdowns,
-    currentTable
+    currentTable,
   } = props;
 
-  const currentwhereClauses = whereClauses.find((item)=>item.id === `${tablesId}`)
-  if (currentTable.id === tablesId && !currentTable.deleted){
-  return (
-    <div className="my-1">
-      {list.fields ? (
-        <div className="d-flex flex-column">
-          <div className="row m-0">
-            <div className="row w-100 d-flex justify-content-end">
-              <Button
-                className="mb-2 col-1 self-end"
-                onClick={deleteTable}
-                icon
-              >
-                <CloseOutlined />
-              </Button>
-            </div>
-            <Select
-              className="col-md-4 mb-2"
-              onChange={getQueryAttribute}
-              placeholder="Seleziona campo"
-            >
-              {/* eslint-disable-next-line array-callback-return */}
-              {list.fields.map((el, i) => {
-                if (
-                  el.type === "oid" ||
-                  el.type === "small-integer" ||
-                  el.type === "integer" ||
-                  el.type === "string" ||
-                  el.type === "double"
-                ) {
-                  return (
-                    <Option
-                      data-table-id={tablesId}
-                      value={i}
-                      name={el.name}
-                      dataType={el.type}
-                    >
-                      {el.alias} ({el.type})
-                    </Option>
-                  );
-                }
-              })}
-            </Select>
-            <div className="col-md-4 mb-2">
-              <Select onChange={(e)=>getQuery(e,"single")} placeholder="Seleziona campo">
-                {currentwhereClauses &&
-                currentwhereClauses.attributeQueryType === "string"
-                  ? queryConstructorString.map((o, i) => {
-                      return (
-                        <Option
-                          data-table-id={tablesId}
-                          value={i}
-                          name={o.value}
-                        >
-                          {o.name}
-                        </Option>
-                      );
-                    })
-                  : queryConstructorNumber.map((o, i) => {
-                      return (
-                        <Option
-                          data-table-id={tablesId}
-                          value={i}
-                          name={o.value}
-                        >
-                          {o.name}
-                        </Option>
-                      );
-                    })}
-              </Select>
-            </div>
-            <SecondConstructor
-              className="col-md-4"
-              handleThirdQuery={handleThirdQuery}
-              textInputHandler={textInputHandler}
-              multiSelectHandler={multiSelectHandler}
-              dropdownItemHandler={dropdownItemHandler}
-              textFirstIncludedHandler={textFirstIncludedHandler}
-              textSecondIncludedHandler={textSecondIncludedHandler}
-              dropdownValueQuery={dropdownValueQuery}
-              handleCheckBox={handleCheckBox}
-              isChecked={isChecked}
-              counterIsChecked={counterIsChecked}
-              functionCounterIsChecked={functionCounterIsChecked}
-              checkedToQuery={checkedToQuery}
-              getQueryAttribute={getQueryAttribute}
-              whereClauses={whereClauses}
-              tablesId={tablesId}
-              dropDownToggler={dropDownToggler}
-              univocoSelectHandler={univocoSelectHandler}
-              dropDown={dropDown}
-              isOpenDropD={isOpenDropD}
-              onChangeCheckBox={onChangeCheckBox}
-              openDrop={openDrop}
-              closeDrop={closeDrop}
-              opened={opened}
-              autOpen={autOpen}
-              mouseleave={mouseleave}
-              onmouseLeave={onmouseLeave}
-              dropdowns = {dropdowns}
-            />
-          </div>
-        </div>
-      ) : (
-        ""
-      )}
-    </div>
+  const currentwhereClauses = whereClauses.find(
+    (item) => item.id === `${tablesId}`
   );
+
+  if (currentTable.id === tablesId && !currentTable.deleted) {
+    return (
+      <ReactResizeDetector handleWidth handleHeight>
+        {({ width, height }) => (
+          <div className="my-1">
+            {width}
+            {list.fields ? (
+              <>
+                {width < 547 && (
+                  <div
+                    className=""
+                    style={{
+                      display: "flex",
+                      flexDirection: "column",
+                      background: "",
+                      height: "fit-content",
+                    }}
+                  >
+                    <div
+                      className=""
+                      style={{
+                        display: "flex",
+                        flexDirection: "column",
+                        gap: "5px",
+                      }}
+                    >
+                      <Select
+                        className=""
+                        onChange={getQueryAttribute}
+                        placeholder="Seleziona campo"
+                      >
+                        {/* eslint-disable-next-line array-callback-return */}
+                        {list.fields.map((el, i) => {
+                          if (
+                            el.type === "oid" ||
+                            el.type === "small-integer" ||
+                            el.type === "integer" ||
+                            el.type === "string" ||
+                            el.type === "double"
+                          ) {
+                            return (
+                              <Option
+                                data-table-id={tablesId}
+                                value={i}
+                                name={el.name}
+                                dataType={el.type}
+                              >
+                                {el.alias} ({el.type})
+                              </Option>
+                            );
+                          }
+                        })}
+                      </Select>
+                      <div
+                        style={{
+                          display: "flex",
+                          flexDirection: "row",
+                          width: "100%",
+                        }}
+                      >
+                        <Select
+                          onChange={(e) => getQuery(e, "single")}
+                          placeholder="Seleziona campo"
+                        >
+                          {currentwhereClauses &&
+                          currentwhereClauses.attributeQueryType === "string"
+                            ? queryConstructorString.map((o, i) => {
+                                return (
+                                  <Option
+                                    data-table-id={tablesId}
+                                    value={i}
+                                    name={o.value}
+                                  >
+                                    {o.name}
+                                  </Option>
+                                );
+                              })
+                            : queryConstructorNumber.map((o, i) => {
+                                return (
+                                  <Option
+                                    data-table-id={tablesId}
+                                    value={i}
+                                    name={o.value}
+                                  >
+                                    {o.name}
+                                  </Option>
+                                );
+                              })}
+                        </Select>
+                        <div className="" style={{}}>
+                          <Button className="" onClick={deleteTable} icon>
+                            <CloseOutlined />
+                          </Button>
+                        </div>
+                      </div>
+                      <div style={{ width: "100%" }}>
+                        <SecondConstructor
+                          className="col-md-4"
+                          handleThirdQuery={handleThirdQuery}
+                          textInputHandler={textInputHandler}
+                          multiSelectHandler={multiSelectHandler}
+                          dropdownItemHandler={dropdownItemHandler}
+                          textFirstIncludedHandler={textFirstIncludedHandler}
+                          textSecondIncludedHandler={textSecondIncludedHandler}
+                          dropdownValueQuery={dropdownValueQuery}
+                          handleCheckBox={handleCheckBox}
+                          isChecked={isChecked}
+                          counterIsChecked={counterIsChecked}
+                          functionCounterIsChecked={functionCounterIsChecked}
+                          checkedToQuery={checkedToQuery}
+                          getQueryAttribute={getQueryAttribute}
+                          whereClauses={whereClauses}
+                          tablesId={tablesId}
+                          dropDownToggler={dropDownToggler}
+                          univocoSelectHandler={univocoSelectHandler}
+                          dropDown={dropDown}
+                          isOpenDropD={isOpenDropD}
+                          onChangeCheckBox={onChangeCheckBox}
+                          openDrop={openDrop}
+                          closeDrop={closeDrop}
+                          opened={opened}
+                          autOpen={autOpen}
+                          mouseleave={mouseleave}
+                          onmouseLeave={onmouseLeave}
+                          dropdowns={dropdowns}
+                        />
+                      </div>
+                    </div>
+                  </div>
+                )}
+                {width > 547 && (
+                  <div
+                    className=""
+                    style={{
+                      display: "flex",
+                      flexDirection: "row",
+                      background: "",
+                      justifyContent: "center",
+                    }}
+                  >
+                    <div className="row m-0">
+                      <Select
+                        className="col-md-4 mb-2"
+                        onChange={getQueryAttribute}
+                        placeholder="Seleziona campo"
+                      >
+                        {/* eslint-disable-next-line array-callback-return */}
+                        {list.fields.map((el, i) => {
+                          if (
+                            el.type === "oid" ||
+                            el.type === "small-integer" ||
+                            el.type === "integer" ||
+                            el.type === "string" ||
+                            el.type === "double"
+                          ) {
+                            return (
+                              <Option
+                                data-table-id={tablesId}
+                                value={i}
+                                name={el.name}
+                                dataType={el.type}
+                              >
+                                {el.alias} ({el.type})
+                              </Option>
+                            );
+                          }
+                        })}
+                      </Select>
+                      <div className="" style={{ background: "" }}>
+                        <Select
+                          onChange={(e) => getQuery(e, "single")}
+                          placeholder="Seleziona campo"
+                        >
+                          {currentwhereClauses &&
+                          currentwhereClauses.attributeQueryType === "string"
+                            ? queryConstructorString.map((o, i) => {
+                                return (
+                                  <Option
+                                    data-table-id={tablesId}
+                                    value={i}
+                                    name={o.value}
+                                  >
+                                    {o.name}
+                                  </Option>
+                                );
+                              })
+                            : queryConstructorNumber.map((o, i) => {
+                                return (
+                                  <Option
+                                    data-table-id={tablesId}
+                                    value={i}
+                                    name={o.value}
+                                  >
+                                    {o.name}
+                                  </Option>
+                                );
+                              })}
+                        </Select>
+                      </div>
+                      <SecondConstructor
+                        className="col-md-4"
+                        handleThirdQuery={handleThirdQuery}
+                        textInputHandler={textInputHandler}
+                        multiSelectHandler={multiSelectHandler}
+                        dropdownItemHandler={dropdownItemHandler}
+                        textFirstIncludedHandler={textFirstIncludedHandler}
+                        textSecondIncludedHandler={textSecondIncludedHandler}
+                        dropdownValueQuery={dropdownValueQuery}
+                        handleCheckBox={handleCheckBox}
+                        isChecked={isChecked}
+                        counterIsChecked={counterIsChecked}
+                        functionCounterIsChecked={functionCounterIsChecked}
+                        checkedToQuery={checkedToQuery}
+                        getQueryAttribute={getQueryAttribute}
+                        whereClauses={whereClauses}
+                        tablesId={tablesId}
+                        dropDownToggler={dropDownToggler}
+                        univocoSelectHandler={univocoSelectHandler}
+                        dropDown={dropDown}
+                        isOpenDropD={isOpenDropD}
+                        onChangeCheckBox={onChangeCheckBox}
+                        openDrop={openDrop}
+                        closeDrop={closeDrop}
+                        opened={opened}
+                        autOpen={autOpen}
+                        mouseleave={mouseleave}
+                        onmouseLeave={onmouseLeave}
+                        dropdowns={dropdowns}
+                      />
+                    </div>
+                    <div className="">
+                      <Button className="" onClick={deleteTable} icon>
+                        <CloseOutlined />
+                      </Button>
+                    </div>
+                  </div>
+                )}
+              </>
+            ) : (
+              ""
+            )}
+          </div>
+        )}
+      </ReactResizeDetector>
+    );
   }
   return null;
 }
@@ -204,7 +347,9 @@ const SecondConstructor = (props) => {
   let checked = 0;
   let au = true;
   let defaultTextValue = " ";
-  const currentWhereClause = whereClauses.find((item)=>item.id === `${tablesId}`);
+  const currentWhereClause = whereClauses.find(
+    (item) => item.id === `${tablesId}`
+  );
   if (currentWhereClause && currentWhereClause.ifInOrNotInQueryValue) {
     currentWhereClause.ifInOrNotInQueryValue.map((el, i) => {
       normalizedThirdQuery.push({
@@ -235,7 +380,7 @@ const SecondConstructor = (props) => {
       <div value={"="} className="d-flex col-md-4">
         {dropdownValueQuery === "univoco" ? (
           <Select
-            onChange={(e)=>univocoSelectHandler(e,"single")}
+            onChange={(e) => univocoSelectHandler(e, "single")}
             placeholder="Seleziona il Layer"
           >
             {normalizedThirdQuery.map((el, i) => {
@@ -253,7 +398,7 @@ const SecondConstructor = (props) => {
             type="text"
             className=" w-100"
             data-table-id={tablesId}
-            defaultValue = {defaultTextValue}
+            defaultValue={defaultTextValue}
           />
         )}
         <div className="flex-shrink-1">
@@ -267,14 +412,14 @@ const SecondConstructor = (props) => {
               <DropdownItem divider />
               <DropdownItem
                 value="valore"
-                onClick={(e)=>dropdownItemHandler(e,"single")}
+                onClick={(e) => dropdownItemHandler(e, "single")}
                 data-table-id={tablesId}
               >
                 Valore
               </DropdownItem>
               <DropdownItem
                 value="campo"
-                onClick={(e)=>dropdownItemHandler(e,"single")}
+                onClick={(e) => dropdownItemHandler(e, "single")}
                 disabled
                 data-table-id={tablesId}
               >
@@ -282,7 +427,7 @@ const SecondConstructor = (props) => {
               </DropdownItem>
               <DropdownItem
                 value="univoco"
-                onClick={(e)=>dropdownItemHandler(e,"single")}
+                onClick={(e) => dropdownItemHandler(e, "single")}
                 data-table-id={tablesId}
               >
                 Univoci
@@ -294,7 +439,7 @@ const SecondConstructor = (props) => {
       <div value={"<>"} className="d-flex col-md-4">
         {dropdownValueQuery === "univoco" ? (
           <Select
-            onChange={(e)=>univocoSelectHandler(e,"single")}
+            onChange={(e) => univocoSelectHandler(e, "single")}
             placeholder="Seleziona il Layer"
           >
             {normalizedThirdQuery.map((el, i) => {
@@ -324,14 +469,14 @@ const SecondConstructor = (props) => {
               <DropdownItem divider />
               <DropdownItem
                 value="valore"
-                onClick={(e)=>dropdownItemHandler(e,"single")}
+                onClick={(e) => dropdownItemHandler(e, "single")}
                 data-table-id={tablesId}
               >
                 Valore
               </DropdownItem>
               <DropdownItem
                 value="campo"
-                onClick={(e)=>dropdownItemHandler(e,"single")}
+                onClick={(e) => dropdownItemHandler(e, "single")}
                 disabled
                 data-table-id={tablesId}
               >
@@ -339,7 +484,7 @@ const SecondConstructor = (props) => {
               </DropdownItem>
               <DropdownItem
                 value="univoco"
-                onClick={(e)=>dropdownItemHandler(e,"single")}
+                onClick={(e) => dropdownItemHandler(e, "single")}
                 data-table-id={tablesId}
               >
                 Univoci
@@ -351,7 +496,11 @@ const SecondConstructor = (props) => {
       <div value={"IN"} onMouseLeave={() => onmouseLeave()}>
         <div className="w-100">
           {
-            <Dropdown activeIcon isOpen={dropdowns[tablesId]} toggle={() => dropDown}>
+            <Dropdown
+              activeIcon
+              isOpen={dropdowns[tablesId]}
+              toggle={() => dropDown}
+            >
               <DropdownButton onClick={() => openDrop(tablesId)}>
                 {checked} elementi selezionati
               </DropdownButton>
@@ -400,9 +549,13 @@ const SecondConstructor = (props) => {
         </div>
       </div>
       <div value={"NOT_IN"} className="d-flex justify-content-between">
-      <div className="w-100">
+        <div className="w-100">
           {
-            <Dropdown activeIcon isOpen={dropdowns[tablesId]} toggle={() => dropDown}>
+            <Dropdown
+              activeIcon
+              isOpen={dropdowns[tablesId]}
+              toggle={() => dropDown}
+            >
               <DropdownButton onClick={() => openDrop(tablesId)}>
                 {checked} elementi selezionati
               </DropdownButton>
@@ -452,7 +605,10 @@ const SecondConstructor = (props) => {
       </div>
       <div value={"<="} className="d-flex  col-md-4">
         {dropdownValueQuery === "univoco" ? (
-          <Select placeholder="Seleziona il Layer" onChange={(e)=>univocoSelectHandler(e,"single")}>
+          <Select
+            placeholder="Seleziona il Layer"
+            onChange={(e) => univocoSelectHandler(e, "single")}
+          >
             {normalizedThirdQuery.map((el, i) => {
               return (
                 <Option value={i} data-table-id={tablesId}>
@@ -480,14 +636,14 @@ const SecondConstructor = (props) => {
               <DropdownItem divider />
               <DropdownItem
                 value="valore"
-                onClick={(e)=>dropdownItemHandler(e,"single")}
+                onClick={(e) => dropdownItemHandler(e, "single")}
                 data-table-id={tablesId}
               >
                 Valore
               </DropdownItem>
               <DropdownItem
                 value="campo"
-                onClick={(e)=>dropdownItemHandler(e,"single")}
+                onClick={(e) => dropdownItemHandler(e, "single")}
                 disabled
                 data-table-id={tablesId}
               >
@@ -495,7 +651,7 @@ const SecondConstructor = (props) => {
               </DropdownItem>
               <DropdownItem
                 value="univoco"
-                onClick={(e)=>dropdownItemHandler(e,"single")}
+                onClick={(e) => dropdownItemHandler(e, "single")}
                 data-table-id={tablesId}
               >
                 Univoci
@@ -506,7 +662,10 @@ const SecondConstructor = (props) => {
       </div>
       <div value={">="} className="d-flex col-md-4">
         {dropdownValueQuery === "univoco" ? (
-          <Select placeholder="Seleziona il Layer" onChange={(e)=>univocoSelectHandler(e,"single")}>
+          <Select
+            placeholder="Seleziona il Layer"
+            onChange={(e) => univocoSelectHandler(e, "single")}
+          >
             {normalizedThirdQuery.map((el, i) => {
               return (
                 <Option value={i} data-table-id={tablesId}>
@@ -534,14 +693,14 @@ const SecondConstructor = (props) => {
               <DropdownItem divider />
               <DropdownItem
                 value="valore"
-                onClick={(e)=>dropdownItemHandler(e,"single")}
+                onClick={(e) => dropdownItemHandler(e, "single")}
                 data-table-id={tablesId}
               >
                 Valore
               </DropdownItem>
               <DropdownItem
                 value="campo"
-                onClick={(e)=>dropdownItemHandler(e,"single")}
+                onClick={(e) => dropdownItemHandler(e, "single")}
                 disabled
                 data-table-id={tablesId}
               >
@@ -549,7 +708,7 @@ const SecondConstructor = (props) => {
               </DropdownItem>
               <DropdownItem
                 value="univoco"
-                onClick={(e)=>dropdownItemHandler(e,"single")}
+                onClick={(e) => dropdownItemHandler(e, "single")}
                 data-table-id={tablesId}
               >
                 Univoci
@@ -560,7 +719,10 @@ const SecondConstructor = (props) => {
       </div>
       <div value={"<"} className="d-flex col-md-4">
         {dropdownValueQuery === "univoco" ? (
-          <Select placeholder="Seleziona il Layer" onChange={(e)=>univocoSelectHandler(e,"single")}>
+          <Select
+            placeholder="Seleziona il Layer"
+            onChange={(e) => univocoSelectHandler(e, "single")}
+          >
             {normalizedThirdQuery.map((el, i) => {
               return (
                 <Option value={i} data-table-id={tablesId}>
@@ -588,14 +750,14 @@ const SecondConstructor = (props) => {
               <DropdownItem divider />
               <DropdownItem
                 value="valore"
-                onClick={(e)=>dropdownItemHandler(e,"single")}
+                onClick={(e) => dropdownItemHandler(e, "single")}
                 data-table-id={tablesId}
               >
                 Valore
               </DropdownItem>
               <DropdownItem
                 value="campo"
-                onClick={(e)=>dropdownItemHandler(e,"single")}
+                onClick={(e) => dropdownItemHandler(e, "single")}
                 disabled
                 data-table-id={tablesId}
               >
@@ -603,7 +765,7 @@ const SecondConstructor = (props) => {
               </DropdownItem>
               <DropdownItem
                 value="univoco"
-                onClick={(e)=>dropdownItemHandler(e,"single")}
+                onClick={(e) => dropdownItemHandler(e, "single")}
                 data-table-id={tablesId}
               >
                 Univoci
@@ -614,7 +776,10 @@ const SecondConstructor = (props) => {
       </div>
       <div value={">"} className="d-flex col-md-4">
         {dropdownValueQuery === "univoco" ? (
-          <Select placeholder="Seleziona il Layer" onChange={(e)=>univocoSelectHandler(e,"single")}>
+          <Select
+            placeholder="Seleziona il Layer"
+            onChange={(e) => univocoSelectHandler(e, "single")}
+          >
             {normalizedThirdQuery.map((el, i) => {
               return (
                 <Option value={i} data-table-id={tablesId}>
@@ -642,14 +807,14 @@ const SecondConstructor = (props) => {
               <DropdownItem divider />
               <DropdownItem
                 value="valore"
-                onClick={(e)=>dropdownItemHandler(e,"single")}
+                onClick={(e) => dropdownItemHandler(e, "single")}
                 data-table-id={tablesId}
               >
                 Valore
               </DropdownItem>
               <DropdownItem
                 value="campo"
-                onClick={(e)=>dropdownItemHandler(e,"single")}
+                onClick={(e) => dropdownItemHandler(e, "single")}
                 disabled
                 data-table-id={tablesId}
               >
@@ -657,7 +822,7 @@ const SecondConstructor = (props) => {
               </DropdownItem>
               <DropdownItem
                 value="univoco"
-                onClick={(e)=>dropdownItemHandler(e,"single")}
+                onClick={(e) => dropdownItemHandler(e, "single")}
                 data-table-id={tablesId}
               >
                 Univoci
@@ -675,15 +840,17 @@ const SecondConstructor = (props) => {
             onAcceptValue={function noRefCheck() {}}
             type="text"
             data-table-id={tablesId}
-            id='inputs'
+            id="inputs"
           />
-          <p className="col-md-2 text-center" style={{width:'10%'}}>e</p>
+          <p className="col-md-2 text-center" style={{ width: "10%" }}>
+            e
+          </p>
           <TextInput
             onChange={textSecondIncludedHandler}
             onAcceptValue={function noRefCheck() {}}
             type="text"
             data-table-id={tablesId}
-            id='inputs'
+            id="inputs"
           />
         </div>
       </div>
@@ -693,7 +860,7 @@ const SecondConstructor = (props) => {
             onChange={textFirstIncludedHandler}
             onAcceptValue={function noRefCheck() {}}
             type="text"
-            id='inputs'
+            id="inputs"
             data-table-id={tablesId}
           />
           <p className="col-sm-2 text-center">e</p>
@@ -701,7 +868,7 @@ const SecondConstructor = (props) => {
             onChange={textSecondIncludedHandler}
             onAcceptValue={function noRefCheck() {}}
             type="text"
-            id='inputs'
+            id="inputs"
             data-table-id={tablesId}
           />
         </div>
