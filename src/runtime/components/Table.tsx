@@ -155,11 +155,6 @@ function Table(props) {
                                 );
                               })}
                         </Select>
-                        {/* <div className="" style={{}}>
-                          <Button className="" onClick={deleteTable} icon>
-                            <CloseOutlined />
-                          </Button>
-                        </div> */}
                       </div>
                       <div style={{ width: "100%"}}>
                         <SecondConstructor
