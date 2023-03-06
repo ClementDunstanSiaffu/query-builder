@@ -14,6 +14,7 @@ import {
 import { SettingOutlined } from "jimu-icons/outlined/application/setting";
 import { React } from "jimu-core";
 import { CloseOutlined } from "jimu-icons/outlined/editor/close";
+import ReactResizeDetector from "../lib/ResizeDetector";
 import {
   queryConstructorNumber,
   queryConstructorString,
@@ -56,121 +57,264 @@ function AddSetTable(props) {
     mouseleave,
     onmouseLeave,
     dropdownsSet,
-    showDelete,blockId,
+    showDelete,
+    blockId,
     currentTable,
-    showBlockDelete
+    showBlockDelete,
   } = props;
 
-  const currentwhereClausesSet = whereClausesSet.find((item)=>item.id === tablesSetId);
-  if (currentTable.id === parseInt(tablesSetId.split("-")[0]) && !currentTable.deleted){
+  const currentwhereClausesSet = whereClausesSet.find(
+    (item) => item.id === tablesSetId
+  );
+  if (
+    currentTable.id === parseInt(tablesSetId.split("-")[0]) &&
+    !currentTable.deleted
+  ) {
     return (
-      <div className="my-1">
-        {list.fields ? (
-          <div className="d-flex flex-column">
-            <div className="row m-0">
-              {showDelete&&<div className="row w-100 d-flex justify-content-end">
-                <Button
-                  className="mb-2 col-1 self-end"
-                  onClick={deleteTable}
-                  icon
-                >
-                  <CloseOutlined />
-                </Button>
-              </div>}
-              <Select
-                className="col-md-4 mb-2"
-                onChange={getQueryAttribute}
-                placeholder="Seleziona campo"
-              >
-                {/* eslint-disable-next-line array-callback-return */}
-                {list.fields.map((el, i) => {
-                  if (
-                    el.type === "oid" ||
-                    el.type === "small-integer" ||
-                    el.type === "integer" ||
-                    el.type === "string" ||
-                    el.type === "double"
-                  ) {
-                    return (
-                      <Option
-                        data-table-id={tablesSetId}
-                        value={i}
-                        name={el.name}
-                        dataType={el.type}
+      <ReactResizeDetector handleWidth handleHeight>
+        {({ width, height }) => (
+          <div className="my-1">
+            {list.fields ? (
+              <>
+                {width < 547 && (
+                  <div
+                    className=""
+                    style={{
+                      display: "flex",
+                      flexDirection: "row",
+                      height: "fit-content",
+                      alignItems: "center",
+                      gap: "3%",
+                      // minWidth:'280px'
+                      // background: "",
+                    }}
+                  >
+                    <div className="" style={{
+                        display: "flex",
+                        flexDirection: "column",
+                        gap: "5px",
+                        width:"80%",
+                      }}>
+                      <Select
+                        className=""
+                        onChange={getQueryAttribute}
+                        placeholder="Seleziona campo"
                       >
-                        {el.alias} ({el.type})
-                      </Option>
-                    );
-                  }
-                })}
-              </Select>
-              <div className="col-md-4 mb-2">
-                <Select
-                  onChange={(e) => getQuery(e, "set")}
-                  placeholder="Seleziona campo"
-                >
-                  {currentwhereClausesSet && currentwhereClausesSet.attributeQueryType === "string"
-                    ? queryConstructorString.map((o, i) => {
-                        return (
-                          <Option
-                            data-table-id={tablesSetId}
-                            value={i}
-                            name={o.value}
+                        {/* eslint-disable-next-line array-callback-return */}
+                        {list.fields.map((el, i) => {
+                          if (
+                            el.type === "oid" ||
+                            el.type === "small-integer" ||
+                            el.type === "integer" ||
+                            el.type === "string" ||
+                            el.type === "double"
+                          ) {
+                            return (
+                              <Option
+                                data-table-id={tablesSetId}
+                                value={i}
+                                name={el.name}
+                                dataType={el.type}
+                              >
+                                {el.alias} ({el.type})
+                              </Option>
+                            );
+                          }
+                        })}
+                      </Select>
+                      <div className="">
+                        <Select
+                          onChange={(e) => getQuery(e, "set")}
+                          placeholder="Seleziona campo"
+                        >
+                          {currentwhereClausesSet &&
+                          currentwhereClausesSet.attributeQueryType === "string"
+                            ? queryConstructorString.map((o, i) => {
+                                return (
+                                  <Option
+                                    data-table-id={tablesSetId}
+                                    value={i}
+                                    name={o.value}
+                                  >
+                                    {o.name}
+                                  </Option>
+                                );
+                              })
+                            : queryConstructorNumber.map((o, i) => {
+                                return (
+                                  <Option
+                                    data-table-id={tablesSetId}
+                                    value={i}
+                                    name={o.value}
+                                  >
+                                    {o.name}
+                                  </Option>
+                                );
+                              })}
+                        </Select>
+                      </div>
+                      <SecondConstructor
+                        className="col-md-4"
+                        handleThirdQuery={handleThirdQuery}
+                        textInputHandler={textInputHandler}
+                        multiSelectHandler={multiSelectHandler}
+                        dropdownItemHandler={dropdownItemHandler}
+                        textFirstIncludedHandler={textFirstIncludedHandler}
+                        textSecondIncludedHandler={textSecondIncludedHandler}
+                        dropdownValueQuery={dropdownValueQuery}
+                        handleCheckBox={handleCheckBox}
+                        isChecked={isChecked}
+                        counterIsChecked={counterIsChecked}
+                        functionCounterIsChecked={functionCounterIsChecked}
+                        checkedToQuery={checkedToQuery}
+                        getQueryAttribute={getQueryAttribute}
+                        whereClausesSet={whereClausesSet}
+                        tablesSetId={tablesSetId}
+                        dropDownToggler={dropDownToggler}
+                        univocoSelectHandler={univocoSelectHandler}
+                        dropDown={dropDown}
+                        isOpenDropD={isOpenDropD}
+                        onChangeCheckBox={onChangeCheckBox}
+                        openDrop={openDrop}
+                        closeDrop={closeDrop}
+                        opened={opened}
+                        autOpen={autOpen}
+                        mouseleave={mouseleave}
+                        onmouseLeave={onmouseLeave}
+                        dropdownsSet={dropdownsSet}
+                        blockId={blockId}
+                        width={width}
+
+                      />
+                    </div>
+
+                    {showDelete && (
+                        <div className="">
+                          <Button className="" onClick={deleteTable} icon>
+                            <CloseOutlined />
+                          </Button>
+                        </div>
+                      )}
+                  </div>
+                )}
+                {width > 547 && (
+                  <div className="" style={{
+                    display: "flex",
+                    flexDirection: "row",
+                    background:''
+                  }}>
+                    <div className="row m-0">
+                      <Select
+                        className="col-md-4 mb-2"
+                        onChange={getQueryAttribute}
+                        placeholder="Seleziona campo"
+                      >
+                        {/* eslint-disable-next-line array-callback-return */}
+                        {list.fields.map((el, i) => {
+                          if (
+                            el.type === "oid" ||
+                            el.type === "small-integer" ||
+                            el.type === "integer" ||
+                            el.type === "string" ||
+                            el.type === "double"
+                          ) {
+                            return (
+                              <Option
+                                data-table-id={tablesSetId}
+                                value={i}
+                                name={el.name}
+                                dataType={el.type}
+                              >
+                                {el.alias} ({el.type})
+                              </Option>
+                            );
+                          }
+                        })}
+                      </Select>
+                      <div className="col-md-4 mb-2">
+                        <Select
+                          onChange={(e) => getQuery(e, "set")}
+                          placeholder="Seleziona campo"
+                        >
+                          {currentwhereClausesSet &&
+                          currentwhereClausesSet.attributeQueryType === "string"
+                            ? queryConstructorString.map((o, i) => {
+                                return (
+                                  <Option
+                                    data-table-id={tablesSetId}
+                                    value={i}
+                                    name={o.value}
+                                  >
+                                    {o.name}
+                                  </Option>
+                                );
+                              })
+                            : queryConstructorNumber.map((o, i) => {
+                                return (
+                                  <Option
+                                    data-table-id={tablesSetId}
+                                    value={i}
+                                    name={o.value}
+                                  >
+                                    {o.name}
+                                  </Option>
+                                );
+                              })}
+                        </Select>
+                      </div>
+                      <SecondConstructor
+                        className="col-md-4"
+                        handleThirdQuery={handleThirdQuery}
+                        textInputHandler={textInputHandler}
+                        multiSelectHandler={multiSelectHandler}
+                        dropdownItemHandler={dropdownItemHandler}
+                        textFirstIncludedHandler={textFirstIncludedHandler}
+                        textSecondIncludedHandler={textSecondIncludedHandler}
+                        dropdownValueQuery={dropdownValueQuery}
+                        handleCheckBox={handleCheckBox}
+                        isChecked={isChecked}
+                        counterIsChecked={counterIsChecked}
+                        functionCounterIsChecked={functionCounterIsChecked}
+                        checkedToQuery={checkedToQuery}
+                        getQueryAttribute={getQueryAttribute}
+                        whereClausesSet={whereClausesSet}
+                        tablesSetId={tablesSetId}
+                        dropDownToggler={dropDownToggler}
+                        univocoSelectHandler={univocoSelectHandler}
+                        dropDown={dropDown}
+                        isOpenDropD={isOpenDropD}
+                        onChangeCheckBox={onChangeCheckBox}
+                        openDrop={openDrop}
+                        closeDrop={closeDrop}
+                        opened={opened}
+                        autOpen={autOpen}
+                        mouseleave={mouseleave}
+                        onmouseLeave={onmouseLeave}
+                        dropdownsSet={dropdownsSet}
+                        blockId={blockId}
+                        width={width}
+                      />
+                    </div>
+                    {showDelete && (
+                        <div className="">
+                          <Button
+                            className=""
+                            onClick={deleteTable}
+                            icon
                           >
-                            {o.name}
-                          </Option>
-                        );
-                      })
-                    : queryConstructorNumber.map((o, i) => {
-                        return (
-                          <Option
-                            data-table-id={tablesSetId}
-                            value={i}
-                            name={o.value}
-                          >
-                            {o.name}
-                          </Option>
-                        );
-                      })}
-                </Select>
-              </div>
-              <SecondConstructor
-                className="col-md-4"
-                handleThirdQuery={handleThirdQuery}
-                textInputHandler={textInputHandler}
-                multiSelectHandler={multiSelectHandler}
-                dropdownItemHandler={dropdownItemHandler}
-                textFirstIncludedHandler={textFirstIncludedHandler}
-                textSecondIncludedHandler={textSecondIncludedHandler}
-                dropdownValueQuery={dropdownValueQuery}
-                handleCheckBox={handleCheckBox}
-                isChecked={isChecked}
-                counterIsChecked={counterIsChecked}
-                functionCounterIsChecked={functionCounterIsChecked}
-                checkedToQuery={checkedToQuery}
-                getQueryAttribute={getQueryAttribute}
-                whereClausesSet={whereClausesSet}
-                tablesSetId={tablesSetId}
-                dropDownToggler={dropDownToggler}
-                univocoSelectHandler={univocoSelectHandler}
-                dropDown={dropDown}
-                isOpenDropD={isOpenDropD}
-                onChangeCheckBox={onChangeCheckBox}
-                openDrop={openDrop}
-                closeDrop={closeDrop}
-                opened={opened}
-                autOpen={autOpen}
-                mouseleave={mouseleave}
-                onmouseLeave={onmouseLeave}
-                dropdownsSet={dropdownsSet}
-                blockId = {blockId}
-              />
-            </div>
+                            <CloseOutlined />
+                          </Button>
+                        </div>
+                      )}
+                  </div>
+                )}
+              </>
+            ) : (
+              ""
+            )}
           </div>
-        ) : (
-          ""
         )}
-      </div>
+      </ReactResizeDetector>
     );
   }
   return null;
@@ -204,7 +348,7 @@ const SecondConstructor = (props) => {
     autOpen,
     onmouseLeave,
     dropdownsSet,
-    blockId
+    blockId,width
   } = props;
   const normalizedThirdQuery = [];
   let defaultValue = "=";
@@ -213,34 +357,35 @@ const SecondConstructor = (props) => {
   let checked = 0;
   let au = true;
   // valueThirdQuery.map((el, i) => { normalizedThirdQuery.push({ label: el.label[0].toString(), value: el.value[0].toString() }) })
-  if (whereClausesSet.length){
-    const currentItem = whereClausesSet.find((item)=>item.id === tablesSetId);
-    if (currentItem?.ifInOrNotInQueryValue){
-      currentItem.ifInOrNotInQueryValue.map((el,i)=>{
+  if (whereClausesSet.length) {
+    const currentItem = whereClausesSet.find((item) => item.id === tablesSetId);
+    if (currentItem?.ifInOrNotInQueryValue) {
+      currentItem.ifInOrNotInQueryValue.map((el, i) => {
         normalizedThirdQuery.push({
           id: tablesSetId.toString(),
           label: el.label.toString(),
           value: el.value.toString(),
           listel: currentItem.checkedListSet,
         });
-      })
+      });
     }
 
-    if (currentItem?.queryValue)defaultValue = currentItem.queryValue;
-    if (currentItem?.dropdownValueQuery) dropdownValueQuery = currentItem.dropdownValueQuery;
+    if (currentItem?.queryValue) defaultValue = currentItem.queryValue;
+    if (currentItem?.dropdownValueQuery)
+      dropdownValueQuery = currentItem.dropdownValueQuery;
     if (currentItem?.isOpen) {
       // opened = whereClausesSet[tablesSetId].isOpen;
     }
-    if (currentItem?.checkedListSet)checked = currentItem.checkedListSet.length;
-    
+    if (currentItem?.checkedListSet)
+      checked = currentItem.checkedListSet.length;
   }
 
-  return (
+  return (<>{width > 547  && 
     <Switch queryValues={defaultValue}>
       <div value={"="} className="d-flex col-md-4">
         {dropdownValueQuery === "univoco" ? (
           <Select
-            onChange={(e)=>univocoSelectHandler(e,"set")}
+            onChange={(e) => univocoSelectHandler(e, "set")}
             placeholder="Seleziona il Layer"
           >
             {normalizedThirdQuery.map((el, i) => {
@@ -253,7 +398,7 @@ const SecondConstructor = (props) => {
           </Select>
         ) : (
           <TextInput
-            onChange={(e)=>textInputHandler(e,"set")}
+            onChange={(e) => textInputHandler(e, "set")}
             onAcceptValue={function noRefCheck() {}}
             type="text"
             className=" w-100"
@@ -271,14 +416,14 @@ const SecondConstructor = (props) => {
               <DropdownItem divider />
               <DropdownItem
                 value="valore"
-                onClick={(e)=>dropdownItemHandler(e,"set")}
+                onClick={(e) => dropdownItemHandler(e, "set")}
                 data-table-id={tablesSetId}
               >
                 Valore
               </DropdownItem>
               <DropdownItem
                 value="campo"
-                onClick={(e)=>dropdownItemHandler(e,"set")}
+                onClick={(e) => dropdownItemHandler(e, "set")}
                 disabled
                 data-table-id={tablesSetId}
               >
@@ -286,7 +431,7 @@ const SecondConstructor = (props) => {
               </DropdownItem>
               <DropdownItem
                 value="univoco"
-                onClick={(e)=>dropdownItemHandler(e,"set")}
+                onClick={(e) => dropdownItemHandler(e, "set")}
                 data-table-id={tablesSetId}
               >
                 Univoci
@@ -298,7 +443,7 @@ const SecondConstructor = (props) => {
       <div value={"<>"} className="d-flex col-md-4">
         {dropdownValueQuery === "univoco" ? (
           <Select
-            onChange={(e)=>univocoSelectHandler(e,"set")}
+            onChange={(e) => univocoSelectHandler(e, "set")}
             placeholder="Seleziona il Layer"
           >
             {normalizedThirdQuery.map((el, i) => {
@@ -311,7 +456,7 @@ const SecondConstructor = (props) => {
           </Select>
         ) : (
           <TextInput
-            onChange={(e)=>textInputHandler(e,"set")}
+            onChange={(e) => textInputHandler(e, "set")}
             onAcceptValue={function noRefCheck() {}}
             type="text"
             className=" w-100"
@@ -328,14 +473,14 @@ const SecondConstructor = (props) => {
               <DropdownItem divider />
               <DropdownItem
                 value="valore"
-                onClick={(e)=>dropdownItemHandler(e,"set")}
+                onClick={(e) => dropdownItemHandler(e, "set")}
                 data-table-id={tablesSetId}
               >
                 Valore
               </DropdownItem>
               <DropdownItem
                 value="campo"
-                onClick={(e)=>dropdownItemHandler(e,"set")}
+                onClick={(e) => dropdownItemHandler(e, "set")}
                 disabled
                 data-table-id={tablesSetId}
               >
@@ -343,7 +488,7 @@ const SecondConstructor = (props) => {
               </DropdownItem>
               <DropdownItem
                 value="univoco"
-                onClick={(e)=>dropdownItemHandler(e,"set")}
+                onClick={(e) => dropdownItemHandler(e, "set")}
                 data-table-id={tablesSetId}
               >
                 Univoci
@@ -357,7 +502,7 @@ const SecondConstructor = (props) => {
           {
             <Dropdown
               activeIcon
-              isOpen={dropdownsSet[tablesSetId]??false}
+              isOpen={dropdownsSet[tablesSetId] ?? false}
               toggle={() => dropDown}
             >
               <DropdownButton onClick={() => openDrop(tablesSetId)}>
@@ -408,11 +553,11 @@ const SecondConstructor = (props) => {
         </div>
       </div>
       <div value={"NOT_IN"} className="d-flex justify-content-between">
-      <div className="w-100">
+        <div className="w-100">
           {
             <Dropdown
               activeIcon
-              isOpen={dropdownsSet[tablesSetId]??false}
+              isOpen={dropdownsSet[tablesSetId] ?? false}
               toggle={() => dropDown}
             >
               <DropdownButton onClick={() => openDrop(tablesSetId)}>
@@ -464,7 +609,10 @@ const SecondConstructor = (props) => {
       </div>
       <div value={"<="} className="d-flex  col-md-4">
         {dropdownValueQuery === "univoco" ? (
-          <Select placeholder="Seleziona il Layer" onChange={(e)=>univocoSelectHandler(e,"set")}>
+          <Select
+            placeholder="Seleziona il Layer"
+            onChange={(e) => univocoSelectHandler(e, "set")}
+          >
             {normalizedThirdQuery.map((el, i) => {
               return (
                 <Option value={i} data-table-id={tablesSetId}>
@@ -475,7 +623,7 @@ const SecondConstructor = (props) => {
           </Select>
         ) : (
           <TextInput
-            onChange={(e)=>textInputHandler(e,"set")}
+            onChange={(e) => textInputHandler(e, "set")}
             onAcceptValue={function noRefCheck() {}}
             type="text"
             className=" w-100"
@@ -492,14 +640,14 @@ const SecondConstructor = (props) => {
               <DropdownItem divider />
               <DropdownItem
                 value="valore"
-                onClick={(e)=>dropdownItemHandler(e,"set")}
+                onClick={(e) => dropdownItemHandler(e, "set")}
                 data-table-id={tablesSetId}
               >
                 Valore
               </DropdownItem>
               <DropdownItem
                 value="campo"
-                onClick={(e)=>dropdownItemHandler(e,"set")}
+                onClick={(e) => dropdownItemHandler(e, "set")}
                 disabled
                 data-table-id={tablesSetId}
               >
@@ -507,7 +655,7 @@ const SecondConstructor = (props) => {
               </DropdownItem>
               <DropdownItem
                 value="univoco"
-                onClick={(e)=>dropdownItemHandler(e,"set")}
+                onClick={(e) => dropdownItemHandler(e, "set")}
                 data-table-id={tablesSetId}
               >
                 Univoci
@@ -518,7 +666,10 @@ const SecondConstructor = (props) => {
       </div>
       <div value={">="} className="d-flex col-md-4">
         {dropdownValueQuery === "univoco" ? (
-          <Select placeholder="Seleziona il Layer" onChange={(e)=>univocoSelectHandler(e,"set")}>
+          <Select
+            placeholder="Seleziona il Layer"
+            onChange={(e) => univocoSelectHandler(e, "set")}
+          >
             {normalizedThirdQuery.map((el, i) => {
               return (
                 <Option value={i} data-table-id={tablesSetId}>
@@ -529,7 +680,7 @@ const SecondConstructor = (props) => {
           </Select>
         ) : (
           <TextInput
-            onChange={(e)=>textInputHandler(e,"set")}
+            onChange={(e) => textInputHandler(e, "set")}
             onAcceptValue={function noRefCheck() {}}
             type="text"
             className=" w-100"
@@ -546,14 +697,14 @@ const SecondConstructor = (props) => {
               <DropdownItem divider />
               <DropdownItem
                 value="valore"
-                onClick={(e)=>dropdownItemHandler(e,"set")}
+                onClick={(e) => dropdownItemHandler(e, "set")}
                 data-table-id={tablesSetId}
               >
                 Valore
               </DropdownItem>
               <DropdownItem
                 value="campo"
-                onClick={(e)=>dropdownItemHandler(e,"set")}
+                onClick={(e) => dropdownItemHandler(e, "set")}
                 disabled
                 data-table-id={tablesSetId}
               >
@@ -561,7 +712,7 @@ const SecondConstructor = (props) => {
               </DropdownItem>
               <DropdownItem
                 value="univoco"
-                onClick={(e)=>dropdownItemHandler(e,"set")}
+                onClick={(e) => dropdownItemHandler(e, "set")}
                 data-table-id={tablesSetId}
               >
                 Univoci
@@ -572,7 +723,10 @@ const SecondConstructor = (props) => {
       </div>
       <div value={"<"} className="d-flex col-md-4">
         {dropdownValueQuery === "univoco" ? (
-          <Select placeholder="Seleziona il Layer" onChange={(e)=>univocoSelectHandler(e,"set")}>
+          <Select
+            placeholder="Seleziona il Layer"
+            onChange={(e) => univocoSelectHandler(e, "set")}
+          >
             {normalizedThirdQuery.map((el, i) => {
               return (
                 <Option value={i} data-table-id={tablesSetId}>
@@ -583,7 +737,7 @@ const SecondConstructor = (props) => {
           </Select>
         ) : (
           <TextInput
-            onChange={(e)=>textInputHandler(e,"set")}
+            onChange={(e) => textInputHandler(e, "set")}
             onAcceptValue={function noRefCheck() {}}
             type="text"
             className=" w-100"
@@ -600,14 +754,14 @@ const SecondConstructor = (props) => {
               <DropdownItem divider />
               <DropdownItem
                 value="valore"
-                onClick={(e)=>dropdownItemHandler(e,"set")}
+                onClick={(e) => dropdownItemHandler(e, "set")}
                 data-table-id={tablesSetId}
               >
                 Valore
               </DropdownItem>
               <DropdownItem
                 value="campo"
-                onClick={(e)=>dropdownItemHandler(e,"set")}
+                onClick={(e) => dropdownItemHandler(e, "set")}
                 disabled
                 data-table-id={tablesSetId}
               >
@@ -615,7 +769,7 @@ const SecondConstructor = (props) => {
               </DropdownItem>
               <DropdownItem
                 value="univoco"
-                onClick={(e)=>dropdownItemHandler(e,"set")}
+                onClick={(e) => dropdownItemHandler(e, "set")}
                 data-table-id={tablesSetId}
               >
                 Univoci
@@ -626,7 +780,10 @@ const SecondConstructor = (props) => {
       </div>
       <div value={">"} className="d-flex col-md-4">
         {dropdownValueQuery === "univoco" ? (
-          <Select placeholder="Seleziona il Layer" onChange={(e)=>univocoSelectHandler(e,"set")}>
+          <Select
+            placeholder="Seleziona il Layer"
+            onChange={(e) => univocoSelectHandler(e, "set")}
+          >
             {normalizedThirdQuery.map((el, i) => {
               return (
                 <Option value={i} data-table-id={tablesSetId}>
@@ -637,7 +794,7 @@ const SecondConstructor = (props) => {
           </Select>
         ) : (
           <TextInput
-            onChange={(e)=>textInputHandler(e,"set")}
+            onChange={(e) => textInputHandler(e, "set")}
             onAcceptValue={function noRefCheck() {}}
             type="text"
             className=" w-100"
@@ -654,14 +811,14 @@ const SecondConstructor = (props) => {
               <DropdownItem divider />
               <DropdownItem
                 value="valore"
-                onClick={(e)=>dropdownItemHandler(e,"set")}
+                onClick={(e) => dropdownItemHandler(e, "set")}
                 data-table-id={tablesSetId}
               >
                 Valore
               </DropdownItem>
               <DropdownItem
                 value="campo"
-                onClick={(e)=>dropdownItemHandler(e,"set")}
+                onClick={(e) => dropdownItemHandler(e, "set")}
                 disabled
                 data-table-id={tablesSetId}
               >
@@ -669,7 +826,7 @@ const SecondConstructor = (props) => {
               </DropdownItem>
               <DropdownItem
                 value="univoco"
-                onClick={(e)=>dropdownItemHandler(e,"set")}
+                onClick={(e) => dropdownItemHandler(e, "set")}
                 data-table-id={tablesSetId}
               >
                 Univoci
@@ -683,7 +840,7 @@ const SecondConstructor = (props) => {
       <div value={"included"} className="d-flex col-md-4">
         <div className="include">
           <TextInput
-            onChange={(e)=>textFirstIncludedHandler(e,"set")}
+            onChange={(e) => textFirstIncludedHandler(e, "set")}
             onAcceptValue={function noRefCheck() {}}
             type="text"
             data-table-id={tablesSetId}
@@ -693,7 +850,7 @@ const SecondConstructor = (props) => {
             e
           </p>
           <TextInput
-            onChange={(e)=>textSecondIncludedHandler(e,"set")}
+            onChange={(e) => textSecondIncludedHandler(e, "set")}
             onAcceptValue={function noRefCheck() {}}
             type="text"
             data-table-id={tablesSetId}
@@ -704,7 +861,7 @@ const SecondConstructor = (props) => {
       <div value={"is_not_included"} className="d-flex col-md-4">
         <div className="include">
           <TextInput
-            onChange={(e)=>textFirstIncludedHandler(e,"set")}
+            onChange={(e) => textFirstIncludedHandler(e, "set")}
             onAcceptValue={function noRefCheck() {}}
             type="text"
             id="inputs"
@@ -712,7 +869,7 @@ const SecondConstructor = (props) => {
           />
           <p className="col-sm-2 text-center">e</p>
           <TextInput
-            onChange={(e)=>textSecondIncludedHandler(e,"set")}
+            onChange={(e) => textSecondIncludedHandler(e, "set")}
             onAcceptValue={function noRefCheck() {}}
             type="text"
             id="inputs"
@@ -722,7 +879,7 @@ const SecondConstructor = (props) => {
       </div>
       <div value={"LIKE%"} className="d-flex col-md-4">
         <TextInput
-          onChange={(e)=>textInputHandler(e,"set")}
+          onChange={(e) => textInputHandler(e, "set")}
           onAcceptValue={function noRefCheck() {}}
           type="text"
           className=" w-100"
@@ -731,7 +888,7 @@ const SecondConstructor = (props) => {
       </div>
       <div value={"%LIKE"} className="d-flex col-md-4">
         <TextInput
-          onChange={(e)=>textInputHandler(e,"set")}
+          onChange={(e) => textInputHandler(e, "set")}
           onAcceptValue={function noRefCheck() {}}
           type="text"
           className=" w-100"
@@ -740,7 +897,7 @@ const SecondConstructor = (props) => {
       </div>
       <div value={"LIKE%"} className="d-flex col-md-4">
         <TextInput
-          onChange={(e)=>textInputHandler(e,"set")}
+          onChange={(e) => textInputHandler(e, "set")}
           onAcceptValue={function noRefCheck() {}}
           type="text"
           className=" w-100"
@@ -749,7 +906,7 @@ const SecondConstructor = (props) => {
       </div>
       <div value={"%LIKE%"} className="d-flex col-md-4">
         <TextInput
-          onChange={(e)=>textInputHandler(e,"set")}
+          onChange={(e) => textInputHandler(e, "set")}
           onAcceptValue={function noRefCheck() {}}
           type="text"
           className=" w-100"
@@ -758,15 +915,558 @@ const SecondConstructor = (props) => {
       </div>
       <div value={"NOT LIKE"} className="d-flex col-md-4">
         <TextInput
-          onChange={(e)=>textInputHandler(e,"set")}
+          onChange={(e) => textInputHandler(e, "set")}
           onAcceptValue={function noRefCheck() {}}
           type="text"
           className=" w-100"
           data-table-id={tablesSetId}
         />
       </div>
-    </Switch>
-  );
+    </Switch>}
+    {547 > width &&
+    <Switch queryValues={defaultValue}>
+      <div value={"="} className="" style={{display:'flex'}}>
+        {dropdownValueQuery === "univoco" ? (
+          <Select
+            onChange={(e) => univocoSelectHandler(e, "set")}
+            placeholder="Seleziona il Layer"
+          >
+            {normalizedThirdQuery.map((el, i) => {
+              return (
+                <Option value={i} data-table-id={tablesSetId}>
+                  {el.label}
+                </Option>
+              );
+            })}
+          </Select>
+        ) : (
+          <TextInput
+            onChange={(e) => textInputHandler(e, "set")}
+            onAcceptValue={function noRefCheck() {}}
+            type="text"
+            className=" w-100"
+            data-table-id={tablesSetId}
+          />
+        )}
+        <div className="">
+          {}
+          <Dropdown activeIcon>
+            <DropdownButton>
+              <SettingOutlined className="setting-svg" />
+            </DropdownButton>
+            <DropdownMenu>
+              <DropdownItem header>Importa il tipo di input</DropdownItem>
+              <DropdownItem divider />
+              <DropdownItem
+                value="valore"
+                onClick={(e) => dropdownItemHandler(e, "set")}
+                data-table-id={tablesSetId}
+              >
+                Valore
+              </DropdownItem>
+              <DropdownItem
+                value="campo"
+                onClick={(e) => dropdownItemHandler(e, "set")}
+                disabled
+                data-table-id={tablesSetId}
+              >
+                Campo
+              </DropdownItem>
+              <DropdownItem
+                value="univoco"
+                onClick={(e) => dropdownItemHandler(e, "set")}
+                data-table-id={tablesSetId}
+              >
+                Univoci
+              </DropdownItem>
+            </DropdownMenu>
+          </Dropdown>
+        </div>
+      </div>
+      <div value={"<>"} className="">
+        {dropdownValueQuery === "univoco" ? (
+          <Select
+            onChange={(e) => univocoSelectHandler(e, "set")}
+            placeholder="Seleziona il Layer"
+          >
+            {normalizedThirdQuery.map((el, i) => {
+              return (
+                <Option value={i} data-table-id={tablesSetId}>
+                  {el.label}
+                </Option>
+              );
+            })}
+          </Select>
+        ) : (
+          <TextInput
+            onChange={(e) => textInputHandler(e, "set")}
+            onAcceptValue={function noRefCheck() {}}
+            type="text"
+            className=" w-100"
+            data-table-id={tablesSetId}
+          />
+        )}
+        <div className="flex-shrink-1">
+          <Dropdown activeIcon>
+            <DropdownButton>
+              <SettingOutlined className="setting-svg" />
+            </DropdownButton>
+            <DropdownMenu>
+              <DropdownItem header>Importa il tipo di input</DropdownItem>
+              <DropdownItem divider />
+              <DropdownItem
+                value="valore"
+                onClick={(e) => dropdownItemHandler(e, "set")}
+                data-table-id={tablesSetId}
+              >
+                Valore
+              </DropdownItem>
+              <DropdownItem
+                value="campo"
+                onClick={(e) => dropdownItemHandler(e, "set")}
+                disabled
+                data-table-id={tablesSetId}
+              >
+                Campo
+              </DropdownItem>
+              <DropdownItem
+                value="univoco"
+                onClick={(e) => dropdownItemHandler(e, "set")}
+                data-table-id={tablesSetId}
+              >
+                Univoci
+              </DropdownItem>
+            </DropdownMenu>
+          </Dropdown>
+        </div>
+      </div>
+      <div value={"IN"} onMouseLeave={() => onmouseLeave()}>
+        <div className="w-100">
+          {
+            <Dropdown
+              activeIcon
+              isOpen={dropdownsSet[tablesSetId] ?? false}
+              toggle={() => dropDown}
+            >
+              <DropdownButton onClick={() => openDrop(tablesSetId)}>
+                {checked} elementi selezionati
+              </DropdownButton>
+              <DropdownMenu>
+                <DropdownItem header>Multi selezione attiva</DropdownItem>
+                <DropdownItem divider />
+                {normalizedThirdQuery.map((el, i) => {
+                  return (
+                    <div>
+                      <DropdownItem
+                        value={i}
+                        data-table-id={tablesSetId}
+                        className="d-flex justify-content-start"
+                        strategy={"fixed"}
+                      >
+                        {
+                          <Input
+                            onChange={onChangeCheckBox}
+                            type="checkbox"
+                            id={tablesSetId}
+                            name={el.label}
+                            value={el.value}
+                            defaultChecked={
+                              el.listel &&
+                              el.listel.filter(function (e) {
+                                return e.checkValue === el.label;
+                              }).length > 0
+                            }
+                          />
+                        }
+                        <label
+                          htmlFor={tablesSetId}
+                          className="ml-3 mb-0"
+                          id={tablesSetId}
+                        >
+                          {" "}
+                          {el.label}
+                        </label>
+                      </DropdownItem>
+                    </div>
+                  );
+                })}
+              </DropdownMenu>
+            </Dropdown>
+          }
+        </div>
+      </div>
+      <div value={"NOT_IN"} className="d-flex justify-content-between">
+        <div className="w-100">
+          {
+            <Dropdown
+              activeIcon
+              isOpen={dropdownsSet[tablesSetId] ?? false}
+              toggle={() => dropDown}
+            >
+              <DropdownButton onClick={() => openDrop(tablesSetId)}>
+                {checked} elementi selezionati
+              </DropdownButton>
+              <DropdownMenu>
+                <DropdownItem header>Multi selezione attiva</DropdownItem>
+                <DropdownItem divider />
+                {normalizedThirdQuery.map((el, i) => {
+                  return (
+                    <div>
+                      <DropdownItem
+                        value={i}
+                        data-table-id={tablesSetId}
+                        className="d-flex justify-content-start"
+                        strategy={"fixed"}
+                      >
+                        {
+                          <Input
+                            onChange={onChangeCheckBox}
+                            type="checkbox"
+                            id={tablesSetId}
+                            name={el.label}
+                            value={el.value}
+                            defaultChecked={
+                              el.listel &&
+                              el.listel.filter(function (e) {
+                                return e.checkValue === el.label;
+                              }).length > 0
+                            }
+                          />
+                        }
+                        <label
+                          htmlFor={tablesSetId}
+                          className="ml-3 mb-0"
+                          id={tablesSetId}
+                        >
+                          {" "}
+                          {el.label}
+                        </label>
+                      </DropdownItem>
+                    </div>
+                  );
+                })}
+              </DropdownMenu>
+            </Dropdown>
+          }
+        </div>
+      </div>
+      <div value={"<="} className="">
+        {dropdownValueQuery === "univoco" ? (
+          <Select
+            placeholder="Seleziona il Layer"
+            onChange={(e) => univocoSelectHandler(e, "set")}
+          >
+            {normalizedThirdQuery.map((el, i) => {
+              return (
+                <Option value={i} data-table-id={tablesSetId}>
+                  {el.label}
+                </Option>
+              );
+            })}
+          </Select>
+        ) : (
+          <TextInput
+            onChange={(e) => textInputHandler(e, "set")}
+            onAcceptValue={function noRefCheck() {}}
+            type="text"
+            className=" w-100"
+            data-table-id={tablesSetId}
+          />
+        )}
+        <div className="flex-shrink-1">
+          <Dropdown activeIcon>
+            <DropdownButton>
+              <SettingOutlined className="setting-svg" />
+            </DropdownButton>
+            <DropdownMenu>
+              <DropdownItem header>Importa il tipo di input</DropdownItem>
+              <DropdownItem divider />
+              <DropdownItem
+                value="valore"
+                onClick={(e) => dropdownItemHandler(e, "set")}
+                data-table-id={tablesSetId}
+              >
+                Valore
+              </DropdownItem>
+              <DropdownItem
+                value="campo"
+                onClick={(e) => dropdownItemHandler(e, "set")}
+                disabled
+                data-table-id={tablesSetId}
+              >
+                Campo
+              </DropdownItem>
+              <DropdownItem
+                value="univoco"
+                onClick={(e) => dropdownItemHandler(e, "set")}
+                data-table-id={tablesSetId}
+              >
+                Univoci
+              </DropdownItem>
+            </DropdownMenu>
+          </Dropdown>
+        </div>
+      </div>
+      <div value={">="} className="">
+        {dropdownValueQuery === "univoco" ? (
+          <Select
+            placeholder="Seleziona il Layer"
+            onChange={(e) => univocoSelectHandler(e, "set")}
+          >
+            {normalizedThirdQuery.map((el, i) => {
+              return (
+                <Option value={i} data-table-id={tablesSetId}>
+                  {el.label}
+                </Option>
+              );
+            })}
+          </Select>
+        ) : (
+          <TextInput
+            onChange={(e) => textInputHandler(e, "set")}
+            onAcceptValue={function noRefCheck() {}}
+            type="text"
+            className=" w-100"
+            data-table-id={tablesSetId}
+          />
+        )}
+        <div className="flex-shrink-1">
+          <Dropdown activeIcon>
+            <DropdownButton>
+              <SettingOutlined className="setting-svg" />
+            </DropdownButton>
+            <DropdownMenu>
+              <DropdownItem header>Importa il tipo di input</DropdownItem>
+              <DropdownItem divider />
+              <DropdownItem
+                value="valore"
+                onClick={(e) => dropdownItemHandler(e, "set")}
+                data-table-id={tablesSetId}
+              >
+                Valore
+              </DropdownItem>
+              <DropdownItem
+                value="campo"
+                onClick={(e) => dropdownItemHandler(e, "set")}
+                disabled
+                data-table-id={tablesSetId}
+              >
+                Campo
+              </DropdownItem>
+              <DropdownItem
+                value="univoco"
+                onClick={(e) => dropdownItemHandler(e, "set")}
+                data-table-id={tablesSetId}
+              >
+                Univoci
+              </DropdownItem>
+            </DropdownMenu>
+          </Dropdown>
+        </div>
+      </div>
+      <div value={"<"} className="">
+        {dropdownValueQuery === "univoco" ? (
+          <Select
+            placeholder="Seleziona il Layer"
+            onChange={(e) => univocoSelectHandler(e, "set")}
+          >
+            {normalizedThirdQuery.map((el, i) => {
+              return (
+                <Option value={i} data-table-id={tablesSetId}>
+                  {el.label}
+                </Option>
+              );
+            })}
+          </Select>
+        ) : (
+          <TextInput
+            onChange={(e) => textInputHandler(e, "set")}
+            onAcceptValue={function noRefCheck() {}}
+            type="text"
+            className=" w-100"
+            data-table-id={tablesSetId}
+          />
+        )}
+        <div className="flex-shrink-1">
+          <Dropdown activeIcon>
+            <DropdownButton>
+              <SettingOutlined className="setting-svg" />
+            </DropdownButton>
+            <DropdownMenu>
+              <DropdownItem header>Importa il tipo di input</DropdownItem>
+              <DropdownItem divider />
+              <DropdownItem
+                value="valore"
+                onClick={(e) => dropdownItemHandler(e, "set")}
+                data-table-id={tablesSetId}
+              >
+                Valore
+              </DropdownItem>
+              <DropdownItem
+                value="campo"
+                onClick={(e) => dropdownItemHandler(e, "set")}
+                disabled
+                data-table-id={tablesSetId}
+              >
+                Campo
+              </DropdownItem>
+              <DropdownItem
+                value="univoco"
+                onClick={(e) => dropdownItemHandler(e, "set")}
+                data-table-id={tablesSetId}
+              >
+                Univoci
+              </DropdownItem>
+            </DropdownMenu>
+          </Dropdown>
+        </div>
+      </div>
+      <div value={">"} className="">
+        {dropdownValueQuery === "univoco" ? (
+          <Select
+            placeholder="Seleziona il Layer"
+            onChange={(e) => univocoSelectHandler(e, "set")}
+          >
+            {normalizedThirdQuery.map((el, i) => {
+              return (
+                <Option value={i} data-table-id={tablesSetId}>
+                  {el.label}
+                </Option>
+              );
+            })}
+          </Select>
+        ) : (
+          <TextInput
+            onChange={(e) => textInputHandler(e, "set")}
+            onAcceptValue={function noRefCheck() {}}
+            type="text"
+            className=" w-100"
+            data-table-id={tablesSetId}
+          />
+        )}
+        <div className="flex-shrink-1">
+          <Dropdown activeIcon>
+            <DropdownButton>
+              <SettingOutlined className="setting-svg" />
+            </DropdownButton>
+            <DropdownMenu>
+              <DropdownItem header>Importa il tipo di input</DropdownItem>
+              <DropdownItem divider />
+              <DropdownItem
+                value="valore"
+                onClick={(e) => dropdownItemHandler(e, "set")}
+                data-table-id={tablesSetId}
+              >
+                Valore
+              </DropdownItem>
+              <DropdownItem
+                value="campo"
+                onClick={(e) => dropdownItemHandler(e, "set")}
+                disabled
+                data-table-id={tablesSetId}
+              >
+                Campo
+              </DropdownItem>
+              <DropdownItem
+                value="univoco"
+                onClick={(e) => dropdownItemHandler(e, "set")}
+                data-table-id={tablesSetId}
+              >
+                Univoci
+              </DropdownItem>
+            </DropdownMenu>
+          </Dropdown>
+        </div>
+      </div>
+      <div value={"is null"}></div>
+      <div value={"is not null"}></div>
+      <div value={"included"} className="">
+        <div className="include">
+          <TextInput
+            onChange={(e) => textFirstIncludedHandler(e, "set")}
+            onAcceptValue={function noRefCheck() {}}
+            type="text"
+            data-table-id={tablesSetId}
+            id="inputs"
+          />
+          <p className="col-md-2 text-center" style={{ width: "10%" }}>
+            e
+          </p>
+          <TextInput
+            onChange={(e) => textSecondIncludedHandler(e, "set")}
+            onAcceptValue={function noRefCheck() {}}
+            type="text"
+            data-table-id={tablesSetId}
+            id="inputs"
+          />
+        </div>
+      </div>
+      <div value={"is_not_included"} className="">
+        <div className="include">
+          <TextInput
+            onChange={(e) => textFirstIncludedHandler(e, "set")}
+            onAcceptValue={function noRefCheck() {}}
+            type="text"
+            id="inputs"
+            data-table-id={tablesSetId}
+          />
+          <p className="col-sm-2 text-center">e</p>
+          <TextInput
+            onChange={(e) => textSecondIncludedHandler(e, "set")}
+            onAcceptValue={function noRefCheck() {}}
+            type="text"
+            id="inputs"
+            data-table-id={tablesSetId}
+          />
+        </div>
+      </div>
+      <div value={"LIKE%"} className="">
+        <TextInput
+          onChange={(e) => textInputHandler(e, "set")}
+          onAcceptValue={function noRefCheck() {}}
+          type="text"
+          className=" w-100"
+          data-table-id={tablesSetId}
+        />
+      </div>
+      <div value={"%LIKE"} className="">
+        <TextInput
+          onChange={(e) => textInputHandler(e, "set")}
+          onAcceptValue={function noRefCheck() {}}
+          type="text"
+          className=" w-100"
+          data-table-id={tablesSetId}
+        />
+      </div>
+      <div value={"LIKE%"} className="">
+        <TextInput
+          onChange={(e) => textInputHandler(e, "set")}
+          onAcceptValue={function noRefCheck() {}}
+          type="text"
+          className=" w-100"
+          data-table-id={tablesSetId}
+        />
+      </div>
+      <div value={"%LIKE%"} className="">
+        <TextInput
+          onChange={(e) => textInputHandler(e, "set")}
+          onAcceptValue={function noRefCheck() {}}
+          type="text"
+          className=" w-100"
+          data-table-id={tablesSetId}
+        />
+      </div>
+      <div value={"NOT LIKE"} className="">
+        <TextInput
+          onChange={(e) => textInputHandler(e, "set")}
+          onAcceptValue={function noRefCheck() {}}
+          type="text"
+          className=" w-100"
+          data-table-id={tablesSetId}
+        />
+      </div>
+    </Switch>}
+  </>);
 };
 
 export default AddSetTable;

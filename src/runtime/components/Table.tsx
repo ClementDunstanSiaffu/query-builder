@@ -67,7 +67,6 @@ function Table(props) {
       <ReactResizeDetector handleWidth handleHeight>
         {({ width, height }) => (
           <div className="my-1">
-            {width}
             {list.fields ? (
               <>
                 {width < 547 && (
@@ -203,7 +202,6 @@ function Table(props) {
                     style={{
                       display: "flex",
                       flexDirection: "row",
-                      justifyContent: "center",
                     }}
                   >
                     <div className="row m-0">
@@ -955,7 +953,7 @@ const SecondConstructor = (props) => {
               <SettingOutlined className="setting-svg" />
             </DropdownButton>
             <DropdownMenu>
-              <DropdownItem header>Importa il tipo di input {width}</DropdownItem>
+              <DropdownItem header>Importa il tipo di input</DropdownItem>
               <DropdownItem divider />
               <DropdownItem
                 value="valore"
