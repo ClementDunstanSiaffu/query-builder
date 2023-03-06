@@ -56,6 +56,7 @@ function Table(props) {
     currentTable
   } = props;
 
+  const currentwhereClauses = whereClauses.find((item)=>item.id === `${tablesId}`)
   if (currentTable.id === tablesId && !currentTable.deleted){
   return (
     <div className="my-1">
@@ -100,8 +101,8 @@ function Table(props) {
             </Select>
             <div className="col-md-4 mb-2">
               <Select onChange={(e)=>getQuery(e,"single")} placeholder="Seleziona campo">
-                {whereClauses[tablesId] &&
-                whereClauses[tablesId].attributeQueryType === "string"
+                {currentwhereClauses &&
+                currentwhereClauses.attributeQueryType === "string"
                   ? queryConstructorString.map((o, i) => {
                       return (
                         <Option
