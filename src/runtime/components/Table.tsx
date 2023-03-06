@@ -76,10 +76,12 @@ function Table(props) {
                     style={{
                       display: "flex",
                       flexDirection: "row",
-                      background: "",
+                      background: "green",
                       height: "fit-content",
                       alignItems:"center",
+                      gap:'3px',
                       justifyContent:"space-between",
+                      // minWidth:'280px'
                       // width:"100%"
                     }}
                   >
@@ -186,6 +188,8 @@ function Table(props) {
                           mouseleave={mouseleave}
                           onmouseLeave={onmouseLeave}
                           dropdowns={dropdowns}
+                          width={width}
+
                         />
                       </div>
                     </div>
@@ -202,7 +206,7 @@ function Table(props) {
                     style={{
                       display: "flex",
                       flexDirection: "row",
-                      background: "",
+                      background: "red",
                       justifyContent: "center",
                     }}
                   >
@@ -294,6 +298,7 @@ function Table(props) {
                         mouseleave={mouseleave}
                         onmouseLeave={onmouseLeave}
                         dropdowns={dropdowns}
+                        width={width}
                       />
                     </div>
                     <div className="">
@@ -342,7 +347,7 @@ const SecondConstructor = (props) => {
     opened: d,
     autOpen,
     onmouseLeave,
-    dropdowns,
+    dropdowns,width
   } = props;
   const normalizedThirdQuery = [];
   let defaultValue = "=";
@@ -379,8 +384,8 @@ const SecondConstructor = (props) => {
   }
 
   const test = (props) => {};
-  return (
-    <Switch queryValues={defaultValue}>
+  return (<>
+    {width > 547  && <Switch queryValues={defaultValue}>
       {/* <div value={"="} className="d-flex col-md-4"> */}
       <div value={"="} className="d-flex col-md-4" style={{width:"100%"}}>
         {dropdownValueQuery === "univoco" ? (
@@ -407,7 +412,6 @@ const SecondConstructor = (props) => {
           />
         )}
         <div className="flex-shrink-1">
-          {}
           <Dropdown activeIcon>
             <DropdownButton>
               <SettingOutlined className="setting-svg" />
@@ -923,7 +927,550 @@ const SecondConstructor = (props) => {
           data-table-id={tablesId}
         />
       </div>
-    </Switch>
+    </Switch>}
+    {547 > width &&<Switch queryValues={defaultValue}> 
+      <div value={"="} className="" style={{display:'flex'}}>
+        {dropdownValueQuery === "univoco" ? (
+          <Select
+            onChange={(e) => univocoSelectHandler(e, "single")}
+            placeholder="Seleziona il Layer"
+          >
+            {normalizedThirdQuery.map((el, i) => {
+              return (
+                <Option value={i} data-table-id={tablesId}>
+                  {el.label}
+                </Option>
+              );
+            })}
+          </Select>
+        ) : (
+          <TextInput
+            onChange={textInputHandler}
+            onAcceptValue={function noRefCheck() {}}
+            type="text"
+            className="w-100"
+            data-table-id={tablesId}
+            defaultValue={defaultTextValue}
+          />
+        )}
+        <div className="">
+          <Dropdown activeIcon>
+            <DropdownButton>
+              <SettingOutlined className="setting-svg" />
+            </DropdownButton>
+            <DropdownMenu>
+              <DropdownItem header>Importa il tipo di input {width}</DropdownItem>
+              <DropdownItem divider />
+              <DropdownItem
+                value="valore"
+                onClick={(e) => dropdownItemHandler(e, "single")}
+                data-table-id={tablesId}
+              >
+                Valore
+              </DropdownItem>
+              <DropdownItem
+                value="campo"
+                onClick={(e) => dropdownItemHandler(e, "single")}
+                disabled
+                data-table-id={tablesId}
+              >
+                Campo
+              </DropdownItem>
+              <DropdownItem
+                value="univoco"
+                onClick={(e) => dropdownItemHandler(e, "single")}
+                data-table-id={tablesId}
+              >
+                Univoci
+              </DropdownItem>
+            </DropdownMenu>
+          </Dropdown>
+        </div>
+      </div>
+      <div value={"<>"} className="">
+        {dropdownValueQuery === "univoco" ? (
+          <Select
+            onChange={(e) => univocoSelectHandler(e, "single")}
+            placeholder="Seleziona il Layer"
+          >
+            {normalizedThirdQuery.map((el, i) => {
+              return (
+                <Option value={i} data-table-id={tablesId}>
+                  {el.label}
+                </Option>
+              );
+            })}
+          </Select>
+        ) : (
+          <TextInput
+            onChange={textInputHandler}
+            onAcceptValue={function noRefCheck() {}}
+            type="text"
+            className=" w-100"
+            data-table-id={tablesId}
+          />
+        )}
+        <div className="flex-shrink-1">
+          <Dropdown activeIcon>
+            <DropdownButton>
+              <SettingOutlined className="setting-svg" />
+            </DropdownButton>
+            <DropdownMenu>
+              <DropdownItem header>Importa il tipo di input</DropdownItem>
+              <DropdownItem divider />
+              <DropdownItem
+                value="valore"
+                onClick={(e) => dropdownItemHandler(e, "single")}
+                data-table-id={tablesId}
+              >
+                Valore
+              </DropdownItem>
+              <DropdownItem
+                value="campo"
+                onClick={(e) => dropdownItemHandler(e, "single")}
+                disabled
+                data-table-id={tablesId}
+              >
+                Campo
+              </DropdownItem>
+              <DropdownItem
+                value="univoco"
+                onClick={(e) => dropdownItemHandler(e, "single")}
+                data-table-id={tablesId}
+              >
+                Univoci
+              </DropdownItem>
+            </DropdownMenu>
+          </Dropdown>
+        </div>
+      </div>
+      <div value={"IN"} onMouseLeave={() => onmouseLeave()}>
+        <div className="w-100">
+          {
+            <Dropdown
+              activeIcon
+              isOpen={dropdowns[tablesId]}
+              toggle={() => dropDown}
+            >
+              <DropdownButton onClick={() => openDrop(tablesId)}>
+                {checked} elementi selezionati
+              </DropdownButton>
+              <DropdownMenu>
+                <DropdownItem header>Multi selezione attiva</DropdownItem>
+                <DropdownItem divider />
+                {normalizedThirdQuery.map((el, i) => {
+                  return (
+                    <div>
+                      <DropdownItem
+                        value={i}
+                        data-table-id={tablesId}
+                        className="d-flex justify-content-start"
+                        strategy={"fixed"}
+                      >
+                        {
+                          <Input
+                            onChange={onChangeCheckBox}
+                            type="checkbox"
+                            id={tablesId}
+                            name={el.label}
+                            value={el.value}
+                            defaultChecked={
+                              el.listel &&
+                              el.listel.filter(function (e) {
+                                return e.checkValue === el.label;
+                              }).length > 0
+                            }
+                          />
+                        }
+                        <label
+                          htmlFor={tablesId}
+                          className="ml-3 mb-0"
+                          id={tablesId}
+                        >
+                          {" "}
+                          {el.label}
+                        </label>
+                      </DropdownItem>
+                    </div>
+                  );
+                })}
+              </DropdownMenu>
+            </Dropdown>
+          }
+        </div>
+      </div>
+      <div value={"NOT_IN"} className="d-flex justify-content-between">
+        <div className="w-100">
+          {
+            <Dropdown
+              activeIcon
+              isOpen={dropdowns[tablesId]}
+              toggle={() => dropDown}
+            >
+              <DropdownButton onClick={() => openDrop(tablesId)}>
+                {checked} elementi selezionati
+              </DropdownButton>
+              <DropdownMenu>
+                <DropdownItem header>Multi selezione attiva</DropdownItem>
+                <DropdownItem divider />
+                {normalizedThirdQuery.map((el, i) => {
+                  return (
+                    <div>
+                      <DropdownItem
+                        value={i}
+                        data-table-id={tablesId}
+                        className="d-flex justify-content-start"
+                        strategy={"fixed"}
+                      >
+                        {
+                          <Input
+                            onChange={onChangeCheckBox}
+                            type="checkbox"
+                            id={tablesId}
+                            name={el.label}
+                            value={el.value}
+                            defaultChecked={
+                              el.listel &&
+                              el.listel.filter(function (e) {
+                                return e.checkValue === el.label;
+                              }).length > 0
+                            }
+                          />
+                        }
+                        <label
+                          htmlFor={tablesId}
+                          className="ml-3 mb-0"
+                          id={tablesId}
+                        >
+                          {" "}
+                          {el.label}
+                        </label>
+                      </DropdownItem>
+                    </div>
+                  );
+                })}
+              </DropdownMenu>
+            </Dropdown>
+          }
+        </div>
+      </div>
+      <div value={"<="} className="d-flex  col-md-4">
+        {dropdownValueQuery === "univoco" ? (
+          <Select
+            placeholder="Seleziona il Layer"
+            onChange={(e) => univocoSelectHandler(e, "single")}
+          >
+            {normalizedThirdQuery.map((el, i) => {
+              return (
+                <Option value={i} data-table-id={tablesId}>
+                  {el.label}
+                </Option>
+              );
+            })}
+          </Select>
+        ) : (
+          <TextInput
+            onChange={textInputHandler}
+            onAcceptValue={function noRefCheck() {}}
+            type="text"
+            className=" w-100"
+            data-table-id={tablesId}
+          />
+        )}
+        <div className="flex-shrink-1">
+          <Dropdown activeIcon>
+            <DropdownButton>
+              <SettingOutlined className="setting-svg" />
+            </DropdownButton>
+            <DropdownMenu>
+              <DropdownItem header>Importa il tipo di input</DropdownItem>
+              <DropdownItem divider />
+              <DropdownItem
+                value="valore"
+                onClick={(e) => dropdownItemHandler(e, "single")}
+                data-table-id={tablesId}
+              >
+                Valore
+              </DropdownItem>
+              <DropdownItem
+                value="campo"
+                onClick={(e) => dropdownItemHandler(e, "single")}
+                disabled
+                data-table-id={tablesId}
+              >
+                Campo
+              </DropdownItem>
+              <DropdownItem
+                value="univoco"
+                onClick={(e) => dropdownItemHandler(e, "single")}
+                data-table-id={tablesId}
+              >
+                Univoci
+              </DropdownItem>
+            </DropdownMenu>
+          </Dropdown>
+        </div>
+      </div>
+      <div value={">="} className="">
+        {dropdownValueQuery === "univoco" ? (
+          <Select
+            placeholder="Seleziona il Layer"
+            onChange={(e) => univocoSelectHandler(e, "single")}
+          >
+            {normalizedThirdQuery.map((el, i) => {
+              return (
+                <Option value={i} data-table-id={tablesId}>
+                  {el.label}
+                </Option>
+              );
+            })}
+          </Select>
+        ) : (
+          <TextInput
+            onChange={textInputHandler}
+            onAcceptValue={function noRefCheck() {}}
+            type="text"
+            className=" w-100"
+            data-table-id={tablesId}
+          />
+        )}
+        <div className="flex-shrink-1">
+          <Dropdown activeIcon>
+            <DropdownButton>
+              <SettingOutlined className="setting-svg" />
+            </DropdownButton>
+            <DropdownMenu>
+              <DropdownItem header>Importa il tipo di input</DropdownItem>
+              <DropdownItem divider />
+              <DropdownItem
+                value="valore"
+                onClick={(e) => dropdownItemHandler(e, "single")}
+                data-table-id={tablesId}
+              >
+                Valore
+              </DropdownItem>
+              <DropdownItem
+                value="campo"
+                onClick={(e) => dropdownItemHandler(e, "single")}
+                disabled
+                data-table-id={tablesId}
+              >
+                Campo
+              </DropdownItem>
+              <DropdownItem
+                value="univoco"
+                onClick={(e) => dropdownItemHandler(e, "single")}
+                data-table-id={tablesId}
+              >
+                Univoci
+              </DropdownItem>
+            </DropdownMenu>
+          </Dropdown>
+        </div>
+      </div>
+      <div value={"<"} className="">
+        {dropdownValueQuery === "univoco" ? (
+          <Select
+            placeholder="Seleziona il Layer"
+            onChange={(e) => univocoSelectHandler(e, "single")}
+          >
+            {normalizedThirdQuery.map((el, i) => {
+              return (
+                <Option value={i} data-table-id={tablesId}>
+                  {el.label}
+                </Option>
+              );
+            })}
+          </Select>
+        ) : (
+          <TextInput
+            onChange={textInputHandler}
+            onAcceptValue={function noRefCheck() {}}
+            type="text"
+            className=" w-100"
+            data-table-id={tablesId}
+          />
+        )}
+        <div className="flex-shrink-1">
+          <Dropdown activeIcon>
+            <DropdownButton>
+              <SettingOutlined className="setting-svg" />
+            </DropdownButton>
+            <DropdownMenu>
+              <DropdownItem header>Importa il tipo di input</DropdownItem>
+              <DropdownItem divider />
+              <DropdownItem
+                value="valore"
+                onClick={(e) => dropdownItemHandler(e, "single")}
+                data-table-id={tablesId}
+              >
+                Valore
+              </DropdownItem>
+              <DropdownItem
+                value="campo"
+                onClick={(e) => dropdownItemHandler(e, "single")}
+                disabled
+                data-table-id={tablesId}
+              >
+                Campo
+              </DropdownItem>
+              <DropdownItem
+                value="univoco"
+                onClick={(e) => dropdownItemHandler(e, "single")}
+                data-table-id={tablesId}
+              >
+                Univoci
+              </DropdownItem>
+            </DropdownMenu>
+          </Dropdown>
+        </div>
+      </div>
+      <div value={">"} className="">
+        {dropdownValueQuery === "univoco" ? (
+          <Select
+            placeholder="Seleziona il Layer"
+            onChange={(e) => univocoSelectHandler(e, "single")}
+          >
+            {normalizedThirdQuery.map((el, i) => {
+              return (
+                <Option value={i} data-table-id={tablesId}>
+                  {el.label}
+                </Option>
+              );
+            })}
+          </Select>
+        ) : (
+          <TextInput
+            onChange={textInputHandler}
+            onAcceptValue={function noRefCheck() {}}
+            type="text"
+            className=" w-100"
+            data-table-id={tablesId}
+          />
+        )}
+        <div className="flex-shrink-1">
+          <Dropdown activeIcon>
+            <DropdownButton>
+              <SettingOutlined className="setting-svg" />
+            </DropdownButton>
+            <DropdownMenu>
+              <DropdownItem header>Importa il tipo di input</DropdownItem>
+              <DropdownItem divider />
+              <DropdownItem
+                value="valore"
+                onClick={(e) => dropdownItemHandler(e, "single")}
+                data-table-id={tablesId}
+              >
+                Valore
+              </DropdownItem>
+              <DropdownItem
+                value="campo"
+                onClick={(e) => dropdownItemHandler(e, "single")}
+                disabled
+                data-table-id={tablesId}
+              >
+                Campo
+              </DropdownItem>
+              <DropdownItem
+                value="univoco"
+                onClick={(e) => dropdownItemHandler(e, "single")}
+                data-table-id={tablesId}
+              >
+                Univoci
+              </DropdownItem>
+            </DropdownMenu>
+          </Dropdown>
+        </div>
+      </div>
+      <div value={"is null"}></div>
+      <div value={"is not null"}></div>
+      <div value={"included"} className="">
+        <div className="include">
+          <TextInput
+            onChange={textFirstIncludedHandler}
+            onAcceptValue={function noRefCheck() {}}
+            type="text"
+            data-table-id={tablesId}
+            id="inputs"
+          />
+          <p className="col-md-2 text-center" style={{ width: "10%" }}>
+            e
+          </p>
+          <TextInput
+            onChange={textSecondIncludedHandler}
+            onAcceptValue={function noRefCheck() {}}
+            type="text"
+            data-table-id={tablesId}
+            id="inputs"
+          />
+        </div>
+      </div>
+      <div value={"is_not_included"} className="">
+        <div className="include">
+          <TextInput
+            onChange={textFirstIncludedHandler}
+            onAcceptValue={function noRefCheck() {}}
+            type="text"
+            id="inputs"
+            data-table-id={tablesId}
+          />
+          <p className="col-sm-2 text-center">e</p>
+          <TextInput
+            onChange={textSecondIncludedHandler}
+            onAcceptValue={function noRefCheck() {}}
+            type="text"
+            id="inputs"
+            data-table-id={tablesId}
+          />
+        </div>
+      </div>
+      <div value={"LIKE%"} className="">
+        <TextInput
+          onChange={textInputHandler}
+          onAcceptValue={function noRefCheck() {}}
+          type="text"
+          className=" w-100"
+          data-table-id={tablesId}
+        />
+      </div>
+      <div value={"%LIKE"} className="">
+        <TextInput
+          onChange={textInputHandler}
+          onAcceptValue={function noRefCheck() {}}
+          type="text"
+          className=" w-100"
+          data-table-id={tablesId}
+        />
+      </div>
+      <div value={"LIKE%"} className="">
+        <TextInput
+          onChange={textInputHandler}
+          onAcceptValue={function noRefCheck() {}}
+          type="text"
+          className=" w-100"
+          data-table-id={tablesId}
+        />
+      </div>
+      <div value={"%LIKE%"} className="">
+        <TextInput
+          onChange={textInputHandler}
+          onAcceptValue={function noRefCheck() {}}
+          type="text"
+          className=" w-100"
+          data-table-id={tablesId}
+        />
+      </div>
+      <div value={"NOT LIKE"} className="">
+        <TextInput
+          onChange={textInputHandler}
+          onAcceptValue={function noRefCheck() {}}
+          type="text"
+          className=" w-100"
+          data-table-id={tablesId}
+        />
+      </div>
+    </Switch>}
+    </>
   );
 };
 
