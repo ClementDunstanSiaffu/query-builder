@@ -1031,7 +1031,7 @@ export default class Widget extends React.PureComponent<
   deleteBlockAll = (blockData) => {};
 
   textInputHandler = (e, queryType = "single") => {
-    let txt = e.target.value;
+    let txt = e.target.value.trim();
     let currentTableId = e.target.attributes[0].value;
     this.queryTextConstructor(txt, currentTableId, queryType);
   };
