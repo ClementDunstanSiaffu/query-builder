@@ -77,7 +77,7 @@ function AddSetTable(props) {
           <div className="my-1">
             {list.fields ? (
               <>
-                {width < 547 && (
+                {width <= 625 && (
                   <div
                     className=""
                     style={{
@@ -199,7 +199,7 @@ function AddSetTable(props) {
                       )}
                   </div>
                 )}
-                {width > 547 && (
+                {width >= 625 && (
                   // <div className="" style={{
                   //   display: "flex",
                   //   flexDirection: "row",
@@ -221,6 +221,7 @@ function AddSetTable(props) {
                         // className=" "
                         onChange={getQueryAttribute}
                         placeholder="Seleziona campo"
+                        // style={{width:"100vw",backgroundColor:"green"}}
                       >
                         {/* eslint-disable-next-line array-callback-return */}
                         {list.fields.map((el, i) => {
@@ -309,7 +310,7 @@ function AddSetTable(props) {
                         width={width}
                       />
                       {showDelete && (
-                        <div className="col-md-4">
+                        <div className="close-container-table-query-builder" >
                           <Button
                             // className=""
                             onClick={deleteTable}
@@ -393,7 +394,7 @@ const SecondConstructor = (props) => {
       checked = currentItem.checkedListSet.length;
   }
 
-  return (<>{width > 547  && 
+  return (<>{width >= 626  && 
     <Switch queryValues={defaultValue}>
       <div value={"="} className="d-flex col-md-4">
       {/* <div value={"="} className=" "> */}
@@ -938,7 +939,7 @@ const SecondConstructor = (props) => {
         />
       </div>
     </Switch>}
-    {547 > width &&
+    {625 >= width &&
     <Switch queryValues={defaultValue}>
       <div value={"="} className="" style={{display:'flex'}}>
         {dropdownValueQuery === "univoco" ? (

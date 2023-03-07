@@ -1,8 +1,13 @@
 
 @media (min-width:768px){
     .col-md-4 {
-        // flex: 0 0 33.33333%;
-        max-width: 20%;
+        flex: auto;
+    }
+}
+
+@media (min-width:768px){
+    .close-container-table-query-builder{
+        flex:auto;
     }
 }
 
