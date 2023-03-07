@@ -20,7 +20,6 @@ import {
   queryConstructorString,
 } from "../utils/queryTableValue";
 import '../../assets/styles/styles.scss';
-// import {useState} from 'react'
 
 function AddSetTable(props) {
   const {
@@ -87,8 +86,6 @@ function AddSetTable(props) {
                       alignItems: "center",
                       gap: "3%",
                       marginBottom:20
-                      // minWidth:'280px'
-                      // background: "",
                     }}
                   >
                     <div className="" style={{
@@ -200,12 +197,6 @@ function AddSetTable(props) {
                   </div>
                 )}
                 {width >= 625 && (
-                  // <div className="" style={{
-                  //   display: "flex",
-                  //   flexDirection: "row",
-                  //   background:'red'
-                  // }}>
-                    // <div className="row m-0">
                     <div 
                       className=" " 
                       style={{
@@ -218,10 +209,8 @@ function AddSetTable(props) {
                     >
                       <Select
                         className="col-md-4"
-                        // className=" "
                         onChange={getQueryAttribute}
                         placeholder="Seleziona campo"
-                        // style={{width:"100vw",backgroundColor:"green"}}
                       >
                         {/* eslint-disable-next-line array-callback-return */}
                         {list.fields.map((el, i) => {
@@ -246,7 +235,6 @@ function AddSetTable(props) {
                         })}
                       </Select>
                       <div className="col-md-4">
-                      {/* <div className=" "> */}
                         <Select
                           onChange={(e) => getQuery(e, "set")}
                           placeholder="Seleziona campo"
@@ -278,7 +266,6 @@ function AddSetTable(props) {
                         </Select>
                       </div>
                       <SecondConstructor
-                        // className="col-md-4"
                         handleThirdQuery={handleThirdQuery}
                         textInputHandler={textInputHandler}
                         multiSelectHandler={multiSelectHandler}
@@ -312,7 +299,6 @@ function AddSetTable(props) {
                       {showDelete && (
                         <div className="close-container-table-query-builder" >
                           <Button
-                            // className=""
                             onClick={deleteTable}
                             icon
                           >
@@ -397,7 +383,6 @@ const SecondConstructor = (props) => {
   return (<>{width >= 626  && 
     <Switch queryValues={defaultValue}>
       <div value={"="} className="d-flex col-md-4">
-      {/* <div value={"="} className=" "> */}
         {dropdownValueQuery === "univoco" ? (
           <Select
             onChange={(e) => univocoSelectHandler(e, "set")}

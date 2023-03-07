@@ -22,7 +22,6 @@ import {
 } from "../utils/queryTableValue";
 import '../../assets/styles/styles.scss';
 
-// import {useState} from 'react'
 
 function Table(props) {
   const {
@@ -65,6 +64,7 @@ function Table(props) {
   );
 
   if (currentTable.id === tablesId && !currentTable.deleted) {
+    console.log(whereClauses,currentTable,currentwhereClauses,tablesId,"check whereclause")
     return (
       <ReactResizeDetector handleWidth handleHeight>
         {({ width, height }) => (
@@ -200,24 +200,16 @@ function Table(props) {
                   </div>
                 )}
                 {width >= 626 && (
-                  // <div
-                  //   className=""
-                  //   style={{
-                  //     display: "flex",
-                  //     flexDirection: "row",
-                  //   }}
-                  // >
-                  //   <div className="row m-0">
                   <div 
-                  className=" " 
-                  style={{
-                    display:"flex",
-                    alignItems:"center",
-                    justifyContent:"start",
-                    flexDirection:"row",
-                    gap:"3%"
-                  }}
-                >
+                    className=" " 
+                    style={{
+                      display:"flex",
+                      alignItems:"center",
+                      justifyContent:"start",
+                      flexDirection:"row",
+                      gap:"3%"
+                    }}
+                  >
                       <Select
                         className="col-md-4"
                         onChange={getQueryAttribute}
@@ -393,7 +385,6 @@ const SecondConstructor = (props) => {
   const test = (props) => {};
   return (<>
     {width >= 626  && <Switch queryValues={defaultValue}>
-      {/* <div value={"="} className="d-flex col-md-4"> */}
       <div value={"="} className="d-flex col-md-4" style={{width:"100%"}}>
         {dropdownValueQuery === "univoco" ? (
           <Select
