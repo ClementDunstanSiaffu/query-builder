@@ -20,6 +20,8 @@ import {
   queryConstructorNumber,
   queryConstructorString,
 } from "../utils/queryTableValue";
+import '../../assets/styles/styles.scss';
+
 // import {useState} from 'react'
 
 function Table(props) {
@@ -69,7 +71,7 @@ function Table(props) {
           <div className="my-1">
             {list.fields ? (
               <>
-                {width < 547 && (
+                {width <= 625 && (
                   <div
                     className=""
                     style={{
@@ -78,7 +80,8 @@ function Table(props) {
                       height: "fit-content",
                       alignItems:"center",
                       gap:'3%',
-                      minWidth:'280px'
+                      minWidth:'280px',
+                      marginBottom:20
                     }}
                   >
                     <div
@@ -196,17 +199,27 @@ function Table(props) {
                     </div>
                   </div>
                 )}
-                {width > 547 && (
-                  <div
-                    className=""
-                    style={{
-                      display: "flex",
-                      flexDirection: "row",
-                    }}
-                  >
-                    <div className="row m-0">
+                {width >= 626 && (
+                  // <div
+                  //   className=""
+                  //   style={{
+                  //     display: "flex",
+                  //     flexDirection: "row",
+                  //   }}
+                  // >
+                  //   <div className="row m-0">
+                  <div 
+                  className=" " 
+                  style={{
+                    display:"flex",
+                    alignItems:"center",
+                    justifyContent:"start",
+                    flexDirection:"row",
+                    gap:"3%"
+                  }}
+                >
                       <Select
-                        className="col-md-4 mb-2"
+                        className="col-md-4"
                         onChange={getQueryAttribute}
                         placeholder="Seleziona campo"
                       >
@@ -232,7 +245,7 @@ function Table(props) {
                           }
                         })}
                       </Select>
-                      <div className="" style={{ background: "" }}>
+                      <div className="col-md-4" style={{ background: "" }}>
                         <Select
                           onChange={(e) => getQuery(e, "single")}
                           placeholder="Seleziona campo"
@@ -294,8 +307,8 @@ function Table(props) {
                         dropdowns={dropdowns}
                         width={width}
                       />
-                    </div>
-                    <div className="">
+                    {/* </div> */}
+                    <div className="close-container-table-query-builder">
                       <Button className="" onClick={deleteTable} icon>
                         <CloseOutlined />
                       </Button>
@@ -379,7 +392,7 @@ const SecondConstructor = (props) => {
 
   const test = (props) => {};
   return (<>
-    {width > 547  && <Switch queryValues={defaultValue}>
+    {width >= 626  && <Switch queryValues={defaultValue}>
       {/* <div value={"="} className="d-flex col-md-4"> */}
       <div value={"="} className="d-flex col-md-4" style={{width:"100%"}}>
         {dropdownValueQuery === "univoco" ? (
@@ -922,7 +935,7 @@ const SecondConstructor = (props) => {
         />
       </div>
     </Switch>}
-    {547 > width &&<Switch queryValues={defaultValue}> 
+    {625 >= width &&<Switch queryValues={defaultValue}> 
       <div value={"="} className="" style={{display:'flex'}}>
         {dropdownValueQuery === "univoco" ? (
           <Select
