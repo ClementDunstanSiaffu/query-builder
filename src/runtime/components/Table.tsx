@@ -560,7 +560,7 @@ const SecondConstructor = (props) => {
       <div 
         value={"="} 
         className = {width >= 626 ? "d-flex col-md-4" :" "} 
-        style={width >= 626 ? {width:"100%"}:{display:'flex'}}
+        style={width >= 626 ? {}:{display:'flex'}}
       >
         {dropdownValueQuery === "univoco" ? (
           <Select
@@ -679,15 +679,19 @@ const SecondConstructor = (props) => {
           </Dropdown>
         </div>
       </div>
-      <div value={"IN"} onMouseLeave={() => onmouseLeave()}>
-        <div className="w-100">
+      <div value={"IN"} onMouseLeave={() => onmouseLeave()}  className = {width >= 626 ? "d-flex col-md-4" :" "}>
+        {/* <div className="w-100" style={{width:"100%",backgroundColor:"red"}}> */}
           {
             <Dropdown
               activeIcon
               isOpen={dropdowns[tablesId]}
               toggle={() => dropDown}
+              style = {{width:"100%"}}
             >
-              <DropdownButton onClick={() => openDrop(tablesId)}>
+              <DropdownButton 
+                onClick={() => openDrop(tablesId)} 
+                style = {{width:"100%"}}
+              >
                 {checked} elementi selezionati
               </DropdownButton>
               <DropdownMenu>
@@ -732,17 +736,22 @@ const SecondConstructor = (props) => {
               </DropdownMenu>
             </Dropdown>
           }
-        </div>
+        {/* </div> */}
       </div>
-      <div value={"NOT_IN"} className="d-flex justify-content-between">
-        <div className="w-100">
+      <div 
+        value={"NOT_IN"} 
+        className = {width >= 626 ? "d-flex col-md-4" :" "}
+        // className="d-flex justify-content-between"
+      >
+        {/* <div className="w-100"> */}
           {
             <Dropdown
               activeIcon
               isOpen={dropdowns[tablesId]}
               toggle={() => dropDown}
+              style = {{width:"100%"}}
             >
-              <DropdownButton onClick={() => openDrop(tablesId)}>
+              <DropdownButton onClick={() => openDrop(tablesId)} style = {{width:"100%"}}>
                 {checked} elementi selezionati
               </DropdownButton>
               <DropdownMenu>
@@ -787,9 +796,13 @@ const SecondConstructor = (props) => {
               </DropdownMenu>
             </Dropdown>
           }
-        </div>
+        {/* </div> */}
       </div>
-      <div value={"<="} className="d-flex  col-md-4">
+      <div 
+        value={"<="}  
+        className = {width >= 626 ? "d-flex col-md-4" :" "} 
+        style={width >= 626 ? {}:{display:'flex'}}
+      >
         {dropdownValueQuery === "univoco" ? (
           <Select
             placeholder="Seleziona il Layer"
@@ -848,6 +861,7 @@ const SecondConstructor = (props) => {
       </div>
       <div 
         value={">="} 
+        style={width >= 626 ? {}:{display:'flex'}}
         className={width >= 626 ? "d-flex col-md-4":" "}
       >
         {dropdownValueQuery === "univoco" ? (
@@ -906,7 +920,11 @@ const SecondConstructor = (props) => {
           </Dropdown>
         </div>
       </div>
-      <div value={"<"} className= {width >= 626 ? "d-flex col-md-4":" "}>
+      <div 
+        value={"<"} 
+        className= {width >= 626 ? "d-flex col-md-4":" "}
+        style={width >= 626 ? {}:{display:'flex'}}
+      >
         {dropdownValueQuery === "univoco" ? (
           <Select
             placeholder="Seleziona il Layer"
@@ -963,7 +981,11 @@ const SecondConstructor = (props) => {
           </Dropdown>
         </div>
       </div>
-      <div value={">"} className={width > 626 ? "d-flex col-md-4":" "}>
+      <div 
+        value={">"} 
+        className={width > 626 ? "d-flex col-md-4":" "}
+        style={width >= 626 ? {}:{display:'flex'}}
+      >
         {dropdownValueQuery === "univoco" ? (
           <Select
             placeholder="Seleziona il Layer"
@@ -1020,9 +1042,9 @@ const SecondConstructor = (props) => {
           </Dropdown>
         </div>
       </div>
-      <div value={"is null"}></div>
-      <div value={"is not null"}></div>
-      <div value={"included"} className={width > 626 ? "d-flex col-md-4":" "}>
+      <div value={"is null"} className={width > 626 ? "d-flex col-md-4":" "} style={width >= 626 ? {}:{display:'flex'}}></div>
+      <div value={"is not null"} className={width > 626 ? "d-flex col-md-4":" "} style={width >= 626 ? {}:{display:'flex'}}></div>
+      <div value={"included"} className={width > 626 ? "d-flex col-md-4":" "} style={width >= 626 ? {}:{display:'flex'}}>
         <div className="include">
           <TextInput
             onChange={textFirstIncludedHandler}
@@ -1043,7 +1065,7 @@ const SecondConstructor = (props) => {
           />
         </div>
       </div>
-      <div value={"is_not_included"} className={width >= 626 ? "d-flex col-md-4":" "}>
+      <div value={"is_not_included"} className={width >= 626 ? "d-flex col-md-4":" "} style={width >= 626 ? {}:{display:'flex'}}>
         <div className="include">
           <TextInput
             onChange={textFirstIncludedHandler}
@@ -1062,7 +1084,7 @@ const SecondConstructor = (props) => {
           />
         </div>
       </div>
-      <div value={"LIKE%"} className={width > 626 ? "d-flex col-md-4":" "}>
+      <div value={"LIKE%"} className={width > 626 ? "d-flex col-md-4":" "} style={width >= 626 ? {}:{display:'flex'}}>
         <TextInput
           onChange={textInputHandler}
           onAcceptValue={function noRefCheck() {}}
@@ -1071,7 +1093,7 @@ const SecondConstructor = (props) => {
           data-table-id={tablesId}
         />
       </div>
-      <div value={"%LIKE"} className={width > 626 ? "d-flex col-md-4":" "}>
+      <div value={"%LIKE"} className={width > 626 ? "d-flex col-md-4":" "} style={width >= 626 ? {}:{display:'flex'}}>
         <TextInput
           onChange={textInputHandler}
           onAcceptValue={function noRefCheck() {}}
@@ -1089,7 +1111,7 @@ const SecondConstructor = (props) => {
           data-table-id={tablesId}
         />
       </div> */}
-      <div value={"%LIKE%"} className={width >= 626 ? "d-flex col-md-4":" "}>
+      <div value={"%LIKE%"} className={width >= 626 ? "d-flex col-md-4":" "} style={width >= 626 ? {}:{display:'flex'}}>
         <TextInput
           onChange={textInputHandler}
           onAcceptValue={function noRefCheck() {}}
@@ -1098,7 +1120,7 @@ const SecondConstructor = (props) => {
           data-table-id={tablesId}
         />
       </div>
-      <div value={"NOT LIKE"} className={width >= 626 ? "d-flex col-md-4":" "}>
+      <div value={"NOT LIKE"} className={width >= 626 ? "d-flex col-md-4":" "} style={width >= 626 ? {}:{display:'flex'}}>
         <TextInput
           onChange={textInputHandler}
           onAcceptValue={function noRefCheck() {}}
