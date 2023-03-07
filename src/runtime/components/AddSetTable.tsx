@@ -19,6 +19,7 @@ import {
   queryConstructorNumber,
   queryConstructorString,
 } from "../utils/queryTableValue";
+import '../../assets/styles/styles.scss';
 // import {useState} from 'react'
 
 function AddSetTable(props) {
@@ -85,6 +86,7 @@ function AddSetTable(props) {
                       height: "fit-content",
                       alignItems: "center",
                       gap: "3%",
+                      marginBottom:20
                       // minWidth:'280px'
                       // background: "",
                     }}
@@ -198,14 +200,25 @@ function AddSetTable(props) {
                   </div>
                 )}
                 {width > 547 && (
-                  <div className="" style={{
-                    display: "flex",
-                    flexDirection: "row",
-                    background:''
-                  }}>
-                    <div className="row m-0">
+                  // <div className="" style={{
+                  //   display: "flex",
+                  //   flexDirection: "row",
+                  //   background:'red'
+                  // }}>
+                    // <div className="row m-0">
+                    <div 
+                      className=" " 
+                      style={{
+                        display:"flex",
+                        alignItems:"center",
+                        justifyContent:"start",
+                        flexDirection:"row",
+                        gap:"3%"
+                      }}
+                    >
                       <Select
-                        className="col-md-4 mb-2"
+                        className="col-md-4"
+                        // className=" "
                         onChange={getQueryAttribute}
                         placeholder="Seleziona campo"
                       >
@@ -231,7 +244,8 @@ function AddSetTable(props) {
                           }
                         })}
                       </Select>
-                      <div className="col-md-4 mb-2">
+                      <div className="col-md-4">
+                      {/* <div className=" "> */}
                         <Select
                           onChange={(e) => getQuery(e, "set")}
                           placeholder="Seleziona campo"
@@ -263,7 +277,7 @@ function AddSetTable(props) {
                         </Select>
                       </div>
                       <SecondConstructor
-                        className="col-md-4"
+                        // className="col-md-4"
                         handleThirdQuery={handleThirdQuery}
                         textInputHandler={textInputHandler}
                         multiSelectHandler={multiSelectHandler}
@@ -294,11 +308,10 @@ function AddSetTable(props) {
                         blockId={blockId}
                         width={width}
                       />
-                    </div>
-                    {showDelete && (
-                        <div className="">
+                      {showDelete && (
+                        <div className="col-md-4">
                           <Button
-                            className=""
+                            // className=""
                             onClick={deleteTable}
                             icon
                           >
@@ -306,7 +319,7 @@ function AddSetTable(props) {
                           </Button>
                         </div>
                       )}
-                  </div>
+                    </div>
                 )}
               </>
             ) : (
@@ -383,6 +396,7 @@ const SecondConstructor = (props) => {
   return (<>{width > 547  && 
     <Switch queryValues={defaultValue}>
       <div value={"="} className="d-flex col-md-4">
+      {/* <div value={"="} className=" "> */}
         {dropdownValueQuery === "univoco" ? (
           <Select
             onChange={(e) => univocoSelectHandler(e, "set")}
@@ -406,6 +420,7 @@ const SecondConstructor = (props) => {
           />
         )}
         <div className="flex-shrink-1">
+        {/* <div className=" "> */}
           {}
           <Dropdown activeIcon>
             <DropdownButton>
