@@ -2221,7 +2221,7 @@ export default class Widget extends React.PureComponent<
                     </div>
                   </div>
                 </div>
-                {width > 600 && (
+                {width >= 626 && (
                   <div className="row mt-1 mb-3 justify-content-around">
                     <div
                       className="col-md-5 d-flex justify-content-center text-center"
@@ -2275,7 +2275,7 @@ export default class Widget extends React.PureComponent<
                     </div>
                   </div>
                 )}
-                {590 > width && (
+                {625 >= width && (
                   <div style={{ display: "flex", flexDirection: "column" }}>
                     <div
                       className=""
