@@ -564,7 +564,7 @@ const SecondConstructor = (props) => {
           </Select>
         ) : (
           <TextInput
-            onChange={textInputHandler}
+            onChange={(e) => textInputHandler(e, "set")}
             onAcceptValue={function noRefCheck() {}}
             type="text"
             className="w-100"
@@ -581,14 +581,14 @@ const SecondConstructor = (props) => {
               <DropdownItem divider />
               <DropdownItem
                 value="valore"
-                onClick={(e) => dropdownItemHandler(e, "single")}
+                onClick={(e) => dropdownItemHandler(e, "set")}
                 data-table-id={tablesSetId}
               >
                 Valore
               </DropdownItem>
               <DropdownItem
                 value="campo"
-                onClick={(e) => dropdownItemHandler(e, "single")}
+                onClick={(e) => dropdownItemHandler(e, "set")}
                 disabled
                 data-table-id={tablesSetId}
               >
@@ -596,7 +596,7 @@ const SecondConstructor = (props) => {
               </DropdownItem>
               <DropdownItem
                 value="univoco"
-                onClick={(e) => dropdownItemHandler(e, "single")}
+                onClick={(e) => dropdownItemHandler(e, "set")}
                 data-table-id={tablesSetId}
               >
                 Univoci
@@ -611,7 +611,7 @@ const SecondConstructor = (props) => {
       >
         {dropdownValueQuery === "univoco" ? (
           <Select
-            onChange={(e) => univocoSelectHandler(e, "single")}
+            onChange={(e) => univocoSelectHandler(e, "set")}
             placeholder="Seleziona il Layer"
           >
             {normalizedThirdQuery.map((el, i) => {
@@ -624,7 +624,7 @@ const SecondConstructor = (props) => {
           </Select>
         ) : (
           <TextInput
-            onChange={textInputHandler}
+            onChange={(e) => textInputHandler(e, "set")}
             onAcceptValue={function noRefCheck() {}}
             type="text"
             className=" w-100"
@@ -641,14 +641,14 @@ const SecondConstructor = (props) => {
               <DropdownItem divider />
               <DropdownItem
                 value="valore"
-                onClick={(e) => dropdownItemHandler(e, "single")}
+                onClick={(e) => dropdownItemHandler(e, "set")}
                 data-table-id={tablesSetId}
               >
                 Valore
               </DropdownItem>
               <DropdownItem
                 value="campo"
-                onClick={(e) => dropdownItemHandler(e, "single")}
+                onClick={(e) => dropdownItemHandler(e, "set")}
                 disabled
                 data-table-id={tablesSetId}
               >
@@ -656,7 +656,7 @@ const SecondConstructor = (props) => {
               </DropdownItem>
               <DropdownItem
                 value="univoco"
-                onClick={(e) => dropdownItemHandler(e, "single")}
+                onClick={(e) => dropdownItemHandler(e, "set")}
                 data-table-id={tablesSetId}
               >
                 Univoci
@@ -792,7 +792,7 @@ const SecondConstructor = (props) => {
         {dropdownValueQuery === "univoco" ? (
           <Select
             placeholder="Seleziona il Layer"
-            onChange={(e) => univocoSelectHandler(e, "single")}
+            onChange={(e) => univocoSelectHandler(e, "set")}
           >
             {normalizedThirdQuery.map((el, i) => {
               return (
@@ -804,7 +804,7 @@ const SecondConstructor = (props) => {
           </Select>
         ) : (
           <TextInput
-            onChange={textInputHandler}
+            onChange={(e) => textInputHandler(e, "set")}
             onAcceptValue={function noRefCheck() {}}
             type="text"
             className=" w-100"
@@ -821,14 +821,14 @@ const SecondConstructor = (props) => {
               <DropdownItem divider />
               <DropdownItem
                 value="valore"
-                onClick={(e) => dropdownItemHandler(e, "single")}
+                onClick={(e) => dropdownItemHandler(e, "set")}
                 data-table-id={tablesSetId}
               >
                 Valore
               </DropdownItem>
               <DropdownItem
                 value="campo"
-                onClick={(e) => dropdownItemHandler(e, "single")}
+                onClick={(e) => dropdownItemHandler(e, "set")}
                 disabled
                 data-table-id={tablesSetId}
               >
@@ -836,7 +836,7 @@ const SecondConstructor = (props) => {
               </DropdownItem>
               <DropdownItem
                 value="univoco"
-                onClick={(e) => dropdownItemHandler(e, "single")}
+                onClick={(e) => dropdownItemHandler(e, "set")}
                 data-table-id={tablesSetId}
               >
                 Univoci
@@ -853,7 +853,7 @@ const SecondConstructor = (props) => {
         {dropdownValueQuery === "univoco" ? (
           <Select
             placeholder="Seleziona il Layer"
-            onChange={(e) => univocoSelectHandler(e, "single")}
+            onChange={(e) => univocoSelectHandler(e, "set")}
           >
             {normalizedThirdQuery.map((el, i) => {
               return (
@@ -865,7 +865,7 @@ const SecondConstructor = (props) => {
           </Select>
         ) : (
           <TextInput
-            onChange={textInputHandler}
+            onChange={(e) => textInputHandler(e, "set")}
             onAcceptValue={function noRefCheck() {}}
             type="text"
             className=" w-100"
@@ -882,14 +882,14 @@ const SecondConstructor = (props) => {
               <DropdownItem divider />
               <DropdownItem
                 value="valore"
-                onClick={(e) => dropdownItemHandler(e, "single")}
+                onClick={(e) => dropdownItemHandler(e, "set")}
                 data-table-id={tablesSetId}
               >
                 Valore
               </DropdownItem>
               <DropdownItem
                 value="campo"
-                onClick={(e) => dropdownItemHandler(e, "single")}
+                onClick={(e) => dropdownItemHandler(e, "set")}
                 disabled
                 data-table-id={tablesSetId}
               >
@@ -897,7 +897,7 @@ const SecondConstructor = (props) => {
               </DropdownItem>
               <DropdownItem
                 value="univoco"
-                onClick={(e) => dropdownItemHandler(e, "single")}
+                onClick={(e) => dropdownItemHandler(e, "set")}
                 data-table-id={tablesSetId}
               >
                 Univoci
@@ -914,7 +914,7 @@ const SecondConstructor = (props) => {
         {dropdownValueQuery === "univoco" ? (
           <Select
             placeholder="Seleziona il Layer"
-            onChange={(e) => univocoSelectHandler(e, "single")}
+            onChange={(e) => univocoSelectHandler(e,"set")}
           >
             {normalizedThirdQuery.map((el, i) => {
               return (
@@ -926,7 +926,7 @@ const SecondConstructor = (props) => {
           </Select>
         ) : (
           <TextInput
-            onChange={textInputHandler}
+            onChange={(e) => textInputHandler(e, "set")}
             onAcceptValue={function noRefCheck() {}}
             type="text"
             className=" w-100"
@@ -943,14 +943,14 @@ const SecondConstructor = (props) => {
               <DropdownItem divider />
               <DropdownItem
                 value="valore"
-                onClick={(e) => dropdownItemHandler(e, "single")}
+                onClick={(e) => dropdownItemHandler(e, "set")}
                 data-table-id={tablesSetId}
               >
                 Valore
               </DropdownItem>
               <DropdownItem
                 value="campo"
-                onClick={(e) => dropdownItemHandler(e, "single")}
+                onClick={(e) => dropdownItemHandler(e, "set")}
                 disabled
                 data-table-id={tablesSetId}
               >
@@ -958,7 +958,7 @@ const SecondConstructor = (props) => {
               </DropdownItem>
               <DropdownItem
                 value="univoco"
-                onClick={(e) => dropdownItemHandler(e, "single")}
+                onClick={(e) => dropdownItemHandler(e, "set")}
                 data-table-id={tablesSetId}
               >
                 Univoci
@@ -975,7 +975,7 @@ const SecondConstructor = (props) => {
         {dropdownValueQuery === "univoco" ? (
           <Select
             placeholder="Seleziona il Layer"
-            onChange={(e) => univocoSelectHandler(e, "single")}
+            onChange={(e) => univocoSelectHandler(e,"set")}
           >
             {normalizedThirdQuery.map((el, i) => {
               return (
@@ -987,7 +987,7 @@ const SecondConstructor = (props) => {
           </Select>
         ) : (
           <TextInput
-            onChange={textInputHandler}
+            onChange={(e) => textInputHandler(e, "set")}
             onAcceptValue={function noRefCheck() {}}
             type="text"
             className=" w-100"
@@ -1004,14 +1004,14 @@ const SecondConstructor = (props) => {
               <DropdownItem divider />
               <DropdownItem
                 value="valore"
-                onClick={(e) => dropdownItemHandler(e, "single")}
+                onClick={(e) => dropdownItemHandler(e, "set")}
                 data-table-id={tablesSetId}
               >
                 Valore
               </DropdownItem>
               <DropdownItem
                 value="campo"
-                onClick={(e) => dropdownItemHandler(e, "single")}
+                onClick={(e) => dropdownItemHandler(e, "set")}
                 disabled
                 data-table-id={tablesSetId}
               >
@@ -1019,7 +1019,7 @@ const SecondConstructor = (props) => {
               </DropdownItem>
               <DropdownItem
                 value="univoco"
-                onClick={(e) => dropdownItemHandler(e, "single")}
+                onClick={(e) => dropdownItemHandler(e, "set")}
                 data-table-id={tablesSetId}
               >
                 Univoci
@@ -1033,7 +1033,7 @@ const SecondConstructor = (props) => {
       <div value={"included"} className={width > 626 ? "d-flex col-md-4":" "} style={width >= 626 ? {}:{display:'flex'}}>
         <div className="include">
           <TextInput
-            onChange={textFirstIncludedHandler}
+            onChange={(e) => textFirstIncludedHandler(e, "set")}
             onAcceptValue={function noRefCheck() {}}
             type="text"
             data-table-id={tablesSetId}
@@ -1043,7 +1043,7 @@ const SecondConstructor = (props) => {
             e
           </p>
           <TextInput
-            onChange={textSecondIncludedHandler}
+            onChange={(e) => textSecondIncludedHandler(e, "set")}
             onAcceptValue={function noRefCheck() {}}
             type="text"
             data-table-id={tablesSetId}
@@ -1052,27 +1052,27 @@ const SecondConstructor = (props) => {
         </div>
       </div>
       <div value={"is_not_included"} className={width >= 626 ? "d-flex col-md-4":" "} style={width >= 626 ? {}:{display:'flex'}}>
-        <div className="include">
-          <TextInput
-            onChange={textFirstIncludedHandler}
-            onAcceptValue={function noRefCheck() {}}
-            type="text"
-            id="inputs"
-            data-table-id={tablesSetId}
-          />
-          <p className="col-sm-2 text-center">e</p>
-          <TextInput
-            onChange={textSecondIncludedHandler}
-            onAcceptValue={function noRefCheck() {}}
-            type="text"
-            id="inputs"
-            data-table-id={tablesSetId}
-          />
-        </div>
+      <div className="include">
+        <TextInput
+          onChange={(e) => textFirstIncludedHandler(e, "set")}
+          onAcceptValue={function noRefCheck() {}}
+          type="text"
+          data-table-id={tablesSetId}
+          id="inputs"
+        />
+        <p className="col-sm-2 text-center">e</p>
+        <TextInput
+          onChange={(e) => textSecondIncludedHandler(e, "set")}
+          onAcceptValue={function noRefCheck() {}}
+          type="text"
+          data-table-id={tablesSetId}
+          id="inputs"
+        />
+      </div>
       </div>
       <div value={"LIKE%"} className={width > 626 ? "d-flex col-md-4":" "} style={width >= 626 ? {}:{display:'flex'}}>
         <TextInput
-          onChange={textInputHandler}
+          onChange={(e) => textInputHandler(e, "set")}
           onAcceptValue={function noRefCheck() {}}
           type="text"
           className=" w-100"
@@ -1081,7 +1081,7 @@ const SecondConstructor = (props) => {
       </div>
       <div value={"%LIKE"} className={width > 626 ? "d-flex col-md-4":" "} style={width >= 626 ? {}:{display:'flex'}}>
         <TextInput
-          onChange={textInputHandler}
+          onChange={(e) => textInputHandler(e, "set")}
           onAcceptValue={function noRefCheck() {}}
           type="text"
           className=" w-100"
@@ -1099,7 +1099,7 @@ const SecondConstructor = (props) => {
       </div> */}
       <div value={"%LIKE%"} className={width >= 626 ? "d-flex col-md-4":" "} style={width >= 626 ? {}:{display:'flex'}}>
         <TextInput
-          onChange={textInputHandler}
+          onChange={(e) => textInputHandler(e, "set")}
           onAcceptValue={function noRefCheck() {}}
           type="text"
           className=" w-100"
@@ -1108,7 +1108,7 @@ const SecondConstructor = (props) => {
       </div>
       <div value={"NOT LIKE"} className={width >= 626 ? "d-flex col-md-4":" "} style={width >= 626 ? {}:{display:'flex'}}>
         <TextInput
-          onChange={textInputHandler}
+          onChange={(e) => textInputHandler(e, "set")}
           onAcceptValue={function noRefCheck() {}}
           type="text"
           className=" w-100"
