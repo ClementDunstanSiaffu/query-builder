@@ -208,13 +208,13 @@ function AddSetTable(props) {
                         width={width}
                       />
                         {
-                          width >= 626 && <div className="" style={{}}>
+                          (width >= 626 && showDelete) && <div className="" style={{}}>
                             <Button className="" onClick={deleteTable} icon><CloseOutlined /></Button>
                           </div>
                     }
                     </div>
                     {
-                      width <= 625 && <div className="" style={{}}>
+                      (width <= 625 && showDelete) && <div className="" style={{}}>
                           <Button className="" onClick={deleteTable} icon><CloseOutlined /></Button>
                         </div>
                     }
