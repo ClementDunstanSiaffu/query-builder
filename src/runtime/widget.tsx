@@ -16,6 +16,7 @@ import ReactResizeDetector from "./lib/ResizeDetector";
 import AttributeTableConnector from "../connector/attribute_table_connector";
 import geometryEngine from "esri/geometry/geometryEngine";
 import AddSetTable from "./components/AddSetTable";
+import { Card, CardBody, CardFooter } from "jimu-ui";
 
 export default class Widget extends React.PureComponent<
   AllWidgetProps<IMConfig>,
@@ -917,7 +918,7 @@ export default class Widget extends React.PureComponent<
   deleteTable = (id) => {
     let copiedTable = [...this.state.tables];
     copiedTable = copiedTable.map((el) => {
-      if (el.id === id)el.deleted = true;
+      if (el.id === id) el.deleted = true;
       return el;
     });
     const newTables = copiedTable;
@@ -1044,7 +1045,7 @@ export default class Widget extends React.PureComponent<
   };
 
   textSecondIncludedHandler = (e, queryType = "single") => {
-    let txt = e.target.value.trim()
+    let txt = e.target.value.trim();
     let currentTableId = e.target.attributes[0].value;
     let input = "second";
     this.queryTextIncludedConstructor(txt, currentTableId, input, queryType);
@@ -2411,14 +2412,14 @@ export default class Widget extends React.PureComponent<
                               ""
                             )
                           ) : (
-                            <div
+                            <div className={width >= 626 ? "d-flex col-l-1 ":"d-flex col-md-8"}
                               style={{
-                                display: "flex",
-                                flexDirection: "row",
-                                marginTop: "20px",
+                              paddingLeft:0,
+                              paddingRight:0,
                               }}
                             >
                               <Select
+                                fluid={true}
                                 onChange={(e) =>
                                   this.chooseAndOrSet(e, el.blockId)
                                 }
@@ -2435,7 +2436,6 @@ export default class Widget extends React.PureComponent<
                                   espressioni seguenti
                                 </Option>
                               </Select>
-                              <div className="">
                                 <Button
                                   className=""
                                   onClick={() => this.deleteBlock(el.blockId)}
@@ -2445,9 +2445,6 @@ export default class Widget extends React.PureComponent<
                                 >
                                   <CloseOutlined />
                                 </Button>
-                              </div>
-
-                              <div className=" ">
                                 <Button
                                   id={el.blockId}
                                   onClick={() => this.addTwoTable(el.blockId)}
@@ -2457,7 +2454,6 @@ export default class Widget extends React.PureComponent<
                                 >
                                   <PlusOutlined />
                                 </Button>
-                              </div>
                             </div>
                           )}
                           {el.tablesSet.map((innerEl, i, TableArray) => (
