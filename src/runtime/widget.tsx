@@ -117,6 +117,7 @@ export default class Widget extends React.PureComponent<
       selectedId: null,
       width: 0,
       height: 0,
+      queryChanged:false
     };
   };
 
@@ -321,6 +322,7 @@ export default class Widget extends React.PureComponent<
     const clickedQueryTableId = e.currentTarget.attributes[1].value;
     const currentTargetName = e.currentTarget.name;
     this.manipulateFieldQuery(currentTargetName, clickedQueryTableId, type);
+    this.setState({queryChanged:true});
   }
 
   async manipulateFieldQuery(
@@ -2386,6 +2388,8 @@ export default class Widget extends React.PureComponent<
                         itemNotFound={this.state.itemNotFound}
                         selectedId={this.state.selectedId}
                         currentTable={el}
+                        queryChanged = {this.state.queryChanged}
+                        parent={this}
                       />
                     ))}
                     <br />

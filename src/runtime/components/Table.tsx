@@ -58,6 +58,8 @@ function Table(props) {
     onmouseLeave,
     dropdowns,
     currentTable,
+    queryChanged,
+    parent
   } = props;
 
   const currentwhereClauses = whereClauses.find(
@@ -198,7 +200,8 @@ function Table(props) {
                           onmouseLeave={onmouseLeave}
                           dropdowns={dropdowns}
                           width={width}
-
+                          queryChanged = {queryChanged}
+                          parent = {parent}
                         />
                         {
                           width >= 626 && <div className="" style={{}}>
@@ -259,7 +262,10 @@ const SecondConstructor = (props) => {
     opened: d,
     autOpen,
     onmouseLeave,
-    dropdowns,width
+    dropdowns,
+    width,
+    queryChanged,
+    parent
   } = props;
   const normalizedThirdQuery = [];
   let defaultValue = "=";
@@ -302,7 +308,17 @@ const SecondConstructor = (props) => {
       calculateTotalNumberOfPage();
       onIncrement();
     }
-  },[copiednormalizedThirdQuery])
+  },[copiednormalizedThirdQuery]);
+
+  React.useEffect(()=>{
+    if (queryChanged && parent){
+      setStartIndex(0);
+      setEndIndex(0);
+      setCurrentNumberOfPage(0);
+      setTotalNumberOfPage(0);
+      parent?.setState({queryChanged:false})
+  }
+  },[queryChanged])
 
   const calculateTotalNumberOfPage = ()=>{
     if (copiednormalizedThirdQuery.length){
@@ -563,7 +579,61 @@ const SecondConstructor = (props) => {
               <DropdownButton onClick={() => openDrop(tablesId)} style = {{width:"100%"}}>
                 {checked} elementi selezionati
               </DropdownButton>
-              <DropdownMenu>
+              <DropdownMenu className="drop-down-menu-table">
+                <DropdownItem header>Multi selezione attiva</DropdownItem>
+                <DropdownItem divider  />
+                {copiednormalizedThirdQuery.slice(startIndex,endIndex)?.map((el,i)=>{
+                {/* {normalizedThirdQuery.map((el, i) => { */}
+                  if (el){
+                    return (
+                      <div 
+                        // onMouseOver={(e)=>onMouseOver_(e,i)}
+                      >
+                        <DropdownItem
+                          value={i}
+                          data-table-id={tablesId}
+                          className="d-flex justify-content-start"
+                          strategy={"fixed"}
+                        >
+                          {
+                            <Input
+                              onChange={onChangeCheckBox}
+                              type="checkbox"
+                              id={tablesId}
+                              name={el.label}
+                              value={el.value}
+                              defaultChecked={
+                                el.listel &&
+                                el.listel.filter(function (e) {
+                                  return e.checkValue === el.label;
+                                }).length > 0
+                              }
+                            />
+                          }
+                          <label
+                            htmlFor={tablesId}
+                            className="ml-3 mb-0"
+                            id={tablesId}
+                          >
+                            {" "}
+                            {el.label}
+                          </label>
+                        </DropdownItem>
+                      
+                      </div>
+                    );
+                  }
+                })}
+                <>
+                  <PaginationCompoenent
+                    currentPage={`${currentNumberOfPage}`}
+                    totalNumberOfPage = {`${totalNumberOfPage}`}
+                    ondecrement = {onDecrement}
+                    onincrement = {onIncrement}
+                  />
+                </>
+              </DropdownMenu>
+              {/* <DropdownMenu>
                 <DropdownItem header>Multi selezione attiva</DropdownItem>
                 <DropdownItem divider />
                 {normalizedThirdQuery.map((el, i) => {
@@ -602,7 +672,7 @@ const SecondConstructor = (props) => {
                     </div>
                   );
                 })}
-              </DropdownMenu>
+              </DropdownMenu> */}
             </Dropdown>
           }
         {/* </div> */}
