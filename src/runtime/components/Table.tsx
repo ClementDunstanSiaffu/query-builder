@@ -21,6 +21,7 @@ import {
   queryConstructorString,
 } from "../utils/queryTableValue";
 import '../../assets/styles/styles.scss';
+import PaginationCompoenent from "./pagination";
 
 
 function Table(props) {
@@ -231,6 +232,14 @@ const Switch = (props) => {
 };
 
 const SecondConstructor = (props) => {
+
+  const [startIndex,setStartIndex] = React.useState<number>(0);
+  const [endIndex,setEndIndex] = React.useState<number>(0);
+  const [currentNumberOfPage,setCurrentNumberOfPage] = React.useState<number>(0);
+  const [totalNumberOfPage,setTotalNumberOfPage] = React.useState<number>(0);
+
+  const numberOfItems = 10;
+
   const {
     textInputHandler,
     dropdownItemHandler,
@@ -285,6 +294,55 @@ const SecondConstructor = (props) => {
   if (currentWhereClause && currentWhereClause.checkedList) {
     checked = currentWhereClause.checkedList.length;
   }
+
+  const copiednormalizedThirdQuery = [...normalizedThirdQuery];
+
+  React.useEffect(()=>{
+    if (currentNumberOfPage === 0 && copiednormalizedThirdQuery.length){
+      calculateTotalNumberOfPage();
+      onIncrement();
+    }
+  },[copiednormalizedThirdQuery])
+
+  const calculateTotalNumberOfPage = ()=>{
+    if (copiednormalizedThirdQuery.length){
+      const newTotalNumberOfPage = Math.floor(copiednormalizedThirdQuery.length/numberOfItems);
+      setTotalNumberOfPage(newTotalNumberOfPage);
+    }
+  }
+
+  const onIncrement = ()=>{
+    const firstIndex = endIndex;
+    const lastIndex = firstIndex + numberOfItems;
+    const newcurrentNumberOfPage = currentNumberOfPage + 1;
+    setStartIndex(firstIndex);
+    setEndIndex(lastIndex);
+    setCurrentNumberOfPage(newcurrentNumberOfPage);
+  }
+
+  const onDecrement = ()=>{
+    if (startIndex > 0){
+      const firstIndex = startIndex-numberOfItems;
+      const lastIndex = endIndex-numberOfItems;
+      const newcurrentNumberOfPage = currentNumberOfPage - 1;
+      setStartIndex(firstIndex);
+      setEndIndex(lastIndex);
+      setCurrentNumberOfPage(newcurrentNumberOfPage);
+    }
+  }
+
+  // const onMouseOver_ = (e,currentIndex)=>{
+  //   let newFirstIndex,newLastIndex;
+  //   console.log(currentIndex,"check current index")
+  //   if (currentIndex === (numberOfItems-1)){
+  //     newFirstIndex = endIndex;
+  //     newLastIndex = endIndex+10;
+  //     setStartIndex(newFirstIndex);
+  //     setEndIndex(newLastIndex);
+  //   }else if (currentIndex === 0){
+
+  //   }
+  // }
 
   // const test = (props) => {};
   return(
@@ -411,7 +469,11 @@ const SecondConstructor = (props) => {
           </Dropdown>
         </div>
       </div>
-      <div value={"IN"} onMouseLeave={() => onmouseLeave()}  className = {width >= 626 ? "d-flex col-md-4" :" "}>
+      <div 
+        value={"IN"} 
+        onMouseLeave={() => onmouseLeave()}  
+        className = {width >= 626 ? "d-flex col-md-4" :" "}
+      >
         {/* <div className="w-100" style={{width:"100%",backgroundColor:"red"}}> */}
           {
             <Dropdown
@@ -419,6 +481,7 @@ const SecondConstructor = (props) => {
               isOpen={dropdowns[tablesId]}
               toggle={() => dropDown}
               style = {{width:"100%"}}
+              
             >
               <DropdownButton 
                 onClick={() => openDrop(tablesId)} 
@@ -426,45 +489,59 @@ const SecondConstructor = (props) => {
               >
                 {checked} elementi selezionati
               </DropdownButton>
-              <DropdownMenu>
+              <DropdownMenu className="drop-down-menu-table">
                 <DropdownItem header>Multi selezione attiva</DropdownItem>
-                <DropdownItem divider />
-                {normalizedThirdQuery.map((el, i) => {
-                  return (
-                    <div>
-                      <DropdownItem
-                        value={i}
-                        data-table-id={tablesId}
-                        className="d-flex justify-content-start"
-                        strategy={"fixed"}
+                <DropdownItem divider  />
+                {copiednormalizedThirdQuery.slice(startIndex,endIndex)?.map((el,i)=>{
+                {/* {normalizedThirdQuery.map((el, i) => { */}
+                  if (el){
+                    return (
+                      <div 
+                        // onMouseOver={(e)=>onMouseOver_(e,i)}
                       >
-                        {
-                          <Input
-                            onChange={onChangeCheckBox}
-                            type="checkbox"
-                            id={tablesId}
-                            name={el.label}
-                            value={el.value}
-                            defaultChecked={
-                              el.listel &&
-                              el.listel.filter(function (e) {
-                                return e.checkValue === el.label;
-                              }).length > 0
-                            }
-                          />
-                        }
-                        <label
-                          htmlFor={tablesId}
-                          className="ml-3 mb-0"
-                          id={tablesId}
+                        <DropdownItem
+                          value={i}
+                          data-table-id={tablesId}
+                          className="d-flex justify-content-start"
+                          strategy={"fixed"}
                         >
-                          {" "}
-                          {el.label}
-                        </label>
-                      </DropdownItem>
-                    </div>
-                  );
+                          {
+                            <Input
+                              onChange={onChangeCheckBox}
+                              type="checkbox"
+                              id={tablesId}
+                              name={el.label}
+                              value={el.value}
+                              defaultChecked={
+                                el.listel &&
+                                el.listel.filter(function (e) {
+                                  return e.checkValue === el.label;
+                                }).length > 0
+                              }
+                            />
+                          }
+                          <label
+                            htmlFor={tablesId}
+                            className="ml-3 mb-0"
+                            id={tablesId}
+                          >
+                            {" "}
+                            {el.label}
+                          </label>
+                        </DropdownItem>
+                      
+                      </div>
+                    );
+                  }
                 })}
+                <>
+                  <PaginationCompoenent
+                    currentPage={`${currentNumberOfPage}`}
+                    totalNumberOfPage = {`${totalNumberOfPage}`}
+                    ondecrement = {onDecrement}
+                    onincrement = {onIncrement}
+                  />
+                </>
               </DropdownMenu>
             </Dropdown>
           }
