@@ -1851,6 +1851,7 @@ export default class Widget extends React.PureComponent<
   };
 
   openDrop = (id) => {
+    console.log("is called")
     this.setState({ mouseleave: false });
     this.setState({ dropId: id });
     const dropDowns = { ...this.state.dropDowns };
@@ -1880,25 +1881,26 @@ export default class Widget extends React.PureComponent<
   closeDrop = () => this.setState({ opened: false, autOpen: false });
 
   closeDropOnclickOutside = () => {
+    console.log("when clicked outside")
     if (this.state.dropId !== null && this.state.mouseleave) {
-      this.setState({
-        dropDowns: { ...this.state.dropDowns, [this.state.dropId]: false },
-      });
-      this.setState({
-        dropDownsSet: {
-          ...this.state.dropDownsSet,
-          [this.state.dropIdSet]: false,
-        },
-      });
+      // this.setState({
+      //   dropDowns: { ...this.state.dropDowns, [this.state.dropId]: false },
+      // });
+      // this.setState({
+      //   dropDownsSet: {
+      //     ...this.state.dropDownsSet,
+      //     [this.state.dropIdSet]: false,
+      //   },
+      // });
       this.setState({ mouseleave: false });
     }
     if (this.state.dropIdSet !== null && this.state.mouseleave) {
-      this.setState({
-        dropDownsSet: {
-          ...this.state.dropDownsSet,
-          [this.state.dropIdSet]: false,
-        },
-      });
+      // this.setState({
+      //   dropDownsSet: {
+      //     ...this.state.dropDownsSet,
+      //     [this.state.dropIdSet]: false,
+      //   },
+      // });
       this.setState({ mouseleave: false });
     }
   };

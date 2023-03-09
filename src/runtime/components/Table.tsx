@@ -361,6 +361,7 @@ const SecondConstructor = (props) => {
   // }
 
   // const test = (props) => {};
+  console.log(dropdowns[tablesId],dropdowns,"check dropdowns")
   return(
     <Switch queryValues={defaultValue}>
       <div 
@@ -495,7 +496,7 @@ const SecondConstructor = (props) => {
             <Dropdown
               activeIcon
               isOpen={dropdowns[tablesId]}
-              toggle={() => dropDown}
+              // toggle={() => dropDown}
               style = {{width:"100%"}}
               
             >
