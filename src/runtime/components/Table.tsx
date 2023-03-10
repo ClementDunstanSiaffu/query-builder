@@ -1,12 +1,10 @@
 import {
   Button,
-  Checkbox,
   Dropdown,
   DropdownButton,
   DropdownItem,
   DropdownMenu,
   Input,
-  MultiSelect,
   Option,
   Select,
   TextInput,
@@ -15,15 +13,10 @@ import { SettingOutlined } from "jimu-icons/outlined/application/setting";
 import { React } from "jimu-core";
 import { CloseOutlined } from "jimu-icons/outlined/editor/close";
 import ReactResizeDetector from "../lib/ResizeDetector";
-
-import {
-  queryConstructorNumber,
-  queryConstructorString,
-} from "../utils/queryTableValue";
+import {queryConstructorNumber,queryConstructorString} from "../utils/queryTableValue";
 import '../../assets/styles/styles.scss';
 import PaginationCompoenent from "./pagination";
 import SelectUnivoco from "./common/inputs/select";
-
 
 function Table(props) {
   const {
@@ -63,9 +56,7 @@ function Table(props) {
     parent
   } = props;
 
-  const currentwhereClauses = whereClauses.find(
-    (item) => item.id === `${tablesId}`
-  );
+  const currentwhereClauses = whereClauses.find((item) => item.id === `${tablesId}`);
 
   const styles = {
     smallerWidthOuterContainer:{
@@ -98,7 +89,6 @@ function Table(props) {
       flexDirection:"row",
       gap:"3%",
     }
-
   }
 
   if (currentTable.id === tablesId && !currentTable.deleted) {
@@ -172,43 +162,43 @@ function Table(props) {
                         </Select>
                       </div>
                       <SecondConstructor
-                          className="col-md-4"
-                          handleThirdQuery={handleThirdQuery}
-                          textInputHandler={textInputHandler}
-                          multiSelectHandler={multiSelectHandler}
-                          dropdownItemHandler={dropdownItemHandler}
-                          textFirstIncludedHandler={textFirstIncludedHandler}
-                          textSecondIncludedHandler={textSecondIncludedHandler}
-                          dropdownValueQuery={dropdownValueQuery}
-                          handleCheckBox={handleCheckBox}
-                          isChecked={isChecked}
-                          counterIsChecked={counterIsChecked}
-                          functionCounterIsChecked={functionCounterIsChecked}
-                          checkedToQuery={checkedToQuery}
-                          getQueryAttribute={getQueryAttribute}
-                          whereClauses={whereClauses}
-                          tablesId={tablesId}
-                          dropDownToggler={dropDownToggler}
-                          univocoSelectHandler={univocoSelectHandler}
-                          dropDown={dropDown}
-                          isOpenDropD={isOpenDropD}
-                          onChangeCheckBox={onChangeCheckBox}
-                          openDrop={openDrop}
-                          closeDrop={closeDrop}
-                          opened={opened}
-                          autOpen={autOpen}
-                          mouseleave={mouseleave}
-                          onmouseLeave={onmouseLeave}
-                          dropdowns={dropdowns}
-                          width={width}
-                          queryChanged = {queryChanged}
-                          parent = {parent}
-                        />
+                        className="col-md-4"
+                        handleThirdQuery={handleThirdQuery}
+                        textInputHandler={textInputHandler}
+                        multiSelectHandler={multiSelectHandler}
+                        dropdownItemHandler={dropdownItemHandler}
+                        textFirstIncludedHandler={textFirstIncludedHandler}
+                        textSecondIncludedHandler={textSecondIncludedHandler}
+                        dropdownValueQuery={dropdownValueQuery}
+                        handleCheckBox={handleCheckBox}
+                        isChecked={isChecked}
+                        counterIsChecked={counterIsChecked}
+                        functionCounterIsChecked={functionCounterIsChecked}
+                        checkedToQuery={checkedToQuery}
+                        getQueryAttribute={getQueryAttribute}
+                        whereClauses={whereClauses}
+                        tablesId={tablesId}
+                        dropDownToggler={dropDownToggler}
+                        univocoSelectHandler={univocoSelectHandler}
+                        dropDown={dropDown}
+                        isOpenDropD={isOpenDropD}
+                        onChangeCheckBox={onChangeCheckBox}
+                        openDrop={openDrop}
+                        closeDrop={closeDrop}
+                        opened={opened}
+                        autOpen={autOpen}
+                        mouseleave={mouseleave}
+                        onmouseLeave={onmouseLeave}
+                        dropdowns={dropdowns}
+                        width={width}
+                        queryChanged = {queryChanged}
+                        parent = {parent}
+                      />
                         {
                           width >= 626 && <div className="" style={{}}>
                             <Button className="" onClick={deleteTable} icon><CloseOutlined /></Button>
                           </div>
-                    }
+                        }
                     </div>
                     {
                       width <= 625 && <div className="" style={{}}>
@@ -237,13 +227,8 @@ const Switch = (props) => {
 
 const SecondConstructor = (props) => {
 
-  // const [startIndex,setStartIndex] = React.useState<number>(0);
-  // const [endIndex,setEndIndex] = React.useState<number>(0);
-  // const [currentNumberOfPage,setCurrentNumberOfPage] = React.useState<number>(0);
-  // const [totalNumberOfPage,setTotalNumberOfPage] = React.useState<number>(0);
   const [currentTable,setCurrentTable] = React.useState({});
   const [onChangingPage,setOnChangingPage] = React.useState({});
-
   const numberOfItems = 10;
 
   const {
@@ -316,20 +301,8 @@ const SecondConstructor = (props) => {
     }
   },[copiednormalizedThirdQuery]);
 
-  // const initiallizeCurrentTable = ()=>{
-  //   setCurrentTable({
-  //     ...currentTable,
-  //     [tablesId]:{
-  //       "startIndex":0,
-  //       "endIndex":0,
-  //       "currentNumberOfPage":0,
-  //       "totalNumberOfPage":0
-  //   }})
-  // }
-
   React.useEffect(()=>{
     if (queryChanged[tablesId] && parent){
-      // initiallizeCurrentTable();
       setCurrentTable({
         ...currentTable,
         [tablesId]:{
@@ -338,23 +311,9 @@ const SecondConstructor = (props) => {
           "currentNumberOfPage":0,
           "totalNumberOfPage":0
       }})
-      // setStartIndex(0);
-      // setEndIndex(0);
-      // setCurrentNumberOfPage(0);
-      // setTotalNumberOfPage(0);
       parent?.setState({queryChanged:{...queryChanged,[tablesId]:false}})
-      // parent?.setState({queryChanged:false})
-  }
+    }
   },[queryChanged])
-
-  // React.useEffect(()=>{
-  //   if (dropdownValueQuery !== "univoco"){
-  //     if (onChangingPage[tablesId]){
-  //       // initiallizeCurrentTable();
-  //       setOnChangingPage({...onChangingPage,[tablesId]:false});
-  //     }
-  //   }
-  // },[onChangingPage])
 
   const calculateTotalNumberOfPage = ()=>{
     if (copiednormalizedThirdQuery.length){
@@ -365,34 +324,19 @@ const SecondConstructor = (props) => {
       }else{
         newCurrentTable = {"totalNumberOfPage":newTotalNumberOfPage}
       }
-      // console.log({...currentTable,...newCurrentTable})
       setCurrentTable({...currentTable,[tablesId]:newCurrentTable})
-      // currentTable[tablesId]["totalNumberOfPage"] = newTotalNumberOfPage;
-      // setCurrentTable(currentTable);
-      // setTotalNumberOfPage(newTotalNumberOfPage);
     }
   }
 
   const onIncrement = ()=>{
     const currentNumberOfPage = currentTable[tablesId]?.currentNumberOfPage ?? 0;
-    // console.log(
-    //   currentNumberOfPage,
-    //   currentTable[tablesId]?.totalNumberOfPage, 
-    //   currentTable[tablesId],
-    //   typeof currentTable[tablesId]?.totalNumberOfPage,
-    //   currentNumberOfPage < currentTable[tablesId]?.totalNumberOfPage,
-    // "increment is called")
     if (
       currentNumberOfPage < currentTable[tablesId]?.totalNumberOfPage
     ){
       const firstIndex = currentTable[tablesId]?.endIndex??0;
       const lastIndex = firstIndex + numberOfItems;
       const newcurrentNumberOfPage = currentNumberOfPage + 1;
-      // setStartIndex(firstIndex);
-      // setEndIndex(lastIndex);
-      // setCurrentNumberOfPage(newcurrentNumberOfPage);
       let newCurrentTable = currentTable[tablesId];
-      // console.log(currentTable,"check current table")
       if (newCurrentTable){
         newCurrentTable = {
           ...newCurrentTable, 
@@ -405,12 +349,10 @@ const SecondConstructor = (props) => {
       }
       setCurrentTable({...currentTable,[tablesId]:newCurrentTable})
       setOnChangingPage({...onChangingPage,[tablesId]:true})
-      // setOnChangingPage(true)
     }
   }
 
   const onDecrement = ()=>{
-    console.log(currentTable[tablesId]?.startIndex,"check the value of start index")
     if (currentTable[tablesId]?.startIndex > 0){
       const startIndex = currentTable[tablesId].startIndex;
       const endIndex = currentTable[tablesId].endIndex;
@@ -418,9 +360,6 @@ const SecondConstructor = (props) => {
       const firstIndex = startIndex-numberOfItems;
       const lastIndex = endIndex-numberOfItems;
       const newcurrentNumberOfPage = currentNumberOfPage - 1;
-      // setStartIndex(firstIndex);
-      // setEndIndex(lastIndex);
-      // setCurrentNumberOfPage(newcurrentNumberOfPage);
       let newCurrentTable = currentTable[tablesId];
       if (newCurrentTable){
         newCurrentTable = {
@@ -434,22 +373,8 @@ const SecondConstructor = (props) => {
       }
       setCurrentTable({...currentTable,[tablesId]:newCurrentTable});
       setOnChangingPage({...onChangingPage,[tablesId]:true})
-      // setOnChangingPage(true)
     }
   }
-
-  // const onMouseOver_ = (e,currentIndex)=>{
-  //   let newFirstIndex,newLastIndex;
-  //   console.log(currentIndex,"check current index")
-  //   if (currentIndex === (numberOfItems-1)){
-  //     newFirstIndex = endIndex;
-  //     newLastIndex = endIndex+10;
-  //     setStartIndex(newFirstIndex);
-  //     setEndIndex(newLastIndex);
-  //   }else if (currentIndex === 0){
-
-  //   }
-  // }
 
   // const test = (props) => {};
   const startIndex = currentTable[tablesId]?.startIndex??0;
@@ -478,18 +403,6 @@ const SecondConstructor = (props) => {
             onChangingPage = {onChangingPage}
             setOnChangingPage = {setOnChangingPage}
           />
-          // <Select
-          //   onChange={(e) => univocoSelectHandler(e, "single")}
-          //   placeholder="Seleziona il Layer"
-          // >
-          //   {normalizedThirdQuery.map((el, i) => {
-          //     return (
-          //       <Option value={i} data-table-id={tablesId}>
-          //         {el.label}
-          //       </Option>
-          //     );
-          //   })}
-          // </Select>
         ) : (
           <TextInput
             onChange={textInputHandler}
@@ -534,10 +447,7 @@ const SecondConstructor = (props) => {
           </Dropdown>
         </div>
       </div>
-      <div 
-        value={"<>"} 
-        className={width >= 626 ? "d-flex col-md-4":" "}
-      >
+      <div value={"<>"} className={width >= 626 ? "d-flex col-md-4":" "}>
         {dropdownValueQuery === "univoco" ? (
           <SelectUnivoco 
             currentPage={currentTable[tablesId]?.currentNumberOfPage??0}
@@ -555,21 +465,6 @@ const SecondConstructor = (props) => {
             onChangingPage = {onChangingPage}
             setOnChangingPage = {setOnChangingPage}
           />
-          // <Select
-          //   onChange={(e) => univocoSelectHandler(e, "single")}
-          //   placeholder="Seleziona il Layer"
-            
-          // >
-          //   {normalizedThirdQuery.map((el, i) => {
-          //     return (
-          //       <Option value={i} data-table-id={tablesId}>
-          //         {el.label}
-          //       </Option>
-          //     );
-          //   })}
-      
-      
-          // </Select>
         ) : (
           <TextInput
             onChange={textInputHandler}
@@ -618,31 +513,22 @@ const SecondConstructor = (props) => {
         onMouseLeave={() => onmouseLeave()}  
         className = {width >= 626 ? "d-flex col-md-4" :" "}
       >
-        {/* <div className="w-100" style={{width:"100%",backgroundColor:"red"}}> */}
-          {
-            <Dropdown
-              activeIcon
-              isOpen={dropdowns[tablesId]}
-              // toggle={() => dropDown}
-              style = {{width:"100%"}}
-              
-            >
-              <DropdownButton 
-                onClick={() => openDrop(tablesId)} 
-                style = {{width:"100%"}}
-              >
+        {
+          <Dropdown
+            activeIcon
+            isOpen={dropdowns[tablesId]}
+            style = {{width:"100%"}}
+          >
+            <DropdownButton onClick={() => openDrop(tablesId)} style = {{width:"100%"}}>
                 {checked} elementi selezionati
-              </DropdownButton>
-              <DropdownMenu className="drop-down-menu-table">
+            </DropdownButton>
+            <DropdownMenu className="drop-down-menu-table">
                 <DropdownItem header>Multi selezione attiva</DropdownItem>
                 <DropdownItem divider  />
                 {copiednormalizedThirdQuery.slice(startIndex,endIndex)?.map((el,i)=>{
-                {/* {normalizedThirdQuery.map((el, i) => { */}
                   if (el){
                     return (
-                      <div 
-                        // onMouseOver={(e)=>onMouseOver_(e,i)}
-                      >
+                      <div >
                         <DropdownItem
                           value={i}
                           data-table-id={tablesId}
@@ -695,82 +581,23 @@ const SecondConstructor = (props) => {
               </DropdownMenu>
             </Dropdown>
           }
-        {/* </div> */}
       </div>
-      <div 
-        value={"NOT_IN"} 
-        className = {width >= 626 ? "d-flex col-md-4" :" "}
-        // className="d-flex justify-content-between"
-      >
-        {/* <div className="w-100"> */}
-          {
-            <Dropdown
-              activeIcon
-              isOpen={dropdowns[tablesId]}
-              toggle={() => dropDown}
-              style = {{width:"100%"}}
-            >
-              <DropdownButton onClick={() => openDrop(tablesId)} style = {{width:"100%"}}>
+      <div value={"NOT_IN"} className = {width >= 626 ? "d-flex col-md-4" :" "}>
+        {
+          <Dropdown
+            activeIcon
+            isOpen={dropdowns[tablesId]}
+            toggle={() => dropDown}
+            style = {{width:"100%"}}
+          >
+            <DropdownButton onClick={() => openDrop(tablesId)} style = {{width:"100%"}}>
                 {checked} elementi selezionati
-              </DropdownButton>
-              <DropdownMenu className="drop-down-menu-table">
-                <DropdownItem header>Multi selezione attiva</DropdownItem>
-                <DropdownItem divider  />
-                {copiednormalizedThirdQuery.slice(startIndex,endIndex)?.map((el,i)=>{
-                {/* {normalizedThirdQuery.map((el, i) => { */}
-                  if (el){
-                    return (
-                      <div 
-                        // onMouseOver={(e)=>onMouseOver_(e,i)}
-                      >
-                        <DropdownItem
-                          value={i}
-                          data-table-id={tablesId}
-                          className="d-flex justify-content-start"
-                          strategy={"fixed"}
-                        >
-                          {
-                            <Input
-                              onChange={onChangeCheckBox}
-                              type="checkbox"
-                              id={tablesId}
-                              name={el.label}
-                              value={el.value}
-                              defaultChecked={
-                                el.listel &&
-                                el.listel.filter(function (e) {
-                                  return e.checkValue === el.label;
-                                }).length > 0
-                              }
-                            />
-                          }
-                          <label
-                            htmlFor={tablesId}
-                            className="ml-3 mb-0"
-                            id={tablesId}
-                          >
-                            {" "}
-                            {el.label}
-                          </label>
-                        </DropdownItem>
-                      
-                      </div>
-                    );
-                  }
-                })}
-                <>
-                  <PaginationCompoenent
-                    currentPage={`${currentTable[tablesId]?.currentNumberOfPage??0}`}
-                    totalNumberOfPage = {`${currentTable[tablesId]?.totalNumberOfPage??0}`}
-                    ondecrement = {onDecrement}
-                    onincrement = {onIncrement}
-                  />
-                </>
-              </DropdownMenu>
-              {/* <DropdownMenu>
-                <DropdownItem header>Multi selezione attiva</DropdownItem>
-                <DropdownItem divider />
-                {normalizedThirdQuery.map((el, i) => {
+            </DropdownButton>
+            <DropdownMenu className="drop-down-menu-table">
+              <DropdownItem header>Multi selezione attiva</DropdownItem>
+              <DropdownItem divider  />
+              {copiednormalizedThirdQuery.slice(startIndex,endIndex)?.map((el,i)=>{
+                if (el){
                   return (
                     <div>
                       <DropdownItem
@@ -805,11 +632,19 @@ const SecondConstructor = (props) => {
                       </DropdownItem>
                     </div>
                   );
-                })}
-              </DropdownMenu> */}
-            </Dropdown>
-          }
-        {/* </div> */}
+                }
+              })}
+              <>
+                <PaginationCompoenent
+                  currentPage={`${currentTable[tablesId]?.currentNumberOfPage??0}`}
+                  totalNumberOfPage = {`${currentTable[tablesId]?.totalNumberOfPage??0}`}
+                  ondecrement = {onDecrement}
+                  onincrement = {onIncrement}
+                />
+              </>
+            </DropdownMenu>
+          </Dropdown>
+        }
       </div>
       <div 
         value={"<="}  
@@ -817,111 +652,87 @@ const SecondConstructor = (props) => {
         style={width >= 626 ? {}:{display:'flex'}}
       >
         {dropdownValueQuery === "univoco" ? (
-            <SelectUnivoco 
-               currentPage={currentTable[tablesId]?.currentNumberOfPage??0}
-               totalNumberOfPages = {currentTable[tablesId]?.totalNumberOfPage??0}
-               onDecrement = {onDecrement}
-               onIncrement = {onIncrement}
-               startIndex = {currentTable[tablesId]?.startIndex??0}
-               endIndex = {currentTable[tablesId]?.endIndex??0}
-               tablesId = {tablesId}
-               dropdowns = {dropdowns}
-               openDrop = {openDrop}
-               univocoSelectHandler = {univocoSelectHandler}
-               data = {copiednormalizedThirdQuery}
-               queryType = "single"
-               onChangingPage = {onChangingPage}
-               setOnChangingPage = {setOnChangingPage}
-             />
-          // <Select
-          //   placeholder="Seleziona il Layer"
-          //   onChange={(e) => univocoSelectHandler(e, "single")}
-          // >
-          //   {normalizedThirdQuery.map((el, i) => {
-          //     return (
-          //       <Option value={i} data-table-id={tablesId}>
-          //         {el.label}
-          //       </Option>
-          //     );
-          //   })}
-          // </Select>
-        ) : (
-          <TextInput
-            onChange={textInputHandler}
-            onAcceptValue={function noRefCheck() {}}
-            type="text"
-            className=" w-100"
-            data-table-id={tablesId}
-          />
-        )}
-        <div className="flex-shrink-1">
-          <Dropdown activeIcon>
-            <DropdownButton>
-              <SettingOutlined className="setting-svg" />
-            </DropdownButton>
-            <DropdownMenu>
-              <DropdownItem header>Importa il tipo di input</DropdownItem>
-              <DropdownItem divider />
-              <DropdownItem
-                value="valore"
-                onClick={(e) => dropdownItemHandler(e, "single")}
-                data-table-id={tablesId}
-              >
-                Valore
-              </DropdownItem>
-              <DropdownItem
-                value="campo"
-                onClick={(e) => dropdownItemHandler(e, "single")}
-                disabled
-                data-table-id={tablesId}
-              >
-                Campo
-              </DropdownItem>
-              <DropdownItem
-                value="univoco"
-                onClick={(e) => dropdownItemHandler(e, "single")}
-                data-table-id={tablesId}
-              >
-                Univoci
-              </DropdownItem>
-            </DropdownMenu>
-          </Dropdown>
-        </div>
-      </div>
-      <div 
-        value={">="} 
-        style={width >= 626 ? {}:{display:'flex'}}
-        className={width >= 626 ? "d-flex col-md-4":" "}
-      >
-        {dropdownValueQuery === "univoco" ? (
           <SelectUnivoco 
-              currentPage={currentTable[tablesId]?.currentNumberOfPage??0}
-               totalNumberOfPages = {currentTable[tablesId]?.totalNumberOfPage??0}
-               onDecrement = {onDecrement}
-               onIncrement = {onIncrement}
-               startIndex = {currentTable[tablesId]?.startIndex??0}
-               endIndex = {currentTable[tablesId]?.endIndex??0}
-               tablesId = {tablesId}
-               dropdowns = {dropdowns}
-               openDrop = {openDrop}
-               univocoSelectHandler = {univocoSelectHandler}
-               data = {copiednormalizedThirdQuery}
-               queryType = "single"
-               onChangingPage = {onChangingPage}
-               setOnChangingPage = {setOnChangingPage}
-             />
-          // <Select
-          //   placeholder="Seleziona il Layer"
-          //   onChange={(e) => univocoSelectHandler(e, "single")}
-          // >
-          //   {normalizedThirdQuery.map((el, i) => {
-          //     return (
-          //       <Option value={i} data-table-id={tablesId}>
-          //         {el.label}
-          //       </Option>
-          //     );
-          //   })}
-          // </Select>
+            currentPage={currentTable[tablesId]?.currentNumberOfPage??0}
+            totalNumberOfPages = {currentTable[tablesId]?.totalNumberOfPage??0}
+            onDecrement = {onDecrement}
+            onIncrement = {onIncrement}
+            startIndex = {currentTable[tablesId]?.startIndex??0}
+            endIndex = {currentTable[tablesId]?.endIndex??0}
+            tablesId = {tablesId}
+            dropdowns = {dropdowns}
+            openDrop = {openDrop}
+            univocoSelectHandler = {univocoSelectHandler}
+            data = {copiednormalizedThirdQuery}
+            queryType = "single"
+            onChangingPage = {onChangingPage}
+            setOnChangingPage = {setOnChangingPage}
+          />
+        ) : (
+        <TextInput
+          onChange={textInputHandler}
+          onAcceptValue={function noRefCheck() {}}
+          type="text"
+          className=" w-100"
+          data-table-id={tablesId}
+        />
+      )}
+      <div className="flex-shrink-1">
+        <Dropdown activeIcon>
+          <DropdownButton>
+            <SettingOutlined className="setting-svg" />
+          </DropdownButton>
+          <DropdownMenu>
+            <DropdownItem header>Importa il tipo di input</DropdownItem>
+            <DropdownItem divider />
+            <DropdownItem
+              value="valore"
+              onClick={(e) => dropdownItemHandler(e, "single")}
+              data-table-id={tablesId}
+            >
+              Valore
+            </DropdownItem>
+            <DropdownItem
+              value="campo"
+              onClick={(e) => dropdownItemHandler(e, "single")}
+              disabled
+              data-table-id={tablesId}
+            >
+              Campo
+            </DropdownItem>
+            <DropdownItem
+              value="univoco"
+              onClick={(e) => dropdownItemHandler(e, "single")}
+              data-table-id={tablesId}
+            >
+              Univoci
+            </DropdownItem>
+          </DropdownMenu>
+        </Dropdown>
+      </div>
+    </div>
+    <div 
+      value={">="} 
+      style={width >= 626 ? {}:{display:'flex'}}
+      className={width >= 626 ? "d-flex col-md-4":" "}
+    >
+      {dropdownValueQuery === "univoco" ? (
+        <SelectUnivoco 
+          currentPage={currentTable[tablesId]?.currentNumberOfPage??0}
+          totalNumberOfPages = {currentTable[tablesId]?.totalNumberOfPage??0}
+          onDecrement = {onDecrement}
+          onIncrement = {onIncrement}
+          startIndex = {currentTable[tablesId]?.startIndex??0}
+          endIndex = {currentTable[tablesId]?.endIndex??0}
+          tablesId = {tablesId}
+          dropdowns = {dropdowns}
+          openDrop = {openDrop}
+          univocoSelectHandler = {univocoSelectHandler}
+          data = {copiednormalizedThirdQuery}
+          queryType = "single"
+          onChangingPage = {onChangingPage}
+          setOnChangingPage = {setOnChangingPage}
+        />
         ) : (
           <TextInput
             onChange={textInputHandler}
@@ -930,37 +741,35 @@ const SecondConstructor = (props) => {
             className=" w-100"
             data-table-id={tablesId}
           />
-        )}
-        <div className="flex-shrink-1">
-          <Dropdown activeIcon>
-            <DropdownButton>
-              <SettingOutlined className="setting-svg" />
-            </DropdownButton>
-            <DropdownMenu>
-              <DropdownItem header>Importa il tipo di input</DropdownItem>
-              <DropdownItem divider />
-              <DropdownItem
-                value="valore"
-                onClick={(e) => dropdownItemHandler(e, "single")}
-                data-table-id={tablesId}
-              >
-                Valore
-              </DropdownItem>
-              <DropdownItem
-                value="campo"
-                onClick={(e) => dropdownItemHandler(e, "single")}
-                disabled
-                data-table-id={tablesId}
-              >
-                Campo
-              </DropdownItem>
-              <DropdownItem
-                value="univoco"
-                onClick={(e) => dropdownItemHandler(e, "single")}
-                data-table-id={tablesId}
-              >
-                Univoci
-              </DropdownItem>
+      )}
+      <div className="flex-shrink-1">
+        <Dropdown activeIcon>
+          <DropdownButton><SettingOutlined className="setting-svg" /></DropdownButton>
+          <DropdownMenu>
+            <DropdownItem header>Importa il tipo di input</DropdownItem>
+            <DropdownItem divider />
+            <DropdownItem
+              value="valore"
+              onClick={(e) => dropdownItemHandler(e, "single")}
+              data-table-id={tablesId}
+            >
+              Valore
+            </DropdownItem>
+            <DropdownItem
+              value="campo"
+              onClick={(e) => dropdownItemHandler(e, "single")}
+              disabled
+              data-table-id={tablesId}
+            >
+              Campo
+            </DropdownItem>
+            <DropdownItem
+              value="univoco"
+              onClick={(e) => dropdownItemHandler(e, "single")}
+              data-table-id={tablesId}
+            >
+              Univoci
+            </DropdownItem>
             </DropdownMenu>
           </Dropdown>
         </div>
@@ -971,34 +780,22 @@ const SecondConstructor = (props) => {
         style={width >= 626 ? {}:{display:'flex'}}
       >
         {dropdownValueQuery === "univoco" ? (
-            <SelectUnivoco 
-               currentPage={currentTable[tablesId]?.currentNumberOfPage??0}
-               totalNumberOfPages = {currentTable[tablesId]?.totalNumberOfPage??0}
-               onDecrement = {onDecrement}
-               onIncrement = {onIncrement}
-               startIndex = {currentTable[tablesId]?.startIndex??0}
-               endIndex = {currentTable[tablesId]?.endIndex??0}
-               tablesId = {tablesId}
-               dropdowns = {dropdowns}
-               openDrop = {openDrop}
-               univocoSelectHandler = {univocoSelectHandler}
-               data = {copiednormalizedThirdQuery}
-               queryType = "single"
-               onChangingPage = {onChangingPage}
-               setOnChangingPage = {setOnChangingPage}
-             />
-          // <Select
-          //   placeholder="Seleziona il Layer"
-          //   onChange={(e) => univocoSelectHandler(e, "single")}
-          // >
-          //   {normalizedThirdQuery.map((el, i) => {
-          //     return (
-          //       <Option value={i} data-table-id={tablesId}>
-          //         {el.label}
-          //       </Option>
-          //     );
-          //   })}
-          // </Select>
+          <SelectUnivoco 
+            currentPage={currentTable[tablesId]?.currentNumberOfPage??0}
+            totalNumberOfPages = {currentTable[tablesId]?.totalNumberOfPage??0}
+            onDecrement = {onDecrement}
+            onIncrement = {onIncrement}
+            startIndex = {currentTable[tablesId]?.startIndex??0}
+            endIndex = {currentTable[tablesId]?.endIndex??0}
+            tablesId = {tablesId}
+            dropdowns = {dropdowns}
+            openDrop = {openDrop}
+            univocoSelectHandler = {univocoSelectHandler}
+            data = {copiednormalizedThirdQuery}
+            queryType = "single"
+            onChangingPage = {onChangingPage}
+            setOnChangingPage = {setOnChangingPage}
+          />
         ) : (
           <TextInput
             onChange={textInputHandler}
@@ -1010,9 +807,7 @@ const SecondConstructor = (props) => {
         )}
         <div className="flex-shrink-1">
           <Dropdown activeIcon>
-            <DropdownButton>
-              <SettingOutlined className="setting-svg" />
-            </DropdownButton>
+            <DropdownButton><SettingOutlined className="setting-svg" /></DropdownButton>
             <DropdownMenu>
               <DropdownItem header>Importa il tipo di input</DropdownItem>
               <DropdownItem divider />
@@ -1048,34 +843,22 @@ const SecondConstructor = (props) => {
         style={width >= 626 ? {}:{display:'flex'}}
       >
         {dropdownValueQuery === "univoco" ? (
-            <SelectUnivoco 
-               currentPage={currentTable[tablesId]?.currentNumberOfPage??0}
-               totalNumberOfPages = {currentTable[tablesId]?.totalNumberOfPage??0}
-               onDecrement = {onDecrement}
-               onIncrement = {onIncrement}
-               startIndex = {currentTable[tablesId]?.startIndex??0}
-               endIndex = {currentTable[tablesId]?.endIndex??0}
-               tablesId = {tablesId}
-               dropdowns = {dropdowns}
-               openDrop = {openDrop}
-               univocoSelectHandler = {univocoSelectHandler}
-               data = {copiednormalizedThirdQuery}
-               queryType = "single"
-               onChangingPage = {onChangingPage}
-               setOnChangingPage = {setOnChangingPage}
-             />
-          // <Select
-          //   placeholder="Seleziona il Layer"
-          //   onChange={(e) => univocoSelectHandler(e, "single")}
-          // >
-          //   {normalizedThirdQuery.map((el, i) => {
-          //     return (
-          //       <Option value={i} data-table-id={tablesId}>
-          //         {el.label}
-          //       </Option>
-          //     );
-          //   })}
-          // </Select>
+          <SelectUnivoco 
+            currentPage={currentTable[tablesId]?.currentNumberOfPage??0}
+            totalNumberOfPages = {currentTable[tablesId]?.totalNumberOfPage??0}
+            onDecrement = {onDecrement}
+            onIncrement = {onIncrement}
+            startIndex = {currentTable[tablesId]?.startIndex??0}
+            endIndex = {currentTable[tablesId]?.endIndex??0}
+            tablesId = {tablesId}
+            dropdowns = {dropdowns}
+            openDrop = {openDrop}
+            univocoSelectHandler = {univocoSelectHandler}
+            data = {copiednormalizedThirdQuery}
+            queryType = "single"
+            onChangingPage = {onChangingPage}
+            setOnChangingPage = {setOnChangingPage}
+          />
         ) : (
           <TextInput
             onChange={textInputHandler}

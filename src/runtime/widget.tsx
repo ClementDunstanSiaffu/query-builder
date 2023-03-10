@@ -502,16 +502,7 @@ export default class Widget extends React.PureComponent<
           }
           if (queryValue === "IN" || queryValue === "NOT_IN") {
             value = [];
-            if (queryValue === "IN" && el.checkedList.length) {
-              el.checkedList.forEach((el) => value.push(el.checkValue));
-            } else if (
-              queryValue === "NOT_IN" &&
-              this.state.counterIsChecked.length
-            ) {
-              this.state.counterIsChecked.forEach((el) =>
-                value.push(el.checkValue)
-              );
-            }
+            el.checkedList.forEach((el) => value.push(el.checkValue));
             if (this.containsAnyLetters(value)) {
               let queryIn = `${attributeQuery} IN (${
                 "'" + value.join("', '") + "'"
