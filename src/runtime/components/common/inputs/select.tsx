@@ -3,6 +3,7 @@ import {React,jsx} from 'jimu-core';
 import {Dropdown,DropdownButton,DropdownMenu,DropdownItem,Input} from 'jimu-ui'
 import { CheckOutlined } from 'jimu-icons/outlined/application/check'
 import PaginationCompoenent from '../../pagination';
+import '../../../../assets/styles/styles.scss'
 
 type PropsType = {
   tablesId:number|string
@@ -80,7 +81,7 @@ const SelectUnivoco = (props:PropsType)=>{
           {currentTable[tablesId]?.selectedItem??" "}
           {/* {selectedItem} */}
         </DropdownButton>
-        <DropdownMenu className="drop-down-menu-table">
+        <DropdownMenu className="drop-down-menu-table"  >
           {/* <DropdownItem header></DropdownItem> */}
           <DropdownItem divider  />
           {data?.slice(startIndex,endIndex)?.map((el,i)=>{
@@ -93,6 +94,7 @@ const SelectUnivoco = (props:PropsType)=>{
                   // value = {el.value}
                 >
                   <DropdownItem
+                    
                     value={i}
                     data-table-id={tablesId}
                     className="d-flex justify-content-start"
