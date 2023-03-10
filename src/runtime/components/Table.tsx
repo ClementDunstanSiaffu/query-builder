@@ -22,6 +22,7 @@ import {
 } from "../utils/queryTableValue";
 import '../../assets/styles/styles.scss';
 import PaginationCompoenent from "./pagination";
+import SelectUnivoco from "./common/inputs/select";
 
 
 function Table(props) {
@@ -240,6 +241,7 @@ const SecondConstructor = (props) => {
   const [endIndex,setEndIndex] = React.useState<number>(0);
   const [currentNumberOfPage,setCurrentNumberOfPage] = React.useState<number>(0);
   const [totalNumberOfPage,setTotalNumberOfPage] = React.useState<number>(0);
+  const [onChangingPage,setOnChangingPage] = React.useState<boolean>(false);
 
   const numberOfItems = 10;
 
@@ -322,18 +324,21 @@ const SecondConstructor = (props) => {
 
   const calculateTotalNumberOfPage = ()=>{
     if (copiednormalizedThirdQuery.length){
-      const newTotalNumberOfPage = Math.floor(copiednormalizedThirdQuery.length/numberOfItems);
+      const newTotalNumberOfPage = Math.ceil(copiednormalizedThirdQuery.length/numberOfItems);
       setTotalNumberOfPage(newTotalNumberOfPage);
     }
   }
 
   const onIncrement = ()=>{
-    const firstIndex = endIndex;
-    const lastIndex = firstIndex + numberOfItems;
-    const newcurrentNumberOfPage = currentNumberOfPage + 1;
-    setStartIndex(firstIndex);
-    setEndIndex(lastIndex);
-    setCurrentNumberOfPage(newcurrentNumberOfPage);
+    if (currentNumberOfPage < totalNumberOfPage){
+      const firstIndex = endIndex;
+      const lastIndex = firstIndex + numberOfItems;
+      const newcurrentNumberOfPage = currentNumberOfPage + 1;
+      setStartIndex(firstIndex);
+      setEndIndex(lastIndex);
+      setCurrentNumberOfPage(newcurrentNumberOfPage);
+      setOnChangingPage(true)
+    }
   }
 
   const onDecrement = ()=>{
@@ -344,6 +349,7 @@ const SecondConstructor = (props) => {
       setStartIndex(firstIndex);
       setEndIndex(lastIndex);
       setCurrentNumberOfPage(newcurrentNumberOfPage);
+      setOnChangingPage(true)
     }
   }
 
@@ -361,7 +367,6 @@ const SecondConstructor = (props) => {
   // }
 
   // const test = (props) => {};
-  console.log(dropdowns[tablesId],dropdowns,"check dropdowns")
   return(
     <Switch queryValues={defaultValue}>
       <div 
@@ -370,18 +375,34 @@ const SecondConstructor = (props) => {
         style={width >= 626 ? {}:{display:'flex'}}
       >
         {dropdownValueQuery === "univoco" ? (
-          <Select
-            onChange={(e) => univocoSelectHandler(e, "single")}
-            placeholder="Seleziona il Layer"
-          >
-            {normalizedThirdQuery.map((el, i) => {
-              return (
-                <Option value={i} data-table-id={tablesId}>
-                  {el.label}
-                </Option>
-              );
-            })}
-          </Select>
+          <SelectUnivoco 
+            currentPage={currentNumberOfPage}
+            totalNumberOfPages = {totalNumberOfPage}
+            onDecrement = {onDecrement}
+            onIncrement = {onIncrement}
+            startIndex = {startIndex}
+            endIndex = {endIndex}
+            tablesId = {tablesId}
+            dropdowns = {dropdowns}
+            openDrop = {openDrop}
+            univocoSelectHandler = {univocoSelectHandler}
+            data = {copiednormalizedThirdQuery}
+            queryType = "single"
+            onChangingPage = {onChangingPage}
+            setOnChangingPage = {setOnChangingPage}
+          />
+          // <Select
+          //   onChange={(e) => univocoSelectHandler(e, "single")}
+          //   placeholder="Seleziona il Layer"
+          // >
+          //   {normalizedThirdQuery.map((el, i) => {
+          //     return (
+          //       <Option value={i} data-table-id={tablesId}>
+          //         {el.label}
+          //       </Option>
+          //     );
+          //   })}
+          // </Select>
         ) : (
           <TextInput
             onChange={textInputHandler}
@@ -434,6 +455,7 @@ const SecondConstructor = (props) => {
           <Select
             onChange={(e) => univocoSelectHandler(e, "single")}
             placeholder="Seleziona il Layer"
+            
           >
             {normalizedThirdQuery.map((el, i) => {
               return (
@@ -442,6 +464,8 @@ const SecondConstructor = (props) => {
                 </Option>
               );
             })}
+      
+      
           </Select>
         ) : (
           <TextInput
