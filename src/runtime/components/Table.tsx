@@ -237,11 +237,12 @@ const Switch = (props) => {
 
 const SecondConstructor = (props) => {
 
-  const [startIndex,setStartIndex] = React.useState<number>(0);
-  const [endIndex,setEndIndex] = React.useState<number>(0);
-  const [currentNumberOfPage,setCurrentNumberOfPage] = React.useState<number>(0);
-  const [totalNumberOfPage,setTotalNumberOfPage] = React.useState<number>(0);
-  const [onChangingPage,setOnChangingPage] = React.useState<boolean>(false);
+  // const [startIndex,setStartIndex] = React.useState<number>(0);
+  // const [endIndex,setEndIndex] = React.useState<number>(0);
+  // const [currentNumberOfPage,setCurrentNumberOfPage] = React.useState<number>(0);
+  // const [totalNumberOfPage,setTotalNumberOfPage] = React.useState<number>(0);
+  const [currentTable,setCurrentTable] = React.useState({});
+  const [onChangingPage,setOnChangingPage] = React.useState({});
 
   const numberOfItems = 10;
 
@@ -306,50 +307,134 @@ const SecondConstructor = (props) => {
   const copiednormalizedThirdQuery = [...normalizedThirdQuery];
 
   React.useEffect(()=>{
-    if (currentNumberOfPage === 0 && copiednormalizedThirdQuery.length){
+    if (
+      currentTable[tablesId]?.currentNumberOfPage === 0 && 
+      copiednormalizedThirdQuery.length
+    ){
       calculateTotalNumberOfPage();
       onIncrement();
     }
   },[copiednormalizedThirdQuery]);
 
+  // const initiallizeCurrentTable = ()=>{
+  //   setCurrentTable({
+  //     ...currentTable,
+  //     [tablesId]:{
+  //       "startIndex":0,
+  //       "endIndex":0,
+  //       "currentNumberOfPage":0,
+  //       "totalNumberOfPage":0
+  //   }})
+  // }
+
   React.useEffect(()=>{
-    if (queryChanged && parent){
-      setStartIndex(0);
-      setEndIndex(0);
-      setCurrentNumberOfPage(0);
-      setTotalNumberOfPage(0);
-      parent?.setState({queryChanged:false})
+    if (queryChanged[tablesId] && parent){
+      // initiallizeCurrentTable();
+      setCurrentTable({
+        ...currentTable,
+        [tablesId]:{
+          "startIndex":0,
+          "endIndex":0,
+          "currentNumberOfPage":0,
+          "totalNumberOfPage":0
+      }})
+      // setStartIndex(0);
+      // setEndIndex(0);
+      // setCurrentNumberOfPage(0);
+      // setTotalNumberOfPage(0);
+      parent?.setState({queryChanged:{...queryChanged,[tablesId]:false}})
+      // parent?.setState({queryChanged:false})
   }
   },[queryChanged])
+
+  // React.useEffect(()=>{
+  //   if (dropdownValueQuery !== "univoco"){
+  //     if (onChangingPage[tablesId]){
+  //       // initiallizeCurrentTable();
+  //       setOnChangingPage({...onChangingPage,[tablesId]:false});
+  //     }
+  //   }
+  // },[onChangingPage])
 
   const calculateTotalNumberOfPage = ()=>{
     if (copiednormalizedThirdQuery.length){
       const newTotalNumberOfPage = Math.ceil(copiednormalizedThirdQuery.length/numberOfItems);
-      setTotalNumberOfPage(newTotalNumberOfPage);
+      let newCurrentTable = currentTable[tablesId];
+      if (newCurrentTable){
+        newCurrentTable = {...newCurrentTable,"totalNumberOfPage":newTotalNumberOfPage};
+      }else{
+        newCurrentTable = {"totalNumberOfPage":newTotalNumberOfPage}
+      }
+      // console.log({...currentTable,...newCurrentTable})
+      setCurrentTable({...currentTable,[tablesId]:newCurrentTable})
+      // currentTable[tablesId]["totalNumberOfPage"] = newTotalNumberOfPage;
+      // setCurrentTable(currentTable);
+      // setTotalNumberOfPage(newTotalNumberOfPage);
     }
   }
 
   const onIncrement = ()=>{
-    if (currentNumberOfPage < totalNumberOfPage){
-      const firstIndex = endIndex;
+    const currentNumberOfPage = currentTable[tablesId]?.currentNumberOfPage ?? 0;
+    // console.log(
+    //   currentNumberOfPage,
+    //   currentTable[tablesId]?.totalNumberOfPage, 
+    //   currentTable[tablesId],
+    //   typeof currentTable[tablesId]?.totalNumberOfPage,
+    //   currentNumberOfPage < currentTable[tablesId]?.totalNumberOfPage,
+    // "increment is called")
+    if (
+      currentNumberOfPage < currentTable[tablesId]?.totalNumberOfPage
+    ){
+      const firstIndex = currentTable[tablesId]?.endIndex??0;
       const lastIndex = firstIndex + numberOfItems;
       const newcurrentNumberOfPage = currentNumberOfPage + 1;
-      setStartIndex(firstIndex);
-      setEndIndex(lastIndex);
-      setCurrentNumberOfPage(newcurrentNumberOfPage);
-      setOnChangingPage(true)
+      // setStartIndex(firstIndex);
+      // setEndIndex(lastIndex);
+      // setCurrentNumberOfPage(newcurrentNumberOfPage);
+      let newCurrentTable = currentTable[tablesId];
+      // console.log(currentTable,"check current table")
+      if (newCurrentTable){
+        newCurrentTable = {
+          ...newCurrentTable, 
+          "startIndex":firstIndex,
+          "endIndex":lastIndex,
+          "currentNumberOfPage":newcurrentNumberOfPage
+        };
+      }else{
+        newCurrentTable = {"startIndex":firstIndex,"endIndex":lastIndex,"currentNumberOfPage":newcurrentNumberOfPage}
+      }
+      setCurrentTable({...currentTable,[tablesId]:newCurrentTable})
+      setOnChangingPage({...onChangingPage,[tablesId]:true})
+      // setOnChangingPage(true)
     }
   }
 
   const onDecrement = ()=>{
-    if (startIndex > 0){
+    console.log(currentTable[tablesId]?.startIndex,"check the value of start index")
+    if (currentTable[tablesId]?.startIndex > 0){
+      const startIndex = currentTable[tablesId].startIndex;
+      const endIndex = currentTable[tablesId].endIndex;
+      const currentNumberOfPage = currentTable[tablesId].currentNumberOfPage
       const firstIndex = startIndex-numberOfItems;
       const lastIndex = endIndex-numberOfItems;
       const newcurrentNumberOfPage = currentNumberOfPage - 1;
-      setStartIndex(firstIndex);
-      setEndIndex(lastIndex);
-      setCurrentNumberOfPage(newcurrentNumberOfPage);
-      setOnChangingPage(true)
+      // setStartIndex(firstIndex);
+      // setEndIndex(lastIndex);
+      // setCurrentNumberOfPage(newcurrentNumberOfPage);
+      let newCurrentTable = currentTable[tablesId];
+      if (newCurrentTable){
+        newCurrentTable = {
+          ...newCurrentTable, 
+          "startIndex":firstIndex,
+          "endIndex":lastIndex,
+          "currentNumberOfPage":newcurrentNumberOfPage
+        };
+      }else{
+        newCurrentTable = {"startIndex":firstIndex,"endIndex":lastIndex,"currentNumberOfPage":newcurrentNumberOfPage}
+      }
+      setCurrentTable({...currentTable,[tablesId]:newCurrentTable});
+      setOnChangingPage({...onChangingPage,[tablesId]:true})
+      // setOnChangingPage(true)
     }
   }
 
@@ -367,6 +452,8 @@ const SecondConstructor = (props) => {
   // }
 
   // const test = (props) => {};
+  const startIndex = currentTable[tablesId]?.startIndex??0;
+  const endIndex = currentTable[tablesId]?.endIndex??10;
   return(
     <Switch queryValues={defaultValue}>
       <div 
@@ -376,12 +463,12 @@ const SecondConstructor = (props) => {
       >
         {dropdownValueQuery === "univoco" ? (
           <SelectUnivoco 
-            currentPage={currentNumberOfPage}
-            totalNumberOfPages = {totalNumberOfPage}
+            currentPage={currentTable[tablesId]?.currentNumberOfPage??0}
+            totalNumberOfPages = {currentTable[tablesId]?.totalNumberOfPage??0}
             onDecrement = {onDecrement}
             onIncrement = {onIncrement}
-            startIndex = {startIndex}
-            endIndex = {endIndex}
+            startIndex = {currentTable[tablesId]?.startIndex??0}
+            endIndex = {currentTable[tablesId]?.endIndex??0}
             tablesId = {tablesId}
             dropdowns = {dropdowns}
             openDrop = {openDrop}
@@ -452,21 +539,37 @@ const SecondConstructor = (props) => {
         className={width >= 626 ? "d-flex col-md-4":" "}
       >
         {dropdownValueQuery === "univoco" ? (
-          <Select
-            onChange={(e) => univocoSelectHandler(e, "single")}
-            placeholder="Seleziona il Layer"
+          <SelectUnivoco 
+            currentPage={currentTable[tablesId]?.currentNumberOfPage??0}
+            totalNumberOfPages = {currentTable[tablesId]?.totalNumberOfPage??0}
+            onDecrement = {onDecrement}
+            onIncrement = {onIncrement}
+            startIndex = {currentTable[tablesId]?.startIndex??0}
+            endIndex = {currentTable[tablesId]?.endIndex??0}
+            tablesId = {tablesId}
+            dropdowns = {dropdowns}
+            openDrop = {openDrop}
+            univocoSelectHandler = {univocoSelectHandler}
+            data = {copiednormalizedThirdQuery}
+            queryType = "single"
+            onChangingPage = {onChangingPage}
+            setOnChangingPage = {setOnChangingPage}
+          />
+          // <Select
+          //   onChange={(e) => univocoSelectHandler(e, "single")}
+          //   placeholder="Seleziona il Layer"
             
-          >
-            {normalizedThirdQuery.map((el, i) => {
-              return (
-                <Option value={i} data-table-id={tablesId}>
-                  {el.label}
-                </Option>
-              );
-            })}
+          // >
+          //   {normalizedThirdQuery.map((el, i) => {
+          //     return (
+          //       <Option value={i} data-table-id={tablesId}>
+          //         {el.label}
+          //       </Option>
+          //     );
+          //   })}
       
       
-          </Select>
+          // </Select>
         ) : (
           <TextInput
             onChange={textInputHandler}
@@ -553,6 +656,12 @@ const SecondConstructor = (props) => {
                               id={tablesId}
                               name={el.label}
                               value={el.value}
+                              checked = {
+                                el.listel &&
+                                el.listel.filter(function (e) {
+                                  return e.checkValue === el.label;
+                                }).length > 0
+                              }
                               defaultChecked={
                                 el.listel &&
                                 el.listel.filter(function (e) {
@@ -577,8 +686,8 @@ const SecondConstructor = (props) => {
                 })}
                 <>
                   <PaginationCompoenent
-                    currentPage={`${currentNumberOfPage}`}
-                    totalNumberOfPage = {`${totalNumberOfPage}`}
+                    currentPage={`${currentTable[tablesId]?.currentNumberOfPage??0}`}
+                    totalNumberOfPage = {`${currentTable[tablesId]?.totalNumberOfPage}`}
                     ondecrement = {onDecrement}
                     onincrement = {onIncrement}
                   />
@@ -651,8 +760,8 @@ const SecondConstructor = (props) => {
                 })}
                 <>
                   <PaginationCompoenent
-                    currentPage={`${currentNumberOfPage}`}
-                    totalNumberOfPage = {`${totalNumberOfPage}`}
+                    currentPage={`${currentTable[tablesId]?.currentNumberOfPage??0}`}
+                    totalNumberOfPage = {`${currentTable[tablesId]?.totalNumberOfPage??0}`}
                     ondecrement = {onDecrement}
                     onincrement = {onIncrement}
                   />

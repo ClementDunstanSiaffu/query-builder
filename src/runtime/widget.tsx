@@ -117,7 +117,7 @@ export default class Widget extends React.PureComponent<
       selectedId: null,
       width: 0,
       height: 0,
-      queryChanged:false
+      queryChanged:{}
     };
   };
 
@@ -322,7 +322,8 @@ export default class Widget extends React.PureComponent<
     const clickedQueryTableId = e.currentTarget.attributes[1].value;
     const currentTargetName = e.currentTarget.name;
     this.manipulateFieldQuery(currentTargetName, clickedQueryTableId, type);
-    this.setState({queryChanged:true});
+    this.setState({queryChanged:{...this.state.queryChanged,[clickedQueryTableId]:true}})
+    // this.setState({queryChanged:true});
   }
 
   async manipulateFieldQuery(
@@ -1857,7 +1858,6 @@ export default class Widget extends React.PureComponent<
   };
 
   openDrop = (id) => {
-    console.log("is called")
     this.setState({ mouseleave: false });
     this.setState({ dropId: id });
     const dropDowns = { ...this.state.dropDowns };
@@ -1887,7 +1887,6 @@ export default class Widget extends React.PureComponent<
   closeDrop = () => this.setState({ opened: false, autOpen: false });
 
   closeDropOnclickOutside = () => {
-    console.log("when clicked outside")
     if (this.state.dropId !== null && this.state.mouseleave) {
       // this.setState({
       //   dropDowns: { ...this.state.dropDowns, [this.state.dropId]: false },

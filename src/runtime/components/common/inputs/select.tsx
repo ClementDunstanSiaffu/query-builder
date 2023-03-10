@@ -17,15 +17,16 @@ type PropsType = {
   dropdowns:{[key:number|string]:boolean},
   openDrop:(tablesId:string|number)=>void,
   queryType:string,
-  onChangingPage:boolean,
+  onChangingPage:{[key:string|number]:boolean},
   setOnChangingPage:any
 }
 
 const SelectUnivoco = (props:PropsType)=>{
 
-  const [openDropdown,setOpenDropdown] = React.useState<boolean>(false);
-  const [selectedIndex,setSelectedIndex] = React.useState<number>(-1);
-  const [selectedItem,setSelectedItem] = React.useState<string>(" ");
+  // const [openDropdown,setOpenDropdown] = React.useState<boolean>(false);
+  // const [selectedIndex,setSelectedIndex] = React.useState<number>(-1);
+  // const [selectedItem,setSelectedItem] = React.useState<string>(" ");
+  const [currentTable,setCurrentTable] = React.useState({});
 
   // const openDropDown_ = ()=>setOpenDropdown(!openDropdown);
   
@@ -47,21 +48,24 @@ const SelectUnivoco = (props:PropsType)=>{
   } = props
 
   React.useEffect(()=>{
-    if (onChangingPage){
-      setSelectedIndex(-1);
-      setSelectedItem(" ");
-      setOnChangingPage(false);
+    if (onChangingPage[tablesId]){
+      setCurrentTable({...currentTable,[tablesId]:{"selectedIndex":-1,"selectedItem":" "}})
+      // setSelectedIndex(-1);
+      // setSelectedItem(" ");
+      setOnChangingPage({...onChangingPage,[tablesId]:false});
     }
   },[onChangingPage])
 
   const getClickedItem = (value:any,tableId:string|number,index)=>{
-    setSelectedIndex(index);
-    setSelectedItem(value)
+    setCurrentTable({...currentTable,[tableId]:{"selectedIndex":index,"selectedItem":value}});
+    // setSelectedIndex(index);
+    // setSelectedItem(value)
     const currentTableId = typeof tableId === "number" ? `${tableId}`:tableId
     const obj = {value,tableId:currentTableId}
     univocoSelectHandler(obj,queryType);
     openDrop(tablesId)
   }
+  
 
   return(
     
@@ -72,7 +76,10 @@ const SelectUnivoco = (props:PropsType)=>{
         style = {{width:"100%"}}
         
       >
-        <DropdownButton onClick={() => openDrop(tablesId)} style = {{width:"100%"}}>{selectedItem}</DropdownButton>
+        <DropdownButton onClick={() => openDrop(tablesId)} style = {{width:"100%"}}>
+          {currentTable[tablesId]?.selectedItem??" "}
+          {/* {selectedItem} */}
+        </DropdownButton>
         <DropdownMenu className="drop-down-menu-table">
           {/* <DropdownItem header></DropdownItem> */}
           <DropdownItem divider  />
@@ -93,7 +100,8 @@ const SelectUnivoco = (props:PropsType)=>{
                   >
                     {
                       <div style={{width:20,height:20,display:"flex",alignItems:"center",justifyContent:"flex-end"}}>
-                        {  selectedIndex === i && <CheckOutlined />}
+                        {currentTable[tablesId]?.selectedIndex === i && <CheckOutlined />}
+                        {/* {  selectedIndex === i && <CheckOutlined />} */}
                       </div>
                     
                       // <Input
