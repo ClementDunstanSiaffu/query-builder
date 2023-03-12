@@ -20,6 +20,7 @@ import {
   queryConstructorString,
 } from "../utils/queryTableValue";
 import '../../assets/styles/styles.scss';
+import PaginationCompoenent from "./pagination";
 
 function AddSetTable(props) {
   const {
@@ -61,6 +62,8 @@ function AddSetTable(props) {
     blockId,
     currentTable,
     showBlockDelete,
+    queryChanged,
+    parent
   } = props;
 
   const currentwhereClausesSet = whereClausesSet.find(
@@ -206,6 +209,8 @@ function AddSetTable(props) {
                         dropdownsSet={dropdownsSet}
                         blockId={blockId}
                         width={width}
+                        queryChanged = {queryChanged}
+                        parent = {parent}
                       />
                         {
                           (width >= 626 && showDelete) && <div className="" style={{}}>
@@ -259,8 +264,16 @@ const SecondConstructor = (props) => {
     autOpen,
     onmouseLeave,
     dropdownsSet,
-    blockId,width
+    blockId,
+    width,
+    queryChanged,
+    parent
   } = props;
+
+  const [currentTable,setCurrentTable] = React.useState({});
+  const [onChangingPage,setOnChangingPage] = React.useState({});
+  const numberOfItems = 10;
+
   const normalizedThirdQuery = [];
   let defaultValue = "=";
   let dropdownValueQuery = "valore";
@@ -291,6 +304,98 @@ const SecondConstructor = (props) => {
       checked = currentItem.checkedListSet.length;
   }
 
+  const copiednormalizedThirdQuery = [...normalizedThirdQuery];
+
+  React.useEffect(()=>{
+    if (
+      currentTable[tablesSetId]?.currentNumberOfPage === 0 && 
+      copiednormalizedThirdQuery.length
+    ){
+      calculateTotalNumberOfPage();
+      onIncrement();
+    }
+  },[copiednormalizedThirdQuery]);
+
+  React.useEffect(()=>{
+    if (queryChanged[tablesSetId] && parent){
+      setCurrentTable({
+        ...currentTable,
+        [tablesSetId]:{
+          "startIndex":0,
+          "endIndex":0,
+          "currentNumberOfPage":0,
+          "totalNumberOfPage":0
+      }})
+      parent?.setState({queryChanged:{...queryChanged,[tablesSetId]:false}})
+    }
+  },[queryChanged])
+
+  const calculateTotalNumberOfPage = ()=>{
+    if (copiednormalizedThirdQuery.length){
+      const newTotalNumberOfPage = Math.ceil(copiednormalizedThirdQuery.length/numberOfItems);
+      let newCurrentTable = currentTable[tablesSetId];
+      if (newCurrentTable){
+        newCurrentTable = {...newCurrentTable,"totalNumberOfPage":newTotalNumberOfPage};
+      }else{
+        newCurrentTable = {"totalNumberOfPage":newTotalNumberOfPage}
+      }
+      setCurrentTable({...currentTable,[tablesSetId]:newCurrentTable})
+    }
+  }
+
+  const onIncrement = ()=>{
+    const currentNumberOfPage = currentTable[tablesSetId]?.currentNumberOfPage ?? 0;
+    if (
+      currentNumberOfPage < currentTable[tablesSetId]?.totalNumberOfPage
+    ){
+      const firstIndex = currentTable[tablesSetId]?.endIndex??0;
+      const lastIndex = firstIndex + numberOfItems;
+      const newcurrentNumberOfPage = currentNumberOfPage + 1;
+      let newCurrentTable = currentTable[tablesSetId];
+      if (newCurrentTable){
+        newCurrentTable = {
+          ...newCurrentTable, 
+          "startIndex":firstIndex,
+          "endIndex":lastIndex,
+          "currentNumberOfPage":newcurrentNumberOfPage
+        };
+      }else{
+        newCurrentTable = {"startIndex":firstIndex,"endIndex":lastIndex,"currentNumberOfPage":newcurrentNumberOfPage}
+      }
+      setCurrentTable({...currentTable,[tablesSetId]:newCurrentTable})
+      setOnChangingPage({...onChangingPage,[tablesSetId]:true})
+    }
+  }
+
+  const onDecrement = ()=>{
+    if (currentTable[tablesSetId]?.startIndex > 0){
+      const startIndex = currentTable[tablesSetId].startIndex;
+      const endIndex = currentTable[tablesSetId].endIndex;
+      const currentNumberOfPage = currentTable[tablesSetId].currentNumberOfPage
+      const firstIndex = startIndex-numberOfItems;
+      const lastIndex = endIndex-numberOfItems;
+      const newcurrentNumberOfPage = currentNumberOfPage - 1;
+      let newCurrentTable = currentTable[tablesSetId];
+      if (newCurrentTable){
+        newCurrentTable = {
+          ...newCurrentTable, 
+          "startIndex":firstIndex,
+          "endIndex":lastIndex,
+          "currentNumberOfPage":newcurrentNumberOfPage
+        };
+      }else{
+        newCurrentTable = {"startIndex":firstIndex,"endIndex":lastIndex,"currentNumberOfPage":newcurrentNumberOfPage}
+      }
+      setCurrentTable({...currentTable,[tablesSetId]:newCurrentTable});
+      setOnChangingPage({...onChangingPage,[tablesSetId]:true})
+    }
+  }
+
+  // const test = (props) => {};
+  const startIndex = currentTable[tablesSetId]?.startIndex??0;
+  const endIndex = currentTable[tablesSetId]?.endIndex??10;
+
+  console.log(currentTable,startIndex,endIndex)
   return(
     <Switch queryValues={defaultValue}>
       <div 
@@ -432,7 +537,62 @@ const SecondConstructor = (props) => {
               <DropdownMenu>
                 <DropdownItem header>Multi selezione attiva</DropdownItem>
                 <DropdownItem divider />
-                {normalizedThirdQuery.map((el, i) => {
+                {copiednormalizedThirdQuery.slice(startIndex,endIndex)?.map((el,i)=>{
+                  if (el){
+                    return (
+                      <div >
+                        <DropdownItem
+                          value={i}
+                          data-table-id={tablesSetId}
+                          className="d-flex justify-content-start"
+                          strategy={"fixed"}
+                        >
+                          {
+                            <Input
+                              onChange={onChangeCheckBox}
+                              type="checkbox"
+                              id={tablesSetId}
+                              name={el.label}
+                              value={el.value}
+                              checked = {
+                                el.listel &&
+                                el.listel.filter(function (e) {
+                                  return e.checkValue === el.label;
+                                }).length > 0
+                              }
+                              defaultChecked={
+                                el.listel &&
+                                el.listel.filter(function (e) {
+                                  return e.checkValue === el.label;
+                                }).length > 0
+                              }
+                            />
+                          }
+                          <label
+                            htmlFor={tablesSetId}
+                            className="ml-3 mb-0"
+                            id={tablesSetId}
+                          >
+                            {" "}
+                            {el.label}
+                          </label>
+                        </DropdownItem>
+                      
+                      </div>
+                    );
+                  }
+                })}
+                <>
+                  <PaginationCompoenent
+                    currentPage={`${currentTable[tablesSetId]?.currentNumberOfPage??0}`}
+                    totalNumberOfPage = {`${currentTable[tablesSetId]?.totalNumberOfPage}`}
+                    ondecrement = {onDecrement}
+                    onincrement = {onIncrement}
+                  />
+                </>
+
+
+                {/* {normalizedThirdQuery.map((el, i) => {
                   return (
                     <div>
                       <DropdownItem
@@ -467,7 +627,7 @@ const SecondConstructor = (props) => {
                       </DropdownItem>
                     </div>
                   );
-                })}
+                })} */}
               </DropdownMenu>
             </Dropdown>
           }
@@ -492,7 +652,60 @@ const SecondConstructor = (props) => {
               <DropdownMenu>
                 <DropdownItem header>Multi selezione attiva</DropdownItem>
                 <DropdownItem divider />
-                {normalizedThirdQuery.map((el, i) => {
+                {copiednormalizedThirdQuery.slice(startIndex,endIndex)?.map((el,i)=>{
+                  if (el){
+                    return (
+                      <div >
+                        <DropdownItem
+                          value={i}
+                          data-table-id={tablesSetId}
+                          className="d-flex justify-content-start"
+                          strategy={"fixed"}
+                        >
+                          {
+                            <Input
+                              onChange={onChangeCheckBox}
+                              type="checkbox"
+                              id={tablesSetId}
+                              name={el.label}
+                              value={el.value}
+                              checked = {
+                                el.listel &&
+                                el.listel.filter(function (e) {
+                                  return e.checkValue === el.label;
+                                }).length > 0
+                              }
+                              defaultChecked={
+                                el.listel &&
+                                el.listel.filter(function (e) {
+                                  return e.checkValue === el.label;
+                                }).length > 0
+                              }
+                            />
+                          }
+                          <label
+                            htmlFor={tablesSetId}
+                            className="ml-3 mb-0"
+                            id={tablesSetId}
+                          >
+                            {" "}
+                            {el.label}
+                          </label>
+                        </DropdownItem>
+                      
+                      </div>
+                    );
+                  }
+                })}
+                <>
+                  <PaginationCompoenent
+                    currentPage={`${currentTable[tablesSetId]?.currentNumberOfPage??0}`}
+                    totalNumberOfPage = {`${currentTable[tablesSetId]?.totalNumberOfPage}`}
+                    ondecrement = {onDecrement}
+                    onincrement = {onIncrement}
+                  />
+                </>
+                {/* {normalizedThirdQuery.map((el, i) => {
                   return (
                     <div>
                       <DropdownItem
@@ -527,7 +740,7 @@ const SecondConstructor = (props) => {
                       </DropdownItem>
                     </div>
                   );
-                })}
+                })} */}
               </DropdownMenu>
             </Dropdown>
           }

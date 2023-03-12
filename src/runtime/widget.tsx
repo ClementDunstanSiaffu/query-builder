@@ -427,6 +427,7 @@ export default class Widget extends React.PureComponent<
     const clickedQueryTableId = e.currentTarget.attributes[1].value;
     const currentTargetName = e.currentTarget.name;
     this.manipulateFieldQuery(currentTargetName, clickedQueryTableId, "set");
+    this.setState({queryChanged:{...this.state.queryChanged,[clickedQueryTableId]:true}})
   }
 
   //TODO la sendQuery andrà risistemata quando si aggiungerà oltre all'espressione anche il set di espressioni
@@ -2524,6 +2525,8 @@ export default class Widget extends React.PureComponent<
                                 this.deleteBlockAll({ el, innerEl })
                               }
                               currentTable={innerEl}
+                              queryChanged = {this.state.queryChanged}
+                              parent={this}
                             />
                           ))}
                         </div>
