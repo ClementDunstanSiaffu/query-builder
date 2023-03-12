@@ -21,6 +21,7 @@ import {
 } from "../utils/queryTableValue";
 import '../../assets/styles/styles.scss';
 import PaginationCompoenent from "./pagination";
+import SelectUnivoco from "./common/inputs/select";
 
 function AddSetTable(props) {
   const {
@@ -404,18 +405,34 @@ const SecondConstructor = (props) => {
         style={width >= 626 ? {}:{display:'flex'}}
       >
         {dropdownValueQuery === "univoco" ? (
-          <Select
-            onChange={(e) => univocoSelectHandler(e, "set")}
-            placeholder="Seleziona il Layer"
-          >
-            {normalizedThirdQuery.map((el, i) => {
-              return (
-                <Option value={i} data-table-id={tablesSetId}>
-                  {el.label}
-                </Option>
-              );
-            })}
-          </Select>
+              <SelectUnivoco 
+                currentPage={currentTable[tablesSetId]?.currentNumberOfPage??0}
+                totalNumberOfPages = {currentTable[tablesSetId]?.totalNumberOfPage??0}
+                onDecrement = {onDecrement}
+                onIncrement = {onIncrement}
+                startIndex = {currentTable[tablesSetId]?.startIndex??0}
+                endIndex = {currentTable[tablesSetId]?.endIndex??0}
+                tablesId = {tablesSetId}
+                dropdowns = {dropdownsSet}
+                openDrop = {openDrop}
+                univocoSelectHandler = {univocoSelectHandler}
+                data = {copiednormalizedThirdQuery}
+                queryType = "set"
+                onChangingPage = {onChangingPage}
+                setOnChangingPage = {setOnChangingPage}
+              />
+          // <Select
+          //   onChange={(e) => univocoSelectHandler(e, "set")}
+          //   placeholder="Seleziona il Layer"
+          // >
+          //   {normalizedThirdQuery.map((el, i) => {
+          //     return (
+          //       <Option value={i} data-table-id={tablesSetId}>
+          //         {el.label}
+          //       </Option>
+          //     );
+          //   })}
+          // </Select>
         ) : (
           <TextInput
             onChange={(e) => textInputHandler(e, "set")}
@@ -464,18 +481,34 @@ const SecondConstructor = (props) => {
         className={width >= 626 ? "d-flex col-md-4":" "}
       >
         {dropdownValueQuery === "univoco" ? (
-          <Select
-            onChange={(e) => univocoSelectHandler(e, "set")}
-            placeholder="Seleziona il Layer"
-          >
-            {normalizedThirdQuery.map((el, i) => {
-              return (
-                <Option value={i} data-table-id={tablesSetId}>
-                  {el.label}
-                </Option>
-              );
-            })}
-          </Select>
+            <SelectUnivoco 
+                  currentPage={currentTable[tablesSetId]?.currentNumberOfPage??0}
+                  totalNumberOfPages = {currentTable[tablesSetId]?.totalNumberOfPage??0}
+                  onDecrement = {onDecrement}
+                  onIncrement = {onIncrement}
+                  startIndex = {currentTable[tablesSetId]?.startIndex??0}
+                  endIndex = {currentTable[tablesSetId]?.endIndex??0}
+                  tablesId = {tablesSetId}
+                  dropdowns = {dropdownsSet}
+                  openDrop = {openDrop}
+                  univocoSelectHandler = {univocoSelectHandler}
+                  data = {copiednormalizedThirdQuery}
+                  queryType = "set"
+                  onChangingPage = {onChangingPage}
+                  setOnChangingPage = {setOnChangingPage}
+                />
+          // <Select
+          //   onChange={(e) => univocoSelectHandler(e, "set")}
+          //   placeholder="Seleziona il Layer"
+          // >
+          //   {normalizedThirdQuery.map((el, i) => {
+          //     return (
+          //       <Option value={i} data-table-id={tablesSetId}>
+          //         {el.label}
+          //       </Option>
+          //     );
+          //   })}
+          // </Select>
         ) : (
           <TextInput
             onChange={(e) => textInputHandler(e, "set")}
@@ -752,18 +785,34 @@ const SecondConstructor = (props) => {
         style={width >= 626 ? {}:{display:'flex'}}
       >
         {dropdownValueQuery === "univoco" ? (
-          <Select
-            placeholder="Seleziona il Layer"
-            onChange={(e) => univocoSelectHandler(e, "set")}
-          >
-            {normalizedThirdQuery.map((el, i) => {
-              return (
-                <Option value={i} data-table-id={tablesSetId}>
-                  {el.label}
-                </Option>
-              );
-            })}
-          </Select>
+                  <SelectUnivoco 
+                  currentPage={currentTable[tablesSetId]?.currentNumberOfPage??0}
+                  totalNumberOfPages = {currentTable[tablesSetId]?.totalNumberOfPage??0}
+                  onDecrement = {onDecrement}
+                  onIncrement = {onIncrement}
+                  startIndex = {currentTable[tablesSetId]?.startIndex??0}
+                  endIndex = {currentTable[tablesSetId]?.endIndex??0}
+                  tablesId = {tablesSetId}
+                  dropdowns = {dropdownsSet}
+                  openDrop = {openDrop}
+                  univocoSelectHandler = {univocoSelectHandler}
+                  data = {copiednormalizedThirdQuery}
+                  queryType = "set"
+                  onChangingPage = {onChangingPage}
+                  setOnChangingPage = {setOnChangingPage}
+                />
+          // <Select
+          //   placeholder="Seleziona il Layer"
+          //   onChange={(e) => univocoSelectHandler(e, "set")}
+          // >
+          //   {normalizedThirdQuery.map((el, i) => {
+          //     return (
+          //       <Option value={i} data-table-id={tablesSetId}>
+          //         {el.label}
+          //       </Option>
+          //     );
+          //   })}
+          // </Select>
         ) : (
           <TextInput
             onChange={(e) => textInputHandler(e, "set")}
@@ -813,18 +862,34 @@ const SecondConstructor = (props) => {
         className={width >= 626 ? "d-flex col-md-4":" "}
       >
         {dropdownValueQuery === "univoco" ? (
-          <Select
-            placeholder="Seleziona il Layer"
-            onChange={(e) => univocoSelectHandler(e, "set")}
-          >
-            {normalizedThirdQuery.map((el, i) => {
-              return (
-                <Option value={i} data-table-id={tablesSetId}>
-                  {el.label}
-                </Option>
-              );
-            })}
-          </Select>
+                  <SelectUnivoco 
+                  currentPage={currentTable[tablesSetId]?.currentNumberOfPage??0}
+                  totalNumberOfPages = {currentTable[tablesSetId]?.totalNumberOfPage??0}
+                  onDecrement = {onDecrement}
+                  onIncrement = {onIncrement}
+                  startIndex = {currentTable[tablesSetId]?.startIndex??0}
+                  endIndex = {currentTable[tablesSetId]?.endIndex??0}
+                  tablesId = {tablesSetId}
+                  dropdowns = {dropdownsSet}
+                  openDrop = {openDrop}
+                  univocoSelectHandler = {univocoSelectHandler}
+                  data = {copiednormalizedThirdQuery}
+                  queryType = "set"
+                  onChangingPage = {onChangingPage}
+                  setOnChangingPage = {setOnChangingPage}
+                />
+          // <Select
+          //   placeholder="Seleziona il Layer"
+          //   onChange={(e) => univocoSelectHandler(e, "set")}
+          // >
+          //   {normalizedThirdQuery.map((el, i) => {
+          //     return (
+          //       <Option value={i} data-table-id={tablesSetId}>
+          //         {el.label}
+          //       </Option>
+          //     );
+          //   })}
+          // </Select>
         ) : (
           <TextInput
             onChange={(e) => textInputHandler(e, "set")}
@@ -874,18 +939,34 @@ const SecondConstructor = (props) => {
         style={width >= 626 ? {}:{display:'flex'}}
       >
         {dropdownValueQuery === "univoco" ? (
-          <Select
-            placeholder="Seleziona il Layer"
-            onChange={(e) => univocoSelectHandler(e,"set")}
-          >
-            {normalizedThirdQuery.map((el, i) => {
-              return (
-                <Option value={i} data-table-id={tablesSetId}>
-                  {el.label}
-                </Option>
-              );
-            })}
-          </Select>
+                <SelectUnivoco 
+                  currentPage={currentTable[tablesSetId]?.currentNumberOfPage??0}
+                  totalNumberOfPages = {currentTable[tablesSetId]?.totalNumberOfPage??0}
+                  onDecrement = {onDecrement}
+                  onIncrement = {onIncrement}
+                  startIndex = {currentTable[tablesSetId]?.startIndex??0}
+                  endIndex = {currentTable[tablesSetId]?.endIndex??0}
+                  tablesId = {tablesSetId}
+                  dropdowns = {dropdownsSet}
+                  openDrop = {openDrop}
+                  univocoSelectHandler = {univocoSelectHandler}
+                  data = {copiednormalizedThirdQuery}
+                  queryType = "set"
+                  onChangingPage = {onChangingPage}
+                  setOnChangingPage = {setOnChangingPage}
+                />
+          // <Select
+          //   placeholder="Seleziona il Layer"
+          //   onChange={(e) => univocoSelectHandler(e,"set")}
+          // >
+          //   {normalizedThirdQuery.map((el, i) => {
+          //     return (
+          //       <Option value={i} data-table-id={tablesSetId}>
+          //         {el.label}
+          //       </Option>
+          //     );
+          //   })}
+          // </Select>
         ) : (
           <TextInput
             onChange={(e) => textInputHandler(e, "set")}
@@ -935,18 +1016,34 @@ const SecondConstructor = (props) => {
         style={width >= 626 ? {}:{display:'flex'}}
       >
         {dropdownValueQuery === "univoco" ? (
-          <Select
-            placeholder="Seleziona il Layer"
-            onChange={(e) => univocoSelectHandler(e,"set")}
-          >
-            {normalizedThirdQuery.map((el, i) => {
-              return (
-                <Option value={i} data-table-id={tablesSetId}>
-                  {el.label}
-                </Option>
-              );
-            })}
-          </Select>
+                  <SelectUnivoco 
+                  currentPage={currentTable[tablesSetId]?.currentNumberOfPage??0}
+                  totalNumberOfPages = {currentTable[tablesSetId]?.totalNumberOfPage??0}
+                  onDecrement = {onDecrement}
+                  onIncrement = {onIncrement}
+                  startIndex = {currentTable[tablesSetId]?.startIndex??0}
+                  endIndex = {currentTable[tablesSetId]?.endIndex??0}
+                  tablesId = {tablesSetId}
+                  dropdowns = {dropdownsSet}
+                  openDrop = {openDrop}
+                  univocoSelectHandler = {univocoSelectHandler}
+                  data = {copiednormalizedThirdQuery}
+                  queryType = "set"
+                  onChangingPage = {onChangingPage}
+                  setOnChangingPage = {setOnChangingPage}
+                />
+          // <Select
+          //   placeholder="Seleziona il Layer"
+          //   onChange={(e) => univocoSelectHandler(e,"set")}
+          // >
+          //   {normalizedThirdQuery.map((el, i) => {
+          //     return (
+          //       <Option value={i} data-table-id={tablesSetId}>
+          //         {el.label}
+          //       </Option>
+          //     );
+          //   })}
+          // </Select>
         ) : (
           <TextInput
             onChange={(e) => textInputHandler(e, "set")}
