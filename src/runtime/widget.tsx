@@ -2424,10 +2424,13 @@ export default class Widget extends React.PureComponent<
                             )
                           ) : (
                             <div
+                            className={width >= 626 ? "d-flex col-l-1 ":"d-flex col-md-8"}
                               style={{
-                                display: "flex",
-                                flexDirection: "row",
-                                marginTop: "20px",
+                                paddingLeft:0,
+                                paddingRight:0
+                                // display: "flex",
+                                // flexDirection: "row",
+                                // marginTop: "20px",
                               }}
                             >
                               <Select
