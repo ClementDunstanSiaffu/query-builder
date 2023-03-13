@@ -911,50 +911,42 @@ const SecondConstructor = (props) => {
       <div value={"is null"} className={width > 626 ? "d-flex col-md-4":" "} style={width >= 626 ? {}:{display:'flex'}}></div>
       <div value={"is not null"} className={width > 626 ? "d-flex col-md-4":" "} style={width >= 626 ? {}:{display:'flex'}}></div>
       <div value={"included"} className={width > 626 ? "d-flex col-md-4":" "} style={width >= 626 ? {}:{display:'flex'}}>
-        {/* <div className="include"> */}
-          <TextInput
-            onChange={textFirstIncludedHandler}
-            onAcceptValue={function noRefCheck() {}}
-            type="text"
-            data-table-id={tablesId}
-            id="inputs"
-            style={{width:"100%"}}
-          />
-          <span className="col-sm-2 text-center" style={{background:'',height:'100%',fontSize:'18px'}}>e</span>
-          {/* <p className="col-md-2 text-center" style={{ width: "10%" }}>
-            e
-          </p> */}
-          <TextInput
-            onChange={textSecondIncludedHandler}
-            onAcceptValue={function noRefCheck() {}}
-            type="text"
-            data-table-id={tablesId}
-            id="inputs"
-            style={{width:"100%"}}
-          />
-        {/* </div> */}
+        <TextInput
+          onChange={textFirstIncludedHandler}
+          onAcceptValue={function noRefCheck() {}}
+          type="text"
+          data-table-id={tablesId}
+          id="inputs"
+          style={{width:"100%"}}
+        />
+        <span className="col-sm-2 text-center" style={{height:'100%',fontSize:'18px'}}>e</span>
+        <TextInput
+          onChange={textSecondIncludedHandler}
+          onAcceptValue={function noRefCheck() {}}
+          type="text"
+          data-table-id={tablesId}
+          id="inputs"
+          style={{width:"100%"}}
+        />
       </div>
       <div value={"is_not_included"} className={width >= 626 ? "d-flex col-md-4":" "} style={width >= 626 ? {}:{display:'flex'}}>
-        {/* <div className="include"> */}
-          <TextInput
-            onChange={textFirstIncludedHandler}
-            onAcceptValue={function noRefCheck() {}}
-            type="text"
-            id="inputs"
-            data-table-id={tablesId}
-            style={{width:"100%"}}
-          />
-          <span className="col-sm-2 text-center" style={{background:'',height:'100%',fontSize:'18px'}}>e</span>
-          {/* <p className="col-sm-2 text-center">e</p> */}
-          <TextInput
-            onChange={textSecondIncludedHandler}
-            onAcceptValue={function noRefCheck() {}}
-            type="text"
-            id="inputs"
-            data-table-id={tablesId}
-            style={{width:"100%"}}
-          />
-        {/* </div> */}
+        <TextInput
+          onChange={textFirstIncludedHandler}
+          onAcceptValue={function noRefCheck() {}}
+          type="text"
+          id="inputs"
+          data-table-id={tablesId}
+          style={{width:"100%"}}
+        />
+        <span className="col-sm-2 text-center" style={{height:'100%',fontSize:'18px'}}>e</span>
+        <TextInput
+          onChange={textSecondIncludedHandler}
+          onAcceptValue={function noRefCheck() {}}
+          type="text"
+          id="inputs"
+          data-table-id={tablesId}
+          style={{width:"100%"}}
+        />
       </div>
       <div value={"LIKE%"} className={width > 626 ? "d-flex col-md-4":" "} style={width >= 626 ? {}:{display:'flex'}}>
         <TextInput
