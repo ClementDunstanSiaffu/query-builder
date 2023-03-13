@@ -19,7 +19,8 @@ type PropsType = {
   openDrop:(tablesId:string|number)=>void,
   queryType:string,
   onChangingPage:{[key:string|number]:boolean},
-  setOnChangingPage:any
+  setOnChangingPage:any,
+  currentValue:string|number
 }
 
 const SelectUnivoco = (props:PropsType)=>{
@@ -39,7 +40,8 @@ const SelectUnivoco = (props:PropsType)=>{
     openDrop,
     queryType,
     onChangingPage,
-    setOnChangingPage
+    setOnChangingPage,
+    currentValue
   } = props
 
   React.useEffect(()=>{
@@ -56,6 +58,15 @@ const SelectUnivoco = (props:PropsType)=>{
     univocoSelectHandler(obj,queryType);
     openDrop(tablesId)
   }
+
+  const unrequiredSelectedValue = [''," ",' '];
+  let selectedItem = currentValue??" "
+  const currentTableSelectedValue = currentTable[tablesId]?.selectedItem;
+  if (currentTableSelectedValue && !unrequiredSelectedValue.includes(currentTableSelectedValue)){
+    selectedItem = currentTableSelectedValue
+  }
+
+  // const selectedItem = currentValue??" "
   
   return(
     <Dropdown
@@ -64,7 +75,7 @@ const SelectUnivoco = (props:PropsType)=>{
       style = {{width:"100%"}} 
     >
       <DropdownButton onClick={() => openDrop(tablesId)} style = {{width:"100%"}}>
-          {currentTable[tablesId]?.selectedItem??" "}
+          {selectedItem}
       </DropdownButton>
       <DropdownMenu className="drop-down-menu-table"  >
         <DropdownItem divider  />

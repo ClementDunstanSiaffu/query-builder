@@ -281,6 +281,7 @@ const SecondConstructor = (props) => {
   let opened = false;
   let checked = 0;
   let au = true;
+  let singleWhereClause
   // valueThirdQuery.map((el, i) => { normalizedThirdQuery.push({ label: el.label[0].toString(), value: el.value[0].toString() }) })
   if (whereClausesSet.length) {
     const currentItem = whereClausesSet.find((item) => item.id === tablesSetId);
@@ -301,8 +302,9 @@ const SecondConstructor = (props) => {
     if (currentItem?.isOpen) {
       // opened = whereClausesSet[tablesSetId].isOpen;
     }
-    if (currentItem?.checkedListSet)
-      checked = currentItem.checkedListSet.length;
+    if (currentItem?.checkedListSet)checked = currentItem.checkedListSet.length;
+
+    singleWhereClause = currentItem;
   }
 
   const copiednormalizedThirdQuery = [...normalizedThirdQuery];
@@ -396,7 +398,6 @@ const SecondConstructor = (props) => {
   const startIndex = currentTable[tablesSetId]?.startIndex??0;
   const endIndex = currentTable[tablesSetId]?.endIndex??10;
 
-  console.log(currentTable,startIndex,endIndex)
   return(
     <Switch queryValues={defaultValue}>
       <div 
@@ -420,6 +421,7 @@ const SecondConstructor = (props) => {
                 queryType = "set"
                 onChangingPage = {onChangingPage}
                 setOnChangingPage = {setOnChangingPage}
+                currentValue = {singleWhereClause?.value?.txt}
               />
           // <Select
           //   onChange={(e) => univocoSelectHandler(e, "set")}
@@ -496,6 +498,7 @@ const SecondConstructor = (props) => {
                   queryType = "set"
                   onChangingPage = {onChangingPage}
                   setOnChangingPage = {setOnChangingPage}
+                  currentValue = {singleWhereClause?.value?.txt}
                 />
           // <Select
           //   onChange={(e) => univocoSelectHandler(e, "set")}
@@ -800,6 +803,7 @@ const SecondConstructor = (props) => {
                   queryType = "set"
                   onChangingPage = {onChangingPage}
                   setOnChangingPage = {setOnChangingPage}
+                  currentValue = {singleWhereClause?.value?.txt}
                 />
           // <Select
           //   placeholder="Seleziona il Layer"
@@ -877,6 +881,7 @@ const SecondConstructor = (props) => {
                   queryType = "set"
                   onChangingPage = {onChangingPage}
                   setOnChangingPage = {setOnChangingPage}
+                  currentValue = {singleWhereClause?.value?.txt}
                 />
           // <Select
           //   placeholder="Seleziona il Layer"
@@ -954,6 +959,7 @@ const SecondConstructor = (props) => {
                   queryType = "set"
                   onChangingPage = {onChangingPage}
                   setOnChangingPage = {setOnChangingPage}
+                  currentValue = {singleWhereClause?.value?.txt}
                 />
           // <Select
           //   placeholder="Seleziona il Layer"
@@ -1031,6 +1037,7 @@ const SecondConstructor = (props) => {
                   queryType = "set"
                   onChangingPage = {onChangingPage}
                   setOnChangingPage = {setOnChangingPage}
+                  currentValue = {singleWhereClause?.value?.txt}
                 />
           // <Select
           //   placeholder="Seleziona il Layer"

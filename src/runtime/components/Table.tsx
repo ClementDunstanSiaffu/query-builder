@@ -402,6 +402,7 @@ const SecondConstructor = (props) => {
             queryType = "single"
             onChangingPage = {onChangingPage}
             setOnChangingPage = {setOnChangingPage}
+            currentValue = {currentWhereClause?.value?.txt}
           />
         ) : (
           <TextInput
@@ -464,6 +465,7 @@ const SecondConstructor = (props) => {
             queryType = "single"
             onChangingPage = {onChangingPage}
             setOnChangingPage = {setOnChangingPage}
+            currentValue = {currentWhereClause?.value?.txt}
           />
         ) : (
           <TextInput
@@ -667,6 +669,7 @@ const SecondConstructor = (props) => {
             queryType = "single"
             onChangingPage = {onChangingPage}
             setOnChangingPage = {setOnChangingPage}
+            currentValue = {currentWhereClause?.value?.txt}
           />
         ) : (
         <TextInput
@@ -732,6 +735,7 @@ const SecondConstructor = (props) => {
           queryType = "single"
           onChangingPage = {onChangingPage}
           setOnChangingPage = {setOnChangingPage}
+          currentValue = {currentWhereClause?.value?.txt}
         />
         ) : (
           <TextInput
@@ -795,6 +799,7 @@ const SecondConstructor = (props) => {
             queryType = "single"
             onChangingPage = {onChangingPage}
             setOnChangingPage = {setOnChangingPage}
+            currentValue = {currentWhereClause?.value?.txt}
           />
         ) : (
           <TextInput
@@ -858,6 +863,7 @@ const SecondConstructor = (props) => {
             queryType = "single"
             onChangingPage = {onChangingPage}
             setOnChangingPage = {setOnChangingPage}
+            currentValue = {currentWhereClause?.value?.txt}
           />
         ) : (
           <TextInput
