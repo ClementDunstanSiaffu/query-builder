@@ -65,8 +65,6 @@ const SelectUnivoco = (props:PropsType)=>{
   if (currentTableSelectedValue && !unrequiredSelectedValue.includes(currentTableSelectedValue)){
     selectedItem = currentTableSelectedValue
   }
-
-  // const selectedItem = currentValue??" "
   
   return(
     <Dropdown

@@ -61,19 +61,11 @@ const PaginationCompoenent = (props:PropsType)=>{
     return(
         <div style = {styles.outerContainer}>
             <div style ={styles.iconContainer}>
-                <div style = {styles.innerIconContainer} onClick = {ondecrement}>
-                    <LeftOutlined color='white' size = {25} />
-                </div>
+                <div style = {styles.innerIconContainer} onClick = {ondecrement}><LeftOutlined color='white' size = {25} /></div>
             </div>
-            <div style={styles.textContainer}>
-                <div style={styles.innerTextContainer}>
-                    {currentPage}/{totalNumberOfPage}
-                </div>
-            </div>
+            <div style={styles.textContainer}><div style={styles.innerTextContainer}>{currentPage}/{totalNumberOfPage}</div></div>
             <div style ={styles.iconContainer} onClick = {onincrement}>
-                <div style = {styles.innerIconContainer}>
-                    <RightOutlined color='white' size = {25} />
-                </div>
+                <div style = {styles.innerIconContainer}><RightOutlined color='white' size = {25} /></div>
             </div>
         </div>
     )

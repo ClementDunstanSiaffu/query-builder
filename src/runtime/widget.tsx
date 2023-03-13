@@ -1188,6 +1188,15 @@ export default class Widget extends React.PureComponent<
                           });
                         });
                         if (queryIndex !== -1) {
+                          if (typeof detailThirdQuery[0].value !== "number") {
+                            detailThirdQuery.sort((a, b) =>
+                              a.label < b.label ? -1 : a.label > b.label ? 1 : 0
+                            );
+                          } else {
+                            detailThirdQuery.sort((a, b) =>
+                              a.value - b.value < 0 ? -1 : a.value === b.value ? 0 : 1
+                            );
+                          }
                           const updateState = this.state[keytype].map((obj) => {
                             if (obj.id === clickedQueryTableId) {
                               obj = {
