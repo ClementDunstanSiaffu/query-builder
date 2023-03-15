@@ -164,7 +164,6 @@ const SecondConstructor = (props) => {
       }
     }
   
-    // const test = (props) => {};
     const startIndex = currentTable[tablesId]?.startIndex??0;
     const endIndex = currentTable[tablesId]?.endIndex??10;
   
@@ -313,7 +312,8 @@ const SecondConstructor = (props) => {
         }
         {
           queriesWithNothing.includes(defaultValue) && 
-          <div value={defaultValue} className={width > 626 ? "d-flex col-md-4":" "} style={width >= 626 ? {}:{display:'flex'}}></div>
+          <div value={defaultValue} className={width > 626 ? "d-flex col-md-4":" "} style={width >= 626 ? {}:{display:'flex'}}>
+          </div>
         }
         {
           queriesWithTwoInputs.includes(defaultValue) && 
