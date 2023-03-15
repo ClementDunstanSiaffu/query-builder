@@ -379,365 +379,179 @@ const SecondConstructor = (props) => {
   // const test = (props) => {};
   const startIndex = currentTable[tablesId]?.startIndex??0;
   const endIndex = currentTable[tablesId]?.endIndex??10;
+
+  const queriesWithUnivoco = ["=","<>","<=",">=","<",">"];
+  const queriesWithMultiselect = ["IN","NOT_IN"];
+  const queriesWithNothing = ["is null","is not null"];
+  const queriesWithTwoInputs = ["included","is_not_included"];
+  const queriesWithSingleInput = ["LIKE%","%LIKE","%LIKE%","NOT LIKE"];
+
   return(
-    <Switch queryValues={defaultValue}>
-      <div 
-        value={"="} 
-        className = {width >= 626 ? "d-flex col-md-4" :" "} 
-        style={width >= 626 ? {}:{display:'flex'}}
-      >
-        {dropdownValueQuery === "univoco" ? (
-          <SelectUnivoco 
-            currentPage={currentTable[tablesId]?.currentNumberOfPage??0}
-            totalNumberOfPages = {currentTable[tablesId]?.totalNumberOfPage??0}
-            onDecrement = {onDecrement}
-            onIncrement = {onIncrement}
-            startIndex = {currentTable[tablesId]?.startIndex??0}
-            endIndex = {currentTable[tablesId]?.endIndex??0}
-            tablesId = {tablesId}
-            dropdowns = {dropdowns}
-            openDrop = {openDrop}
-            univocoSelectHandler = {univocoSelectHandler}
-            data = {copiednormalizedThirdQuery}
-            queryType = "single"
-            onChangingPage = {onChangingPage}
-            setOnChangingPage = {setOnChangingPage}
-            currentValue = {currentWhereClause?.value?.txt}
-          />
-        ) : (
-          <TextInput
-            onChange={textInputHandler}
-            onAcceptValue={function noRefCheck() {}}
-            type="text"
-            className="w-100"
-            data-table-id={tablesId}
-            defaultValue={defaultTextValue}
-          />
-        )}
-        <div className="flex-shrink-1">
-          <Dropdown activeIcon>
-            <DropdownButton>
-              <SettingOutlined className="setting-svg" />
-            </DropdownButton>
-            <DropdownMenu>
-              <DropdownItem header>Importa il tipo di input</DropdownItem>
-              <DropdownItem divider />
-              <DropdownItem
-                value="valore"
-                onClick={(e) => dropdownItemHandler(e, "single")}
-                data-table-id={tablesId}
-              >
-                Valore
-              </DropdownItem>
-              <DropdownItem
-                value="campo"
-                onClick={(e) => dropdownItemHandler(e, "single")}
-                disabled
-                data-table-id={tablesId}
-              >
-                Campo
-              </DropdownItem>
-              <DropdownItem
-                value="univoco"
-                onClick={(e) => dropdownItemHandler(e, "single")}
-                data-table-id={tablesId}
-              >
-                Univoci
-              </DropdownItem>
-            </DropdownMenu>
-          </Dropdown>
+    <>
+      {
+        queriesWithUnivoco.includes(defaultValue) && 
+        <div value={defaultValue} className = {width >= 626 ? "d-flex col-md-4" :" "} style={width >= 626 ? {}:{display:'flex'}}>
+          {dropdownValueQuery === "univoco" ? (
+            <SelectUnivoco 
+              currentPage={currentTable[tablesId]?.currentNumberOfPage??0}
+              totalNumberOfPages = {currentTable[tablesId]?.totalNumberOfPage??0}
+              onDecrement = {onDecrement}
+              onIncrement = {onIncrement}
+              startIndex = {currentTable[tablesId]?.startIndex??0}
+              endIndex = {currentTable[tablesId]?.endIndex??0}
+              tablesId = {tablesId}
+              dropdowns = {dropdowns}
+              openDrop = {openDrop}
+              univocoSelectHandler = {univocoSelectHandler}
+              data = {copiednormalizedThirdQuery}
+              queryType = "single"
+              onChangingPage = {onChangingPage}
+              setOnChangingPage = {setOnChangingPage}
+              currentValue = {currentWhereClause?.value?.txt}
+            />
+          ) : (
+            <TextInput
+              onChange={textInputHandler}
+              onAcceptValue={function noRefCheck() {}}
+              type="text"
+              className="w-100"
+              data-table-id={tablesId}
+              defaultValue={defaultTextValue}
+            />
+          )}
+          <div className="flex-shrink-1">
+            <Dropdown activeIcon>
+              <DropdownButton>
+                <SettingOutlined className="setting-svg" />
+              </DropdownButton>
+              <DropdownMenu>
+                <DropdownItem header>Importa il tipo di input</DropdownItem>
+                <DropdownItem divider />
+                <DropdownItem
+                  value="valore"
+                  onClick={(e) => dropdownItemHandler(e, "single")}
+                  data-table-id={tablesId}
+                >
+                  Valore
+                </DropdownItem>
+                <DropdownItem
+                  value="campo"
+                  onClick={(e) => dropdownItemHandler(e, "single")}
+                  disabled
+                  data-table-id={tablesId}
+                >
+                  Campo
+                </DropdownItem>
+                <DropdownItem
+                  value="univoco"
+                  onClick={(e) => dropdownItemHandler(e, "single")}
+                  data-table-id={tablesId}
+                >
+                  Univoci
+                </DropdownItem>
+              </DropdownMenu>
+            </Dropdown>
+          </div>
         </div>
-      </div>
-      <div value={"<>"} className={width >= 626 ? "d-flex col-md-4":" "}>
-        {dropdownValueQuery === "univoco" ? (
-          <SelectUnivoco 
-            currentPage={currentTable[tablesId]?.currentNumberOfPage??0}
-            totalNumberOfPages = {currentTable[tablesId]?.totalNumberOfPage??0}
-            onDecrement = {onDecrement}
-            onIncrement = {onIncrement}
-            startIndex = {currentTable[tablesId]?.startIndex??0}
-            endIndex = {currentTable[tablesId]?.endIndex??0}
-            tablesId = {tablesId}
-            dropdowns = {dropdowns}
-            openDrop = {openDrop}
-            univocoSelectHandler = {univocoSelectHandler}
-            data = {copiednormalizedThirdQuery}
-            queryType = "single"
-            onChangingPage = {onChangingPage}
-            setOnChangingPage = {setOnChangingPage}
-            currentValue = {currentWhereClause?.value?.txt}
-          />
-        ) : (
-          <TextInput
-            onChange={textInputHandler}
-            onAcceptValue={function noRefCheck() {}}
-            type="text"
-            className=" w-100"
-            data-table-id={tablesId}
-          />
-        )}
-        <div className="flex-shrink-1">
-          <Dropdown activeIcon>
-            <DropdownButton>
-              <SettingOutlined className="setting-svg" />
-            </DropdownButton>
-            <DropdownMenu>
-              <DropdownItem header>Importa il tipo di input</DropdownItem>
-              <DropdownItem divider />
-              <DropdownItem
-                value="valore"
-                onClick={(e) => dropdownItemHandler(e, "single")}
-                data-table-id={tablesId}
-              >
-                Valore
-              </DropdownItem>
-              <DropdownItem
-                value="campo"
-                onClick={(e) => dropdownItemHandler(e, "single")}
-                disabled
-                data-table-id={tablesId}
-              >
-                Campo
-              </DropdownItem>
-              <DropdownItem
-                value="univoco"
-                onClick={(e) => dropdownItemHandler(e, "single")}
-                data-table-id={tablesId}
-              >
-                Univoci
-              </DropdownItem>
-            </DropdownMenu>
-          </Dropdown>
-        </div>
-      </div>
-      <div 
-        value={"IN"} 
-        onMouseLeave={() => onmouseLeave()}  
-        className = {width >= 626 ? "d-flex col-md-4" :" "}
-      >
-        {
-          <Dropdown
-            activeIcon
-            isOpen={dropdowns[tablesId]}
-            style = {{width:"100%"}}
-          >
-            <DropdownButton onClick={() => openDrop(tablesId)} style = {{width:"100%"}}>
-                {checked} elementi selezionati
-            </DropdownButton>
-            <DropdownMenu className="drop-down-menu-table">
-                <DropdownItem header>Multi selezione attiva</DropdownItem>
-                <DropdownItem divider  />
-                {copiednormalizedThirdQuery.slice(startIndex,endIndex)?.map((el,i)=>{
-                  if (el){
-                    return (
-                      <div >
-                        <DropdownItem
-                          value={i}
-                          data-table-id={tablesId}
-                          className="d-flex justify-content-start"
-                          strategy={"fixed"}
-                        >
-                          {
-                            <Input
-                              onChange={onChangeCheckBox}
-                              type="checkbox"
-                              id={tablesId}
-                              name={el.label}
-                              value={el.value}
-                              checked = {
-                                el.listel &&
-                                el.listel.filter(function (e) {
-                                  return e.checkValue === el.label;
-                                }).length > 0
-                              }
-                              defaultChecked={
-                                el.listel &&
-                                el.listel.filter(function (e) {
-                                  return e.checkValue === el.label;
-                                }).length > 0
-                              }
-                            />
-                          }
-                          <label
-                            htmlFor={tablesId}
-                            className="ml-3 mb-0"
-                            id={tablesId}
+      }
+      {
+        queriesWithMultiselect.includes(defaultValue) &&
+        <div value={defaultValue} onMouseLeave={() => onmouseLeave()} className = {width >= 626 ? "d-flex col-md-4" :" "}>
+          {
+            <Dropdown activeIcon isOpen={dropdowns[tablesId]} style = {{width:"100%"}}>
+              <DropdownButton onClick={() => openDrop(tablesId)} style = {{width:"100%"}}>
+                  {checked} elementi selezionati
+              </DropdownButton>
+              <DropdownMenu className="drop-down-menu-table">
+                  <DropdownItem header>Multi selezione attiva</DropdownItem>
+                  <DropdownItem divider  />
+                  {copiednormalizedThirdQuery.slice(startIndex,endIndex)?.map((el,i)=>{
+                    if (el){
+                      return (
+                        <div >
+                          <DropdownItem
+                            value={i}
+                            data-table-id={tablesId}
+                            className="d-flex justify-content-start"
+                            strategy={"fixed"}
                           >
-                            {" "}
-                            {el.label}
-                          </label>
-                        </DropdownItem>
-                      
-                      </div>
-                    );
-                  }
-                })}
-                <>
-                  <PaginationCompoenent
-                    currentPage={`${currentTable[tablesId]?.currentNumberOfPage??0}`}
-                    totalNumberOfPage = {`${currentTable[tablesId]?.totalNumberOfPage}`}
-                    ondecrement = {onDecrement}
-                    onincrement = {onIncrement}
-                  />
-                </>
+                            {
+                              <Input
+                                onChange={onChangeCheckBox}
+                                type="checkbox"
+                                id={tablesId}
+                                name={el.label}
+                                value={el.value}
+                                checked = {
+                                  el.listel &&
+                                  el.listel.filter(function (e) {
+                                    return e.checkValue === el.label;
+                                  }).length > 0
+                                }
+                                defaultChecked={
+                                  el.listel &&
+                                  el.listel.filter(function (e) {
+                                    return e.checkValue === el.label;
+                                  }).length > 0
+                                }
+                              />
+                            }
+                            <label
+                              htmlFor={tablesId}
+                              className="ml-3 mb-0"
+                              id={tablesId}
+                            >
+                              {" "}
+                              {el.label}
+                            </label>
+                          </DropdownItem>
+                        
+                        </div>
+                      );
+                    }
+                  })}
+                  <>
+                    <PaginationCompoenent
+                      currentPage={`${currentTable[tablesId]?.currentNumberOfPage??0}`}
+                      totalNumberOfPage = {`${currentTable[tablesId]?.totalNumberOfPage}`}
+                      ondecrement = {onDecrement}
+                      onincrement = {onIncrement}
+                    />
+                  </>
               </DropdownMenu>
             </Dropdown>
           }
-      </div>
-      <div value={"NOT_IN"} className = {width >= 626 ? "d-flex col-md-4" :" "}>
-        {
-          <Dropdown
-            activeIcon
-            isOpen={dropdowns[tablesId]}
-            toggle={() => dropDown}
-            style = {{width:"100%"}}
-          >
-            <DropdownButton onClick={() => openDrop(tablesId)} style = {{width:"100%"}}>
-                {checked} elementi selezionati
-            </DropdownButton>
-            <DropdownMenu className="drop-down-menu-table">
-              <DropdownItem header>Multi selezione attiva</DropdownItem>
-              <DropdownItem divider  />
-              {copiednormalizedThirdQuery.slice(startIndex,endIndex)?.map((el,i)=>{
-                if (el){
-                  return (
-                    <div>
-                      <DropdownItem
-                        value={i}
-                        data-table-id={tablesId}
-                        className="d-flex justify-content-start"
-                        strategy={"fixed"}
-                      >
-                        {
-                          <Input
-                            onChange={onChangeCheckBox}
-                            type="checkbox"
-                            id={tablesId}
-                            name={el.label}
-                            value={el.value}
-                            defaultChecked={
-                              el.listel &&
-                              el.listel.filter(function (e) {
-                                return e.checkValue === el.label;
-                              }).length > 0
-                            }
-                          />
-                        }
-                        <label
-                          htmlFor={tablesId}
-                          className="ml-3 mb-0"
-                          id={tablesId}
-                        >
-                          {" "}
-                          {el.label}
-                        </label>
-                      </DropdownItem>
-                    </div>
-                  );
-                }
-              })}
-              <>
-                <PaginationCompoenent
-                  currentPage={`${currentTable[tablesId]?.currentNumberOfPage??0}`}
-                  totalNumberOfPage = {`${currentTable[tablesId]?.totalNumberOfPage??0}`}
-                  ondecrement = {onDecrement}
-                  onincrement = {onIncrement}
-                />
-              </>
-            </DropdownMenu>
-          </Dropdown>
-        }
-      </div>
-      <div 
-        value={"<="}  
-        className = {width >= 626 ? "d-flex col-md-4" :" "} 
-        style={width >= 626 ? {}:{display:'flex'}}
-      >
-        {dropdownValueQuery === "univoco" ? (
-          <SelectUnivoco 
-            currentPage={currentTable[tablesId]?.currentNumberOfPage??0}
-            totalNumberOfPages = {currentTable[tablesId]?.totalNumberOfPage??0}
-            onDecrement = {onDecrement}
-            onIncrement = {onIncrement}
-            startIndex = {currentTable[tablesId]?.startIndex??0}
-            endIndex = {currentTable[tablesId]?.endIndex??0}
-            tablesId = {tablesId}
-            dropdowns = {dropdowns}
-            openDrop = {openDrop}
-            univocoSelectHandler = {univocoSelectHandler}
-            data = {copiednormalizedThirdQuery}
-            queryType = "single"
-            onChangingPage = {onChangingPage}
-            setOnChangingPage = {setOnChangingPage}
-            currentValue = {currentWhereClause?.value?.txt}
+        </div>
+      }
+      {
+        queriesWithNothing.includes(defaultValue) && 
+        <div value={defaultValue} className={width > 626 ? "d-flex col-md-4":" "} style={width >= 626 ? {}:{display:'flex'}}></div>
+      }
+      {
+        queriesWithTwoInputs.includes(defaultValue) && 
+        <div value={defaultValue} className={width > 626 ? "d-flex col-md-4":" "} style={width >= 626 ? {}:{display:'flex'}}>
+          <TextInput
+            onChange={textFirstIncludedHandler}
+            onAcceptValue={function noRefCheck() {}}
+            type="text"
+            data-table-id={tablesId}
+            id="inputs"
+            style={{width:"100%"}}
           />
-        ) : (
-        <TextInput
-          onChange={textInputHandler}
-          onAcceptValue={function noRefCheck() {}}
-          type="text"
-          className=" w-100"
-          data-table-id={tablesId}
-        />
-      )}
-      <div className="flex-shrink-1">
-        <Dropdown activeIcon>
-          <DropdownButton>
-            <SettingOutlined className="setting-svg" />
-          </DropdownButton>
-          <DropdownMenu>
-            <DropdownItem header>Importa il tipo di input</DropdownItem>
-            <DropdownItem divider />
-            <DropdownItem
-              value="valore"
-              onClick={(e) => dropdownItemHandler(e, "single")}
-              data-table-id={tablesId}
-            >
-              Valore
-            </DropdownItem>
-            <DropdownItem
-              value="campo"
-              onClick={(e) => dropdownItemHandler(e, "single")}
-              disabled
-              data-table-id={tablesId}
-            >
-              Campo
-            </DropdownItem>
-            <DropdownItem
-              value="univoco"
-              onClick={(e) => dropdownItemHandler(e, "single")}
-              data-table-id={tablesId}
-            >
-              Univoci
-            </DropdownItem>
-          </DropdownMenu>
-        </Dropdown>
-      </div>
-    </div>
-    <div 
-      value={">="} 
-      style={width >= 626 ? {}:{display:'flex'}}
-      className={width >= 626 ? "d-flex col-md-4":" "}
-    >
-      {dropdownValueQuery === "univoco" ? (
-        <SelectUnivoco 
-          currentPage={currentTable[tablesId]?.currentNumberOfPage??0}
-          totalNumberOfPages = {currentTable[tablesId]?.totalNumberOfPage??0}
-          onDecrement = {onDecrement}
-          onIncrement = {onIncrement}
-          startIndex = {currentTable[tablesId]?.startIndex??0}
-          endIndex = {currentTable[tablesId]?.endIndex??0}
-          tablesId = {tablesId}
-          dropdowns = {dropdowns}
-          openDrop = {openDrop}
-          univocoSelectHandler = {univocoSelectHandler}
-          data = {copiednormalizedThirdQuery}
-          queryType = "single"
-          onChangingPage = {onChangingPage}
-          setOnChangingPage = {setOnChangingPage}
-          currentValue = {currentWhereClause?.value?.txt}
-        />
-        ) : (
+          <span className="col-sm-2 text-center" style={{height:'100%',fontSize:'18px'}}>e</span>
+          <TextInput
+            onChange={textSecondIncludedHandler}
+            onAcceptValue={function noRefCheck() {}}
+            type="text"
+            data-table-id={tablesId}
+            id="inputs"
+            style={{width:"100%"}}
+          />
+        </div>
+      }
+      {
+        queriesWithSingleInput.includes(defaultValue) && 
+        <div value={defaultValue} className={width > 626 ? "d-flex col-md-4":" "} style={width >= 626 ? {}:{display:'flex'}}>
           <TextInput
             onChange={textInputHandler}
             onAcceptValue={function noRefCheck() {}}
@@ -745,247 +559,618 @@ const SecondConstructor = (props) => {
             className=" w-100"
             data-table-id={tablesId}
           />
-      )}
-      <div className="flex-shrink-1">
-        <Dropdown activeIcon>
-          <DropdownButton><SettingOutlined className="setting-svg" /></DropdownButton>
-          <DropdownMenu>
-            <DropdownItem header>Importa il tipo di input</DropdownItem>
-            <DropdownItem divider />
-            <DropdownItem
-              value="valore"
-              onClick={(e) => dropdownItemHandler(e, "single")}
-              data-table-id={tablesId}
-            >
-              Valore
-            </DropdownItem>
-            <DropdownItem
-              value="campo"
-              onClick={(e) => dropdownItemHandler(e, "single")}
-              disabled
-              data-table-id={tablesId}
-            >
-              Campo
-            </DropdownItem>
-            <DropdownItem
-              value="univoco"
-              onClick={(e) => dropdownItemHandler(e, "single")}
-              data-table-id={tablesId}
-            >
-              Univoci
-            </DropdownItem>
-            </DropdownMenu>
-          </Dropdown>
         </div>
-      </div>
-      <div 
-        value={"<"} 
-        className= {width >= 626 ? "d-flex col-md-4":" "}
-        style={width >= 626 ? {}:{display:'flex'}}
-      >
-        {dropdownValueQuery === "univoco" ? (
-          <SelectUnivoco 
-            currentPage={currentTable[tablesId]?.currentNumberOfPage??0}
-            totalNumberOfPages = {currentTable[tablesId]?.totalNumberOfPage??0}
-            onDecrement = {onDecrement}
-            onIncrement = {onIncrement}
-            startIndex = {currentTable[tablesId]?.startIndex??0}
-            endIndex = {currentTable[tablesId]?.endIndex??0}
-            tablesId = {tablesId}
-            dropdowns = {dropdowns}
-            openDrop = {openDrop}
-            univocoSelectHandler = {univocoSelectHandler}
-            data = {copiednormalizedThirdQuery}
-            queryType = "single"
-            onChangingPage = {onChangingPage}
-            setOnChangingPage = {setOnChangingPage}
-            currentValue = {currentWhereClause?.value?.txt}
-          />
-        ) : (
-          <TextInput
-            onChange={textInputHandler}
-            onAcceptValue={function noRefCheck() {}}
-            type="text"
-            className=" w-100"
-            data-table-id={tablesId}
-          />
-        )}
-        <div className="flex-shrink-1">
-          <Dropdown activeIcon>
-            <DropdownButton><SettingOutlined className="setting-svg" /></DropdownButton>
-            <DropdownMenu>
-              <DropdownItem header>Importa il tipo di input</DropdownItem>
-              <DropdownItem divider />
-              <DropdownItem
-                value="valore"
-                onClick={(e) => dropdownItemHandler(e, "single")}
-                data-table-id={tablesId}
-              >
-                Valore
-              </DropdownItem>
-              <DropdownItem
-                value="campo"
-                onClick={(e) => dropdownItemHandler(e, "single")}
-                disabled
-                data-table-id={tablesId}
-              >
-                Campo
-              </DropdownItem>
-              <DropdownItem
-                value="univoco"
-                onClick={(e) => dropdownItemHandler(e, "single")}
-                data-table-id={tablesId}
-              >
-                Univoci
-              </DropdownItem>
-            </DropdownMenu>
-          </Dropdown>
-        </div>
-      </div>
-      <div 
-        value={">"} 
-        className={width > 626 ? "d-flex col-md-4":" "}
-        style={width >= 626 ? {}:{display:'flex'}}
-      >
-        {dropdownValueQuery === "univoco" ? (
-          <SelectUnivoco 
-            currentPage={currentTable[tablesId]?.currentNumberOfPage??0}
-            totalNumberOfPages = {currentTable[tablesId]?.totalNumberOfPage??0}
-            onDecrement = {onDecrement}
-            onIncrement = {onIncrement}
-            startIndex = {currentTable[tablesId]?.startIndex??0}
-            endIndex = {currentTable[tablesId]?.endIndex??0}
-            tablesId = {tablesId}
-            dropdowns = {dropdowns}
-            openDrop = {openDrop}
-            univocoSelectHandler = {univocoSelectHandler}
-            data = {copiednormalizedThirdQuery}
-            queryType = "single"
-            onChangingPage = {onChangingPage}
-            setOnChangingPage = {setOnChangingPage}
-            currentValue = {currentWhereClause?.value?.txt}
-          />
-        ) : (
-          <TextInput
-            onChange={textInputHandler}
-            onAcceptValue={function noRefCheck() {}}
-            type="text"
-            className=" w-100"
-            data-table-id={tablesId}
-          />
-        )}
-        <div className="flex-shrink-1">
-          <Dropdown activeIcon>
-            <DropdownButton>
-              <SettingOutlined className="setting-svg" />
-            </DropdownButton>
-            <DropdownMenu>
-              <DropdownItem header>Importa il tipo di input</DropdownItem>
-              <DropdownItem divider />
-              <DropdownItem
-                value="valore"
-                onClick={(e) => dropdownItemHandler(e, "single")}
-                data-table-id={tablesId}
-              >
-                Valore
-              </DropdownItem>
-              <DropdownItem
-                value="campo"
-                onClick={(e) => dropdownItemHandler(e, "single")}
-                disabled
-                data-table-id={tablesId}
-              >
-                Campo
-              </DropdownItem>
-              <DropdownItem
-                value="univoco"
-                onClick={(e) => dropdownItemHandler(e, "single")}
-                data-table-id={tablesId}
-              >
-                Univoci
-              </DropdownItem>
-            </DropdownMenu>
-          </Dropdown>
-        </div>
-      </div>
-      <div value={"is null"} className={width > 626 ? "d-flex col-md-4":" "} style={width >= 626 ? {}:{display:'flex'}}></div>
-      <div value={"is not null"} className={width > 626 ? "d-flex col-md-4":" "} style={width >= 626 ? {}:{display:'flex'}}></div>
-      <div value={"included"} className={width > 626 ? "d-flex col-md-4":" "} style={width >= 626 ? {}:{display:'flex'}}>
-        <TextInput
-          onChange={textFirstIncludedHandler}
-          onAcceptValue={function noRefCheck() {}}
-          type="text"
-          data-table-id={tablesId}
-          id="inputs"
-          style={{width:"100%"}}
-        />
-        <span className="col-sm-2 text-center" style={{height:'100%',fontSize:'18px'}}>e</span>
-        <TextInput
-          onChange={textSecondIncludedHandler}
-          onAcceptValue={function noRefCheck() {}}
-          type="text"
-          data-table-id={tablesId}
-          id="inputs"
-          style={{width:"100%"}}
-        />
-      </div>
-      <div value={"is_not_included"} className={width >= 626 ? "d-flex col-md-4":" "} style={width >= 626 ? {}:{display:'flex'}}>
-        <TextInput
-          onChange={textFirstIncludedHandler}
-          onAcceptValue={function noRefCheck() {}}
-          type="text"
-          id="inputs"
-          data-table-id={tablesId}
-          style={{width:"100%"}}
-        />
-        <span className="col-sm-2 text-center" style={{height:'100%',fontSize:'18px'}}>e</span>
-        <TextInput
-          onChange={textSecondIncludedHandler}
-          onAcceptValue={function noRefCheck() {}}
-          type="text"
-          id="inputs"
-          data-table-id={tablesId}
-          style={{width:"100%"}}
-        />
-      </div>
-      <div value={"LIKE%"} className={width > 626 ? "d-flex col-md-4":" "} style={width >= 626 ? {}:{display:'flex'}}>
-        <TextInput
-          onChange={textInputHandler}
-          onAcceptValue={function noRefCheck() {}}
-          type="text"
-          className=" w-100"
-          data-table-id={tablesId}
-        />
-      </div>
-      <div value={"%LIKE"} className={width > 626 ? "d-flex col-md-4":" "} style={width >= 626 ? {}:{display:'flex'}}>
-        <TextInput
-          onChange={textInputHandler}
-          onAcceptValue={function noRefCheck() {}}
-          type="text"
-          className=" w-100"
-          data-table-id={tablesId}
-        />
-      </div>
-      <div value={"%LIKE%"} className={width >= 626 ? "d-flex col-md-4":" "} style={width >= 626 ? {}:{display:'flex'}}>
-        <TextInput
-          onChange={textInputHandler}
-          onAcceptValue={function noRefCheck() {}}
-          type="text"
-          className=" w-100"
-          data-table-id={tablesId}
-        />
-      </div>
-      <div value={"NOT LIKE"} className={width >= 626 ? "d-flex col-md-4":" "} style={width >= 626 ? {}:{display:'flex'}}>
-        <TextInput
-          onChange={textInputHandler}
-          onAcceptValue={function noRefCheck() {}}
-          type="text"
-          className=" w-100"
-          data-table-id={tablesId}
-        />
-      </div>
-    </Switch>
+      }
+    </>
   )
+
+  // return(
+  //   <Switch queryValues={defaultValue}>
+  //     {/* <div 
+  //       value={"="} 
+  //       className = {width >= 626 ? "d-flex col-md-4" :" "} 
+  //       style={width >= 626 ? {}:{display:'flex'}}
+  //     >
+  //       {dropdownValueQuery === "univoco" ? (
+  //         <SelectUnivoco 
+  //           currentPage={currentTable[tablesId]?.currentNumberOfPage??0}
+  //           totalNumberOfPages = {currentTable[tablesId]?.totalNumberOfPage??0}
+  //           onDecrement = {onDecrement}
+  //           onIncrement = {onIncrement}
+  //           startIndex = {currentTable[tablesId]?.startIndex??0}
+  //           endIndex = {currentTable[tablesId]?.endIndex??0}
+  //           tablesId = {tablesId}
+  //           dropdowns = {dropdowns}
+  //           openDrop = {openDrop}
+  //           univocoSelectHandler = {univocoSelectHandler}
+  //           data = {copiednormalizedThirdQuery}
+  //           queryType = "single"
+  //           onChangingPage = {onChangingPage}
+  //           setOnChangingPage = {setOnChangingPage}
+  //           currentValue = {currentWhereClause?.value?.txt}
+  //         />
+  //       ) : (
+  //         <TextInput
+  //           onChange={textInputHandler}
+  //           onAcceptValue={function noRefCheck() {}}
+  //           type="text"
+  //           className="w-100"
+  //           data-table-id={tablesId}
+  //           defaultValue={defaultTextValue}
+  //         />
+  //       )}
+  //       <div className="flex-shrink-1">
+  //         <Dropdown activeIcon>
+  //           <DropdownButton>
+  //             <SettingOutlined className="setting-svg" />
+  //           </DropdownButton>
+  //           <DropdownMenu>
+  //             <DropdownItem header>Importa il tipo di input</DropdownItem>
+  //             <DropdownItem divider />
+  //             <DropdownItem
+  //               value="valore"
+  //               onClick={(e) => dropdownItemHandler(e, "single")}
+  //               data-table-id={tablesId}
+  //             >
+  //               Valore
+  //             </DropdownItem>
+  //             <DropdownItem
+  //               value="campo"
+  //               onClick={(e) => dropdownItemHandler(e, "single")}
+  //               disabled
+  //               data-table-id={tablesId}
+  //             >
+  //               Campo
+  //             </DropdownItem>
+  //             <DropdownItem
+  //               value="univoco"
+  //               onClick={(e) => dropdownItemHandler(e, "single")}
+  //               data-table-id={tablesId}
+  //             >
+  //               Univoci
+  //             </DropdownItem>
+  //           </DropdownMenu>
+  //         </Dropdown>
+  //       </div>
+  //     </div> */}
+  //     {/* <div value={"<>"} className={width >= 626 ? "d-flex col-md-4":" "}>
+  //       {dropdownValueQuery === "univoco" ? (
+  //         <SelectUnivoco 
+  //           currentPage={currentTable[tablesId]?.currentNumberOfPage??0}
+  //           totalNumberOfPages = {currentTable[tablesId]?.totalNumberOfPage??0}
+  //           onDecrement = {onDecrement}
+  //           onIncrement = {onIncrement}
+  //           startIndex = {currentTable[tablesId]?.startIndex??0}
+  //           endIndex = {currentTable[tablesId]?.endIndex??0}
+  //           tablesId = {tablesId}
+  //           dropdowns = {dropdowns}
+  //           openDrop = {openDrop}
+  //           univocoSelectHandler = {univocoSelectHandler}
+  //           data = {copiednormalizedThirdQuery}
+  //           queryType = "single"
+  //           onChangingPage = {onChangingPage}
+  //           setOnChangingPage = {setOnChangingPage}
+  //           currentValue = {currentWhereClause?.value?.txt}
+  //         />
+  //       ) : (
+  //         <TextInput
+  //           onChange={textInputHandler}
+  //           onAcceptValue={function noRefCheck() {}}
+  //           type="text"
+  //           className=" w-100"
+  //           data-table-id={tablesId}
+  //         />
+  //       )}
+  //       <div className="flex-shrink-1">
+  //         <Dropdown activeIcon>
+  //           <DropdownButton>
+  //             <SettingOutlined className="setting-svg" />
+  //           </DropdownButton>
+  //           <DropdownMenu>
+  //             <DropdownItem header>Importa il tipo di input</DropdownItem>
+  //             <DropdownItem divider />
+  //             <DropdownItem
+  //               value="valore"
+  //               onClick={(e) => dropdownItemHandler(e, "single")}
+  //               data-table-id={tablesId}
+  //             >
+  //               Valore
+  //             </DropdownItem>
+  //             <DropdownItem
+  //               value="campo"
+  //               onClick={(e) => dropdownItemHandler(e, "single")}
+  //               disabled
+  //               data-table-id={tablesId}
+  //             >
+  //               Campo
+  //             </DropdownItem>
+  //             <DropdownItem
+  //               value="univoco"
+  //               onClick={(e) => dropdownItemHandler(e, "single")}
+  //               data-table-id={tablesId}
+  //             >
+  //               Univoci
+  //             </DropdownItem>
+  //           </DropdownMenu>
+  //         </Dropdown>
+  //       </div>
+  //     </div> */}
+  //     {/* <div 
+  //       value={"IN"} 
+  //       onMouseLeave={() => onmouseLeave()}  
+  //       className = {width >= 626 ? "d-flex col-md-4" :" "}
+  //     >
+  //       {
+  //         <Dropdown
+  //           activeIcon
+  //           isOpen={dropdowns[tablesId]}
+  //           style = {{width:"100%"}}
+  //         >
+  //           <DropdownButton onClick={() => openDrop(tablesId)} style = {{width:"100%"}}>
+  //               {checked} elementi selezionati
+  //           </DropdownButton>
+  //           <DropdownMenu className="drop-down-menu-table">
+  //               <DropdownItem header>Multi selezione attiva</DropdownItem>
+  //               <DropdownItem divider  />
+  //               {copiednormalizedThirdQuery.slice(startIndex,endIndex)?.map((el,i)=>{
+  //                 if (el){
+  //                   return (
+  //                     <div >
+  //                       <DropdownItem
+  //                         value={i}
+  //                         data-table-id={tablesId}
+  //                         className="d-flex justify-content-start"
+  //                         strategy={"fixed"}
+  //                       >
+  //                         {
+  //                           <Input
+  //                             onChange={onChangeCheckBox}
+  //                             type="checkbox"
+  //                             id={tablesId}
+  //                             name={el.label}
+  //                             value={el.value}
+  //                             checked = {
+  //                               el.listel &&
+  //                               el.listel.filter(function (e) {
+  //                                 return e.checkValue === el.label;
+  //                               }).length > 0
+  //                             }
+  //                             defaultChecked={
+  //                               el.listel &&
+  //                               el.listel.filter(function (e) {
+  //                                 return e.checkValue === el.label;
+  //                               }).length > 0
+  //                             }
+  //                           />
+  //                         }
+  //                         <label
+  //                           htmlFor={tablesId}
+  //                           className="ml-3 mb-0"
+  //                           id={tablesId}
+  //                         >
+  //                           {" "}
+  //                           {el.label}
+  //                         </label>
+  //                       </DropdownItem>
+                      
+  //                     </div>
+  //                   );
+  //                 }
+  //               })}
+  //               <>
+  //                 <PaginationCompoenent
+  //                   currentPage={`${currentTable[tablesId]?.currentNumberOfPage??0}`}
+  //                   totalNumberOfPage = {`${currentTable[tablesId]?.totalNumberOfPage}`}
+  //                   ondecrement = {onDecrement}
+  //                   onincrement = {onIncrement}
+  //                 />
+  //               </>
+  //             </DropdownMenu>
+  //           </Dropdown>
+  //         }
+  //     </div>
+  //     <div value={"NOT_IN"} className = {width >= 626 ? "d-flex col-md-4" :" "}>
+  //       {
+  //         <Dropdown
+  //           activeIcon
+  //           isOpen={dropdowns[tablesId]}
+  //           toggle={() => dropDown}
+  //           style = {{width:"100%"}}
+  //         >
+  //           <DropdownButton onClick={() => openDrop(tablesId)} style = {{width:"100%"}}>
+  //               {checked} elementi selezionati
+  //           </DropdownButton>
+  //           <DropdownMenu className="drop-down-menu-table">
+  //             <DropdownItem header>Multi selezione attiva</DropdownItem>
+  //             <DropdownItem divider  />
+  //             {copiednormalizedThirdQuery.slice(startIndex,endIndex)?.map((el,i)=>{
+  //               if (el){
+  //                 return (
+  //                   <div>
+  //                     <DropdownItem
+  //                       value={i}
+  //                       data-table-id={tablesId}
+  //                       className="d-flex justify-content-start"
+  //                       strategy={"fixed"}
+  //                     >
+  //                       {
+  //                         <Input
+  //                           onChange={onChangeCheckBox}
+  //                           type="checkbox"
+  //                           id={tablesId}
+  //                           name={el.label}
+  //                           value={el.value}
+  //                           defaultChecked={
+  //                             el.listel &&
+  //                             el.listel.filter(function (e) {
+  //                               return e.checkValue === el.label;
+  //                             }).length > 0
+  //                           }
+  //                         />
+  //                       }
+  //                       <label
+  //                         htmlFor={tablesId}
+  //                         className="ml-3 mb-0"
+  //                         id={tablesId}
+  //                       >
+  //                         {" "}
+  //                         {el.label}
+  //                       </label>
+  //                     </DropdownItem>
+  //                   </div>
+  //                 );
+  //               }
+  //             })}
+  //             <>
+  //               <PaginationCompoenent
+  //                 currentPage={`${currentTable[tablesId]?.currentNumberOfPage??0}`}
+  //                 totalNumberOfPage = {`${currentTable[tablesId]?.totalNumberOfPage??0}`}
+  //                 ondecrement = {onDecrement}
+  //                 onincrement = {onIncrement}
+  //               />
+  //             </>
+  //           </DropdownMenu>
+  //         </Dropdown>
+  //       }
+  //     </div> */}
+  //     {/* <div 
+  //       value={"<="}  
+  //       className = {width >= 626 ? "d-flex col-md-4" :" "} 
+  //       style={width >= 626 ? {}:{display:'flex'}}
+  //     >
+  //       {dropdownValueQuery === "univoco" ? (
+  //         <SelectUnivoco 
+  //           currentPage={currentTable[tablesId]?.currentNumberOfPage??0}
+  //           totalNumberOfPages = {currentTable[tablesId]?.totalNumberOfPage??0}
+  //           onDecrement = {onDecrement}
+  //           onIncrement = {onIncrement}
+  //           startIndex = {currentTable[tablesId]?.startIndex??0}
+  //           endIndex = {currentTable[tablesId]?.endIndex??0}
+  //           tablesId = {tablesId}
+  //           dropdowns = {dropdowns}
+  //           openDrop = {openDrop}
+  //           univocoSelectHandler = {univocoSelectHandler}
+  //           data = {copiednormalizedThirdQuery}
+  //           queryType = "single"
+  //           onChangingPage = {onChangingPage}
+  //           setOnChangingPage = {setOnChangingPage}
+  //           currentValue = {currentWhereClause?.value?.txt}
+  //         />
+  //       ) : (
+  //       <TextInput
+  //         onChange={textInputHandler}
+  //         onAcceptValue={function noRefCheck() {}}
+  //         type="text"
+  //         className=" w-100"
+  //         data-table-id={tablesId}
+  //       />
+  //     )}
+  //     <div className="flex-shrink-1">
+  //       <Dropdown activeIcon>
+  //         <DropdownButton>
+  //           <SettingOutlined className="setting-svg" />
+  //         </DropdownButton>
+  //         <DropdownMenu>
+  //           <DropdownItem header>Importa il tipo di input</DropdownItem>
+  //           <DropdownItem divider />
+  //           <DropdownItem
+  //             value="valore"
+  //             onClick={(e) => dropdownItemHandler(e, "single")}
+  //             data-table-id={tablesId}
+  //           >
+  //             Valore
+  //           </DropdownItem>
+  //           <DropdownItem
+  //             value="campo"
+  //             onClick={(e) => dropdownItemHandler(e, "single")}
+  //             disabled
+  //             data-table-id={tablesId}
+  //           >
+  //             Campo
+  //           </DropdownItem>
+  //           <DropdownItem
+  //             value="univoco"
+  //             onClick={(e) => dropdownItemHandler(e, "single")}
+  //             data-table-id={tablesId}
+  //           >
+  //             Univoci
+  //           </DropdownItem>
+  //         </DropdownMenu>
+  //       </Dropdown>
+  //     </div>
+  //   </div> */}
+  //   {/* <div 
+  //     value={">="} 
+  //     style={width >= 626 ? {}:{display:'flex'}}
+  //     className={width >= 626 ? "d-flex col-md-4":" "}
+  //   >
+  //     {dropdownValueQuery === "univoco" ? (
+  //       <SelectUnivoco 
+  //         currentPage={currentTable[tablesId]?.currentNumberOfPage??0}
+  //         totalNumberOfPages = {currentTable[tablesId]?.totalNumberOfPage??0}
+  //         onDecrement = {onDecrement}
+  //         onIncrement = {onIncrement}
+  //         startIndex = {currentTable[tablesId]?.startIndex??0}
+  //         endIndex = {currentTable[tablesId]?.endIndex??0}
+  //         tablesId = {tablesId}
+  //         dropdowns = {dropdowns}
+  //         openDrop = {openDrop}
+  //         univocoSelectHandler = {univocoSelectHandler}
+  //         data = {copiednormalizedThirdQuery}
+  //         queryType = "single"
+  //         onChangingPage = {onChangingPage}
+  //         setOnChangingPage = {setOnChangingPage}
+  //         currentValue = {currentWhereClause?.value?.txt}
+  //       />
+  //       ) : (
+  //         <TextInput
+  //           onChange={textInputHandler}
+  //           onAcceptValue={function noRefCheck() {}}
+  //           type="text"
+  //           className=" w-100"
+  //           data-table-id={tablesId}
+  //         />
+  //     )}
+  //     <div className="flex-shrink-1">
+  //       <Dropdown activeIcon>
+  //         <DropdownButton><SettingOutlined className="setting-svg" /></DropdownButton>
+  //         <DropdownMenu>
+  //           <DropdownItem header>Importa il tipo di input</DropdownItem>
+  //           <DropdownItem divider />
+  //           <DropdownItem
+  //             value="valore"
+  //             onClick={(e) => dropdownItemHandler(e, "single")}
+  //             data-table-id={tablesId}
+  //           >
+  //             Valore
+  //           </DropdownItem>
+  //           <DropdownItem
+  //             value="campo"
+  //             onClick={(e) => dropdownItemHandler(e, "single")}
+  //             disabled
+  //             data-table-id={tablesId}
+  //           >
+  //             Campo
+  //           </DropdownItem>
+  //           <DropdownItem
+  //             value="univoco"
+  //             onClick={(e) => dropdownItemHandler(e, "single")}
+  //             data-table-id={tablesId}
+  //           >
+  //             Univoci
+  //           </DropdownItem>
+  //           </DropdownMenu>
+  //         </Dropdown>
+  //       </div>
+  //     </div> */}
+  //     {/* <div 
+  //       value={"<"} 
+  //       className= {width >= 626 ? "d-flex col-md-4":" "}
+  //       style={width >= 626 ? {}:{display:'flex'}}
+  //     >
+  //       {dropdownValueQuery === "univoco" ? (
+  //         <SelectUnivoco 
+  //           currentPage={currentTable[tablesId]?.currentNumberOfPage??0}
+  //           totalNumberOfPages = {currentTable[tablesId]?.totalNumberOfPage??0}
+  //           onDecrement = {onDecrement}
+  //           onIncrement = {onIncrement}
+  //           startIndex = {currentTable[tablesId]?.startIndex??0}
+  //           endIndex = {currentTable[tablesId]?.endIndex??0}
+  //           tablesId = {tablesId}
+  //           dropdowns = {dropdowns}
+  //           openDrop = {openDrop}
+  //           univocoSelectHandler = {univocoSelectHandler}
+  //           data = {copiednormalizedThirdQuery}
+  //           queryType = "single"
+  //           onChangingPage = {onChangingPage}
+  //           setOnChangingPage = {setOnChangingPage}
+  //           currentValue = {currentWhereClause?.value?.txt}
+  //         />
+  //       ) : (
+  //         <TextInput
+  //           onChange={textInputHandler}
+  //           onAcceptValue={function noRefCheck() {}}
+  //           type="text"
+  //           className=" w-100"
+  //           data-table-id={tablesId}
+  //         />
+  //       )}
+  //       <div className="flex-shrink-1">
+  //         <Dropdown activeIcon>
+  //           <DropdownButton><SettingOutlined className="setting-svg" /></DropdownButton>
+  //           <DropdownMenu>
+  //             <DropdownItem header>Importa il tipo di input</DropdownItem>
+  //             <DropdownItem divider />
+  //             <DropdownItem
+  //               value="valore"
+  //               onClick={(e) => dropdownItemHandler(e, "single")}
+  //               data-table-id={tablesId}
+  //             >
+  //               Valore
+  //             </DropdownItem>
+  //             <DropdownItem
+  //               value="campo"
+  //               onClick={(e) => dropdownItemHandler(e, "single")}
+  //               disabled
+  //               data-table-id={tablesId}
+  //             >
+  //               Campo
+  //             </DropdownItem>
+  //             <DropdownItem
+  //               value="univoco"
+  //               onClick={(e) => dropdownItemHandler(e, "single")}
+  //               data-table-id={tablesId}
+  //             >
+  //               Univoci
+  //             </DropdownItem>
+  //           </DropdownMenu>
+  //         </Dropdown>
+  //       </div>
+  //     </div> */}
+  //     {/* <div 
+  //       value={">"} 
+  //       className={width > 626 ? "d-flex col-md-4":" "}
+  //       style={width >= 626 ? {}:{display:'flex'}}
+  //     >
+  //       {dropdownValueQuery === "univoco" ? (
+  //         <SelectUnivoco 
+  //           currentPage={currentTable[tablesId]?.currentNumberOfPage??0}
+  //           totalNumberOfPages = {currentTable[tablesId]?.totalNumberOfPage??0}
+  //           onDecrement = {onDecrement}
+  //           onIncrement = {onIncrement}
+  //           startIndex = {currentTable[tablesId]?.startIndex??0}
+  //           endIndex = {currentTable[tablesId]?.endIndex??0}
+  //           tablesId = {tablesId}
+  //           dropdowns = {dropdowns}
+  //           openDrop = {openDrop}
+  //           univocoSelectHandler = {univocoSelectHandler}
+  //           data = {copiednormalizedThirdQuery}
+  //           queryType = "single"
+  //           onChangingPage = {onChangingPage}
+  //           setOnChangingPage = {setOnChangingPage}
+  //           currentValue = {currentWhereClause?.value?.txt}
+  //         />
+  //       ) : (
+  //         <TextInput
+  //           onChange={textInputHandler}
+  //           onAcceptValue={function noRefCheck() {}}
+  //           type="text"
+  //           className=" w-100"
+  //           data-table-id={tablesId}
+  //         />
+  //       )}
+  //       <div className="flex-shrink-1">
+  //         <Dropdown activeIcon>
+  //           <DropdownButton>
+  //             <SettingOutlined className="setting-svg" />
+  //           </DropdownButton>
+  //           <DropdownMenu>
+  //             <DropdownItem header>Importa il tipo di input</DropdownItem>
+  //             <DropdownItem divider />
+  //             <DropdownItem
+  //               value="valore"
+  //               onClick={(e) => dropdownItemHandler(e, "single")}
+  //               data-table-id={tablesId}
+  //             >
+  //               Valore
+  //             </DropdownItem>
+  //             <DropdownItem
+  //               value="campo"
+  //               onClick={(e) => dropdownItemHandler(e, "single")}
+  //               disabled
+  //               data-table-id={tablesId}
+  //             >
+  //               Campo
+  //             </DropdownItem>
+  //             <DropdownItem
+  //               value="univoco"
+  //               onClick={(e) => dropdownItemHandler(e, "single")}
+  //               data-table-id={tablesId}
+  //             >
+  //               Univoci
+  //             </DropdownItem>
+  //           </DropdownMenu>
+  //         </Dropdown>
+  //       </div>
+  //     </div> */}
+  //     {/* <div value={"is null"} className={width > 626 ? "d-flex col-md-4":" "} style={width >= 626 ? {}:{display:'flex'}}></div>
+  //     <div value={"is not null"} className={width > 626 ? "d-flex col-md-4":" "} style={width >= 626 ? {}:{display:'flex'}}></div> */}
+  //     {/* <div value={"included"} className={width > 626 ? "d-flex col-md-4":" "} style={width >= 626 ? {}:{display:'flex'}}>
+  //       <TextInput
+  //         onChange={textFirstIncludedHandler}
+  //         onAcceptValue={function noRefCheck() {}}
+  //         type="text"
+  //         data-table-id={tablesId}
+  //         id="inputs"
+  //         style={{width:"100%"}}
+  //       />
+  //       <span className="col-sm-2 text-center" style={{height:'100%',fontSize:'18px'}}>e</span>
+  //       <TextInput
+  //         onChange={textSecondIncludedHandler}
+  //         onAcceptValue={function noRefCheck() {}}
+  //         type="text"
+  //         data-table-id={tablesId}
+  //         id="inputs"
+  //         style={{width:"100%"}}
+  //       />
+  //     </div> */}
+  //     {/* <div value={"is_not_included"} className={width >= 626 ? "d-flex col-md-4":" "} style={width >= 626 ? {}:{display:'flex'}}>
+  //       <TextInput
+  //         onChange={textFirstIncludedHandler}
+  //         onAcceptValue={function noRefCheck() {}}
+  //         type="text"
+  //         id="inputs"
+  //         data-table-id={tablesId}
+  //         style={{width:"100%"}}
+  //       />
+  //       <span className="col-sm-2 text-center" style={{height:'100%',fontSize:'18px'}}>e</span>
+  //       <TextInput
+  //         onChange={textSecondIncludedHandler}
+  //         onAcceptValue={function noRefCheck() {}}
+  //         type="text"
+  //         id="inputs"
+  //         data-table-id={tablesId}
+  //         style={{width:"100%"}}
+  //       />
+  //     </div> */}
+  //     <div value={"LIKE%"} className={width > 626 ? "d-flex col-md-4":" "} style={width >= 626 ? {}:{display:'flex'}}>
+  //       <TextInput
+  //         onChange={textInputHandler}
+  //         onAcceptValue={function noRefCheck() {}}
+  //         type="text"
+  //         className=" w-100"
+  //         data-table-id={tablesId}
+  //       />
+  //     </div>
+  //     <div value={"%LIKE"} className={width > 626 ? "d-flex col-md-4":" "} style={width >= 626 ? {}:{display:'flex'}}>
+  //       <TextInput
+  //         onChange={textInputHandler}
+  //         onAcceptValue={function noRefCheck() {}}
+  //         type="text"
+  //         className=" w-100"
+  //         data-table-id={tablesId}
+  //       />
+  //     </div>
+  //     <div value={"%LIKE%"} className={width >= 626 ? "d-flex col-md-4":" "} style={width >= 626 ? {}:{display:'flex'}}>
+  //       <TextInput
+  //         onChange={textInputHandler}
+  //         onAcceptValue={function noRefCheck() {}}
+  //         type="text"
+  //         className=" w-100"
+  //         data-table-id={tablesId}
+  //       />
+  //     </div>
+  //     <div value={"NOT LIKE"} className={width >= 626 ? "d-flex col-md-4":" "} style={width >= 626 ? {}:{display:'flex'}}>
+  //       <TextInput
+  //         onChange={textInputHandler}
+  //         onAcceptValue={function noRefCheck() {}}
+  //         type="text"
+  //         className=" w-100"
+  //         data-table-id={tablesId}
+  //       />
+  //     </div>
+  //   </Switch>
+  // )
 };
 
 export default Table;
