@@ -1188,7 +1188,7 @@ export default class Widget extends React.PureComponent<
                           });
                         });
                         if (queryIndex !== -1) {
-                          if (typeof detailThirdQuery[0].value !== "number") {
+                          if (typeof detailThirdQuery[0].value[0] !== "number") {
                             detailThirdQuery.sort((a, b) =>
                               a.label < b.label ? -1 : a.label > b.label ? 1 : 0
                             );
