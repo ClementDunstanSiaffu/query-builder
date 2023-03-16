@@ -5,6 +5,7 @@ import ReactResizeDetector from "../lib/ResizeDetector";
 import {queryConstructorNumber,queryConstructorString} from "../utils/queryTableValue";
 import '../../assets/styles/styles.scss';
 import SecondConstructor from "./common/inputs/secondConstructor";
+import CommonSecondConstructor from "./common/inputs/commonSecondConstructor";
 
 function Table(props) {
   const {
@@ -149,7 +150,7 @@ function Table(props) {
                               })}
                         </Select>
                       </div>
-                      <SecondConstructor
+                      <CommonSecondConstructor 
                         className="col-md-4"
                         handleThirdQuery={handleThirdQuery}
                         textInputHandler={textInputHandler}
@@ -181,7 +182,41 @@ function Table(props) {
                         width={width}
                         queryChanged = {queryChanged}
                         parent = {parent}
+                        queryType = "single"
                       />
+                      {/* <SecondConstructor
+                        className="col-md-4"
+                        handleThirdQuery={handleThirdQuery}
+                        textInputHandler={textInputHandler}
+                        multiSelectHandler={multiSelectHandler}
+                        dropdownItemHandler={dropdownItemHandler}
+                        textFirstIncludedHandler={textFirstIncludedHandler}
+                        textSecondIncludedHandler={textSecondIncludedHandler}
+                        dropdownValueQuery={dropdownValueQuery}
+                        handleCheckBox={handleCheckBox}
+                        isChecked={isChecked}
+                        counterIsChecked={counterIsChecked}
+                        functionCounterIsChecked={functionCounterIsChecked}
+                        checkedToQuery={checkedToQuery}
+                        getQueryAttribute={getQueryAttribute}
+                        whereClauses={whereClauses}
+                        tablesId={tablesId}
+                        dropDownToggler={dropDownToggler}
+                        univocoSelectHandler={univocoSelectHandler}
+                        dropDown={dropDown}
+                        isOpenDropD={isOpenDropD}
+                        onChangeCheckBox={onChangeCheckBox}
+                        openDrop={openDrop}
+                        closeDrop={closeDrop}
+                        opened={opened}
+                        autOpen={autOpen}
+                        mouseleave={mouseleave}
+                        onmouseLeave={onmouseLeave}
+                        dropdowns={dropdowns}
+                        width={width}
+                        queryChanged = {queryChanged}
+                        parent = {parent}
+                      /> */}
                         {
                           width >= 626 && <div className="" style={{}}>
                             <Button className="" onClick={deleteTable} icon><CloseOutlined /></Button>
