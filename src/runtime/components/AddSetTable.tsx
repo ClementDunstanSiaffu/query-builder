@@ -23,7 +23,7 @@ import '../../assets/styles/styles.scss';
 import PaginationCompoenent from "./pagination";
 import SelectUnivoco from "./common/inputs/select";
 import SecondConstructorAddset from "./common/inputs/secondConstructorAddset";
-
+import CommonSecondConstructor from "./common/inputs/commonSecondConstructor";
 
 function AddSetTable(props) {
   const {
@@ -181,6 +181,32 @@ function AddSetTable(props) {
                               })}
                         </Select>
                       </div>
+                      {/* <CommonSecondConstructor 
+                        className="col-md-4"
+                        textInputHandler = {textInputHandler}
+                        dropdownItemHandler = {dropdownItemHandler}
+                        textFirstIncludedHandler = {textFirstIncludedHandler}
+                        textSecondIncludedHandler = {textSecondIncludedHandler}
+                        counterIsChecked = {counterIsChecked}
+                        functionCounterIsChecked = {functionCounterIsChecked}
+                        tablesId = {tablesSetId}
+                        whereClauses = {whereClausesSet}
+                        dropDownToggler = {dropDownToggler}
+                        univocoSelectHandler = {univocoSelectHandler}
+                        dropDown = {dropDown}
+                        isOpenDropD = {isOpenDropD}
+                        onChangeCheckBox = {onChangeCheckBox}
+                        openDrop = {openDrop}
+                        closeDrop = {closeDrop}
+                        opened={opened}
+                        autOpen = {autOpen}
+                        onmouseLeave = {onmouseLeave}
+                        dropdowns = {dropdownsSet}
+                        width = {width}
+                        queryChanged = {queryChanged}
+                        parent = {parent}
+                        queryType = "set"
+                      /> */}
                       <SecondConstructorAddset
                         className="col-md-4"
                         handleThirdQuery={handleThirdQuery}
