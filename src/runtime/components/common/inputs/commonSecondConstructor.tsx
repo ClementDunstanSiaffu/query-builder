@@ -198,7 +198,7 @@ const CommonSecondConstructor = (props) => {
                 openDrop = {openDrop}
                 univocoSelectHandler = {univocoSelectHandler}
                 data = {copiednormalizedThirdQuery}
-                queryType = "single"
+                queryType = {queryType??"single"}
                 onChangingPage = {onChangingPage}
                 setOnChangingPage = {setOnChangingPage}
                 currentValue = {currentWhereClause?.value?.txt}

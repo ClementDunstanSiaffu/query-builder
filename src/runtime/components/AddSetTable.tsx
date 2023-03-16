@@ -181,7 +181,7 @@ function AddSetTable(props) {
                               })}
                         </Select>
                       </div>
-                      {/* <CommonSecondConstructor 
+                      <CommonSecondConstructor 
                         className="col-md-4"
                         textInputHandler = {textInputHandler}
                         dropdownItemHandler = {dropdownItemHandler}
@@ -206,8 +206,8 @@ function AddSetTable(props) {
                         queryChanged = {queryChanged}
                         parent = {parent}
                         queryType = "set"
-                      /> */}
-                      <SecondConstructorAddset
+                      />
+                      {/* <SecondConstructorAddset
                         className="col-md-4"
                         handleThirdQuery={handleThirdQuery}
                         textInputHandler={textInputHandler}
@@ -240,7 +240,7 @@ function AddSetTable(props) {
                         width={width}
                         queryChanged = {queryChanged}
                         parent = {parent}
-                      />
+                      /> */}
                         {
                           (width >= 626 && showDelete) && <div className="" style={{}}>
                             <Button className="" onClick={deleteTable} icon><CloseOutlined /></Button>

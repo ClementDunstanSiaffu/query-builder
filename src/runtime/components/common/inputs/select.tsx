@@ -55,6 +55,7 @@ const SelectUnivoco = (props:PropsType)=>{
     setCurrentTable({...currentTable,[tableId]:{"selectedIndex":index,"selectedItem":value}});
     const currentTableId = typeof tableId === "number" ? `${tableId}`:tableId
     const obj = {value,tableId:currentTableId}
+    console.log(obj,queryType,"check both")
     univocoSelectHandler(obj,queryType);
     openDrop(tablesId)
   }

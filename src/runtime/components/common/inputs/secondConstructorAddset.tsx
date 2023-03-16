@@ -287,7 +287,7 @@ const SecondConstructorAddset = (props) => {
               onIncrement={onIncrement}
               startIndex={currentTable[tablesSetId]?.startIndex ?? 0}
               endIndex={currentTable[tablesSetId]?.endIndex ?? 0}
-              tablesSetId={tablesSetId}
+              tablesId={tablesSetId}
               dropdowns={dropdownsSet}
               openDrop={openDrop}
               univocoSelectHandler={univocoSelectHandler}
