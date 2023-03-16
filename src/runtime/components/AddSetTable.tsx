@@ -22,6 +22,7 @@ import {
 import '../../assets/styles/styles.scss';
 import PaginationCompoenent from "./pagination";
 import SelectUnivoco from "./common/inputs/select";
+import CommonSecondConstructor from "./common/inputs/commonSecondConstructor";
 
 function AddSetTable(props) {
   const {
@@ -179,7 +180,33 @@ function AddSetTable(props) {
                               })}
                         </Select>
                       </div>
-                      <SecondConstructor
+                      <CommonSecondConstructor 
+                        className="col-md-4"
+                        textInputHandler = {textInputHandler}
+                        dropdownItemHandler = {dropdownItemHandler}
+                        textFirstIncludedHandler = {textFirstIncludedHandler}
+                        textSecondIncludedHandler = {textSecondIncludedHandler}
+                        counterIsChecked = {counterIsChecked}
+                        functionCounterIsChecked = {functionCounterIsChecked}
+                        tablesId = {tablesSetId}
+                        whereClauses = {whereClausesSet}
+                        dropDownToggler = {dropDownToggler}
+                        univocoSelectHandler = {univocoSelectHandler}
+                        dropDown = {dropDown}
+                        isOpenDropD = {isOpenDropD}
+                        onChangeCheckBox = {onChangeCheckBox}
+                        openDrop = {openDrop}
+                        closeDrop = {closeDrop}
+                        opened={opened}
+                        autOpen = {autOpen}
+                        onmouseLeave = {onmouseLeave}
+                        dropdowns = {dropdownsSet}
+                        width = {width}
+                        queryChanged = {queryChanged}
+                        parent = {parent}
+                        queryType = "set"
+                      />
+                      {/* <SecondConstructor
                         className="col-md-4"
                         handleThirdQuery={handleThirdQuery}
                         textInputHandler={textInputHandler}
@@ -212,7 +239,7 @@ function AddSetTable(props) {
                         width={width}
                         queryChanged = {queryChanged}
                         parent = {parent}
-                      />
+                      /> */}
                         {
                           (width >= 626 && showDelete) && <div className="" style={{}}>
                             <Button className="" onClick={deleteTable} icon><CloseOutlined /></Button>
