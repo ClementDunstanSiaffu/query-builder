@@ -60,7 +60,6 @@ export default class Widget extends React.PureComponent<
     this.getAllJimuLayerViews = this.getAllJimuLayerViews.bind(this);
     this.connector_function = this.connector_function.bind(this);
     this.functionCounterIsChecked = this.functionCounterIsChecked.bind(this);
-    this.getQueryAttributeSet = this.getQueryAttributeSet.bind(this);
     this.getQuerySet = this.getQuerySet.bind(this);
     this.onChangeCheckBoxSet = this.onChangeCheckBoxSet.bind(this);
   }
@@ -243,137 +242,12 @@ export default class Widget extends React.PureComponent<
     });
   }
 
-  // async getQueryAttribute(e) {
-  //   let currentWhereClause;
-  //   if (!this.state.whereClauses.length) {
-  //     let whereClause = {
-  //       id: e.currentTarget.attributes[1].value,
-  //       attributeQuery: e.currentTarget.name,
-  //       attributeQueryType: e.currentTarget.attributes.datatype.value,
-  //       queryValue: "=",
-  //     };
-  //     currentWhereClause = whereClause;
-  //     this.setState({ whereClauses: [whereClause] });
-  //   }
-  //   if (this.state.whereClauses.length) {
-  //     const queryIndex = this.state.whereClauses
-  //       .map((obj) => obj.id)
-  //       .indexOf(e.currentTarget.attributes[1].value);
-  //     if (queryIndex !== -1) {
-  //       const updateState = this.state.whereClauses.map((obj) => {
-  //         if (obj.id === e.currentTarget.attributes[1].value) {
-  //           obj = {
-  //             ...obj,
-  //             attributeQuery: e.currentTarget.name,
-  //             attributeQueryType: e.currentTarget.attributes.datatype.value,
-  //           };
-  //           obj = this.removeValueFromObject(obj);
-  //           let filteredWhereClauses = this.state.whereClauses.filter(
-  //             (a) => a.id !== obj.id
-  //           );
-  //           filteredWhereClauses.push(obj);
-  //           filteredWhereClauses.sort(function (a, b) {
-  //             return a.id < b.id ? -1 : a.id == b.id ? 0 : 1;
-  //           });
-  //           currentWhereClause = obj;
-  //           return this.setState({ whereClauses: filteredWhereClauses });
-  //         }
-  //         return { obj };
-  //       });
-  //     } else {
-  //       let whereClause = {
-  //         id: e.currentTarget.attributes[1].value,
-  //         attributeQuery: e.currentTarget.name,
-  //         attributeQueryType: e.currentTarget.attributes.datatype.value,
-  //       };
-  //       // whereClause = this.removeValueFromObject(whereClause)
-  //       currentWhereClause = whereClause;
-  //       this.setState({
-  //         whereClauses: [...this.state.whereClauses, whereClause],
-  //       });
-  //       this.state.whereClauses.sort(function (a, b) {
-  //         return a.id < b.id ? -1 : a.id == b.id ? 0 : 1;
-  //       });
-  //     }
-  //   }
-  //   this.setState({ selectedField: e.currentTarget.name }, () => {
-  //     if (currentWhereClause)
-  //       this.manipulateFieldQuery(
-  //         currentWhereClause.queryValue,
-  //         currentWhereClause.id,
-  //         "single"
-  //       );
-  //   });
-  // }
-
-  async getQueryAttributeSet(e) {
-    let currentWhereClause;
-    if (!this.state.whereClauseSet.length) {
-      let whereClauseSet = {
-        id: e.currentTarget.attributes[1].value,
-        attributeQuery: e.currentTarget.name,
-        attributeQueryType: e.currentTarget.attributes.datatype.value,
-        queryValue: "=",
-      };
-      currentWhereClause = whereClauseSet;
-      this.setState({ whereClauseSet: [whereClauseSet] });
-    }
-    if (this.state.whereClauseSet.length) {
-      const queryIndex = this.state.whereClauseSet
-        .map((obj) => obj.id)
-        .indexOf(e.currentTarget.attributes[1].value);
-      if (queryIndex !== -1) {
-        const updateState = this.state.whereClauseSet.map((obj) => {
-          if (obj.id === e.currentTarget.attributes[1].value) {
-            obj = {
-              ...obj,
-              attributeQuery: e.currentTarget.name,
-              attributeQueryType: e.currentTarget.attributes.datatype.value,
-            };
-            obj = this.removeValueFromObject(obj);
-            let filteredWhereClauseSet = this.state.whereClauseSet.filter(
-              (a) => a.id !== obj.id
-            );
-            filteredWhereClauseSet.push(obj);
-            filteredWhereClauseSet.sort(function (a, b) {
-              return a.id < b.id ? -1 : a.id == b.id ? 0 : 1;
-            });
-            currentWhereClause = obj;
-            return this.setState({ whereClauseSet: filteredWhereClauseSet });
-          }
-          return { obj };
-        });
-      } else {
-        let whereClauseSet = {
-          id: e.currentTarget.attributes[1].value,
-          attributeQuery: e.currentTarget.name,
-          attributeQueryType: e.currentTarget.attributes.datatype.value,
-        };
-        currentWhereClause = whereClauseSet;
-        this.setState({
-          whereClauseSet: [...this.state.whereClauseSet, whereClauseSet],
-        });
-        this.state.whereClauseSet.sort(function (a, b) {
-          return a.id < b.id ? -1 : a.id == b.id ? 0 : 1;
-        });
-      }
-    }
-    this.setState({ selectedField: e.currentTarget.name }, () => {
-      this.manipulateFieldQuery(
-        currentWhereClause.queryValue,
-        currentWhereClause.id,
-        "set"
-      );
-    });
-  }
-
   // for called on drop select list
   async getQuery(e, type = "single") {
     const clickedQueryTableId = e.currentTarget.attributes[1].value;
     const currentTargetName = e.currentTarget.name;
     this.manipulateFieldQuery(currentTargetName, clickedQueryTableId, type);
     this.setState({queryChanged:{...this.state.queryChanged,[clickedQueryTableId]:true}})
-    // this.setState({queryChanged:true});
   }
 
   async manipulateFieldQuery(
@@ -688,7 +562,15 @@ export default class Widget extends React.PureComponent<
         if (this.containsAnyLetters(secondQueryTarget)) {
           return `${firstQuery} ${queryRequest} '${secondQueryTarget}'`;
         } else {
-          return `${firstQuery} ${queryRequest} ${secondQueryTarget}`;
+          let queryString = `${firstQuery} ${queryRequest} ${secondQueryTarget}`;
+          const brackets = ["(", ")", "[", "]", "{", "}"];
+          if (brackets.includes(secondQueryTarget.charAt(0))) {
+            const stringFiedValue = JSON.stringify(secondQueryTarget).replace(/"/g, `'`)
+            queryString= `${firstQuery} ${queryRequest} (${stringFiedValue})`;
+          }else{
+            queryString = `${firstQuery} ${queryRequest} '${secondQueryTarget}'`;
+          }
+          return queryString;
         }
     }
   };
@@ -1822,9 +1704,7 @@ export default class Widget extends React.PureComponent<
             const stringFiedValue = this.loopToGetString(secondQueryTarget);
             query.where = `NOT  ${firstQuery} IN (${stringFiedValue})`;
           } else {
-            query.where = `NOT  ${firstQuery} IN (${secondQueryTarget.join(
-              ","
-            )})`;
+            query.where = `NOT  ${firstQuery} IN (${secondQueryTarget.join(",")})`;
           }
           query.outFields = [`${firstQuery}`];
           connector_function({
@@ -1879,8 +1759,15 @@ export default class Widget extends React.PureComponent<
             source: "singleQuery",
           });
         } else {
-          query.where = `${firstQuery} ${queryRequest} ${secondQueryTarget}`;
-          query.outFields = [`${firstQuery}`];
+          const brackets = ["(", ")", "[", "]", "{", "}"];
+          if (brackets.includes(secondQueryTarget.charAt(0))) {
+            const stringFiedValue = JSON.stringify(secondQueryTarget).replace(/"/g, `'`)
+            query.where = `${firstQuery} ${queryRequest} (${stringFiedValue})`;
+          }else{
+            query.where = `${firstQuery} ${queryRequest} '${secondQueryTarget}'`;
+          }
+          // query.where = `${firstQuery} ${queryRequest} ${secondQueryTarget}`;
+          // query.outFields = [`${firstQuery}`];
           connector_function({
             layerView,
             query,
