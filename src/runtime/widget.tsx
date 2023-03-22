@@ -193,24 +193,24 @@ export default class Widget extends React.PureComponent<
     return newWhereClause;
   }
 
-  async getQueryAttribute(e) {
+  async getQueryAttribute(e,type="single") {
+    const keytype = type === "single" ? "whereClauses" : "whereClauseSet";
     let currentWhereClause;
-    if (!this.state.whereClauses.length) {
+    const whereClauseState = this.state[keytype];
+    if (!whereClauseState.length) {
       let whereClause = {
-        id: e.currentTarget.attributes[1].value,
+        id:e.currentTarget.attributes[1].value,
         attributeQuery: e.currentTarget.name,
-        attributeQueryType: e.currentTarget.attributes.datatype.value,
+        attributeQueryType:e.currentTarget.attributes.datatype.value,
         queryValue: "=",
       };
       currentWhereClause = whereClause;
-      this.setState({ whereClauses: [whereClause] });
+      this.setState({[keytype]: [whereClause] });
     }
-    if (this.state.whereClauses.length) {
-      const queryIndex = this.state.whereClauses
-        .map((obj) => obj.id)
-        .indexOf(e.currentTarget.attributes[1].value);
+    if (whereClauseState.length) {
+      const queryIndex = whereClauseState.map((obj) => obj.id).indexOf(e.currentTarget.attributes[1].value);
       if (queryIndex !== -1) {
-        const updateState = this.state.whereClauses.map((obj) => {
+        const updateState = whereClauseState.map((obj) => {
           if (obj.id === e.currentTarget.attributes[1].value) {
             obj = {
               ...obj,
@@ -218,15 +218,11 @@ export default class Widget extends React.PureComponent<
               attributeQueryType: e.currentTarget.attributes.datatype.value,
             };
             obj = this.removeValueFromObject(obj);
-            let filteredWhereClauses = this.state.whereClauses.filter(
-              (a) => a.id !== obj.id
-            );
+            let filteredWhereClauses = whereClauseState.filter((a) => a.id !== obj.id);
             filteredWhereClauses.push(obj);
-            filteredWhereClauses.sort(function (a, b) {
-              return a.id < b.id ? -1 : a.id == b.id ? 0 : 1;
-            });
+            filteredWhereClauses.sort(function (a, b) {return a.id < b.id ? -1 : a.id == b.id ? 0 : 1;});
             currentWhereClause = obj;
-            return this.setState({ whereClauses: filteredWhereClauses });
+            return this.setState({[keytype]: filteredWhereClauses });
           }
           return { obj };
         });
@@ -238,23 +234,77 @@ export default class Widget extends React.PureComponent<
         };
         // whereClause = this.removeValueFromObject(whereClause)
         currentWhereClause = whereClause;
-        this.setState({
-          whereClauses: [...this.state.whereClauses, whereClause],
-        });
-        this.state.whereClauses.sort(function (a, b) {
-          return a.id < b.id ? -1 : a.id == b.id ? 0 : 1;
-        });
+        this.setState({[keytype]: [...whereClauseState,whereClause],});
+        whereClauseState.sort(function (a, b) {return a.id < b.id ? -1 : a.id == b.id ? 0 : 1});
       }
     }
     this.setState({ selectedField: e.currentTarget.name }, () => {
-      if (currentWhereClause)
-        this.manipulateFieldQuery(
-          currentWhereClause.queryValue,
-          currentWhereClause.id,
-          "single"
-        );
+      if (currentWhereClause)this.manipulateFieldQuery(currentWhereClause.queryValue,currentWhereClause.id,type);
     });
   }
+
+  // async getQueryAttribute(e) {
+  //   let currentWhereClause;
+  //   if (!this.state.whereClauses.length) {
+  //     let whereClause = {
+  //       id: e.currentTarget.attributes[1].value,
+  //       attributeQuery: e.currentTarget.name,
+  //       attributeQueryType: e.currentTarget.attributes.datatype.value,
+  //       queryValue: "=",
+  //     };
+  //     currentWhereClause = whereClause;
+  //     this.setState({ whereClauses: [whereClause] });
+  //   }
+  //   if (this.state.whereClauses.length) {
+  //     const queryIndex = this.state.whereClauses
+  //       .map((obj) => obj.id)
+  //       .indexOf(e.currentTarget.attributes[1].value);
+  //     if (queryIndex !== -1) {
+  //       const updateState = this.state.whereClauses.map((obj) => {
+  //         if (obj.id === e.currentTarget.attributes[1].value) {
+  //           obj = {
+  //             ...obj,
+  //             attributeQuery: e.currentTarget.name,
+  //             attributeQueryType: e.currentTarget.attributes.datatype.value,
+  //           };
+  //           obj = this.removeValueFromObject(obj);
+  //           let filteredWhereClauses = this.state.whereClauses.filter(
+  //             (a) => a.id !== obj.id
+  //           );
+  //           filteredWhereClauses.push(obj);
+  //           filteredWhereClauses.sort(function (a, b) {
+  //             return a.id < b.id ? -1 : a.id == b.id ? 0 : 1;
+  //           });
+  //           currentWhereClause = obj;
+  //           return this.setState({ whereClauses: filteredWhereClauses });
+  //         }
+  //         return { obj };
+  //       });
+  //     } else {
+  //       let whereClause = {
+  //         id: e.currentTarget.attributes[1].value,
+  //         attributeQuery: e.currentTarget.name,
+  //         attributeQueryType: e.currentTarget.attributes.datatype.value,
+  //       };
+  //       // whereClause = this.removeValueFromObject(whereClause)
+  //       currentWhereClause = whereClause;
+  //       this.setState({
+  //         whereClauses: [...this.state.whereClauses, whereClause],
+  //       });
+  //       this.state.whereClauses.sort(function (a, b) {
+  //         return a.id < b.id ? -1 : a.id == b.id ? 0 : 1;
+  //       });
+  //     }
+  //   }
+  //   this.setState({ selectedField: e.currentTarget.name }, () => {
+  //     if (currentWhereClause)
+  //       this.manipulateFieldQuery(
+  //         currentWhereClause.queryValue,
+  //         currentWhereClause.id,
+  //         "single"
+  //       );
+  //   });
+  // }
 
   async getQueryAttributeSet(e) {
     let currentWhereClause;
@@ -2494,7 +2544,8 @@ export default class Widget extends React.PureComponent<
                               }
                               whereClausesSet={this.state.whereClauseSet}
                               // End for Add set table............................
-                              getQueryAttribute={this.getQueryAttributeSet}
+                              // getQueryAttribute={this.getQueryAttributeSet}
+                              getQueryAttribute={this.getQueryAttribute}
                               getQuery={this.getQuerySet}
                               handleThirdQuery={this.thirdQuery}
                               textInputHandler={this.textInputHandler}

@@ -90,7 +90,7 @@ function Table(props) {
                     <div style = {width <= 625 ? styles.smallerWidthInnerContainer:styles.largerWidthInnerContainer}>
                       <Select
                         className={width <= 625 ? " ":"col-md-4"}
-                        onChange={getQueryAttribute}
+                        onChange={(e)=>getQueryAttribute(e,"single")}
                         placeholder="Seleziona campo"
                       >
                         {/* eslint-disable-next-line array-callback-return */}

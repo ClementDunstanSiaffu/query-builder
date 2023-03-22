@@ -99,7 +99,7 @@ function AddSetTable(props) {
                     <div style = {width <= 625 ? styles.smallerWidthInnerContainer:styles.largerWidthInnerContainer}>
                       <Select
                         className={width <= 625 ? " ":"col-md-4"}
-                        onChange={getQueryAttribute}
+                        onChange={(e)=>getQueryAttribute(e,"set")}
                         placeholder="Seleziona campo"
                       >
                         {/* eslint-disable-next-line array-callback-return */}
