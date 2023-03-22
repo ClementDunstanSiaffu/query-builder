@@ -1821,24 +1821,9 @@ export default class Widget extends React.PureComponent<
 
   closeDropOnclickOutside = () => {
     if (this.state.dropId !== null && this.state.mouseleave) {
-      // this.setState({
-      //   dropDowns: { ...this.state.dropDowns, [this.state.dropId]: false },
-      // });
-      // this.setState({
-      //   dropDownsSet: {
-      //     ...this.state.dropDownsSet,
-      //     [this.state.dropIdSet]: false,
-      //   },
-      // });
       this.setState({ mouseleave: false });
     }
     if (this.state.dropIdSet !== null && this.state.mouseleave) {
-      // this.setState({
-      //   dropDownsSet: {
-      //     ...this.state.dropDownsSet,
-      //     [this.state.dropIdSet]: false,
-      //   },
-      // });
       this.setState({ mouseleave: false });
     }
   };
@@ -2463,8 +2448,6 @@ export default class Widget extends React.PureComponent<
                               showBlockDelete={
                                 counts === 2 && i == 0 ? true : false
                               }
-                              // showDelete={TableArray.length > 2 ? true:false}
-                              // showBlockDelete={TableArray.length === 2 && i==0 ? true:false }
                               blockId={el.blockId}
                               deleteBlockAll={() =>
                                 this.deleteBlockAll({ el, innerEl })
