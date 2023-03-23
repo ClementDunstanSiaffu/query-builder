@@ -2192,29 +2192,11 @@ export default class Widget extends React.PureComponent<
                                 // marginTop: "20px",
                               }}
                             >
-                              {/* <Select
-                                onChange={(e) =>
-                                  this.chooseAndOrSet(e, el.blockId)
-                                }
-                                placeholder=" Visualizza le feature nel layer che corrispondono a tutte le espressioni seguenti"
-                                defaultValue="AND"
-                              >
-                                <Option value="AND">
-                                  Visualizza le feature nel layer che
-                                  corrispondono a tutte le espressioni seguenti
-                                </Option>
-                                <Option value="OR">
-                                  Visualizza le feature nel layer che
-                                  corrispondono ad una qualsiasi delle
-                                  espressioni seguenti
-                                </Option>
-                              </Select> */}
                               <AndOrSelector chooseAndOr={(e)=>this.chooseAndOrSet(e,el.blockId)}/>
                               <div className="">
                                 <Button
                                   className=""
                                   onClick={() => this.deleteBlock(el.blockId)}
-                                  // onClick={()=>this.deleteBlockAll({el})}
                                   icon
                                   type="secondary"
                                 >
