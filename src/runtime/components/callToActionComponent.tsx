@@ -1,18 +1,182 @@
 
+import Query from 'esri/rest/support/Query';
 import {React,jsx} from 'jimu-core';
 import { Button, Icon } from 'jimu-ui';
-import '../../style.css'
+import { CallToActionContext } from '../../context/contextApi';
+import '../../style.css';
+import helper from '../../connector'
 
 type PropsType = {
     width:number,
     addTable:()=>void,
     currentTargetText:string,
     addBlock:()=>void,
-    sendQuery:()=>void,
+    // sendQuery:()=>void,
     functionRefresh:()=>void
 }
 
 export default class CallToAction extends React.PureComponent<PropsType,any>{
+
+    static contextType?: React.Context<any> = CallToActionContext;
+
+    constructor(props:PropsType){
+        super(props);
+        this.sendQuery = this.sendQuery.bind(this);
+    }
+
+    async sendQuery() {
+        const self = this.context.parent;
+        self.queryArray = [];
+        self.outfields = [];
+        const checkedQuery = [
+          "is null",
+          "is not null",
+          "IN",
+          "NOT_IN",
+          "included",
+          "is_not_included",
+        ];
+        const likelyQuery = ["LIKE%", "%LIKE", "%LIKE%", "NOT LIKE"];
+        if (this.context.whereClauses.length) {
+          if (this.context.AndOr === "AND") {
+            this.context.whereClauses.forEach((el, id) => {
+              let attributeQuery = el.attributeQuery;
+              let queryValue = el.queryValue;
+              let value;
+              if (queryValue === "is null" || queryValue === "is not null") {
+                value = el.value?.txt ?? "";
+              } else if (queryValue === "IN" || queryValue === "NOT_IN") {
+                value = [];
+                el.checkedList.forEach((el) => value.push(el.checkValue));
+              } else if (
+                queryValue === "included" ||
+                queryValue === "is_not_included"
+              ) {
+                value = {firstTxt: el.firstTxt.value,secondTxt: el.secondTxt.value};
+              } else if (!checkedQuery.includes(queryValue)) {
+                value = el.value?.txt ?? "";
+              }
+              if (this.context.jimuMapView) {
+                this.context.jimuMapView.view.map.allLayers.forEach((f, index) => {
+                  if (f.title === this.context.currentTargetText) {
+                    this.context.jimuMapView.view
+                      .whenLayerView(f)
+                      .then((layerView) => {
+                        self.queryConstructor(
+                          //step 2 start querying
+                          layerView,
+                          attributeQuery,
+                          queryValue,
+                          value,
+                          this.context.AndOr,
+                          self.connector_function,
+                          f
+                        );
+                      });
+                  }
+                });
+              }
+            });
+          } else {
+            let normalizedWhereToSendQuery: any = [];
+            this.context.whereClauses.forEach((el, id) => {
+              const query = new Query();
+              let attributeQuery = el.attributeQuery;
+              let queryValue = el.queryValue;
+              let value;
+              if (queryValue === "is null" || queryValue === "is not null") {
+                let queryIn = `${attributeQuery} ${queryValue}`;
+                query.where = queryIn;
+                normalizedWhereToSendQuery.push(queryIn);
+              }
+              if (queryValue === "IN" || queryValue === "NOT_IN") {
+                value = [];
+                el.checkedList.forEach((el) => value.push(el.checkValue));
+                if (self.containsAnyLetters(value)) {
+                  let queryIn = `${attributeQuery} IN (${
+                    "'" + value.join("', '") + "'"
+                  })`;
+                  query.where = queryIn;
+                  normalizedWhereToSendQuery.push(queryIn);
+                } else {
+                  let queryIn = `${attributeQuery} IN (${value.join(",")})`;
+                  query.where = queryIn;
+                  normalizedWhereToSendQuery.push(queryIn);
+                }
+              }
+              if (queryValue === "included" || queryValue === "is_not_included") {
+                let queryIn;
+                queryValue === "included"
+                  ? (queryIn = `${attributeQuery} > ${el.firstTxt.value} AND ${attributeQuery} < ${el.secondTxt.value}`)
+                  : (queryIn = `${attributeQuery} < ${el.firstTxt.value} OR ${attributeQuery} > ${el.secondTxt.value}`);
+                query.where = queryIn;
+                normalizedWhereToSendQuery.push(queryIn);
+              } else if (!checkedQuery.includes(queryValue)) {
+                value = el.value?.txt ?? "";
+                if (likelyQuery.includes(queryValue)) {
+                  query.where = helper.likelyQuery(
+                    attributeQuery,
+                    queryValue,
+                    value
+                  );
+                } else {
+                  if (self.containsAnyLetters(value)) {
+                    let queryInput = `${attributeQuery} ${queryValue} '${value}'`;
+                    query.where = queryInput;
+                    normalizedWhereToSendQuery.push(queryInput);
+                  } else {
+                    let queryInput = `${attributeQuery} ${queryValue} ${value}`;
+                    query.where = queryInput;
+                    normalizedWhereToSendQuery.push(queryInput);
+                  }
+                }
+              }
+              if (this.context.jimuMapView) {
+                this.context.jimuMapView.view.map.allLayers.forEach((f, index) => {
+                  if (f.title === this.context.currentTargetText) {
+                    this.context.jimuMapView.view
+                      .whenLayerView(f)
+                      .then((layerView) => {
+                        self.connector_function({
+                          layerView,
+                          query,
+                          queryRequest: "OR",
+                          layer: f,
+                          AndOr: this.context.AndOr,
+                          field: attributeQuery,
+                          source: "singleQuery",
+                        });
+                      });
+                  }
+                });
+              }
+            });
+          }
+        } else if (this.context.SetBlock.length) {
+          if (this.context.jimuMapView) {
+            self.queryArray = [];
+            this.context.jimuMapView.view.map.allLayers.forEach((f, index) => {
+              if (f.title === this.context.currentTargetText) {
+                this.context.jimuMapView.view.whenLayerView(f).then((layerView) => {
+                  self.connector_function({
+                    layerView,
+                    query: new Query(),
+                    queryRequest: null,
+                    layer: f,
+                    AndOr: this.context.AndOr,
+                    field: null,
+                    source: "setQuery",
+                  });
+                });
+              }
+            });
+          }
+        } else {
+          self.attributeTableConnector.closeTable();
+          self.setState({ isAttributeTableClosed: true });
+          self.returnToOriginalExtent();
+        }
+      }
 
     render(): React.ReactNode {
         return(
@@ -59,7 +223,7 @@ export default class CallToAction extends React.PureComponent<PropsType,any>{
                         size="default"
                         className="d-flex align-items-center mb-2"
                         type="secondary"
-                        onClick={this.props.sendQuery}
+                        onClick={this.sendQuery}
                     >
                         <p className="m-0 p-0">Applica</p>
                     </Button>

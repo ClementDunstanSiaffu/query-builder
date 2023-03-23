@@ -19,6 +19,7 @@ import AddSetTable from "./components/AddSetTable";
 import LayerSelectComponent from "./components/layerSelectComponent";
 import CallToAction from "./components/callToActionComponent";
 import AndOrSelector from "./components/common/andorSelector";
+import {CallToActionContext} from "../context/contextApi";
 
 export default class Widget extends React.PureComponent<
   AllWidgetProps<IMConfig>,
@@ -2090,218 +2091,231 @@ export default class Widget extends React.PureComponent<
                   onActiveViewChange={this.activeViewChangeHandler}
                 />
               )}
-            <div id="search-advanced-tab-Ambito" title="Ambito">
-              <div
-                className="mt-4 container-fluid d-flex justify-content-between flex-column"
-                style={{ height: "100%" }}
-              >
-                <LayerSelectComponent 
-                  onChangeSelectLayer = {this.onChangeSelectLayer}
-                  currentSelectedId = {this.state.currentSelectedId}
-                  resultLayerList = {this.state.resultLayerList}
-                  showAddSelect = {this.state.showAddSelect}
-                  chooseAndOr = {this.chooseAndOr}
-                />
-                <CallToAction 
-                  width={width}
-                  addTable = {this.addTable}
-                  currentTargetText = {this.state.currentTargetText}
-                  addBlock = {this.addBlock}
-                  sendQuery = {this.sendQuery}
-                  functionRefresh = {this.functionRefresh}
-                />
-                <div
-                  className="row"
-                  style={{ height: "50%", overflowY: "scroll" }}
-                >
-                  <div className="col-md-12">
-                    {this.state.tables.map((el, i) => (
-                      <Table
-                        className="w-100"
-                        key={i}
-                        id={`row-${i}`}
-                        list={this.state.resultsLayerSelected}
-                        isOpenDropD={this.state.isOpen}
-                        dropDown={() => this.dropDown(el.id)}
-                        dropdownValueQuery={this.state.dropdownValueQuery}
-                        isChecked={this.state.isChecked}
-                        counterIsChecked={this.state.counterIsChecked}
-                        checkedToQuery={this.state.checkedToQuery}
-                        tables={this.state.tables}
-                        tablesId={el.id}
-                        whereClauses={this.state.whereClauses}
-                        getQueryAttribute={this.getQueryAttribute}
-                        getQuery={this.getQuery}
-                        handleThirdQuery={this.thirdQuery}
-                        textInputHandler={this.textInputHandler}
-                        dropdownItemHandler={this.dropdownItemClick}
-                        textFirstIncludedHandler={this.textFirstIncludedHandler}
-                        textSecondIncludedHandler={
-                          this.textSecondIncludedHandler
-                        }
-                        dropDownToggler={this.dropDown}
-                        handleCheckBox={this.handleCheckBox}
-                        deleteTable={() => this.deleteTable(el.id)}
-                        univocoSelectHandler={this.univocoSelectHandler}
-                        onChangeCheckBox={this.onChangeCheckBox}
-                        openDrop={this.openDrop}
-                        closeDrop={this.closeDrop}
-                        opened={this.state.opened}
-                        autOpen={this.state.autOpen}
-                        mouseleave={this.state.mouseleave}
-                        onmouseLeave={this.onmouseLeave}
-                        functionCounterIsChecked={this.functionCounterIsChecked}
-                        dropdowns={this.state.dropDowns}
-                        itemNotFound={this.state.itemNotFound}
-                        selectedId={this.state.selectedId}
-                        currentTable={el}
-                        queryChanged = {this.state.queryChanged}
-                        parent={this}
-                      />
-                    ))}
-                    <br />
-                    <div
-                      style={{
-                        width: "98%",
-                        background: "#005eca",
-                        height: "10px",
+                <div id="search-advanced-tab-Ambito" title="Ambito">
+                  <div
+                    className="mt-4 container-fluid d-flex justify-content-between flex-column"
+                    style={{ height: "100%" }}
+                  >
+                    <LayerSelectComponent 
+                      onChangeSelectLayer = {this.onChangeSelectLayer}
+                      currentSelectedId = {this.state.currentSelectedId}
+                      resultLayerList = {this.state.resultLayerList}
+                      showAddSelect = {this.state.showAddSelect}
+                      chooseAndOr = {this.chooseAndOr}
+                    />
+                    <CallToActionContext.Provider 
+                      value = {{
+                        parent:this,
+                        whereClauses:this.state.whereClauses,
+                        AndOr:this.state.AndOr,
+                        jimuMapView:this.state.jimuMapView,
+                        SetBlock:this.state.SetBlock,
+                        currentTargetText:this.state.currentTargetText
                       }}
-                    ></div>
-                    <br />
-                    {this.state.SetBlock.map((el, index) => {
-                      const counts = tableSetCounts(el.tablesSet);
-                      return (
-                        <div id={index}>
-                          {counts < 2 ? (
-                            counts == 1 ? (
-                              <p>
-                                Visualizza le feature nel layer corrispondenti
-                                alla seguente espressione
-                              </p>
-                            ) : (
-                              ""
-                            )
-                          ) : (
-                            <div
-                            className={width >= 626 ? "d-flex col-l-1 ":"d-flex col-md-8"}
-                              style={{
-                                paddingLeft:0,
-                                paddingRight:0
-                                // display: "flex",
-                                // flexDirection: "row",
-                                // marginTop: "20px",
-                              }}
-                            >
-                              <AndOrSelector chooseAndOr={(e)=>this.chooseAndOrSet(e,el.blockId)}/>
-                              <div className="">
-                                <Button
-                                  className=""
-                                  onClick={() => this.deleteBlock(el.blockId)}
-                                  icon
-                                  type="secondary"
-                                >
-                                  <CloseOutlined />
-                                </Button>
-                              </div>
-
-                              <div className=" ">
-                                <Button
-                                  id={el.blockId}
-                                  onClick={() => this.addTwoTable(el.blockId)}
-                                  className=""
-                                  icon
-                                  type="secondary"
-                                >
-                                  <PlusOutlined />
-                                </Button>
-                              </div>
-                            </div>
-                          )}
-                          {el.tablesSet.map((innerEl, i, TableArray) => (
-                            <AddSetTable
-                              className="w-100"
-                              key={i}
-                              id={`row-${i}`}
-                              list={this.state.resultsLayerSelected}
-                              isOpenDropD={this.state.isOpen}
-                              dropDown={() => this.dropDownSet(el.id)}
-                              dropdownValueQuery={this.state.dropdownValueQuery}
-                              isChecked={this.state.isChecked}
-                              counterIsChecked={this.state.counterIsChecked}
-                              checkedToQuery={this.state.checkedToQuery}
-                              // for Add set table............................
-                              tablesSet={this.state.tablesSet}
-                              tablesSetId={
-                                `${innerEl.id}` + "-" + `${el.blockId}`
-                              }
-                              whereClausesSet={this.state.whereClauseSet}
-                              // End for Add set table............................
-                              // getQueryAttribute={this.getQueryAttributeSet}
-                              getQueryAttribute={this.getQueryAttribute}
-                              getQuery={this.getQuerySet}
-                              handleThirdQuery={this.thirdQuery}
-                              textInputHandler={this.textInputHandler}
-                              dropdownItemHandler={this.dropdownItemClick}
-                              textFirstIncludedHandler={
-                                this.textFirstIncludedHandler
-                              }
-                              textSecondIncludedHandler={
-                                this.textSecondIncludedHandler
-                              }
-                              dropDownToggler={this.dropDownSet}
-                              handleCheckBox={this.handleCheckBox}
-                              deleteTable={(e) =>
-                                this.deleteBlockTable(
-                                  `${innerEl.id}` + "-" + `${el.blockId}`,
-                                  `${el.blockId}`
-                                )
-                              }
-                              univocoSelectHandler={this.univocoSelectHandler}
-                              onChangeCheckBox={this.onChangeCheckBoxSet}
-                              openDrop={this.openDropSet}
-                              closeDrop={this.closeDrop}
-                              opened={this.state.opened}
-                              autOpen={this.state.autOpen}
-                              mouseleave={this.state.mouseleave}
-                              onmouseLeave={this.onmouseLeave}
-                              functionCounterIsChecked={
-                                this.functionCounterIsChecked
-                              }
-                              dropdownsSet={this.state.dropDownsSet}
-                              itemNotFound={this.state.itemNotFound}
-                              showDelete={counts > 2 ? true : false}
-                              showBlockDelete={
-                                counts === 2 && i == 0 ? true : false
-                              }
-                              blockId={el.blockId}
-                              deleteBlockAll={() =>
-                                this.deleteBlockAll({ el, innerEl })
-                              }
-                              currentTable={innerEl}
-                              queryChanged = {this.state.queryChanged}
-                              parent={this}
-                            />
-                          ))}
-                        </div>
-                      );
-                    })}
-
-                    <br />
-                    <br />
-                    {this.state.itemNotFound && (
-                      <Alert
-                        className="w-100"
-                        form="basic"
-                        open
-                        text={this.state.itemNotFound}
-                        type="error"
-                        withIcon
+                    >
+                      <CallToAction 
+                        width={width}
+                        addTable = {this.addTable}
+                        currentTargetText = {this.state.currentTargetText}
+                        addBlock = {this.addBlock}
+                        // sendQuery = {this.sendQuery}
+                        functionRefresh = {this.functionRefresh}
                       />
-                    )}
+                    </CallToActionContext.Provider>
+                
+                    <div
+                      className="row"
+                      style={{ height: "50%", overflowY: "scroll" }}
+                    >
+                      <div className="col-md-12">
+                        {this.state.tables.map((el, i) => (
+                          <Table
+                            className="w-100"
+                            key={i}
+                            id={`row-${i}`}
+                            list={this.state.resultsLayerSelected}
+                            isOpenDropD={this.state.isOpen}
+                            dropDown={() => this.dropDown(el.id)}
+                            dropdownValueQuery={this.state.dropdownValueQuery}
+                            isChecked={this.state.isChecked}
+                            counterIsChecked={this.state.counterIsChecked}
+                            checkedToQuery={this.state.checkedToQuery}
+                            tables={this.state.tables}
+                            tablesId={el.id}
+                            whereClauses={this.state.whereClauses}
+                            getQueryAttribute={this.getQueryAttribute}
+                            getQuery={this.getQuery}
+                            handleThirdQuery={this.thirdQuery}
+                            textInputHandler={this.textInputHandler}
+                            dropdownItemHandler={this.dropdownItemClick}
+                            textFirstIncludedHandler={this.textFirstIncludedHandler}
+                            textSecondIncludedHandler={
+                              this.textSecondIncludedHandler
+                            }
+                            dropDownToggler={this.dropDown}
+                            handleCheckBox={this.handleCheckBox}
+                            deleteTable={() => this.deleteTable(el.id)}
+                            univocoSelectHandler={this.univocoSelectHandler}
+                            onChangeCheckBox={this.onChangeCheckBox}
+                            openDrop={this.openDrop}
+                            closeDrop={this.closeDrop}
+                            opened={this.state.opened}
+                            autOpen={this.state.autOpen}
+                            mouseleave={this.state.mouseleave}
+                            onmouseLeave={this.onmouseLeave}
+                            functionCounterIsChecked={this.functionCounterIsChecked}
+                            dropdowns={this.state.dropDowns}
+                            itemNotFound={this.state.itemNotFound}
+                            selectedId={this.state.selectedId}
+                            currentTable={el}
+                            queryChanged = {this.state.queryChanged}
+                            parent={this}
+                          />
+                        ))}
+                        <br />
+                        <div
+                          style={{
+                            width: "98%",
+                            background: "#005eca",
+                            height: "10px",
+                          }}
+                        ></div>
+                        <br />
+                        {this.state.SetBlock.map((el, index) => {
+                          const counts = tableSetCounts(el.tablesSet);
+                          return (
+                            <div id={index}>
+                              {counts < 2 ? (
+                                counts == 1 ? (
+                                  <p>
+                                    Visualizza le feature nel layer corrispondenti
+                                    alla seguente espressione
+                                  </p>
+                                ) : (
+                                  ""
+                                )
+                              ) : (
+                                <div
+                                className={width >= 626 ? "d-flex col-l-1 ":"d-flex col-md-8"}
+                                  style={{
+                                    paddingLeft:0,
+                                    paddingRight:0
+                                    // display: "flex",
+                                    // flexDirection: "row",
+                                    // marginTop: "20px",
+                                  }}
+                                >
+                                  <AndOrSelector chooseAndOr={(e)=>this.chooseAndOrSet(e,el.blockId)}/>
+                                  <div className="">
+                                    <Button
+                                      className=""
+                                      onClick={() => this.deleteBlock(el.blockId)}
+                                      icon
+                                      type="secondary"
+                                    >
+                                      <CloseOutlined />
+                                    </Button>
+                                  </div>
+
+                                  <div className=" ">
+                                    <Button
+                                      id={el.blockId}
+                                      onClick={() => this.addTwoTable(el.blockId)}
+                                      className=""
+                                      icon
+                                      type="secondary"
+                                    >
+                                      <PlusOutlined />
+                                    </Button>
+                                  </div>
+                                </div>
+                              )}
+                              {el.tablesSet.map((innerEl, i, TableArray) => (
+                                <AddSetTable
+                                  className="w-100"
+                                  key={i}
+                                  id={`row-${i}`}
+                                  list={this.state.resultsLayerSelected}
+                                  isOpenDropD={this.state.isOpen}
+                                  dropDown={() => this.dropDownSet(el.id)}
+                                  dropdownValueQuery={this.state.dropdownValueQuery}
+                                  isChecked={this.state.isChecked}
+                                  counterIsChecked={this.state.counterIsChecked}
+                                  checkedToQuery={this.state.checkedToQuery}
+                                  // for Add set table............................
+                                  tablesSet={this.state.tablesSet}
+                                  tablesSetId={
+                                    `${innerEl.id}` + "-" + `${el.blockId}`
+                                  }
+                                  whereClausesSet={this.state.whereClauseSet}
+                                  // End for Add set table............................
+                                  // getQueryAttribute={this.getQueryAttributeSet}
+                                  getQueryAttribute={this.getQueryAttribute}
+                                  getQuery={this.getQuerySet}
+                                  handleThirdQuery={this.thirdQuery}
+                                  textInputHandler={this.textInputHandler}
+                                  dropdownItemHandler={this.dropdownItemClick}
+                                  textFirstIncludedHandler={
+                                    this.textFirstIncludedHandler
+                                  }
+                                  textSecondIncludedHandler={
+                                    this.textSecondIncludedHandler
+                                  }
+                                  dropDownToggler={this.dropDownSet}
+                                  handleCheckBox={this.handleCheckBox}
+                                  deleteTable={(e) =>
+                                    this.deleteBlockTable(
+                                      `${innerEl.id}` + "-" + `${el.blockId}`,
+                                      `${el.blockId}`
+                                    )
+                                  }
+                                  univocoSelectHandler={this.univocoSelectHandler}
+                                  onChangeCheckBox={this.onChangeCheckBoxSet}
+                                  openDrop={this.openDropSet}
+                                  closeDrop={this.closeDrop}
+                                  opened={this.state.opened}
+                                  autOpen={this.state.autOpen}
+                                  mouseleave={this.state.mouseleave}
+                                  onmouseLeave={this.onmouseLeave}
+                                  functionCounterIsChecked={
+                                    this.functionCounterIsChecked
+                                  }
+                                  dropdownsSet={this.state.dropDownsSet}
+                                  itemNotFound={this.state.itemNotFound}
+                                  showDelete={counts > 2 ? true : false}
+                                  showBlockDelete={
+                                    counts === 2 && i == 0 ? true : false
+                                  }
+                                  blockId={el.blockId}
+                                  deleteBlockAll={() =>
+                                    this.deleteBlockAll({ el, innerEl })
+                                  }
+                                  currentTable={innerEl}
+                                  queryChanged = {this.state.queryChanged}
+                                  parent={this}
+                                />
+                              ))}
+                            </div>
+                          );
+                        })}
+
+                        <br />
+                        <br />
+                        {this.state.itemNotFound && (
+                          <Alert
+                            className="w-100"
+                            form="basic"
+                            open
+                            text={this.state.itemNotFound}
+                            type="error"
+                            withIcon
+                          />
+                        )}
+                      </div>
+                    </div>
                   </div>
                 </div>
-              </div>
-            </div>
+
           </div>
         )}
       </ReactResizeDetector>
