@@ -16,6 +16,7 @@ import ReactResizeDetector from "./lib/ResizeDetector";
 import AttributeTableConnector from "../connector/attribute_table_connector";
 import geometryEngine from "esri/geometry/geometryEngine";
 import AddSetTable from "./components/AddSetTable";
+import LayerSelectComponent from "./components/layerSelectComponent";
 
 export default class Widget extends React.PureComponent<
   AllWidgetProps<IMConfig>,
@@ -2092,7 +2093,14 @@ export default class Widget extends React.PureComponent<
                 className="mt-4 container-fluid d-flex justify-content-between flex-column"
                 style={{ height: "100%" }}
               >
-                <div className="row">
+                <LayerSelectComponent 
+                  onChangeSelectLayer = {this.onChangeSelectLayer}
+                  currentSelectedId = {this.state.currentSelectedId}
+                  resultLayerList = {this.state.resultLayerList}
+                  showAddSelect = {this.state.showAddSelect}
+                  chooseAndOr = {this.chooseAndOr}
+                />
+                {/* <div className="row">
                   <div className="col-md-12">
                     <div className="mb-2">
                       <Alert
@@ -2147,7 +2155,7 @@ export default class Widget extends React.PureComponent<
                       )}
                     </div>
                   </div>
-                </div>
+                </div> */}
                 {width >= 626 && (
                   <div className="row mt-1 mb-3 justify-content-around">
                     <div
