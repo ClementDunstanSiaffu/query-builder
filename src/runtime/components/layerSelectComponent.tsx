@@ -3,7 +3,7 @@ import Layer from 'esri/layers/Layer';
 import {React} from 'jimu-core';
 import { Alert, Select,Option } from 'jimu-ui';
 import { ChangeEvent } from 'react';
-
+import '../../style.css'
 // element: f,
 // label: f.title,
 // value: index,

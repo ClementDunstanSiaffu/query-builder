@@ -17,6 +17,7 @@ import AttributeTableConnector from "../connector/attribute_table_connector";
 import geometryEngine from "esri/geometry/geometryEngine";
 import AddSetTable from "./components/AddSetTable";
 import LayerSelectComponent from "./components/layerSelectComponent";
+import CallToAction from "./components/callToActionComponent";
 
 export default class Widget extends React.PureComponent<
   AllWidgetProps<IMConfig>,
@@ -2156,7 +2157,15 @@ export default class Widget extends React.PureComponent<
                     </div>
                   </div>
                 </div> */}
-                {width >= 626 && (
+                <CallToAction 
+                  width={width}
+                  addTable = {this.addTable}
+                  currentTargetText = {this.state.currentTargetText}
+                  addBlock = {this.addBlock}
+                  sendQuery = {this.sendQuery}
+                  functionRefresh = {this.functionRefresh}
+                />
+                {/* {width >= 626 && (
                   <div className="row mt-1 mb-3 justify-content-around">
                     <div
                       className="col-md-5 d-flex justify-content-center text-center"
@@ -2275,7 +2284,7 @@ export default class Widget extends React.PureComponent<
                       </Button>
                     </div>
                   </div>
-                )}
+                )} */}
                 <div
                   className="row"
                   style={{ height: "50%", overflowY: "scroll" }}
