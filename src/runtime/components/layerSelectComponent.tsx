@@ -4,6 +4,7 @@ import {React} from 'jimu-core';
 import { Alert, Select,Option } from 'jimu-ui';
 import { ChangeEvent } from 'react';
 import '../../style.css'
+import AndOrSelector from './common/andorSelector';
 // element: f,
 // label: f.title,
 // value: index,
@@ -74,20 +75,21 @@ export default class LayerSelectComponent extends React.PureComponent<PropsType,
                                 seguente espressione
                             </p>
                             ) : (
-                            <Select
-                                onChange={this.props.chooseAndOr}
-                                placeholder=" Visualizza le feature nel layer che corrispondono a tutte le espressioni seguenti"
-                                defaultValue="AND"
-                            >
-                                <Option value="AND">
-                                    Visualizza le feature nel layer che corrispondono a
-                                    tutte le espressioni seguenti
-                                </Option>
-                                <Option value="OR">
-                                    Visualizza le feature nel layer che corrispondono ad
-                                    una qualsiasi delle espressioni seguenti
-                                </Option>
-                            </Select>
+                            <AndOrSelector chooseAndOr={this.props.chooseAndOr} />
+                            // <Select
+                            //     onChange={this.props.chooseAndOr}
+                            //     placeholder=" Visualizza le feature nel layer che corrispondono a tutte le espressioni seguenti"
+                            //     defaultValue="AND"
+                            // >
+                            //     <Option value="AND">
+                            //         Visualizza le feature nel layer che corrispondono a
+                            //         tutte le espressioni seguenti
+                            //     </Option>
+                            //     <Option value="OR">
+                            //         Visualizza le feature nel layer che corrispondono ad
+                            //         una qualsiasi delle espressioni seguenti
+                            //     </Option>
+                            // </Select>
                         )}
                     </div>
                 </div>

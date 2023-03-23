@@ -18,6 +18,7 @@ import geometryEngine from "esri/geometry/geometryEngine";
 import AddSetTable from "./components/AddSetTable";
 import LayerSelectComponent from "./components/layerSelectComponent";
 import CallToAction from "./components/callToActionComponent";
+import AndOrSelector from "./components/common/andorSelector";
 
 export default class Widget extends React.PureComponent<
   AllWidgetProps<IMConfig>,
@@ -1779,8 +1780,8 @@ export default class Widget extends React.PureComponent<
     }
   };
 
-  chooseAndOr = (e) => this.setState({ AndOr: e.target.value });
-
+  chooseAndOr = (e) =>this.setState({ AndOr: e.target.value });
+  
   chooseAndOrSet = (e, blockId) => {
     const currentSetBlock = [...this.state.SetBlock];
     const index = currentSetBlock.findIndex((item) => item.blockId === blockId);
@@ -2191,7 +2192,7 @@ export default class Widget extends React.PureComponent<
                                 // marginTop: "20px",
                               }}
                             >
-                              <Select
+                              {/* <Select
                                 onChange={(e) =>
                                   this.chooseAndOrSet(e, el.blockId)
                                 }
@@ -2207,7 +2208,8 @@ export default class Widget extends React.PureComponent<
                                   corrispondono ad una qualsiasi delle
                                   espressioni seguenti
                                 </Option>
-                              </Select>
+                              </Select> */}
+                              <AndOrSelector chooseAndOr={(e)=>this.chooseAndOrSet(e,el.blockId)}/>
                               <div className="">
                                 <Button
                                   className=""
