@@ -5,6 +5,7 @@ import ReactResizeDetector from "../lib/ResizeDetector";
 import {queryConstructorNumber,queryConstructorString,} from "../utils/queryTableValue";
 import '../../assets/styles/styles.scss';
 import CommonSecondConstructor from "./common/inputs/commonSecondConstructor";
+import Widget from "../widget";
 
 function AddSetTable(props) {
   const {
@@ -50,9 +51,145 @@ function AddSetTable(props) {
     parent
   } = props;
 
-  const currentwhereClausesSet = whereClausesSet.find(
-    (item) => item.id === tablesSetId
-  );
+  const currentwhereClausesSet = whereClausesSet.find((item) => item.id === tablesSetId);
+
+  const onChangeCheckBoxSet = (event) => {
+    const self:Widget = parent;
+    let newWhereSetClause;
+    let currentId = event.target.attributes.id.value;
+    let objectId = event.target.attributes.value.value;
+    let queryIndex;
+    if (event.target.checked) {
+      queryIndex = whereClausesSet.map((obj) => obj.id).indexOf(currentId);
+      if (queryIndex !== -1) {
+        whereClausesSet.map((obj) => {
+          if (obj.id === currentId) {
+            if (!obj.checkedListSet) {
+              obj = {
+                ...obj,
+                checkedListSet: [
+                  {
+                    checkValue: event.target.attributes.name.value,
+                    isChecked: true,
+                  },
+                ],
+              };
+              let filteredWhereClauseSet = whereClausesSet.filter(
+                (a) => a.id !== obj.id
+              );
+              filteredWhereClauseSet.push(obj);
+              newWhereSetClause = filteredWhereClauseSet;
+              filteredWhereClauseSet.sort(function (a, b) {
+                return a.id < b.id ? -1 : a.id == b.id ? 0 : 1;
+              });
+              self.setState({whereClauseSet: Array.from(new Set(filteredWhereClauseSet)),});
+              // self.setState(
+              //   {
+              //     whereClauseSet: filteredWhereClauseSet,
+              //   },
+              //   () => {
+              //     this.state.whereClauseSet.sort(function (a, b) {
+              //       return a.id < b.id ? -1 : a.id == b.id ? 0 : 1;
+              //     });
+              //     // Remove duplicate entries from the whereClauses array
+              //     this.setState({
+              //       whereClauseSet: Array.from(
+              //         new Set(this.state.whereClauseSet)
+              //       ),
+              //     });
+              //   }
+              // );
+            } else {
+              const ifAlreadyCheck = obj.checkedListSet
+                .map((obj) => obj.checkValue)
+                .indexOf(event.target.attributes.name.value);
+              if (ifAlreadyCheck == -1) {
+                obj = {
+                  ...obj,
+                  checkedListSet: [
+                    ...obj.checkedListSet,
+                    {
+                      checkValue: event.target.attributes.name.value,
+                      isChecked: true,
+                    },
+                  ],
+                };
+                // Find the index of the obj object in the whereClauses array
+                const index = whereClausesSet.findIndex(
+                  (a) => a.id === obj.id
+                );
+                // Remove the obj object from the whereClauses array
+                whereClausesSet.splice(index, 1);
+                // Add the updated obj object to the whereClauses array
+                whereClausesSet.push(obj);
+                newWhereSetClause = whereClausesSet;
+                whereClausesSet.sort(function (a, b) {
+                  return a.id < b.id ? -1 : a.id == b.id ? 0 : 1;
+                });
+                self.setState({whereClauseSet: Array.from(new Set(whereClausesSet))});
+                // self.setState(
+                //   {
+                //     whereClauseSet: whereClausesSet,
+                //   },
+                //   () => {
+                //     whereClausesSet.sort(function (a, b) {
+                //       return a.id < b.id ? -1 : a.id == b.id ? 0 : 1;
+                //     });
+                //     // Remove duplicate entries from the whereClauses array
+                //     this.setState({
+                //       whereClauseSet: Array.from(
+                //         new Set(this.state.whereClauseSet)
+                //       ),
+                //     });
+                //   }
+                // );
+              }
+            }
+          }
+          return { obj };
+        });
+      }
+    }
+    if (event.target.checked === false) {
+      // Find the obj object in the whereClauses array
+      const obj = whereClausesSet.find((a) => a.id === currentId);
+      // Remove the checkValue from the checkedList array
+      obj.checkedListSet = obj.checkedListSet.filter(
+        (a) => a.checkValue !== event.target.attributes.name.value
+      );
+      // Update the obj object in the whereClauses array
+      const index = whereClausesSet.findIndex(
+        (a) => a.id === currentId
+      );
+      whereClausesSet[index] = obj;
+      whereClausesSet.sort(function (a, b) {
+        return a.id < b.id ? -1 : a.id == b.id ? 0 : 1;
+      });
+      newWhereSetClause = Array.from(new Set(whereClausesSet));
+      self.setState({whereClauseSet: Array.from(new Set(whereClausesSet)),});
+      // this.setState(
+      //   {
+      //     whereClauseSet: whereClausesSet,
+      //   },
+      //   () => {
+      //     this.state.whereClauseSet.sort(function (a, b) {
+      //       return a.id < b.id ? -1 : a.id == b.id ? 0 : 1;
+      //     });
+      //     newWhereSetClause = Array.from(new Set(this.state.whereClauseSet));
+      //     // Remove duplicate entries from the whereClauses array
+      //     this.setState({
+      //       whereClauseSet: Array.from(new Set(this.state.whereClauseSet)),
+      //     });
+      //   }
+      // );
+    }
+    if (newWhereSetClause?.length) {
+      const currentNewWhereSetClause = newWhereSetClause.find(
+        (item) => item.id === currentId
+      );
+      self.addCurrentWherClauseBlock(currentId, currentNewWhereSetClause);
+    }
+  };
 
   const styles = {
     smallerWidthOuterContainer:{
@@ -169,7 +306,8 @@ function AddSetTable(props) {
                         univocoSelectHandler = {univocoSelectHandler}
                         dropDown = {dropDown}
                         isOpenDropD = {isOpenDropD}
-                        onChangeCheckBox = {onChangeCheckBox}
+                        onChangeCheckBox = {onChangeCheckBoxSet}
+                        // onChangeCheckBox = {onChangeCheckBox}
                         openDrop = {openDrop}
                         closeDrop = {closeDrop}
                         opened={opened}

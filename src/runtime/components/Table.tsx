@@ -106,17 +106,21 @@ function Table(props) {
                 whereClauses.splice(index, 1);
                 // Add the updated obj object to the whereClauses array
                 whereClauses.push(obj);
-                self.setState({whereClauses: whereClauses},
-                  () => {
-                    whereClauses.sort(function (a, b) {
-                      return a.id < b.id ? -1 : a.id == b.id ? 0 : 1;
-                    });
+                whereClauses.sort(function (a, b) {
+                  return a.id < b.id ? -1 : a.id == b.id ? 0 : 1;
+                });
+                self.setState({whereClauses: Array.from(new Set(whereClauses))})
+                // self.setState({whereClauses: whereClauses},
+                //   () => {
+                //     whereClauses.sort(function (a, b) {
+                //       return a.id < b.id ? -1 : a.id == b.id ? 0 : 1;
+                //     });
 
-                    // Remove duplicate entries from the whereClauses array
-                    self.setState({whereClauses: Array.from(new Set(whereClauses)),
-                    });
-                  }
-                );
+                //     // Remove duplicate entries from the whereClauses array
+                //     self.setState({whereClauses: Array.from(new Set(whereClauses)),
+                //     });
+                //   }
+                // );
               }
             }
           }
@@ -136,15 +140,19 @@ function Table(props) {
         (a) => a.id === currentId
       );
       whereClauses[index] = obj;
-      self.setState({whereClauses:whereClauses},
-        () => {
-          whereClauses.sort(function (a, b) {
-            return a.id < b.id ? -1 : a.id == b.id ? 0 : 1;
-          });
-          // Remove duplicate entries from the whereClauses array
-          self.setState({whereClauses: Array.from(new Set(whereClauses))});
-        }
-      );
+      whereClauses.sort(function (a, b) {
+        return a.id < b.id ? -1 : a.id == b.id ? 0 : 1;
+      });
+      self.setState({whereClauses: Array.from(new Set(whereClauses))});
+      // self.setState({whereClauses:whereClauses},
+      //   () => {
+      //     whereClauses.sort(function (a, b) {
+      //       return a.id < b.id ? -1 : a.id == b.id ? 0 : 1;
+      //     });
+      //     // Remove duplicate entries from the whereClauses array
+      //     self.setState({whereClauses: Array.from(new Set(whereClauses))});
+      //   }
+      // );
     }
   };
 

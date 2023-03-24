@@ -63,7 +63,7 @@ export default class Widget extends React.PureComponent<
     this.connector_function = this.connector_function.bind(this);
     this.functionCounterIsChecked = this.functionCounterIsChecked.bind(this);
     this.getQuerySet = this.getQuerySet.bind(this);
-    this.onChangeCheckBoxSet = this.onChangeCheckBoxSet.bind(this);
+    // this.onChangeCheckBoxSet = this.onChangeCheckBoxSet.bind(this);
   }
 
   init = () => {
@@ -1207,131 +1207,131 @@ export default class Widget extends React.PureComponent<
     }
   };
 
-  onChangeCheckBoxSet = (event) => {
-    let newWhereSetClause;
-    let currentId = event.target.attributes.id.value;
-    let objectId = event.target.attributes.value.value;
-    let queryIndex;
-    if (event.target.checked) {
-      queryIndex = this.state.whereClauseSet
-        .map((obj) => obj.id)
-        .indexOf(currentId);
-      if (queryIndex !== -1) {
-        this.state.whereClauseSet.map((obj) => {
-          if (obj.id === currentId) {
-            if (!obj.checkedListSet) {
-              obj = {
-                ...obj,
-                checkedListSet: [
-                  {
-                    checkValue: event.target.attributes.name.value,
-                    isChecked: true,
-                  },
-                ],
-              };
-              let filteredWhereClauseSet = this.state.whereClauseSet.filter(
-                (a) => a.id !== obj.id
-              );
-              filteredWhereClauseSet.push(obj);
-              newWhereSetClause = filteredWhereClauseSet;
-              this.setState(
-                {
-                  whereClauseSet: filteredWhereClauseSet,
-                },
-                () => {
-                  this.state.whereClauseSet.sort(function (a, b) {
-                    return a.id < b.id ? -1 : a.id == b.id ? 0 : 1;
-                  });
-                  // Remove duplicate entries from the whereClauses array
-                  this.setState({
-                    whereClauseSet: Array.from(
-                      new Set(this.state.whereClauseSet)
-                    ),
-                  });
-                }
-              );
-            } else {
-              const ifAlreadyCheck = obj.checkedListSet
-                .map((obj) => obj.checkValue)
-                .indexOf(event.target.attributes.name.value);
-              if (ifAlreadyCheck == -1) {
-                obj = {
-                  ...obj,
-                  checkedListSet: [
-                    ...obj.checkedListSet,
-                    {
-                      checkValue: event.target.attributes.name.value,
-                      isChecked: true,
-                    },
-                  ],
-                };
-                // Find the index of the obj object in the whereClauses array
-                const index = this.state.whereClauseSet.findIndex(
-                  (a) => a.id === obj.id
-                );
-                // Remove the obj object from the whereClauses array
-                this.state.whereClauseSet.splice(index, 1);
-                // Add the updated obj object to the whereClauses array
-                this.state.whereClauseSet.push(obj);
-                newWhereSetClause = this.state.whereClauseSet;
-                this.setState(
-                  {
-                    whereClauseSet: this.state.whereClauseSet,
-                  },
-                  () => {
-                    this.state.whereClauseSet.sort(function (a, b) {
-                      return a.id < b.id ? -1 : a.id == b.id ? 0 : 1;
-                    });
-                    // Remove duplicate entries from the whereClauses array
-                    this.setState({
-                      whereClauseSet: Array.from(
-                        new Set(this.state.whereClauseSet)
-                      ),
-                    });
-                  }
-                );
-              }
-            }
-          }
-          return { obj };
-        });
-      }
-    }
-    if (event.target.checked === false) {
-      // Find the obj object in the whereClauses array
-      const obj = this.state.whereClauseSet.find((a) => a.id === currentId);
-      // Remove the checkValue from the checkedList array
-      obj.checkedListSet = obj.checkedListSet.filter(
-        (a) => a.checkValue !== event.target.attributes.name.value
-      );
-      // Update the obj object in the whereClauses array
-      const index = this.state.whereClauseSet.findIndex(
-        (a) => a.id === currentId
-      );
-      this.state.whereClauseSet[index] = obj;
-      this.setState(
-        {
-          whereClauseSet: this.state.whereClauseSet,
-        },
-        () => {
-          this.state.whereClauseSet.sort(function (a, b) {
-            return a.id < b.id ? -1 : a.id == b.id ? 0 : 1;
-          });
-          newWhereSetClause = Array.from(new Set(this.state.whereClauseSet));
-          // Remove duplicate entries from the whereClauses array
-          this.setState({
-            whereClauseSet: Array.from(new Set(this.state.whereClauseSet)),
-          });
-        }
-      );
-    }
-    if (newWhereSetClause?.length) {
-      const currentNewWhereSetClause = newWhereSetClause.find(
-        (item) => item.id === currentId
-      );
-      this.addCurrentWherClauseBlock(currentId, currentNewWhereSetClause);
-    }
-  };
+  // onChangeCheckBoxSet = (event) => {
+  //   let newWhereSetClause;
+  //   let currentId = event.target.attributes.id.value;
+  //   let objectId = event.target.attributes.value.value;
+  //   let queryIndex;
+  //   if (event.target.checked) {
+  //     queryIndex = this.state.whereClauseSet
+  //       .map((obj) => obj.id)
+  //       .indexOf(currentId);
+  //     if (queryIndex !== -1) {
+  //       this.state.whereClauseSet.map((obj) => {
+  //         if (obj.id === currentId) {
+  //           if (!obj.checkedListSet) {
+  //             obj = {
+  //               ...obj,
+  //               checkedListSet: [
+  //                 {
+  //                   checkValue: event.target.attributes.name.value,
+  //                   isChecked: true,
+  //                 },
+  //               ],
+  //             };
+  //             let filteredWhereClauseSet = this.state.whereClauseSet.filter(
+  //               (a) => a.id !== obj.id
+  //             );
+  //             filteredWhereClauseSet.push(obj);
+  //             newWhereSetClause = filteredWhereClauseSet;
+  //             this.setState(
+  //               {
+  //                 whereClauseSet: filteredWhereClauseSet,
+  //               },
+  //               () => {
+  //                 this.state.whereClauseSet.sort(function (a, b) {
+  //                   return a.id < b.id ? -1 : a.id == b.id ? 0 : 1;
+  //                 });
+  //                 // Remove duplicate entries from the whereClauses array
+  //                 this.setState({
+  //                   whereClauseSet: Array.from(
+  //                     new Set(this.state.whereClauseSet)
+  //                   ),
+  //                 });
+  //               }
+  //             );
+  //           } else {
+  //             const ifAlreadyCheck = obj.checkedListSet
+  //               .map((obj) => obj.checkValue)
+  //               .indexOf(event.target.attributes.name.value);
+  //             if (ifAlreadyCheck == -1) {
+  //               obj = {
+  //                 ...obj,
+  //                 checkedListSet: [
+  //                   ...obj.checkedListSet,
+  //                   {
+  //                     checkValue: event.target.attributes.name.value,
+  //                     isChecked: true,
+  //                   },
+  //                 ],
+  //               };
+  //               // Find the index of the obj object in the whereClauses array
+  //               const index = this.state.whereClauseSet.findIndex(
+  //                 (a) => a.id === obj.id
+  //               );
+  //               // Remove the obj object from the whereClauses array
+  //               this.state.whereClauseSet.splice(index, 1);
+  //               // Add the updated obj object to the whereClauses array
+  //               this.state.whereClauseSet.push(obj);
+  //               newWhereSetClause = this.state.whereClauseSet;
+  //               this.setState(
+  //                 {
+  //                   whereClauseSet: this.state.whereClauseSet,
+  //                 },
+  //                 () => {
+  //                   this.state.whereClauseSet.sort(function (a, b) {
+  //                     return a.id < b.id ? -1 : a.id == b.id ? 0 : 1;
+  //                   });
+  //                   // Remove duplicate entries from the whereClauses array
+  //                   this.setState({
+  //                     whereClauseSet: Array.from(
+  //                       new Set(this.state.whereClauseSet)
+  //                     ),
+  //                   });
+  //                 }
+  //               );
+  //             }
+  //           }
+  //         }
+  //         return { obj };
+  //       });
+  //     }
+  //   }
+  //   if (event.target.checked === false) {
+  //     // Find the obj object in the whereClauses array
+  //     const obj = this.state.whereClauseSet.find((a) => a.id === currentId);
+  //     // Remove the checkValue from the checkedList array
+  //     obj.checkedListSet = obj.checkedListSet.filter(
+  //       (a) => a.checkValue !== event.target.attributes.name.value
+  //     );
+  //     // Update the obj object in the whereClauses array
+  //     const index = this.state.whereClauseSet.findIndex(
+  //       (a) => a.id === currentId
+  //     );
+  //     this.state.whereClauseSet[index] = obj;
+  //     this.setState(
+  //       {
+  //         whereClauseSet: this.state.whereClauseSet,
+  //       },
+  //       () => {
+  //         this.state.whereClauseSet.sort(function (a, b) {
+  //           return a.id < b.id ? -1 : a.id == b.id ? 0 : 1;
+  //         });
+  //         newWhereSetClause = Array.from(new Set(this.state.whereClauseSet));
+  //         // Remove duplicate entries from the whereClauses array
+  //         this.setState({
+  //           whereClauseSet: Array.from(new Set(this.state.whereClauseSet)),
+  //         });
+  //       }
+  //     );
+  //   }
+  //   if (newWhereSetClause?.length) {
+  //     const currentNewWhereSetClause = newWhereSetClause.find(
+  //       (item) => item.id === currentId
+  //     );
+  //     this.addCurrentWherClauseBlock(currentId, currentNewWhereSetClause);
+  //   }
+  // };
 
   checkParenthesis(val: string) {
     let status = false;
@@ -2068,7 +2068,7 @@ export default class Widget extends React.PureComponent<
                                     )
                                   }
                                   univocoSelectHandler={this.univocoSelectHandler}
-                                  onChangeCheckBox={this.onChangeCheckBoxSet}
+                                  // onChangeCheckBox={this.onChangeCheckBoxSet}
                                   openDrop={this.openDropSet}
                                   closeDrop={this.closeDrop}
                                   opened={this.state.opened}
