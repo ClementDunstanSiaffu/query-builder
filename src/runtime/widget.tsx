@@ -19,7 +19,7 @@ import AddSetTable from "./components/AddSetTable";
 import LayerSelectComponent from "./components/layerSelectComponent";
 import CallToAction from "./components/callToActionComponent";
 import AndOrSelector from "./components/common/andorSelector";
-import {CallToActionContext} from "../context/contextApi";
+import {CallToActionContext,LayerSelectContext} from "../context/contextApi";
 
 export default class Widget extends React.PureComponent<
   AllWidgetProps<IMConfig>,
@@ -46,7 +46,7 @@ export default class Widget extends React.PureComponent<
     this.init();
     this.activeViewChangeHandler = this.activeViewChangeHandler.bind(this);
     //Layer
-    this.onChangeSelectLayer = this.onChangeSelectLayer.bind(this);
+    // this.onChangeSelectLayer = this.onChangeSelectLayer.bind(this);
     this.getQueryAttribute = this.getQueryAttribute.bind(this);
     this.getQuery = this.getQuery.bind(this);
     this.sendQuery = this.sendQuery.bind(this);
@@ -54,7 +54,7 @@ export default class Widget extends React.PureComponent<
     // this.runbothQueries= this.runbothQueries.bind(this);
     this.thirdQuery = this.thirdQuery.bind(this);
     this.dropdownItemClick = this.dropdownItemClick.bind(this);
-    this.chooseAndOr = this.chooseAndOr.bind(this);
+    // this.chooseAndOr = this.chooseAndOr.bind(this);
     this.chooseAndOrSet = this.chooseAndOrSet.bind(this);
     this.closeDrop = this.closeDrop.bind(this);
     this.openDrop = this.openDrop.bind(this);
@@ -740,25 +740,25 @@ export default class Widget extends React.PureComponent<
     });
   }
 
-  async onChangeSelectLayer(e) {
-    this.graphicLayerFound.removeAll();
-    if (this.state.jimuMapView) {
-      this.state.jimuMapView.view.map.allLayers.forEach((f, index) => {
-        if (f.title === e.currentTarget.innerText) {
-          this.state.jimuMapView.view.whenLayerView(f).then((layerView) => {
-            this.setState({
-              resultsLayerSelected: f,
-              currentTargetText: e.currentTarget.innerText,
-              currentSelectedId: e.currentTarget.value,
-            });
-            this.props.dispatch(
-              appActions.widgetStatePropChange("value", "checkedLayers", [f.id])
-            );
-          });
-        }
-      });
-    }
-  }
+  // async onChangeSelectLayer(e) {
+  //   this.graphicLayerFound.removeAll();
+  //   if (this.state.jimuMapView) {
+  //     this.state.jimuMapView.view.map.allLayers.forEach((f, index) => {
+  //       if (f.title === e.currentTarget.innerText) {
+  //         this.state.jimuMapView.view.whenLayerView(f).then((layerView) => {
+  //           this.setState({
+  //             resultsLayerSelected: f,
+  //             currentTargetText: e.currentTarget.innerText,
+  //             currentSelectedId: e.currentTarget.value,
+  //           });
+  //           this.props.dispatch(
+  //             appActions.widgetStatePropChange("value", "checkedLayers", [f.id])
+  //           );
+  //         });
+  //       }
+  //     });
+  //   }
+  // }
 
   // addTable = () => {
   //   const currentId = this.state.tableCounter;
@@ -1781,7 +1781,7 @@ export default class Widget extends React.PureComponent<
     }
   };
 
-  chooseAndOr = (e) =>this.setState({ AndOr: e.target.value });
+  // chooseAndOr = (e) =>this.setState({ AndOr: e.target.value });
   
   chooseAndOrSet = (e, blockId) => {
     const currentSetBlock = [...this.state.SetBlock];
@@ -2096,13 +2096,24 @@ export default class Widget extends React.PureComponent<
                     className="mt-4 container-fluid d-flex justify-content-between flex-column"
                     style={{ height: "100%" }}
                   >
-                    <LayerSelectComponent 
-                      onChangeSelectLayer = {this.onChangeSelectLayer}
-                      currentSelectedId = {this.state.currentSelectedId}
-                      resultLayerList = {this.state.resultLayerList}
-                      showAddSelect = {this.state.showAddSelect}
-                      chooseAndOr = {this.chooseAndOr}
-                    />
+                    <LayerSelectContext.Provider 
+                      value = {{
+                        parent:this,
+                        jimuMapView:this.state.jimuMapView,
+                        resultLayerList:this.state.resultLayerList,
+                        showAddSelect:this.state.showAddSelect,
+                        currentSelectedId:this.state.currentSelectedId
+                      }}
+                    >
+                      <LayerSelectComponent 
+                        // onChangeSelectLayer = {this.onChangeSelectLayer}
+                        // currentSelectedId = {this.state.currentSelectedId}
+                        // resultLayerList = {this.state.resultLayerList}
+                        // showAddSelect = {this.state.showAddSelect}
+                        // chooseAndOr = {this.chooseAndOr}
+                      />
+                    </LayerSelectContext.Provider>
+              
                     <CallToActionContext.Provider 
                       value = {{
                         parent:this,
