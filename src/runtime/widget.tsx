@@ -60,7 +60,7 @@ export default class Widget extends React.PureComponent<
     this.onmouseLeave = this.onmouseLeave.bind(this);
     this.getAllCheckedLayers = this.getAllCheckedLayers.bind(this);
     this.getAllJimuLayerViews = this.getAllJimuLayerViews.bind(this);
-    this.connector_function = this.connector_function.bind(this);
+    // this.connector_function = this.connector_function.bind(this);
     this.functionCounterIsChecked = this.functionCounterIsChecked.bind(this);
     this.getQuerySet = this.getQuerySet.bind(this);
     // this.onChangeCheckBoxSet = this.onChangeCheckBoxSet.bind(this);
@@ -1355,227 +1355,227 @@ export default class Widget extends React.PureComponent<
     return newString;
   }
 
-  queryConstructor = (
-    layerView,
-    firstQuery,
-    queryRequest,
-    secondQueryTarget,
-    AndOr,
-    connector_function,
-    layer,
-    queryType = "single"
-  ) => {
-    const query = new Query();
-    const values = secondQueryTarget;
-    switch (queryRequest) {
-      case "LIKE%":
-        query.where = `${firstQuery} LIKE '${secondQueryTarget}%'`;
-        connector_function({
-          layerView,
-          query,
-          queryRequest,
-          values,
-          layer,
-          AndOr,
-          field: firstQuery,
-          source: "singleQuery",
-        });
-        break;
-      case "%LIKE":
-        query.where = `${firstQuery} LIKE '%${secondQueryTarget}'`;
-        connector_function({
-          layerView,
-          query,
-          queryRequest,
-          values,
-          layer,
-          AndOr,
-          field: firstQuery,
-          source: "singleQuery",
-        });
-        break;
-      case "%LIKE%":
-        query.where = `${firstQuery} LIKE '%${secondQueryTarget}%'`;
-        connector_function({
-          layerView,
-          query,
-          queryRequest,
-          values,
-          layer,
-          AndOr,
-          field: firstQuery,
-          source: "singleQuery",
-        });
-        break;
-      case "NOT LIKE":
-        query.where = `${firstQuery} NOT LIKE '%${secondQueryTarget}%'`;
-        connector_function({
-          layerView,
-          query,
-          queryRequest,
-          values,
-          layer,
-          AndOr,
-          field: firstQuery,
-          source: "singleQuery",
-        });
-        break;
-      case "is null":
-        query.where = `${firstQuery} is null`;
-        connector_function({
-          layerView,
-          query,
-          queryRequest,
-          values,
-          layer,
-          AndOr,
-          field: firstQuery,
-          source: "singleQuery",
-        });
-        break;
-      case "is not null":
-        query.where = `${firstQuery} is not null`;
-        connector_function({
-          layerView,
-          query,
-          queryRequest,
-          values,
-          layer,
-          AndOr,
-          field: firstQuery,
-          source: "singleQuery",
-        });
-        break;
-      case "IN":
-        if (this.containsAnyLetters(secondQueryTarget)) {
-          query.where = `${firstQuery} IN (${
-            "'" + secondQueryTarget.join("', '") + "'"
-          })`;
-          connector_function({
-            layerView,
-            query,
-            queryRequest,
-            values,
-            layer,
-            AndOr,
-            field: firstQuery,
-            source: "singleQuery",
-          });
-        } else {
-          if (this.checkParenthesis(secondQueryTarget.join(","))) {
-            const stringFiedValue = this.loopToGetString(secondQueryTarget);
-            query.where = `${firstQuery} IN (${stringFiedValue})`;
-          } else {
-            query.where = `${firstQuery} IN (${secondQueryTarget.join(",")})`;
-          }
-          connector_function({
-            layerView,
-            query,
-            queryRequest,
-            values,
-            layer,
-            AndOr,
-            field: firstQuery,
-            source: "singleQuery",
-          });
-        }
-        break;
-      case "NOT_IN":
-        if (this.containsAnyLetters(secondQueryTarget)) {
-          query.where = `NOT ${firstQuery} IN (${
-            "'" + secondQueryTarget.join("', '") + "'"
-          })`;
-          query.outFields = [`${firstQuery}`];
-          connector_function({
-            layerView,
-            query,
-            queryRequest,
-            values,
-            layer,
-            AndOr,
-            field: firstQuery,
-            source: "singleQuery",
-          });
-        } else {
-          if (this.checkParenthesis(secondQueryTarget.join(","))) {
-            const stringFiedValue = this.loopToGetString(secondQueryTarget);
-            query.where = `NOT  ${firstQuery} IN (${stringFiedValue})`;
-          } else {
-            query.where = `NOT  ${firstQuery} IN (${secondQueryTarget.join(",")})`;
-          }
-          query.outFields = [`${firstQuery}`];
-          connector_function({
-            layerView,
-            query,
-            queryRequest,
-            values,
-            layer,
-            AndOr,
-            field: firstQuery,
-            source: "singleQuery",
-          });
-        }
-        break;
-      case "included":
-        query.where = `(${firstQuery} > ${secondQueryTarget.firstTxt} AND ${firstQuery} < ${secondQueryTarget.secondTxt})`;
-        connector_function({
-          layerView,
-          query,
-          queryRequest,
-          values,
-          layer,
-          AndOr,
-          field: firstQuery,
-          source: "singleQuery",
-        });
-        break;
-      case "is_not_included":
-        query.where = `(${firstQuery} < ${secondQueryTarget.firstTxt} OR ${firstQuery} > ${secondQueryTarget.secondTxt})`;
-        connector_function({
-          layerView,
-          query,
-          queryRequest,
-          values,
-          layer,
-          AndOr,
-          field: firstQuery,
-          source: "singleQuery",
-        });
-        break;
-      default:
-        if (this.containsAnyLetters(secondQueryTarget)) {
-          query.where = `${firstQuery} ${queryRequest} '${secondQueryTarget}'`;
-          connector_function({
-            layerView,
-            query,
-            queryRequest,
-            values,
-            layer,
-            AndOr,
-            field: firstQuery,
-            source: "singleQuery",
-          });
-        } else {
-          const brackets = ["(", ")", "[", "]", "{", "}"];
-          if (brackets.includes(secondQueryTarget.charAt(0))) {
-            const stringFiedValue = JSON.stringify(secondQueryTarget).replace(/"/g, `'`)
-            query.where = `${firstQuery} ${queryRequest} (${stringFiedValue})`;
-          }else{
-            query.where = `${firstQuery} ${queryRequest} '${secondQueryTarget}'`;
-          }
-          connector_function({
-            layerView,
-            query,
-            queryRequest,
-            values,
-            layer,
-            AndOr,
-            field: firstQuery,
-            source: "singleQuery",
-          });
-        }
-    }
-  };
+  // queryConstructor = (
+  //   layerView,
+  //   firstQuery,
+  //   queryRequest,
+  //   secondQueryTarget,
+  //   AndOr,
+  //   connector_function,
+  //   layer,
+  //   queryType = "single"
+  // ) => {
+  //   const query = new Query();
+  //   const values = secondQueryTarget;
+  //   switch (queryRequest) {
+  //     case "LIKE%":
+  //       query.where = `${firstQuery} LIKE '${secondQueryTarget}%'`;
+  //       connector_function({
+  //         layerView,
+  //         query,
+  //         queryRequest,
+  //         values,
+  //         layer,
+  //         AndOr,
+  //         field: firstQuery,
+  //         source: "singleQuery",
+  //       });
+  //       break;
+  //     case "%LIKE":
+  //       query.where = `${firstQuery} LIKE '%${secondQueryTarget}'`;
+  //       connector_function({
+  //         layerView,
+  //         query,
+  //         queryRequest,
+  //         values,
+  //         layer,
+  //         AndOr,
+  //         field: firstQuery,
+  //         source: "singleQuery",
+  //       });
+  //       break;
+  //     case "%LIKE%":
+  //       query.where = `${firstQuery} LIKE '%${secondQueryTarget}%'`;
+  //       connector_function({
+  //         layerView,
+  //         query,
+  //         queryRequest,
+  //         values,
+  //         layer,
+  //         AndOr,
+  //         field: firstQuery,
+  //         source: "singleQuery",
+  //       });
+  //       break;
+  //     case "NOT LIKE":
+  //       query.where = `${firstQuery} NOT LIKE '%${secondQueryTarget}%'`;
+  //       connector_function({
+  //         layerView,
+  //         query,
+  //         queryRequest,
+  //         values,
+  //         layer,
+  //         AndOr,
+  //         field: firstQuery,
+  //         source: "singleQuery",
+  //       });
+  //       break;
+  //     case "is null":
+  //       query.where = `${firstQuery} is null`;
+  //       connector_function({
+  //         layerView,
+  //         query,
+  //         queryRequest,
+  //         values,
+  //         layer,
+  //         AndOr,
+  //         field: firstQuery,
+  //         source: "singleQuery",
+  //       });
+  //       break;
+  //     case "is not null":
+  //       query.where = `${firstQuery} is not null`;
+  //       connector_function({
+  //         layerView,
+  //         query,
+  //         queryRequest,
+  //         values,
+  //         layer,
+  //         AndOr,
+  //         field: firstQuery,
+  //         source: "singleQuery",
+  //       });
+  //       break;
+  //     case "IN":
+  //       if (this.containsAnyLetters(secondQueryTarget)) {
+  //         query.where = `${firstQuery} IN (${
+  //           "'" + secondQueryTarget.join("', '") + "'"
+  //         })`;
+  //         connector_function({
+  //           layerView,
+  //           query,
+  //           queryRequest,
+  //           values,
+  //           layer,
+  //           AndOr,
+  //           field: firstQuery,
+  //           source: "singleQuery",
+  //         });
+  //       } else {
+  //         if (this.checkParenthesis(secondQueryTarget.join(","))) {
+  //           const stringFiedValue = this.loopToGetString(secondQueryTarget);
+  //           query.where = `${firstQuery} IN (${stringFiedValue})`;
+  //         } else {
+  //           query.where = `${firstQuery} IN (${secondQueryTarget.join(",")})`;
+  //         }
+  //         connector_function({
+  //           layerView,
+  //           query,
+  //           queryRequest,
+  //           values,
+  //           layer,
+  //           AndOr,
+  //           field: firstQuery,
+  //           source: "singleQuery",
+  //         });
+  //       }
+  //       break;
+  //     case "NOT_IN":
+  //       if (this.containsAnyLetters(secondQueryTarget)) {
+  //         query.where = `NOT ${firstQuery} IN (${
+  //           "'" + secondQueryTarget.join("', '") + "'"
+  //         })`;
+  //         query.outFields = [`${firstQuery}`];
+  //         connector_function({
+  //           layerView,
+  //           query,
+  //           queryRequest,
+  //           values,
+  //           layer,
+  //           AndOr,
+  //           field: firstQuery,
+  //           source: "singleQuery",
+  //         });
+  //       } else {
+  //         if (this.checkParenthesis(secondQueryTarget.join(","))) {
+  //           const stringFiedValue = this.loopToGetString(secondQueryTarget);
+  //           query.where = `NOT  ${firstQuery} IN (${stringFiedValue})`;
+  //         } else {
+  //           query.where = `NOT  ${firstQuery} IN (${secondQueryTarget.join(",")})`;
+  //         }
+  //         query.outFields = [`${firstQuery}`];
+  //         connector_function({
+  //           layerView,
+  //           query,
+  //           queryRequest,
+  //           values,
+  //           layer,
+  //           AndOr,
+  //           field: firstQuery,
+  //           source: "singleQuery",
+  //         });
+  //       }
+  //       break;
+  //     case "included":
+  //       query.where = `(${firstQuery} > ${secondQueryTarget.firstTxt} AND ${firstQuery} < ${secondQueryTarget.secondTxt})`;
+  //       connector_function({
+  //         layerView,
+  //         query,
+  //         queryRequest,
+  //         values,
+  //         layer,
+  //         AndOr,
+  //         field: firstQuery,
+  //         source: "singleQuery",
+  //       });
+  //       break;
+  //     case "is_not_included":
+  //       query.where = `(${firstQuery} < ${secondQueryTarget.firstTxt} OR ${firstQuery} > ${secondQueryTarget.secondTxt})`;
+  //       connector_function({
+  //         layerView,
+  //         query,
+  //         queryRequest,
+  //         values,
+  //         layer,
+  //         AndOr,
+  //         field: firstQuery,
+  //         source: "singleQuery",
+  //       });
+  //       break;
+  //     default:
+  //       if (this.containsAnyLetters(secondQueryTarget)) {
+  //         query.where = `${firstQuery} ${queryRequest} '${secondQueryTarget}'`;
+  //         connector_function({
+  //           layerView,
+  //           query,
+  //           queryRequest,
+  //           values,
+  //           layer,
+  //           AndOr,
+  //           field: firstQuery,
+  //           source: "singleQuery",
+  //         });
+  //       } else {
+  //         const brackets = ["(", ")", "[", "]", "{", "}"];
+  //         if (brackets.includes(secondQueryTarget.charAt(0))) {
+  //           const stringFiedValue = JSON.stringify(secondQueryTarget).replace(/"/g, `'`)
+  //           query.where = `${firstQuery} ${queryRequest} (${stringFiedValue})`;
+  //         }else{
+  //           query.where = `${firstQuery} ${queryRequest} '${secondQueryTarget}'`;
+  //         }
+  //         connector_function({
+  //           layerView,
+  //           query,
+  //           queryRequest,
+  //           values,
+  //           layer,
+  //           AndOr,
+  //           field: firstQuery,
+  //           source: "singleQuery",
+  //         });
+  //       }
+  //   }
+  // };
   
   chooseAndOrSet = (e, blockId) => {
     const currentSetBlock = [...this.state.SetBlock];
@@ -1661,136 +1661,136 @@ export default class Widget extends React.PureComponent<
     }
   };
 
-  connector_function = async (data) => {
-    const {
-      layerView,
-      query,
-      queryRequest,
-      values,
-      layer,
-      AndOr,
-      field,
-      source,
-    } = data;
-    if (this.state.higlightSelected.length) {
-      this.clearHighlights(layerView);
-      this.state.higlightSelected.forEach((highlight) => {
-        highlight.remove();
-      });
-    }
-    let results = { features: [] };
-    let additionalQuery = null;
-    if (source === "singleQuery") {
-      additionalQuery = query.where;
-      if (this.queryArray.length < this.state.whereClauses.length - 1) {
-        additionalQuery = query.where + " " + AndOr;
-      }
-      this.queryArray.push(additionalQuery);
-      this.outfields.push(`${field}`);
-    }
-    if (
-      this.queryArray.length >= this.state.whereClauses.length ||
-      source === "setQuery"
-    ) {
-      let currentQuery = null;
-      if (this.queryArray.length) currentQuery = this.queryArray.join(" ");
-      if (this.state.whereClauseSet?.length) {
-        const { setQueryString, outFields } = this.sendQuerySet();
-        if (source === "singleQuery") {
-          if (setQueryString)
-            currentQuery += " " + AndOr + " " + "(" + setQueryString + ")";
-          if (outFields?.length) {
-            this.outfields = this.outfields.concat(outFields);
-            const set = new Set(this.outfields);
-            this.outfields = Array.from(set);
-          }
-        } else {
-          if (setQueryString) currentQuery = setQueryString;
-          if (outFields?.length) this.outfields = outFields;
-        }
-      }
-      if (!this.outfields.includes("OBJECTID")) {
-        this.outfields.push("OBJECTID");
-      }
-      query.outFields = this.outfields;
-      query.returnGeometry = true;
-      query.where = currentQuery;
-      try {
-        results = await layer.queryFeatures(query);
-      } catch (err) {
-        if (layerView?.queryFeatures)
-          results = await layerView.queryFeatures(query);
-      }
-      if (layer?.queryFeatures) results = await layer.queryFeatures(query);
-      let checkedLayer_ = [data.layerView.layer.id];
-      const highlightIds = helper.getHighlightedIds(results.features);
-      if (highlightIds.length) {
-        const higlightSelectedArr = [];
-        highlightIds.forEach((el) => {
-          const highlightSelected = layerView.highlight(el);
-          higlightSelectedArr.push(highlightSelected);
-        });
-        if (results.features.length) {
-          const arrayGeometry = [];
-          results.features.forEach((el) => {
-            const newGeometry = geometryEngine.buffer(el.geometry, 1, "meters");
-            arrayGeometry.push(newGeometry);
-          });
-          if (arrayGeometry.length) {
-            const unifiedGeomtry = geometryEngine.union(arrayGeometry);
-            this.state.jimuMapView.view.goTo(unifiedGeomtry.extent);
-          }
-        }
-        this.setState({ higlightSelected: higlightSelectedArr });
-      }
+  // connector_function = async (data) => {
+  //   const {
+  //     layerView,
+  //     query,
+  //     queryRequest,
+  //     values,
+  //     layer,
+  //     AndOr,
+  //     field,
+  //     source,
+  //   } = data;
+  //   if (this.state.higlightSelected.length) {
+  //     this.clearHighlights(layerView);
+  //     this.state.higlightSelected.forEach((highlight) => {
+  //       highlight.remove();
+  //     });
+  //   }
+  //   let results = { features: [] };
+  //   let additionalQuery = null;
+  //   if (source === "singleQuery") {
+  //     additionalQuery = query.where;
+  //     if (this.queryArray.length < this.state.whereClauses.length - 1) {
+  //       additionalQuery = query.where + " " + AndOr;
+  //     }
+  //     this.queryArray.push(additionalQuery);
+  //     this.outfields.push(`${field}`);
+  //   }
+  //   if (
+  //     this.queryArray.length >= this.state.whereClauses.length ||
+  //     source === "setQuery"
+  //   ) {
+  //     let currentQuery = null;
+  //     if (this.queryArray.length) currentQuery = this.queryArray.join(" ");
+  //     if (this.state.whereClauseSet?.length) {
+  //       const { setQueryString, outFields } = this.sendQuerySet();
+  //       if (source === "singleQuery") {
+  //         if (setQueryString)
+  //           currentQuery += " " + AndOr + " " + "(" + setQueryString + ")";
+  //         if (outFields?.length) {
+  //           this.outfields = this.outfields.concat(outFields);
+  //           const set = new Set(this.outfields);
+  //           this.outfields = Array.from(set);
+  //         }
+  //       } else {
+  //         if (setQueryString) currentQuery = setQueryString;
+  //         if (outFields?.length) this.outfields = outFields;
+  //       }
+  //     }
+  //     if (!this.outfields.includes("OBJECTID")) {
+  //       this.outfields.push("OBJECTID");
+  //     }
+  //     query.outFields = this.outfields;
+  //     query.returnGeometry = true;
+  //     query.where = currentQuery;
+  //     try {
+  //       results = await layer.queryFeatures(query);
+  //     } catch (err) {
+  //       if (layerView?.queryFeatures)
+  //         results = await layerView.queryFeatures(query);
+  //     }
+  //     if (layer?.queryFeatures) results = await layer.queryFeatures(query);
+  //     let checkedLayer_ = [data.layerView.layer.id];
+  //     const highlightIds = helper.getHighlightedIds(results.features);
+  //     if (highlightIds.length) {
+  //       const higlightSelectedArr = [];
+  //       highlightIds.forEach((el) => {
+  //         const highlightSelected = layerView.highlight(el);
+  //         higlightSelectedArr.push(highlightSelected);
+  //       });
+  //       if (results.features.length) {
+  //         const arrayGeometry = [];
+  //         results.features.forEach((el) => {
+  //           const newGeometry = geometryEngine.buffer(el.geometry, 1, "meters");
+  //           arrayGeometry.push(newGeometry);
+  //         });
+  //         if (arrayGeometry.length) {
+  //           const unifiedGeomtry = geometryEngine.union(arrayGeometry);
+  //           this.state.jimuMapView.view.goTo(unifiedGeomtry.extent);
+  //         }
+  //       }
+  //       this.setState({ higlightSelected: higlightSelectedArr });
+  //     }
 
-      const selectedLayersContents = helper.getSelectedContentsLayer(
-        [results.features],
-        checkedLayer_
-      );
-      const numberOfAttributes = helper.getNumberOfAttributes(
-        selectedLayersContents
-      );
-      let activeV = this.state.jimuMapView;
-      this.setState({ layerContents: selectedLayersContents });
-      this.setState({ checkedLayer_: checkedLayer_ });
-      const geometry = Polygon.fromExtent(layerView.view.extent).toJSON();
-      const layerOpen = {
-        geometry: geometry,
-        typeSelected: "contains",
-      };
-      if (results.features.length) {
-        this.currentLayerView = layerView;
-        const isLayerChecked = this.state.isAttributeTableClosed ? false : true;
-        const allCheckedLayers = this.getAllCheckedLayers();
-        this.attributeTableConnector.init({
-          results: [results.features],
-          allCheckedLayers: allCheckedLayers,
-          isLayerChecked: isLayerChecked,
-          checkedLayers: checkedLayer_,
-          numberOfAttributes: numberOfAttributes,
-          layerOpen: layerOpen,
-        });
-        this.setState({ isAttributeTableClosed: false });
-        try {
-          this.attributeTableConnector.dispatchingAll();
-          this.setState({ itemNotFound: null });
-        } catch (err) {
-          if (err) this.setState({ itemNotFound: this.nls(err) });
-          this.attributeTableConnector.closeTable();
-          this.setState({ isAttributeTableClosed: true });
-          this.returnToOriginalExtent();
-        }
-      } else {
-        this.attributeTableConnector.closeTable();
-        this.setState({
-          isAttributeTableClosed: true,
-          itemNotFound: this.nls("noItemSelected"),
-        });
-        this.returnToOriginalExtent();
-      }
-    }
-  };
+  //     const selectedLayersContents = helper.getSelectedContentsLayer(
+  //       [results.features],
+  //       checkedLayer_
+  //     );
+  //     const numberOfAttributes = helper.getNumberOfAttributes(
+  //       selectedLayersContents
+  //     );
+  //     let activeV = this.state.jimuMapView;
+  //     this.setState({ layerContents: selectedLayersContents });
+  //     this.setState({ checkedLayer_: checkedLayer_ });
+  //     const geometry = Polygon.fromExtent(layerView.view.extent).toJSON();
+  //     const layerOpen = {
+  //       geometry: geometry,
+  //       typeSelected: "contains",
+  //     };
+  //     if (results.features.length) {
+  //       this.currentLayerView = layerView;
+  //       const isLayerChecked = this.state.isAttributeTableClosed ? false : true;
+  //       const allCheckedLayers = this.getAllCheckedLayers();
+  //       this.attributeTableConnector.init({
+  //         results: [results.features],
+  //         allCheckedLayers: allCheckedLayers,
+  //         isLayerChecked: isLayerChecked,
+  //         checkedLayers: checkedLayer_,
+  //         numberOfAttributes: numberOfAttributes,
+  //         layerOpen: layerOpen,
+  //       });
+  //       this.setState({ isAttributeTableClosed: false });
+  //       try {
+  //         this.attributeTableConnector.dispatchingAll();
+  //         this.setState({ itemNotFound: null });
+  //       } catch (err) {
+  //         if (err) this.setState({ itemNotFound: this.nls(err) });
+  //         this.attributeTableConnector.closeTable();
+  //         this.setState({ isAttributeTableClosed: true });
+  //         this.returnToOriginalExtent();
+  //       }
+  //     } else {
+  //       this.attributeTableConnector.closeTable();
+  //       this.setState({
+  //         isAttributeTableClosed: true,
+  //         itemNotFound: this.nls("noItemSelected"),
+  //       });
+  //       this.returnToOriginalExtent();
+  //     }
+  //   }
+  // };
 
   returnToOriginalExtent = () => {
     const jimuMapView = this.state.jimuMapView;
@@ -1915,7 +1915,9 @@ export default class Widget extends React.PureComponent<
                         tableCounter:this.state.tableCounter,
                         tableCounterSet:this.state.tableCounterSet,
                         dropDowns:this.state.dropDowns,
-                        dropDownsSet:this.state.dropDownsSet
+                        dropDownsSet:this.state.dropDownsSet,
+                        higlightSelected:this.state.higlightSelected,
+                        isAttributeTableClosed:this.state.isAttributeTableClosed
                       }}
                     >
                       <CallToAction width={width} functionRefresh = {this.functionRefresh}/>
