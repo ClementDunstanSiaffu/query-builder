@@ -48,7 +48,7 @@ export default class Widget extends React.PureComponent<
     //Layer
     this.getQueryAttribute = this.getQueryAttribute.bind(this);
     this.getQuery = this.getQuery.bind(this);
-    this.sendQuerySet = this.sendQuerySet.bind(this);
+    // this.sendQuerySet = this.sendQuerySet.bind(this);
     // this.runbothQueries= this.runbothQueries.bind(this);
     this.thirdQuery = this.thirdQuery.bind(this);
     this.dropdownItemClick = this.dropdownItemClick.bind(this);
@@ -374,26 +374,26 @@ export default class Widget extends React.PureComponent<
       case "is not null":
         return `${firstQuery} is not null`;
       case "IN":
-        if (this.containsAnyLetters(secondQueryTarget)) {
+        if (helper.containsAnyLetters(secondQueryTarget)) {
           return `${firstQuery} IN (${
             "'" + secondQueryTarget.join("', '") + "'"
           })`;
         } else {
-          if (this.checkParenthesis(secondQueryTarget.join(","))) {
-            const stringFiedValue = this.loopToGetString(secondQueryTarget);
+          if (helper.checkParenthesis(secondQueryTarget.join(","))) {
+            const stringFiedValue = helper.loopToGetString(secondQueryTarget);
             return `${firstQuery} IN (${stringFiedValue})`;
           } else {
             return `${firstQuery} IN (${secondQueryTarget.join(",")})`;
           }
         }
       case "NOT_IN":
-        if (this.containsAnyLetters(secondQueryTarget)) {
+        if (helper.containsAnyLetters(secondQueryTarget)) {
           return `NOT ${firstQuery} IN (${
             "'" + secondQueryTarget.join("', '") + "'"
           })`;
         } else {
-          if (this.checkParenthesis(secondQueryTarget.join(","))) {
-            const stringFiedValue = this.loopToGetString(secondQueryTarget);
+          if (helper.checkParenthesis(secondQueryTarget.join(","))) {
+            const stringFiedValue = helper.loopToGetString(secondQueryTarget);
             return `NOT  ${firstQuery} IN (${stringFiedValue})`;
           } else {
             return `NOT  ${firstQuery} IN (${secondQueryTarget.join(",")})`;
@@ -404,7 +404,7 @@ export default class Widget extends React.PureComponent<
       case "is_not_included":
         return `(${firstQuery} < ${secondQueryTarget.firstTxt} OR ${firstQuery} > ${secondQueryTarget.secondTxt})`;
       default:
-        if (this.containsAnyLetters(secondQueryTarget)) {
+        if (helper.containsAnyLetters(secondQueryTarget)) {
           return `${firstQuery} ${queryRequest} '${secondQueryTarget}'`;
         } else {
           let queryString = `${firstQuery} ${queryRequest} ${secondQueryTarget}`;
@@ -420,150 +420,150 @@ export default class Widget extends React.PureComponent<
     }
   };
 
-  sendQuerySet() {
-    const checkedQuery = [
-      "is null",
-      "is not null",
-      "IN",
-      "NOT_IN",
-      "included",
-      "is_not_included",
-    ];
-    const likelyQuery = ["LIKE%", "%LIKE", "%LIKE%", "NOT LIKE"];
-    let setQueryString = null;
-    let outFields = [];
-    if (this.state.SetBlock.length) {
-      this.state.SetBlock.forEach((block, i) => {
-        const blockId = block?.blockId;
-        const whereClauseSet = block[`${blockId}`];
-        const AndOrSet = block?.AndOrSet;
-        if (AndOrSet === "AND") {
-          if (whereClauseSet?.length) {
-            whereClauseSet.forEach((el, j) => {
-              let attributeQuery = el.attributeQuery;
-              let queryValue = el.queryValue;
-              let value;
-              if (queryValue === "is null" || queryValue === "is not null") {
-                value = el.value?.txt ?? "";
-              } else if (queryValue === "IN" || queryValue === "NOT_IN") {
-                value = [];
-                el.checkedListSet.forEach((el) => value.push(el.checkValue));
-              } else if (
-                queryValue === "included" ||
-                queryValue === "is_not_included"
-              ) {
-                value = {
-                  firstTxt: el.firstTxt.value,
-                  secondTxt: el.secondTxt.value,
-                };
-              } else if (!checkedQuery.includes(queryValue)) {
-                value = el.value?.txt ?? "";
-              }
-              if (setQueryString) {
-                setQueryString += this.setQueryConstructor(
-                  queryValue,
-                  attributeQuery,
-                  value
-                );
-              } else {
-                setQueryString = this.setQueryConstructor(
-                  queryValue,
-                  attributeQuery,
-                  value
-                );
-              }
-              if (j < whereClauseSet.length - 1)
-                setQueryString += "  " + AndOrSet + "  ";
-              outFields.push(`${attributeQuery}`);
-            });
-          }
-        } else {
-          let normalizedWhereToSendQuery: any = [];
-          if (whereClauseSet?.length) {
-            whereClauseSet.forEach((el, j) => {
-              let attributeQuery = el.attributeQuery;
-              let queryValue = el.queryValue;
-              let value;
-              if (queryValue === "IN" || queryValue === "NOT_IN") {
-                value = [];
-                if (queryValue === "IN" && el.checkedListSet.length) {
-                  el.checkedListSet.forEach((el) => value.push(el.checkValue));
-                } else if (
-                  queryValue === "NOT_IN" &&
-                  this.state.counterIsChecked.length
-                ) {
-                  this.state.counterIsChecked.forEach((el) =>
-                    value.push(el.checkValue)
-                  );
-                }
-              }
-              if (
-                queryValue === "included" ||
-                queryValue === "is_not_included"
-              ) {
-                value = {
-                  firstTxt: el.firstTxt.value,
-                  secondTxt: el.secondTxt.value,
-                };
-              } else if (!checkedQuery.includes(queryValue)) {
-                value = el.value?.txt ?? "";
-              }
-              if (setQueryString) {
-                setQueryString += this.setQueryConstructor(
-                  queryValue,
-                  attributeQuery,
-                  value
-                );
-              } else {
-                setQueryString = this.setQueryConstructor(
-                  queryValue,
-                  attributeQuery,
-                  value
-                );
-              }
-              if (j < whereClauseSet.length - 1)
-                setQueryString += "  " + AndOrSet + "  ";
-              outFields.push(`${attributeQuery}`);
-            });
-          }
-        }
-        if (setQueryString) {
-          if (this.state.SetBlock[i + 1]) {
-            const nextBlock = this.state.SetBlock[i + 1];
-            const nextBlockId = nextBlock?.blockId;
-            const nextWhereClauseSet = nextBlock[`${nextBlockId}`];
-            if (
-              (i === 0 &&
-                this.state.SetBlock.length >= 2 &&
-                nextWhereClauseSet?.length) ||
-              !["("].includes(setQueryString[0])
-            ) {
-              setQueryString = "(" + setQueryString;
-            }
-            if (
-              i < this.state.SetBlock.length - 1 &&
-              nextWhereClauseSet?.length
-            ) {
-              setQueryString += " ) " + this.state.AndOr + " ( ";
-            }
-          }
-          if (this.state.SetBlock[i - 1]) {
-            const prevBlock = this.state.SetBlock[i - 1];
-            const prevBlockId = prevBlock?.blockId;
-            const prevWhereClauseSet = prevBlock[`${prevBlockId}`];
-            if (
-              this.state.SetBlock.length >= 2 &&
-              i === this.state.SetBlock.length - 1 &&
-              prevWhereClauseSet.length
-            ) {
-              setQueryString = setQueryString + ")";
-            }
-          }
-        }
-      });
-    }
-    return { setQueryString, outFields };
-  }
+  // sendQuerySet() {
+  //   const checkedQuery = [
+  //     "is null",
+  //     "is not null",
+  //     "IN",
+  //     "NOT_IN",
+  //     "included",
+  //     "is_not_included",
+  //   ];
+  //   const likelyQuery = ["LIKE%", "%LIKE", "%LIKE%", "NOT LIKE"];
+  //   let setQueryString = null;
+  //   let outFields = [];
+  //   if (this.state.SetBlock.length) {
+  //     this.state.SetBlock.forEach((block, i) => {
+  //       const blockId = block?.blockId;
+  //       const whereClauseSet = block[`${blockId}`];
+  //       const AndOrSet = block?.AndOrSet;
+  //       if (AndOrSet === "AND") {
+  //         if (whereClauseSet?.length) {
+  //           whereClauseSet.forEach((el, j) => {
+  //             let attributeQuery = el.attributeQuery;
+  //             let queryValue = el.queryValue;
+  //             let value;
+  //             if (queryValue === "is null" || queryValue === "is not null") {
+  //               value = el.value?.txt ?? "";
+  //             } else if (queryValue === "IN" || queryValue === "NOT_IN") {
+  //               value = [];
+  //               el.checkedListSet.forEach((el) => value.push(el.checkValue));
+  //             } else if (
+  //               queryValue === "included" ||
+  //               queryValue === "is_not_included"
+  //             ) {
+  //               value = {
+  //                 firstTxt: el.firstTxt.value,
+  //                 secondTxt: el.secondTxt.value,
+  //               };
+  //             } else if (!checkedQuery.includes(queryValue)) {
+  //               value = el.value?.txt ?? "";
+  //             }
+  //             if (setQueryString) {
+  //               setQueryString += this.setQueryConstructor(
+  //                 queryValue,
+  //                 attributeQuery,
+  //                 value
+  //               );
+  //             } else {
+  //               setQueryString = this.setQueryConstructor(
+  //                 queryValue,
+  //                 attributeQuery,
+  //                 value
+  //               );
+  //             }
+  //             if (j < whereClauseSet.length - 1)
+  //               setQueryString += "  " + AndOrSet + "  ";
+  //             outFields.push(`${attributeQuery}`);
+  //           });
+  //         }
+  //       } else {
+  //         let normalizedWhereToSendQuery: any = [];
+  //         if (whereClauseSet?.length) {
+  //           whereClauseSet.forEach((el, j) => {
+  //             let attributeQuery = el.attributeQuery;
+  //             let queryValue = el.queryValue;
+  //             let value;
+  //             if (queryValue === "IN" || queryValue === "NOT_IN") {
+  //               value = [];
+  //               if (queryValue === "IN" && el.checkedListSet.length) {
+  //                 el.checkedListSet.forEach((el) => value.push(el.checkValue));
+  //               } else if (
+  //                 queryValue === "NOT_IN" &&
+  //                 this.state.counterIsChecked.length
+  //               ) {
+  //                 this.state.counterIsChecked.forEach((el) =>
+  //                   value.push(el.checkValue)
+  //                 );
+  //               }
+  //             }
+  //             if (
+  //               queryValue === "included" ||
+  //               queryValue === "is_not_included"
+  //             ) {
+  //               value = {
+  //                 firstTxt: el.firstTxt.value,
+  //                 secondTxt: el.secondTxt.value,
+  //               };
+  //             } else if (!checkedQuery.includes(queryValue)) {
+  //               value = el.value?.txt ?? "";
+  //             }
+  //             if (setQueryString) {
+  //               setQueryString += this.setQueryConstructor(
+  //                 queryValue,
+  //                 attributeQuery,
+  //                 value
+  //               );
+  //             } else {
+  //               setQueryString = this.setQueryConstructor(
+  //                 queryValue,
+  //                 attributeQuery,
+  //                 value
+  //               );
+  //             }
+  //             if (j < whereClauseSet.length - 1)
+  //               setQueryString += "  " + AndOrSet + "  ";
+  //             outFields.push(`${attributeQuery}`);
+  //           });
+  //         }
+  //       }
+  //       if (setQueryString) {
+  //         if (this.state.SetBlock[i + 1]) {
+  //           const nextBlock = this.state.SetBlock[i + 1];
+  //           const nextBlockId = nextBlock?.blockId;
+  //           const nextWhereClauseSet = nextBlock[`${nextBlockId}`];
+  //           if (
+  //             (i === 0 &&
+  //               this.state.SetBlock.length >= 2 &&
+  //               nextWhereClauseSet?.length) ||
+  //             !["("].includes(setQueryString[0])
+  //           ) {
+  //             setQueryString = "(" + setQueryString;
+  //           }
+  //           if (
+  //             i < this.state.SetBlock.length - 1 &&
+  //             nextWhereClauseSet?.length
+  //           ) {
+  //             setQueryString += " ) " + this.state.AndOr + " ( ";
+  //           }
+  //         }
+  //         if (this.state.SetBlock[i - 1]) {
+  //           const prevBlock = this.state.SetBlock[i - 1];
+  //           const prevBlockId = prevBlock?.blockId;
+  //           const prevWhereClauseSet = prevBlock[`${prevBlockId}`];
+  //           if (
+  //             this.state.SetBlock.length >= 2 &&
+  //             i === this.state.SetBlock.length - 1 &&
+  //             prevWhereClauseSet.length
+  //           ) {
+  //             setQueryString = setQueryString + ")";
+  //           }
+  //         }
+  //       }
+  //     });
+  //   }
+  //   return { setQueryString, outFields };
+  // }
 
   async thirdQuery(e) {
     const currentQueryTest = e.currentTarget.textContent;
@@ -785,7 +785,7 @@ export default class Widget extends React.PureComponent<
     this.queryTextConstructor(txt, currentTableId, queryType);
   };
 
-  containsAnyLetters = (str) => /[a-zA-Z]/.test(str);
+  // containsAnyLetters = (str) => /[a-zA-Z]/.test(str);
 
   queryTextConstructor = (txt, currentTableId, queryType) => {
     let queryIndex;
@@ -1333,27 +1333,27 @@ export default class Widget extends React.PureComponent<
   //   }
   // };
 
-  checkParenthesis(val: string) {
-    let status = false;
-    const brackets = ["(", ")", "[", "]", "{", "}"];
-    if (brackets.includes(val.charAt(0))) {
-      status = true;
-    }
-    return status;
-  }
+  // checkParenthesis(val: string) {
+  //   let status = false;
+  //   const brackets = ["(", ")", "[", "]", "{", "}"];
+  //   if (brackets.includes(val.charAt(0))) {
+  //     status = true;
+  //   }
+  //   return status;
+  // }
 
-  loopToGetString(stringArr: string[]) {
-    let newString = " ";
-    if (stringArr.length) {
-      newString = JSON.stringify(stringArr[0]);
-      newString = newString.replace(/"/g, `'`);
-      for (let i = 1; i < stringArr.length; i++) {
-        const newStringVal = JSON.stringify(stringArr[i]).replace(/"/g, `'`);
-        newString += "," + newStringVal;
-      }
-    }
-    return newString;
-  }
+  // loopToGetString(stringArr: string[]) {
+  //   let newString = " ";
+  //   if (stringArr.length) {
+  //     newString = JSON.stringify(stringArr[0]);
+  //     newString = newString.replace(/"/g, `'`);
+  //     for (let i = 1; i < stringArr.length; i++) {
+  //       const newStringVal = JSON.stringify(stringArr[i]).replace(/"/g, `'`);
+  //       newString += "," + newStringVal;
+  //     }
+  //   }
+  //   return newString;
+  // }
 
   // queryConstructor = (
   //   layerView,
@@ -1917,7 +1917,9 @@ export default class Widget extends React.PureComponent<
                         dropDowns:this.state.dropDowns,
                         dropDownsSet:this.state.dropDownsSet,
                         higlightSelected:this.state.higlightSelected,
-                        isAttributeTableClosed:this.state.isAttributeTableClosed
+                        isAttributeTableClosed:this.state.isAttributeTableClosed,
+                        whereClauseSet:this.state.whereClauseSet,
+                        counterIsChecked:this.state.counterIsChecked
                       }}
                     >
                       <CallToAction width={width} functionRefresh = {this.functionRefresh}/>

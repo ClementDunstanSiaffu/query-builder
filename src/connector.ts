@@ -164,17 +164,102 @@ class Helper {
 
     querySetConstructor = (query:any,setWhereClause:any[],AndOrSet:any,field:string)=>{
         let currentQuery = query.where;
-        console.log(this.setQueryArray.length < setWhereClause.length-1,"checking")
+        // console.log(this.setQueryArray.length < setWhereClause.length-1,"checking")
         if (this.setQueryArray.length < setWhereClause.length-1){
             currentQuery = query.where +  " " + AndOrSet;
         }
         this.setQueryArray.push(currentQuery);
         this.setOutFields.push(`${field}`);
-        console.log(this.setQueryArray,this.setOutFields,"make sure")
+        // console.log(this.setQueryArray,this.setOutFields,"make sure")
         // if(this.setQueryArray.length >= setWhereClause.length){
         //     return {querySetArray:this.setQueryArray,querySetOutfields:this.setOutFields}
         // }
     }
+
+    loopToGetString(stringArr: string[]) {
+        let newString = " ";
+        if (stringArr.length) {
+          newString = JSON.stringify(stringArr[0]);
+          newString = newString.replace(/"/g, `'`);
+          for (let i = 1; i < stringArr.length; i++) {
+            const newStringVal = JSON.stringify(stringArr[i]).replace(/"/g, `'`);
+            newString += "," + newStringVal;
+          }
+        }
+        return newString;
+      }
+
+    checkParenthesis(val: string) {
+        let status = false;
+        const brackets = ["(", ")", "[", "]", "{", "}"];
+        if (brackets.includes(val.charAt(0))) {
+          status = true;
+        }
+        return status;
+    }
+
+    containsAnyLetters = (str) => /[a-zA-Z]/.test(str);
+
+    setQueryConstructor = (queryRequest, firstQuery, secondQueryTarget) => {
+        switch (queryRequest) {
+          case "LIKE%":
+            return `${firstQuery} LIKE '${secondQueryTarget}%'`;
+          case "%LIKE":
+            return `${firstQuery} LIKE '%${secondQueryTarget}'`;
+          case "%LIKE%":
+            return `${firstQuery} LIKE '%${secondQueryTarget}%'`;
+          case "NOT LIKE":
+            return `${firstQuery} NOT LIKE '%${secondQueryTarget}%'`;
+          case "is null":
+            return `${firstQuery} is null`;
+          case "is not null":
+            return `${firstQuery} is not null`;
+          case "IN":
+            if (this.containsAnyLetters(secondQueryTarget)) {
+              return `${firstQuery} IN (${
+                "'" + secondQueryTarget.join("', '") + "'"
+              })`;
+            } else {
+              if (this.checkParenthesis(secondQueryTarget.join(","))) {
+                const stringFiedValue = this.loopToGetString(secondQueryTarget);
+                return `${firstQuery} IN (${stringFiedValue})`;
+              } else {
+                return `${firstQuery} IN (${secondQueryTarget.join(",")})`;
+              }
+            }
+          case "NOT_IN":
+            if (this.containsAnyLetters(secondQueryTarget)) {
+              return `NOT ${firstQuery} IN (${
+                "'" + secondQueryTarget.join("', '") + "'"
+              })`;
+            } else {
+              if (this.checkParenthesis(secondQueryTarget.join(","))) {
+                const stringFiedValue = this.loopToGetString(secondQueryTarget);
+                return `NOT  ${firstQuery} IN (${stringFiedValue})`;
+              } else {
+                return `NOT  ${firstQuery} IN (${secondQueryTarget.join(",")})`;
+              }
+            }
+          case "included":
+            return `(${firstQuery} > ${secondQueryTarget.firstTxt} AND ${firstQuery} < ${secondQueryTarget.secondTxt})`;
+          case "is_not_included":
+            return `(${firstQuery} < ${secondQueryTarget.firstTxt} OR ${firstQuery} > ${secondQueryTarget.secondTxt})`;
+          default:
+            if (this.containsAnyLetters(secondQueryTarget)) {
+              return `${firstQuery} ${queryRequest} '${secondQueryTarget}'`;
+            } else {
+              let queryString = `${firstQuery} ${queryRequest} ${secondQueryTarget}`;
+              const brackets = ["(", ")", "[", "]", "{", "}"];
+              if (brackets.includes(secondQueryTarget.charAt(0))) {
+                const stringFiedValue = JSON.stringify(secondQueryTarget).replace(/"/g, `'`)
+                queryString= `${firstQuery} ${queryRequest} (${stringFiedValue})`;
+              }else{
+                queryString = `${firstQuery} ${queryRequest} '${secondQueryTarget}'`;
+              }
+              return queryString;
+            }
+        }
+      };
 
     // tableSetCounts = (tableSetCounts:{id:string,deleted:boolean}[])=>{
     //     let counts = 0

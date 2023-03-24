@@ -19,7 +19,8 @@ export default class CallToAction extends React.PureComponent<PropsType,any>{
     this.sendQuery = this.sendQuery.bind(this);
     this.addBlock = this.addBlock.bind(this);
     this.addTable = this.addTable.bind(this);
-    this.connector_function = this.connector_function.bind(this)
+    this.connector_function = this.connector_function.bind(this);
+    this.sendQuerySet = this.sendQuerySet.bind(this);
   }
 
   async sendQuery() {
@@ -89,7 +90,7 @@ export default class CallToAction extends React.PureComponent<PropsType,any>{
               if (queryValue === "IN" || queryValue === "NOT_IN") {
                 value = [];
                 el.checkedList.forEach((el) => value.push(el.checkValue));
-                if (self.containsAnyLetters(value)) {
+                if (helper.containsAnyLetters(value)) {
                   let queryIn = `${attributeQuery} IN (${
                     "'" + value.join("', '") + "'"
                   })`;
@@ -117,7 +118,7 @@ export default class CallToAction extends React.PureComponent<PropsType,any>{
                     value
                   );
                 } else {
-                  if (self.containsAnyLetters(value)) {
+                  if (helper.containsAnyLetters(value)) {
                     let queryInput = `${attributeQuery} ${queryValue} '${value}'`;
                     query.where = queryInput;
                     normalizedWhereToSendQuery.push(queryInput);
@@ -214,12 +215,12 @@ export default class CallToAction extends React.PureComponent<PropsType,any>{
         this.connector_function({layerView,query,queryRequest,values,layer,AndOr,field: firstQuery,source: "singleQuery"});
         break;
       case "IN":
-        if (self.containsAnyLetters(secondQueryTarget)) {
+        if (helper.containsAnyLetters(secondQueryTarget)) {
           query.where = `${firstQuery} IN (${"'" + secondQueryTarget.join("', '") + "'"})`;
           this.connector_function({layerView,query,queryRequest,values,layer,AndOr,field: firstQuery,source: "singleQuery"});
         } else {
-          if (self.checkParenthesis(secondQueryTarget.join(","))) {
-            const stringFiedValue = self.loopToGetString(secondQueryTarget);
+          if (helper.checkParenthesis(secondQueryTarget.join(","))) {
+            const stringFiedValue = helper.loopToGetString(secondQueryTarget);
             query.where = `${firstQuery} IN (${stringFiedValue})`;
           } else {
             query.where = `${firstQuery} IN (${secondQueryTarget.join(",")})`;
@@ -228,13 +229,13 @@ export default class CallToAction extends React.PureComponent<PropsType,any>{
         }
         break;
       case "NOT_IN":
-        if (self.containsAnyLetters(secondQueryTarget)) {
+        if (helper.containsAnyLetters(secondQueryTarget)) {
           query.where = `NOT ${firstQuery} IN (${"'" + secondQueryTarget.join("', '") + "'"})`;
           query.outFields = [`${firstQuery}`];
           this.connector_function({layerView,query,queryRequest,values,layer,AndOr,field: firstQuery,source: "singleQuery"});
         } else {
-          if (self.checkParenthesis(secondQueryTarget.join(","))) {
-            const stringFiedValue = self.loopToGetString(secondQueryTarget);
+          if (helper.checkParenthesis(secondQueryTarget.join(","))) {
+            const stringFiedValue = helper.loopToGetString(secondQueryTarget);
             query.where = `NOT  ${firstQuery} IN (${stringFiedValue})`;
           } else {
             query.where = `NOT  ${firstQuery} IN (${secondQueryTarget.join(",")})`;
@@ -252,7 +253,7 @@ export default class CallToAction extends React.PureComponent<PropsType,any>{
         this.connector_function({layerView,query,queryRequest,values,layer,AndOr,field: firstQuery,source: "singleQuery"});
         break;
       default:
-        if (self.containsAnyLetters(secondQueryTarget)) {
+        if (helper.containsAnyLetters(secondQueryTarget)) {
           query.where = `${firstQuery} ${queryRequest} '${secondQueryTarget}'`;
           this.connector_function({layerView,query,queryRequest,values,layer,AndOr,field: firstQuery,source: "singleQuery"});
         } else {
@@ -302,8 +303,8 @@ export default class CallToAction extends React.PureComponent<PropsType,any>{
     ) {
       let currentQuery = null;
       if (self.queryArray.length) currentQuery = self.queryArray.join(" ");
-      if (self.state.whereClauseSet?.length) {
-        const { setQueryString, outFields } = self.sendQuerySet();
+      if (this.context.whereClauseSet?.length) {
+        const { setQueryString, outFields } = this.sendQuerySet();
         if (source === "singleQuery") {
           if (setQueryString)
             currentQuery += " " + AndOr + " " + "(" + setQueryString + ")";
@@ -317,9 +318,7 @@ export default class CallToAction extends React.PureComponent<PropsType,any>{
           if (outFields?.length) self.outfields = outFields;
         }
       }
-      if (!self.outfields.includes("OBJECTID")) {
-        self.outfields.push("OBJECTID");
-      }
+      if (!self.outfields.includes("OBJECTID"))self.outfields.push("OBJECTID");
       query.outFields = self.outfields;
       query.returnGeometry = true;
       query.where = currentQuery;
@@ -352,10 +351,7 @@ export default class CallToAction extends React.PureComponent<PropsType,any>{
         self.setState({ higlightSelected: higlightSelectedArr });
       }
 
-      const selectedLayersContents = helper.getSelectedContentsLayer(
-        [results.features],
-        checkedLayer_
-      );
+      const selectedLayersContents = helper.getSelectedContentsLayer([results.features],checkedLayer_);
       const numberOfAttributes = helper.getNumberOfAttributes(selectedLayersContents);
       let activeV = this.context.jimuMapView;
       self.setState({ layerContents: selectedLayersContents,checkedLayer_: checkedLayer_});
@@ -391,6 +387,143 @@ export default class CallToAction extends React.PureComponent<PropsType,any>{
       }
     }
   };
+
+  sendQuerySet() {
+    const checkedQuery = [
+      "is null",
+      "is not null",
+      "IN",
+      "NOT_IN",
+      "included",
+      "is_not_included",
+    ];
+    const likelyQuery = ["LIKE%", "%LIKE", "%LIKE%", "NOT LIKE"];
+    const self:Widget = this.context.parent;
+    let setQueryString = null;
+    let outFields = [];
+    if (this.context.SetBlock.length) {
+      this.context.SetBlock.forEach((block, i) => {
+        const blockId = block?.blockId;
+        const whereClauseSet = block[`${blockId}`];
+        const AndOrSet = block?.AndOrSet;
+        if (AndOrSet === "AND") {
+          if (whereClauseSet?.length) {
+            whereClauseSet.forEach((el, j) => {
+              let attributeQuery = el.attributeQuery;
+              let queryValue = el.queryValue;
+              let value;
+              if (queryValue === "is null" || queryValue === "is not null") {
+                value = el.value?.txt ?? "";
+              } else if (queryValue === "IN" || queryValue === "NOT_IN") {
+                value = [];
+                el.checkedListSet.forEach((el) => value.push(el.checkValue));
+              } else if (queryValue === "included" || queryValue === "is_not_included"
+              ) {
+                value = {firstTxt: el.firstTxt.value,secondTxt: el.secondTxt.value};
+              } else if (!checkedQuery.includes(queryValue)) {
+                value = el.value?.txt ?? "";
+              }
+              if (setQueryString) {
+                setQueryString += helper.setQueryConstructor(
+                  queryValue,
+                  attributeQuery,
+                  value
+                );
+              } else {
+                setQueryString = helper.setQueryConstructor(
+                  queryValue,
+                  attributeQuery,
+                  value
+                );
+              }
+              if (j < whereClauseSet.length - 1)
+                setQueryString += "  " + AndOrSet + "  ";
+                outFields.push(`${attributeQuery}`);
+            });
+          }
+        } else {
+          let normalizedWhereToSendQuery: any = [];
+          if (whereClauseSet?.length) {
+            whereClauseSet.forEach((el, j) => {
+              let attributeQuery = el.attributeQuery;
+              let queryValue = el.queryValue;
+              let value;
+              if (queryValue === "IN" || queryValue === "NOT_IN") {
+                value = [];
+                if (queryValue === "IN" && el.checkedListSet.length) {
+                  el.checkedListSet.forEach((el) => value.push(el.checkValue));
+                } else if (
+                  queryValue === "NOT_IN" &&
+                  this.context.counterIsChecked.length
+                ) {
+                  this.context.counterIsChecked.forEach((el) =>value.push(el.checkValue));
+                }
+              }
+              if (
+                queryValue === "included" ||
+                queryValue === "is_not_included"
+              ) {
+                value = {firstTxt: el.firstTxt.value,secondTxt: el.secondTxt.value};
+              } else if (!checkedQuery.includes(queryValue)) {
+                value = el.value?.txt ?? "";
+              }
+              if (setQueryString) {
+                setQueryString += helper.setQueryConstructor(
+                  queryValue,
+                  attributeQuery,
+                  value
+                );
+              } else {
+                setQueryString = helper.setQueryConstructor(
+                  queryValue,
+                  attributeQuery,
+                  value
+                );
+              }
+              if (j < whereClauseSet.length - 1)
+                setQueryString += "  " + AndOrSet + "  ";
+                outFields.push(`${attributeQuery}`);
+            });
+          }
+        }
+        if (setQueryString) {
+          if (this.context.SetBlock[i + 1]) {
+            const nextBlock = this.context.SetBlock[i + 1];
+            const nextBlockId = nextBlock?.blockId;
+            const nextWhereClauseSet = nextBlock[`${nextBlockId}`];
+            if (
+              (
+                i === 0 &&
+                this.context.SetBlock.length >= 2 &&
+                nextWhereClauseSet?.length) ||
+                !["("].includes(setQueryString[0])
+              ) {
+                setQueryString = "(" + setQueryString;
+              }
+              if (
+                i < this.context.SetBlock.length - 1 &&
+                nextWhereClauseSet?.length
+              ) {
+                setQueryString += " ) " + this.context.AndOr + " ( ";
+              }
+          }
+          if (this.context.SetBlock[i - 1]) {
+            const prevBlock = this.context.SetBlock[i - 1];
+            const prevBlockId = prevBlock?.blockId;
+            const prevWhereClauseSet = prevBlock[`${prevBlockId}`];
+            if (
+              this.context.SetBlock.length >= 2 &&
+              i === this.context.SetBlock.length - 1 &&
+              prevWhereClauseSet.length
+            ) {
+              setQueryString = setQueryString + ")";
+            }
+          }
+        }
+      });
+    }
+    return { setQueryString, outFields };
+  }
 
   addTable = () => {
         const self = this.context.parent;
@@ -442,7 +575,6 @@ export default class CallToAction extends React.PureComponent<PropsType,any>{
           [`${nextCurrentId}-${SetBlock.length}`]: false,
         },
       });
-  
       const tableLength = this.context.tables
         .map((el, idx) => (el.deleted == false ? idx : ""))
         .filter(String).length;
