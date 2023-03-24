@@ -760,28 +760,28 @@ export default class Widget extends React.PureComponent<
     }
   }
 
-  addTable = () => {
-    const currentId = this.state.tableCounter;
-    this.setState({
-      tables: [
-        ...this.state.tables,
-        { id: this.state.tableCounter, deleted: false },
-      ],
-      tableCounter: this.state.tableCounter + 1,
-      dropDowns: { ...this.state.dropDowns, [currentId]: false },
-    });
-    const tableLength = this.state.tables
-      .map((el, idx) => (el.deleted == false ? idx : ""))
-      .filter(String).length;
-    const tablesSetLength = this.state.SetBlock.length;
-    if (tableLength > 0) {
-      this.setState({ showAddSelect: false });
-    }
+  // addTable = () => {
+  //   const currentId = this.state.tableCounter;
+  //   this.setState({
+  //     tables: [
+  //       ...this.state.tables,
+  //       { id: this.state.tableCounter, deleted: false },
+  //     ],
+  //     tableCounter: this.state.tableCounter + 1,
+  //     dropDowns: { ...this.state.dropDowns, [currentId]: false },
+  //   });
+  //   const tableLength = this.state.tables
+  //     .map((el, idx) => (el.deleted == false ? idx : ""))
+  //     .filter(String).length;
+  //   const tablesSetLength = this.state.SetBlock.length;
+  //   if (tableLength > 0) {
+  //     this.setState({ showAddSelect: false });
+  //   }
 
-    if (tablesSetLength > 0) {
-      this.setState({ showAddSelect: false });
-    }
-  };
+  //   if (tablesSetLength > 0) {
+  //     this.setState({ showAddSelect: false });
+  //   }
+  // };
 
   addTwoTable = (blockId) => {
     let newStateBlock = [...this.state.SetBlock];
@@ -2108,16 +2108,22 @@ export default class Widget extends React.PureComponent<
                         parent:this,
                         whereClauses:this.state.whereClauses,
                         AndOr:this.state.AndOr,
+                        AndOrSet:this.state.AndOrSet,
                         jimuMapView:this.state.jimuMapView,
                         SetBlock:this.state.SetBlock,
-                        currentTargetText:this.state.currentTargetText
+                        currentTargetText:this.state.currentTargetText,
+                        tables:this.state.tables,
+                        tableCounter:this.state.tableCounter,
+                        tableCounterSet:this.state.tableCounterSet,
+                        dropDowns:this.state.dropDowns,
+                        dropDownsSet:this.state.dropDownsSet
                       }}
                     >
                       <CallToAction 
                         width={width}
-                        addTable = {this.addTable}
-                        currentTargetText = {this.state.currentTargetText}
-                        addBlock = {this.addBlock}
+                        // addTable = {this.addTable}
+                        // currentTargetText = {this.state.currentTargetText}
+                        // addBlock = {this.addBlock}
                         // sendQuery = {this.sendQuery}
                         functionRefresh = {this.functionRefresh}
                       />

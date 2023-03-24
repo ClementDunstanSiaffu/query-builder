@@ -8,9 +8,9 @@ import helper from '../../connector'
 
 type PropsType = {
     width:number,
-    addTable:()=>void,
-    currentTargetText:string,
-    addBlock:()=>void,
+    // addTable:()=>void,
+    // currentTargetText:string,
+    // addBlock:()=>void,
     // sendQuery:()=>void,
     functionRefresh:()=>void
 }
@@ -22,6 +22,8 @@ export default class CallToAction extends React.PureComponent<PropsType,any>{
     constructor(props:PropsType){
         super(props);
         this.sendQuery = this.sendQuery.bind(this);
+        this.addBlock = this.addBlock.bind(this);
+        this.addTable = this.addTable.bind(this);
     }
 
     async sendQuery() {
@@ -176,7 +178,67 @@ export default class CallToAction extends React.PureComponent<PropsType,any>{
           self.setState({ isAttributeTableClosed: true });
           self.returnToOriginalExtent();
         }
-      }
+    }
+
+    addTable = () => {
+        const self = this.context.parent;
+        const currentId = this.context.tableCounter;
+        self.setState({
+            tables: [...this.context.tables,{ id: this.context.tableCounter, deleted: false },],
+            tableCounter: this.context.tableCounter + 1,
+            dropDowns: { ...this.context.dropDowns, [currentId]: false },
+        });
+        const tableLength = this.context.tables.map((el, idx) => (el.deleted == false ? idx : "")).filter(String).length;
+        const tablesSetLength = this.context.SetBlock.length;
+        if (tableLength > 0) {
+          self.setState({ showAddSelect: false });
+        }
+    
+        if (tablesSetLength > 0) {
+          self.setState({ showAddSelect: false });
+        }
+    };
+
+    addBlock = () => {
+      const self = this.context.parent;
+      const SetBlock = this.context.SetBlock
+      let idOne = SetBlock.tableCounterSet ?? 0;
+      let idTwo = idOne + 1;
+      const currentId = idOne;
+      const nextCurrentId = idTwo;
+      let newBlock = [...SetBlock];
+      newBlock.push({
+        blockId:SetBlock.length,
+        [`${SetBlock.length}`]: [],
+        tablesSet: [
+          { id: idOne, deleted: false },
+          { id: idTwo, deleted: false },
+        ],
+        tableCounterSet: this.context.tableCounterSet + 2,
+        dropDownsSet: {
+          ...this.context.dropDownsSet,
+          [`${currentId}-${SetBlock.length}`]: false,
+          [`${nextCurrentId}-${SetBlock.length}`]: false,
+        },
+        AndOrSet: this.context.AndOrSet,
+      });
+      self.setState({
+        SetBlock:newBlock,
+        dropDownsSet: {
+          ...this.context.dropDownsSet,
+          [`${currentId}-${SetBlock.length}`]: false,
+          [`${nextCurrentId}-${SetBlock.length}`]: false,
+        },
+      });
+  
+      // if(this.state.tables.length > 0)this.setState({showAddSelect:false});
+      const tableLength = this.context.tables
+        .map((el, idx) => (el.deleted == false ? idx : ""))
+        .filter(String).length;
+      const tablesSetLength = SetBlock.length;
+  
+      if (tableLength > 0) self.setState({ showAddSelect: false });
+    };
 
     render(): React.ReactNode {
         return(
@@ -189,8 +251,8 @@ export default class CallToAction extends React.PureComponent<PropsType,any>{
                     style={this.props.width >= 626 ? { gap: "2%" }:{gap: "2%",width:"100%",display: "flex",justifyContent:"center"}}
                 >
                     <Button
-                        disabled={!this.props.currentTargetText}
-                        onClick={this.props.addTable}
+                        disabled={!this.context.currentTargetText}
+                        onClick={this.addTable}
                         size="default"
                         className="d-flex align-items-center  mb-2"
                         type="secondary"
@@ -202,8 +264,8 @@ export default class CallToAction extends React.PureComponent<PropsType,any>{
                         <p className="m-0 p-0">Aggiungi espressione</p>
                     </Button>
                     <Button
-                        disabled={!this.props.currentTargetText}
-                        onClick={this.props.addBlock}
+                        disabled={!this.context.currentTargetText}
+                        onClick={this.addBlock}
                         size="default"
                         className="d-flex align-items-center  mb-2"
                         type="secondary"
