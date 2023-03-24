@@ -5,6 +5,7 @@ import ReactResizeDetector from "../lib/ResizeDetector";
 import {queryConstructorNumber,queryConstructorString} from "../utils/queryTableValue";
 import '../../assets/styles/styles.scss';
 import CommonSecondConstructor from "./common/inputs/commonSecondConstructor";
+import Widget from "../widget";
 
 function Table(props) {
   const {
@@ -31,7 +32,7 @@ function Table(props) {
     univocoSelectHandler,
     dropDown,
     isOpenDropD,
-    onChangeCheckBox,
+    // onChangeCheckBox,
     openDrop,
     closeDrop,
     opened,
@@ -45,6 +46,107 @@ function Table(props) {
   } = props;
 
   const currentwhereClauses = whereClauses.find((item) => item.id === `${tablesId}`);
+
+  const onChangeCheckBox = (event) => {
+    const self:Widget = parent;
+    let currentId = event.target.attributes.id.value;
+    let objectId = event.target.attributes.value.value;
+    let queryIndex;
+    if (event.target.checked) {
+      queryIndex = whereClauses
+        .map((obj) => obj.id)
+        .indexOf(currentId);
+      if (queryIndex !== -1) {
+        whereClauses.map((obj) => {
+          if (obj.id === queryIndex.toString()) {
+            if (!obj.checkedList) {
+              obj = {
+                ...obj,
+                checkedList: [
+                  {
+                    checkValue: event.target.attributes.name.value,
+                    isChecked: true,
+                  },
+                ],
+              };
+              let filteredWhereClauses = whereClauses.filter((a) => a.id !== obj.id);
+              filteredWhereClauses.push(obj);
+              filteredWhereClauses.sort(function (a, b) {
+                return a.id < b.id ? -1 : a.id == b.id ? 0 : 1;
+              });
+              self.setState({whereClauses: Array.from(new Set(filteredWhereClauses))});
+              // console.log(filteredWhereClauses,"check filtered whereclause first")
+              // self.setState({whereClauses: filteredWhereClauses},
+              //   () => {
+              //     filteredWhereClauses.sort(function (a, b) {
+              //       return a.id < b.id ? -1 : a.id == b.id ? 0 : 1;
+              //     });
+              //     // Remove duplicate entries from the whereClauses array
+              //     self.setState({whereClauses: Array.from(new Set(filteredWhereClauses))});
+              //   }
+              // );
+            } else {
+              const ifAlreadyCheck = obj.checkedList
+                .map((obj) => obj.checkValue)
+                .indexOf(event.target.attributes.name.value);
+              if (ifAlreadyCheck == -1) {
+                obj = {
+                  ...obj,
+                  checkedList: [
+                    ...obj.checkedList,
+                    {
+                      checkValue: event.target.attributes.name.value,
+                      isChecked: true,
+                    },
+                  ],
+                };
+                // Find the index of the obj object in the whereClauses array
+                const index = whereClauses.findIndex((a) => a.id === obj.id);
+                // Remove the obj object from the whereClauses array
+                whereClauses.splice(index, 1);
+                // Add the updated obj object to the whereClauses array
+                whereClauses.push(obj);
+                self.setState({whereClauses: whereClauses},
+                  () => {
+                    whereClauses.sort(function (a, b) {
+                      return a.id < b.id ? -1 : a.id == b.id ? 0 : 1;
+                    });
+
+                    // Remove duplicate entries from the whereClauses array
+                    self.setState({whereClauses: Array.from(new Set(whereClauses)),
+                    });
+                  }
+                );
+              }
+            }
+          }
+          return { obj };
+        });
+      }
+    }
+    if (event.target.checked === false) {
+      // Find the obj object in the whereClauses array
+      const obj = whereClauses.find((a) => a.id === currentId);
+      // Remove the checkValue from the checkedList array
+      obj.checkedList = obj.checkedList.filter(
+        (a) => a.checkValue !== event.target.attributes.name.value
+      );
+      // Update the obj object in the whereClauses array
+      const index = whereClauses.findIndex(
+        (a) => a.id === currentId
+      );
+      whereClauses[index] = obj;
+      self.setState({whereClauses:whereClauses},
+        () => {
+          whereClauses.sort(function (a, b) {
+            return a.id < b.id ? -1 : a.id == b.id ? 0 : 1;
+          });
+          // Remove duplicate entries from the whereClauses array
+          self.setState({whereClauses: Array.from(new Set(whereClauses))});
+        }
+      );
+    }
+  };
 
   const styles = {
     smallerWidthOuterContainer:{
