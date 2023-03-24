@@ -15,13 +15,7 @@ interface resultLayerListObject {
     urlServiceServer:string
 }
 
-type PropsType = {
-    // onChangeSelectLayer :(e:ChangeEvent)=>void,
-    // currentSelectedId:string,
-    // resultLayerList:resultLayerListObject[],
-    // showAddSelect:boolean,
-    // chooseAndOr:(e:ChangeEvent)=>void
-}
+type PropsType = {}
 
 export default class LayerSelectComponent extends React.PureComponent<PropsType,any>{
 

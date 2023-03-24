@@ -46,10 +46,8 @@ export default class Widget extends React.PureComponent<
     this.init();
     this.activeViewChangeHandler = this.activeViewChangeHandler.bind(this);
     //Layer
-    // this.onChangeSelectLayer = this.onChangeSelectLayer.bind(this);
     this.getQueryAttribute = this.getQueryAttribute.bind(this);
     this.getQuery = this.getQuery.bind(this);
-    this.sendQuery = this.sendQuery.bind(this);
     this.sendQuerySet = this.sendQuerySet.bind(this);
     // this.runbothQueries= this.runbothQueries.bind(this);
     this.thirdQuery = this.thirdQuery.bind(this);
@@ -361,163 +359,6 @@ export default class Widget extends React.PureComponent<
   //TODO la sendQuery andrà risistemata quando si aggiungerà oltre all'espressione anche il set di espressioni
   // perché ora per l'AND fa il ciclo for su ogni where inserita nell'array ma dopo sarà necessario scomporre per creare le espressioni
 
-  // step1
-  async sendQuery() {
-    this.queryArray = [];
-    this.outfields = [];
-    const checkedQuery = [
-      "is null",
-      "is not null",
-      "IN",
-      "NOT_IN",
-      "included",
-      "is_not_included",
-    ];
-    const likelyQuery = ["LIKE%", "%LIKE", "%LIKE%", "NOT LIKE"];
-    if (this.state.whereClauses.length) {
-      if (this.state.AndOr === "AND") {
-        this.state.whereClauses.forEach((el, id) => {
-          let attributeQuery = el.attributeQuery;
-          let queryValue = el.queryValue;
-          let value;
-          if (queryValue === "is null" || queryValue === "is not null") {
-            value = el.value?.txt ?? "";
-          } else if (queryValue === "IN" || queryValue === "NOT_IN") {
-            value = [];
-            el.checkedList.forEach((el) => value.push(el.checkValue));
-          } else if (
-            queryValue === "included" ||
-            queryValue === "is_not_included"
-          ) {
-            value = {
-              firstTxt: el.firstTxt.value,
-              secondTxt: el.secondTxt.value,
-            };
-          } else if (!checkedQuery.includes(queryValue)) {
-            value = el.value?.txt ?? "";
-          }
-          if (this.state.jimuMapView) {
-            this.state.jimuMapView.view.map.allLayers.forEach((f, index) => {
-              if (f.title === this.state.currentTargetText) {
-                this.state.jimuMapView.view
-                  .whenLayerView(f)
-                  .then((layerView) => {
-                    this.queryConstructor(
-                      //step 2 start querying
-                      layerView,
-                      attributeQuery,
-                      queryValue,
-                      value,
-                      this.state.AndOr,
-                      this.connector_function,
-                      f
-                    );
-                  });
-              }
-            });
-          }
-        });
-      } else {
-        let normalizedWhereToSendQuery: any = [];
-        this.state.whereClauses.forEach((el, id) => {
-          const query = new Query();
-          let attributeQuery = el.attributeQuery;
-          let queryValue = el.queryValue;
-          let value;
-          if (queryValue === "is null" || queryValue === "is not null") {
-            let queryIn = `${attributeQuery} ${queryValue}`;
-            query.where = queryIn;
-            normalizedWhereToSendQuery.push(queryIn);
-          }
-          if (queryValue === "IN" || queryValue === "NOT_IN") {
-            value = [];
-            el.checkedList.forEach((el) => value.push(el.checkValue));
-            if (this.containsAnyLetters(value)) {
-              let queryIn = `${attributeQuery} IN (${
-                "'" + value.join("', '") + "'"
-              })`;
-              query.where = queryIn;
-              normalizedWhereToSendQuery.push(queryIn);
-            } else {
-              let queryIn = `${attributeQuery} IN (${value.join(",")})`;
-              query.where = queryIn;
-              normalizedWhereToSendQuery.push(queryIn);
-            }
-          }
-          if (queryValue === "included" || queryValue === "is_not_included") {
-            let queryIn;
-            queryValue === "included"
-              ? (queryIn = `${attributeQuery} > ${el.firstTxt.value} AND ${attributeQuery} < ${el.secondTxt.value}`)
-              : (queryIn = `${attributeQuery} < ${el.firstTxt.value} OR ${attributeQuery} > ${el.secondTxt.value}`);
-            query.where = queryIn;
-            normalizedWhereToSendQuery.push(queryIn);
-          } else if (!checkedQuery.includes(queryValue)) {
-            value = el.value?.txt ?? "";
-            if (likelyQuery.includes(queryValue)) {
-              query.where = helper.likelyQuery(
-                attributeQuery,
-                queryValue,
-                value
-              );
-            } else {
-              if (this.containsAnyLetters(value)) {
-                let queryInput = `${attributeQuery} ${queryValue} '${value}'`;
-                query.where = queryInput;
-                normalizedWhereToSendQuery.push(queryInput);
-              } else {
-                let queryInput = `${attributeQuery} ${queryValue} ${value}`;
-                query.where = queryInput;
-                normalizedWhereToSendQuery.push(queryInput);
-              }
-            }
-          }
-          if (this.state.jimuMapView) {
-            this.state.jimuMapView.view.map.allLayers.forEach((f, index) => {
-              if (f.title === this.state.currentTargetText) {
-                this.state.jimuMapView.view
-                  .whenLayerView(f)
-                  .then((layerView) => {
-                    this.connector_function({
-                      layerView,
-                      query,
-                      queryRequest: "OR",
-                      layer: f,
-                      AndOr: this.state.AndOr,
-                      field: attributeQuery,
-                      source: "singleQuery",
-                    });
-                  });
-              }
-            });
-          }
-        });
-      }
-    } else if (this.state.SetBlock.length) {
-      if (this.state.jimuMapView) {
-        this.queryArray = [];
-        this.state.jimuMapView.view.map.allLayers.forEach((f, index) => {
-          if (f.title === this.state.currentTargetText) {
-            this.state.jimuMapView.view.whenLayerView(f).then((layerView) => {
-              this.connector_function({
-                layerView,
-                query: new Query(),
-                queryRequest: null,
-                layer: f,
-                AndOr: this.state.AndOr,
-                field: null,
-                source: "setQuery",
-              });
-            });
-          }
-        });
-      }
-    } else {
-      this.attributeTableConnector.closeTable();
-      this.setState({ isAttributeTableClosed: true });
-      this.returnToOriginalExtent();
-    }
-  }
-
   setQueryConstructor = (queryRequest, firstQuery, secondQueryTarget) => {
     switch (queryRequest) {
       case "LIKE%":
@@ -739,49 +580,6 @@ export default class Widget extends React.PureComponent<
       }
     });
   }
-
-  // async onChangeSelectLayer(e) {
-  //   this.graphicLayerFound.removeAll();
-  //   if (this.state.jimuMapView) {
-  //     this.state.jimuMapView.view.map.allLayers.forEach((f, index) => {
-  //       if (f.title === e.currentTarget.innerText) {
-  //         this.state.jimuMapView.view.whenLayerView(f).then((layerView) => {
-  //           this.setState({
-  //             resultsLayerSelected: f,
-  //             currentTargetText: e.currentTarget.innerText,
-  //             currentSelectedId: e.currentTarget.value,
-  //           });
-  //           this.props.dispatch(
-  //             appActions.widgetStatePropChange("value", "checkedLayers", [f.id])
-  //           );
-  //         });
-  //       }
-  //     });
-  //   }
-  // }
-
-  // addTable = () => {
-  //   const currentId = this.state.tableCounter;
-  //   this.setState({
-  //     tables: [
-  //       ...this.state.tables,
-  //       { id: this.state.tableCounter, deleted: false },
-  //     ],
-  //     tableCounter: this.state.tableCounter + 1,
-  //     dropDowns: { ...this.state.dropDowns, [currentId]: false },
-  //   });
-  //   const tableLength = this.state.tables
-  //     .map((el, idx) => (el.deleted == false ? idx : ""))
-  //     .filter(String).length;
-  //   const tablesSetLength = this.state.SetBlock.length;
-  //   if (tableLength > 0) {
-  //     this.setState({ showAddSelect: false });
-  //   }
-
-  //   if (tablesSetLength > 0) {
-  //     this.setState({ showAddSelect: false });
-  //   }
-  // };
 
   addTwoTable = (blockId) => {
     let newStateBlock = [...this.state.SetBlock];
@@ -1765,8 +1563,6 @@ export default class Widget extends React.PureComponent<
           }else{
             query.where = `${firstQuery} ${queryRequest} '${secondQueryTarget}'`;
           }
-          // query.where = `${firstQuery} ${queryRequest} ${secondQueryTarget}`;
-          // query.outFields = [`${firstQuery}`];
           connector_function({
             layerView,
             query,
@@ -1780,8 +1576,6 @@ export default class Widget extends React.PureComponent<
         }
     }
   };
-
-  // chooseAndOr = (e) =>this.setState({ AndOr: e.target.value });
   
   chooseAndOrSet = (e, blockId) => {
     const currentSetBlock = [...this.state.SetBlock];
@@ -2105,13 +1899,7 @@ export default class Widget extends React.PureComponent<
                         currentSelectedId:this.state.currentSelectedId
                       }}
                     >
-                      <LayerSelectComponent 
-                        // onChangeSelectLayer = {this.onChangeSelectLayer}
-                        // currentSelectedId = {this.state.currentSelectedId}
-                        // resultLayerList = {this.state.resultLayerList}
-                        // showAddSelect = {this.state.showAddSelect}
-                        // chooseAndOr = {this.chooseAndOr}
-                      />
+                      <LayerSelectComponent />
                     </LayerSelectContext.Provider>
               
                     <CallToActionContext.Provider 
@@ -2130,14 +1918,7 @@ export default class Widget extends React.PureComponent<
                         dropDownsSet:this.state.dropDownsSet
                       }}
                     >
-                      <CallToAction 
-                        width={width}
-                        // addTable = {this.addTable}
-                        // currentTargetText = {this.state.currentTargetText}
-                        // addBlock = {this.addBlock}
-                        // sendQuery = {this.sendQuery}
-                        functionRefresh = {this.functionRefresh}
-                      />
+                      <CallToAction width={width} functionRefresh = {this.functionRefresh}/>
                     </CallToActionContext.Provider>
                 
                     <div

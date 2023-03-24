@@ -8,10 +8,6 @@ import helper from '../../connector'
 
 type PropsType = {
     width:number,
-    // addTable:()=>void,
-    // currentTargetText:string,
-    // addBlock:()=>void,
-    // sendQuery:()=>void,
     functionRefresh:()=>void
 }
 
@@ -65,7 +61,6 @@ export default class CallToAction extends React.PureComponent<PropsType,any>{
                       .whenLayerView(f)
                       .then((layerView) => {
                         self.queryConstructor(
-                          //step 2 start querying
                           layerView,
                           attributeQuery,
                           queryValue,
@@ -231,7 +226,6 @@ export default class CallToAction extends React.PureComponent<PropsType,any>{
         },
       });
   
-      // if(this.state.tables.length > 0)this.setState({showAddSelect:false});
       const tableLength = this.context.tables
         .map((el, idx) => (el.deleted == false ? idx : ""))
         .filter(String).length;
