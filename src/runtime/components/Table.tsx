@@ -6,10 +6,12 @@ import {queryConstructorNumber,queryConstructorString} from "../utils/queryTable
 import '../../assets/styles/styles.scss';
 import CommonSecondConstructor from "./common/inputs/commonSecondConstructor";
 import Widget from "../widget";
+import { TablesContext } from "../../context/contextApi";
+// import { useContext } from "react";
 
 function Table(props) {
   const {
-    list,
+    // list,
     handleThirdQuery,
     textInputHandler,
     multiSelectHandler,
@@ -17,12 +19,12 @@ function Table(props) {
     textFirstIncludedHandler,
     textSecondIncludedHandler,
     dropdownValueQuery,
-    handleCheckBox,
-    isChecked,
-    counterIsChecked,
-    dropDownToggler,
+    // handleCheckBox,
+    // isChecked,
+    // counterIsChecked,
+    // dropDownToggler,
     functionCounterIsChecked,
-    checkedToQuery,
+    // checkedToQuery,
     deleteTable,
     tablesId,
     getQueryAttribute,
@@ -31,19 +33,24 @@ function Table(props) {
     getQuery,
     univocoSelectHandler,
     // dropDown,
-    isOpenDropD,
+    // isOpenDropD,
     // onChangeCheckBox,
     openDrop,
     closeDrop,
-    opened,
-    autOpen,
-    mouseleave,
+    // opened,
+    // autOpen,
+    // mouseleave,
     onmouseLeave,
     dropdowns,
     currentTable,
-    queryChanged,
-    parent
+    // queryChanged,
+    // parent
   } = props;
+
+  const context = React.useContext(TablesContext);
+
+  //@ts-ignore
+  const {list,parent,queryChanged} = context;
 
   const currentwhereClauses = whereClauses.find((item) => item.id === `${tablesId}`);
 
@@ -194,7 +201,7 @@ function Table(props) {
       <ReactResizeDetector handleWidth handleHeight>
         {({ width, height }) => (
             <div className="my-1">
-              {list.fields ? (
+              {list?.fields ? (
                 <>
                   <div style={width <= 625 ? styles.smallerWidthOuterContainer:styles.largerWidthOuterContainer}>
                     <div style = {width <= 625 ? styles.smallerWidthInnerContainer:styles.largerWidthInnerContainer}>
@@ -268,24 +275,24 @@ function Table(props) {
                         textFirstIncludedHandler={textFirstIncludedHandler}
                         textSecondIncludedHandler={textSecondIncludedHandler}
                         dropdownValueQuery={dropdownValueQuery}
-                        handleCheckBox={handleCheckBox}
-                        isChecked={isChecked}
-                        counterIsChecked={counterIsChecked}
+                        // handleCheckBox={handleCheckBox}
+                        // isChecked={isChecked}
+                        // counterIsChecked={counterIsChecked}
                         functionCounterIsChecked={functionCounterIsChecked}
-                        checkedToQuery={checkedToQuery}
+                        // checkedToQuery={checkedToQuery}
                         getQueryAttribute={getQueryAttribute}
                         whereClauses={whereClauses}
                         tablesId={tablesId}
-                        dropDownToggler={dropDownToggler}
+                        // dropDownToggler={dropDownToggler}
                         univocoSelectHandler={univocoSelectHandler}
                         // dropDown={dropDown}
-                        isOpenDropD={isOpenDropD}
+                        // isOpenDropD={isOpenDropD}
                         onChangeCheckBox={onChangeCheckBox}
                         openDrop={openDrop}
                         closeDrop={closeDrop}
-                        opened={opened}
-                        autOpen={autOpen}
-                        mouseleave={mouseleave}
+                        // opened={opened}
+                        // autOpen={autOpen}
+                        // mouseleave={mouseleave}
                         onmouseLeave={onmouseLeave}
                         dropdowns={dropdowns}
                         width={width}

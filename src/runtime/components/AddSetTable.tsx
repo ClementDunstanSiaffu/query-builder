@@ -6,23 +6,24 @@ import {queryConstructorNumber,queryConstructorString,} from "../utils/queryTabl
 import '../../assets/styles/styles.scss';
 import CommonSecondConstructor from "./common/inputs/commonSecondConstructor";
 import Widget from "../widget";
+import { TablesContext } from "../../context/contextApi";
 
 function AddSetTable(props) {
   const {
-    list,
+    // list,
     handleThirdQuery,
     textInputHandler,
     multiSelectHandler,
     dropdownItemHandler,
     textFirstIncludedHandler,
     textSecondIncludedHandler,
-    dropdownValueQuery,
-    handleCheckBox,
-    isChecked,
-    counterIsChecked,
-    dropDownToggler,
+    // dropdownValueQuery,
+    // handleCheckBox,
+    // isChecked,
+    // counterIsChecked,
+    // dropDownToggler,
     functionCounterIsChecked,
-    checkedToQuery,
+    // checkedToQuery,
     deleteTable,
     getQueryAttribute,
     // for Add set table............................
@@ -34,22 +35,28 @@ function AddSetTable(props) {
     getQuery,
     univocoSelectHandler,
     // dropDown,
-    isOpenDropD,
+    // isOpenDropD,
     onChangeCheckBox,
     openDrop,
     closeDrop,
-    opened,
-    autOpen,
-    mouseleave,
+    // opened,
+    // autOpen,
+    // mouseleave,
     onmouseLeave,
     dropdownsSet,
     showDelete,
     blockId,
     currentTable,
     showBlockDelete,
-    queryChanged,
-    parent
+    // queryChanged,
+    // parent
   } = props;
+
+  const context = React.useContext(TablesContext);
+
+  //@ts-ignore
+  const {list,parent,queryChanged} = context;
+
 
   const currentwhereClausesSet = whereClausesSet.find((item) => item.id === tablesSetId);
 
@@ -230,7 +237,7 @@ function AddSetTable(props) {
       <ReactResizeDetector handleWidth handleHeight>
         {({ width, height }) => (
             <div className="my-1">
-              {list.fields ? (
+              {list?.fields ? (
                 <>
                   <div style={width <= 625 ? styles.smallerWidthOuterContainer:styles.largerWidthOuterContainer}>
                     <div style = {width <= 625 ? styles.smallerWidthInnerContainer:styles.largerWidthInnerContainer}>
@@ -298,20 +305,20 @@ function AddSetTable(props) {
                         dropdownItemHandler = {dropdownItemHandler}
                         textFirstIncludedHandler = {textFirstIncludedHandler}
                         textSecondIncludedHandler = {textSecondIncludedHandler}
-                        counterIsChecked = {counterIsChecked}
+                        // counterIsChecked = {counterIsChecked}
                         functionCounterIsChecked = {functionCounterIsChecked}
                         tablesId = {tablesSetId}
                         whereClauses = {whereClausesSet}
-                        dropDownToggler = {dropDownToggler}
+                        // dropDownToggler = {dropDownToggler}
                         univocoSelectHandler = {univocoSelectHandler}
                         // dropDown = {dropDown}
-                        isOpenDropD = {isOpenDropD}
+                        // isOpenDropD = {isOpenDropD}
                         onChangeCheckBox = {onChangeCheckBoxSet}
                         // onChangeCheckBox = {onChangeCheckBox}
                         openDrop = {openDrop}
                         closeDrop = {closeDrop}
-                        opened={opened}
-                        autOpen = {autOpen}
+                        // opened={opened}
+                        // autOpen = {autOpen}
                         onmouseLeave = {onmouseLeave}
                         dropdowns = {dropdownsSet}
                         width = {width}
