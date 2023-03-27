@@ -31,7 +31,7 @@ const CommonSecondConstructor = (props) => {
       whereClauses,
       dropDownToggler,
       univocoSelectHandler,
-      dropDown,
+      // dropDown,
       isOpenDropD,
       onChangeCheckBox,
       openDrop,

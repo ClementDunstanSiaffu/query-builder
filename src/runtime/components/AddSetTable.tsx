@@ -33,7 +33,7 @@ function AddSetTable(props) {
     tables,
     getQuery,
     univocoSelectHandler,
-    dropDown,
+    // dropDown,
     isOpenDropD,
     onChangeCheckBox,
     openDrop,
@@ -304,7 +304,7 @@ function AddSetTable(props) {
                         whereClauses = {whereClausesSet}
                         dropDownToggler = {dropDownToggler}
                         univocoSelectHandler = {univocoSelectHandler}
-                        dropDown = {dropDown}
+                        // dropDown = {dropDown}
                         isOpenDropD = {isOpenDropD}
                         onChangeCheckBox = {onChangeCheckBoxSet}
                         // onChangeCheckBox = {onChangeCheckBox}

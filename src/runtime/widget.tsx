@@ -756,85 +756,121 @@ export default class Widget extends React.PureComponent<
     }
   };
 
-  dropDown = (id) => {
-    this.setState({ autOpen: true });
-    let queryIndex;
-    queryIndex = this.state.whereClauses
-      .map((obj) => obj.id)
-      .indexOf(id.toString());
-    if (queryIndex !== -1) {
-      const updateState = this.state.whereClauses.map((obj) => {
-        if (obj.id === queryIndex.toString()) {
-          if (!obj.isOpen) {
-            obj = { ...obj, isOpen: true };
-            let filteredWhereClauses = this.state.whereClauses.filter(
-              (a) => a.id !== obj.id
-            );
-            filteredWhereClauses.push(obj);
-            filteredWhereClauses.sort(function (a, b) {
-              return a.id < b.id ? -1 : a.id == b.id ? 0 : 1;
-            });
-            return this.setState({
-              whereClauses: filteredWhereClauses,
-            });
-          } else {
-            obj = { ...obj, isOpen: false };
-            let filteredWhereClauses = this.state.whereClauses.filter(
-              (a) => a.id !== obj.id
-            );
-            filteredWhereClauses.push(obj);
-            filteredWhereClauses.sort(function (a, b) {
-              return a.id < b.id ? -1 : a.id == b.id ? 0 : 1;
-            });
-            return this.setState({
-              whereClauses: filteredWhereClauses,
-            });
-          }
-        }
-        return { obj };
-      });
-    }
-  };
+  // dropDown = (id,type="single") => {
+  //   console.log(type,"check type value")
+  //   const keytype = type === "single" ? "whereClauses" : "whereClauseSet";
+  //   this.setState({ autOpen: true });
+  //   let queryIndex;
+  //   queryIndex = this.state[keytype].map((obj) => obj.id).indexOf(id.toString());
+  //   if (queryIndex !== -1) {
+  //     const updateState = this.state[keytype].map((obj) => {
+  //       if (obj.id === queryIndex.toString()) {
+  //         if (!obj.isOpen) {
+  //           obj = { ...obj, isOpen: true };
+  //           let filteredWhereClauses = this.state[keytype].filter(
+  //             (a) => a.id !== obj.id
+  //           );
+  //           filteredWhereClauses.push(obj);
+  //           filteredWhereClauses.sort(function (a, b) {
+  //             return a.id < b.id ? -1 : a.id == b.id ? 0 : 1;
+  //           });
+  //           return this.setState({[keytype]: filteredWhereClauses,});
+  //         } else {
+  //           obj = { ...obj, isOpen: false };
+  //           let filteredWhereClauses = this.state[keytype].filter(
+  //             (a) => a.id !== obj.id
+  //           );
+  //           filteredWhereClauses.push(obj);
+  //           filteredWhereClauses.sort(function (a, b) {
+  //             return a.id < b.id ? -1 : a.id == b.id ? 0 : 1;
+  //           });
+  //           return this.setState({[keytype]: filteredWhereClauses,});
+  //         }
+  //       }
+  //       return { obj };
+  //     });
+  //   }
+  // };
 
-  dropDownSet = (id) => {
-    this.setState({ autOpen: true });
-    let queryIndex;
-    queryIndex = this.state.whereClauseSet
-      .map((obj) => obj.id)
-      .indexOf(id.toString());
-    if (queryIndex !== -1) {
-      const updateState = this.state.whereClauseSet.map((obj) => {
-        if (obj.id === queryIndex.toString()) {
-          if (!obj.isOpen) {
-            obj = { ...obj, isOpen: true };
-            let filteredWhereClauseSet = this.state.whereClauseSet.filter(
-              (a) => a.id !== obj.id
-            );
-            Set.push(obj);
-            filteredWhereClauseSet.sort(function (a, b) {
-              return a.id < b.id ? -1 : a.id == b.id ? 0 : 1;
-            });
-            return this.setState({
-              whereClauseSet: filteredWhereClauseSet,
-            });
-          } else {
-            obj = { ...obj, isOpen: false };
-            let filteredWhereClauseSet = this.state.whereClauseSet.filter(
-              (a) => a.id !== obj.id
-            );
-            filteredWhereClauseSet.push(obj);
-            filteredWhereClauseSet.sort(function (a, b) {
-              return a.id < b.id ? -1 : a.id == b.id ? 0 : 1;
-            });
-            return this.setState({
-              whereClauseSet: filteredWhereClauseSet,
-            });
-          }
-        }
-        return { obj };
-      });
-    }
-  };
+  // dropDown = (id) => {
+  //   this.setState({ autOpen: true });
+  //   let queryIndex;
+  //   queryIndex = this.state.whereClauses
+  //     .map((obj) => obj.id)
+  //     .indexOf(id.toString());
+  //   if (queryIndex !== -1) {
+  //     const updateState = this.state.whereClauses.map((obj) => {
+  //       if (obj.id === queryIndex.toString()) {
+  //         if (!obj.isOpen) {
+  //           obj = { ...obj, isOpen: true };
+  //           let filteredWhereClauses = this.state.whereClauses.filter(
+  //             (a) => a.id !== obj.id
+  //           );
+  //           filteredWhereClauses.push(obj);
+  //           filteredWhereClauses.sort(function (a, b) {
+  //             return a.id < b.id ? -1 : a.id == b.id ? 0 : 1;
+  //           });
+  //           return this.setState({
+  //             whereClauses: filteredWhereClauses,
+  //           });
+  //         } else {
+  //           obj = { ...obj, isOpen: false };
+  //           let filteredWhereClauses = this.state.whereClauses.filter(
+  //             (a) => a.id !== obj.id
+  //           );
+  //           filteredWhereClauses.push(obj);
+  //           filteredWhereClauses.sort(function (a, b) {
+  //             return a.id < b.id ? -1 : a.id == b.id ? 0 : 1;
+  //           });
+  //           return this.setState({
+  //             whereClauses: filteredWhereClauses,
+  //           });
+  //         }
+  //       }
+  //       return { obj };
+  //     });
+  //   }
+  // };
+
+  // dropDownSet = (id) => {
+  //   this.setState({ autOpen: true });
+  //   let queryIndex;
+  //   queryIndex = this.state.whereClauseSet
+  //     .map((obj) => obj.id)
+  //     .indexOf(id.toString());
+  //   if (queryIndex !== -1) {
+  //     const updateState = this.state.whereClauseSet.map((obj) => {
+  //       if (obj.id === queryIndex.toString()) {
+  //         if (!obj.isOpen) {
+  //           obj = { ...obj, isOpen: true };
+  //           let filteredWhereClauseSet = this.state.whereClauseSet.filter(
+  //             (a) => a.id !== obj.id
+  //           );
+  //           Set.push(obj);
+  //           filteredWhereClauseSet.sort(function (a, b) {
+  //             return a.id < b.id ? -1 : a.id == b.id ? 0 : 1;
+  //           });
+  //           return this.setState({
+  //             whereClauseSet: filteredWhereClauseSet,
+  //           });
+  //         } else {
+  //           obj = { ...obj, isOpen: false };
+  //           let filteredWhereClauseSet = this.state.whereClauseSet.filter(
+  //             (a) => a.id !== obj.id
+  //           );
+  //           filteredWhereClauseSet.push(obj);
+  //           filteredWhereClauseSet.sort(function (a, b) {
+  //             return a.id < b.id ? -1 : a.id == b.id ? 0 : 1;
+  //           });
+  //           return this.setState({
+  //             whereClauseSet: filteredWhereClauseSet,
+  //           });
+  //         }
+  //       }
+  //       return { obj };
+  //     });
+  //   }
+  // };
 
   handleCheckBox = (event) => {
     this.setState({
@@ -1108,7 +1144,7 @@ export default class Widget extends React.PureComponent<
                             id={`row-${i}`}
                             list={this.state.resultsLayerSelected}
                             isOpenDropD={this.state.isOpen}
-                            dropDown={() => this.dropDown(el.id)}
+                            // dropDown={() => this.dropDown(el.id,"single")}
                             dropdownValueQuery={this.state.dropdownValueQuery}
                             isChecked={this.state.isChecked}
                             counterIsChecked={this.state.counterIsChecked}
@@ -1210,7 +1246,8 @@ export default class Widget extends React.PureComponent<
                                   id={`row-${i}`}
                                   list={this.state.resultsLayerSelected}
                                   isOpenDropD={this.state.isOpen}
-                                  dropDown={() => this.dropDownSet(el.id)}
+                                  // dropDown={() => this.dropDown(el.id,"set")}
+                                  // dropDown={() => this.dropDownSet(el.id)}
                                   dropdownValueQuery={this.state.dropdownValueQuery}
                                   isChecked={this.state.isChecked}
                                   counterIsChecked={this.state.counterIsChecked}

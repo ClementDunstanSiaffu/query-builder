@@ -30,7 +30,7 @@ function Table(props) {
     tables,
     getQuery,
     univocoSelectHandler,
-    dropDown,
+    // dropDown,
     isOpenDropD,
     // onChangeCheckBox,
     openDrop,
@@ -278,7 +278,7 @@ function Table(props) {
                         tablesId={tablesId}
                         dropDownToggler={dropDownToggler}
                         univocoSelectHandler={univocoSelectHandler}
-                        dropDown={dropDown}
+                        // dropDown={dropDown}
                         isOpenDropD={isOpenDropD}
                         onChangeCheckBox={onChangeCheckBox}
                         openDrop={openDrop}
