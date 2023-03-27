@@ -11,7 +11,7 @@ import { TablesContext } from "../../context/contextApi";
 function AddSetTable(props) {
   const {
     // list,
-    handleThirdQuery,
+    // handleThirdQuery,
     textInputHandler,
     multiSelectHandler,
     dropdownItemHandler,
@@ -229,8 +229,20 @@ function AddSetTable(props) {
       flexDirection:"row",
       gap:"3%",
     }
-
   }
+
+  const openDropSet = (id) => {
+    const self:Widget = parent
+    const currentId = id;
+    self.setState({ mouseleave: false });
+    self.setState({ dropIdSet: currentId });
+    const dropDownsSet = { ...dropdownsSet};
+    if (dropDownsSet[currentId]) {
+      self.setState({dropDownsSet: { ...dropdownsSet, [currentId]: false },});
+    } else {
+      self.setState({dropDownsSet: { ...dropdownsSet, [currentId]: true },});
+    }
+  };
 
   if (currentTable.id === parseInt(tablesSetId.split("-")[0]) &&!currentTable.deleted) {
     return(
@@ -315,7 +327,8 @@ function AddSetTable(props) {
                         // isOpenDropD = {isOpenDropD}
                         onChangeCheckBox = {onChangeCheckBoxSet}
                         // onChangeCheckBox = {onChangeCheckBox}
-                        openDrop = {openDrop}
+                        // openDrop = {openDrop}
+                        openDrop = {openDropSet}
                         closeDrop = {closeDrop}
                         // opened={opened}
                         // autOpen = {autOpen}

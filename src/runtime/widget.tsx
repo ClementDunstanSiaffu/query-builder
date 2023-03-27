@@ -52,7 +52,7 @@ export default class Widget extends React.PureComponent<
     // this.chooseAndOr = this.chooseAndOr.bind(this);
     this.chooseAndOrSet = this.chooseAndOrSet.bind(this);
     this.closeDrop = this.closeDrop.bind(this);
-    this.openDrop = this.openDrop.bind(this);
+    // this.openDrop = this.openDrop.bind(this);
     this.closeDropOnclickOutside = this.closeDropOnclickOutside.bind(this);
     this.onmouseLeave = this.onmouseLeave.bind(this);
     this.getAllCheckedLayers = this.getAllCheckedLayers.bind(this);
@@ -926,32 +926,32 @@ export default class Widget extends React.PureComponent<
     this.setState({ AndOrSet: e.target.value, SetBlock: currentSetBlock });
   };
 
-  openDrop = (id) => {
-    this.setState({ mouseleave: false });
-    this.setState({ dropId: id });
-    const dropDowns = { ...this.state.dropDowns };
-    if (dropDowns[id]) {
-      this.setState({ dropDowns: { ...this.state.dropDowns, [id]: false } });
-    } else {
-      this.setState({ dropDowns: { ...this.state.dropDowns, [id]: true } });
-    }
-  };
+  // openDrop = (id) => {
+  //   this.setState({ mouseleave: false });
+  //   this.setState({ dropId: id });
+  //   const dropDowns = { ...this.state.dropDowns };
+  //   if (dropDowns[id]) {
+  //     this.setState({ dropDowns: { ...this.state.dropDowns, [id]: false } });
+  //   } else {
+  //     this.setState({ dropDowns: { ...this.state.dropDowns, [id]: true } });
+  //   }
+  // };
 
-  openDropSet = (id) => {
-    const currentId = id;
-    this.setState({ mouseleave: false });
-    this.setState({ dropIdSet: currentId });
-    const dropDownsSet = { ...this.state.dropDownsSet };
-    if (dropDownsSet[currentId]) {
-      this.setState({
-        dropDownsSet: { ...this.state.dropDownsSet, [currentId]: false },
-      });
-    } else {
-      this.setState({
-        dropDownsSet: { ...this.state.dropDownsSet, [currentId]: true },
-      });
-    }
-  };
+  // openDropSet = (id) => {
+  //   const currentId = id;
+  //   this.setState({ mouseleave: false });
+  //   this.setState({ dropIdSet: currentId });
+  //   const dropDownsSet = { ...this.state.dropDownsSet };
+  //   if (dropDownsSet[currentId]) {
+  //     this.setState({
+  //       dropDownsSet: { ...this.state.dropDownsSet, [currentId]: false },
+  //     });
+  //   } else {
+  //     this.setState({
+  //       dropDownsSet: { ...this.state.dropDownsSet, [currentId]: true },
+  //     });
+  //   }
+  // };
 
   closeDrop = () => this.setState({ opened: false, autOpen: false });
 
@@ -1166,7 +1166,7 @@ export default class Widget extends React.PureComponent<
                               whereClauses={this.state.whereClauses}
                               getQueryAttribute={this.getQueryAttribute}
                               getQuery={this.getQuery}
-                              handleThirdQuery={this.thirdQuery}
+                              // handleThirdQuery={this.thirdQuery}
                               textInputHandler={this.textInputHandler}
                               dropdownItemHandler={this.dropdownItemClick}
                               textFirstIncludedHandler={this.textFirstIncludedHandler}
@@ -1178,7 +1178,7 @@ export default class Widget extends React.PureComponent<
                               deleteTable={() => this.deleteTable(el.id)}
                               univocoSelectHandler={this.univocoSelectHandler}
                               // onChangeCheckBox={this.onChangeCheckBox}
-                              openDrop={this.openDrop}
+                              // openDrop={this.openDrop}
                               closeDrop={this.closeDrop}
                               // opened={this.state.opened}
                               // autOpen={this.state.autOpen}
@@ -1274,7 +1274,7 @@ export default class Widget extends React.PureComponent<
                                     // getQueryAttribute={this.getQueryAttributeSet}
                                     getQueryAttribute={this.getQueryAttribute}
                                     getQuery={this.getQuerySet}
-                                    handleThirdQuery={this.thirdQuery}
+                                    // handleThirdQuery={this.thirdQuery}
                                     textInputHandler={this.textInputHandler}
                                     dropdownItemHandler={this.dropdownItemClick}
                                     textFirstIncludedHandler={
@@ -1293,7 +1293,7 @@ export default class Widget extends React.PureComponent<
                                     }
                                     univocoSelectHandler={this.univocoSelectHandler}
                                     // onChangeCheckBox={this.onChangeCheckBoxSet}
-                                    openDrop={this.openDropSet}
+                                    // openDrop={this.openDropSet}
                                     closeDrop={this.closeDrop}
                                     // opened={this.state.opened}
                                     // autOpen={this.state.autOpen}

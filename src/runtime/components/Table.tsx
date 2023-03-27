@@ -35,7 +35,7 @@ function Table(props) {
     // dropDown,
     // isOpenDropD,
     // onChangeCheckBox,
-    openDrop,
+    // openDrop,
     closeDrop,
     // opened,
     // autOpen,
@@ -196,6 +196,18 @@ function Table(props) {
     }
   }
 
+  const openDrop = (id) => {
+    const self:Widget = parent;
+    self.setState({ mouseleave: false });
+    self.setState({ dropId: id });
+    const dropDowns = { ...dropdowns };
+    if (dropDowns[id]) {
+      self.setState({ dropDowns: { ...dropdowns, [id]: false } });
+    } else {
+      self.setState({ dropDowns: { ...dropdowns, [id]: true } });
+    }
+  };
+
   if (currentTable.id === tablesId && !currentTable.deleted) {
     return(
       <ReactResizeDetector handleWidth handleHeight>
@@ -268,7 +280,7 @@ function Table(props) {
                       </div>
                       <CommonSecondConstructor 
                         className="col-md-4"
-                        handleThirdQuery={handleThirdQuery}
+                        // handleThirdQuery={handleThirdQuery}
                         textInputHandler={textInputHandler}
                         multiSelectHandler={multiSelectHandler}
                         dropdownItemHandler={dropdownItemHandler}
