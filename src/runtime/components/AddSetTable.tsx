@@ -10,46 +10,24 @@ import { TablesContext } from "../../context/contextApi";
 
 function AddSetTable(props) {
   const {
-    // list,
-    // handleThirdQuery,
     textInputHandler,
-    multiSelectHandler,
     dropdownItemHandler,
     textFirstIncludedHandler,
     textSecondIncludedHandler,
-    // dropdownValueQuery,
-    // handleCheckBox,
-    // isChecked,
-    // counterIsChecked,
-    // dropDownToggler,
     functionCounterIsChecked,
-    // checkedToQuery,
     deleteTable,
     getQueryAttribute,
     // for Add set table............................
-    tablesSet,
     tablesSetId,
     whereClausesSet,
     // End for Add set table............................
-    tables,
     getQuery,
     univocoSelectHandler,
-    // dropDown,
-    // isOpenDropD,
-    onChangeCheckBox,
-    openDrop,
     closeDrop,
-    // opened,
-    // autOpen,
-    // mouseleave,
     onmouseLeave,
     dropdownsSet,
     showDelete,
-    blockId,
     currentTable,
-    showBlockDelete,
-    // queryChanged,
-    // parent
   } = props;
 
   const context = React.useContext(TablesContext);
@@ -90,22 +68,6 @@ function AddSetTable(props) {
                 return a.id < b.id ? -1 : a.id == b.id ? 0 : 1;
               });
               self.setState({whereClauseSet: Array.from(new Set(filteredWhereClauseSet)),});
-              // self.setState(
-              //   {
-              //     whereClauseSet: filteredWhereClauseSet,
-              //   },
-              //   () => {
-              //     this.state.whereClauseSet.sort(function (a, b) {
-              //       return a.id < b.id ? -1 : a.id == b.id ? 0 : 1;
-              //     });
-              //     // Remove duplicate entries from the whereClauses array
-              //     this.setState({
-              //       whereClauseSet: Array.from(
-              //         new Set(this.state.whereClauseSet)
-              //       ),
-              //     });
-              //   }
-              // );
             } else {
               const ifAlreadyCheck = obj.checkedListSet
                 .map((obj) => obj.checkValue)
@@ -134,22 +96,6 @@ function AddSetTable(props) {
                   return a.id < b.id ? -1 : a.id == b.id ? 0 : 1;
                 });
                 self.setState({whereClauseSet: Array.from(new Set(whereClausesSet))});
-                // self.setState(
-                //   {
-                //     whereClauseSet: whereClausesSet,
-                //   },
-                //   () => {
-                //     whereClausesSet.sort(function (a, b) {
-                //       return a.id < b.id ? -1 : a.id == b.id ? 0 : 1;
-                //     });
-                //     // Remove duplicate entries from the whereClauses array
-                //     this.setState({
-                //       whereClauseSet: Array.from(
-                //         new Set(this.state.whereClauseSet)
-                //       ),
-                //     });
-                //   }
-                // );
               }
             }
           }
@@ -174,21 +120,6 @@ function AddSetTable(props) {
       });
       newWhereSetClause = Array.from(new Set(whereClausesSet));
       self.setState({whereClauseSet: Array.from(new Set(whereClausesSet)),});
-      // this.setState(
-      //   {
-      //     whereClauseSet: whereClausesSet,
-      //   },
-      //   () => {
-      //     this.state.whereClauseSet.sort(function (a, b) {
-      //       return a.id < b.id ? -1 : a.id == b.id ? 0 : 1;
-      //     });
-      //     newWhereSetClause = Array.from(new Set(this.state.whereClauseSet));
-      //     // Remove duplicate entries from the whereClauses array
-      //     this.setState({
-      //       whereClauseSet: Array.from(new Set(this.state.whereClauseSet)),
-      //     });
-      //   }
-      // );
     }
     if (newWhereSetClause?.length) {
       const currentNewWhereSetClause = newWhereSetClause.find(
@@ -317,21 +248,13 @@ function AddSetTable(props) {
                         dropdownItemHandler = {dropdownItemHandler}
                         textFirstIncludedHandler = {textFirstIncludedHandler}
                         textSecondIncludedHandler = {textSecondIncludedHandler}
-                        // counterIsChecked = {counterIsChecked}
                         functionCounterIsChecked = {functionCounterIsChecked}
                         tablesId = {tablesSetId}
                         whereClauses = {whereClausesSet}
-                        // dropDownToggler = {dropDownToggler}
                         univocoSelectHandler = {univocoSelectHandler}
-                        // dropDown = {dropDown}
-                        // isOpenDropD = {isOpenDropD}
                         onChangeCheckBox = {onChangeCheckBoxSet}
-                        // onChangeCheckBox = {onChangeCheckBox}
-                        // openDrop = {openDrop}
                         openDrop = {openDropSet}
                         closeDrop = {closeDrop}
-                        // opened={opened}
-                        // autOpen = {autOpen}
                         onmouseLeave = {onmouseLeave}
                         dropdowns = {dropdownsSet}
                         width = {width}

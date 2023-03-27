@@ -24,19 +24,11 @@ const SecondConstructor = (props) => {
       dropdownItemHandler,
       textFirstIncludedHandler,
       textSecondIncludedHandler,
-      counterIsChecked,
-      functionCounterIsChecked,
       tablesId,
       whereClauses,
-      dropDownToggler,
       univocoSelectHandler,
-      dropDown,
-      isOpenDropD,
       onChangeCheckBox,
       openDrop,
-      closeDrop,
-      opened: d,
-      autOpen,
       onmouseLeave,
       dropdowns,
       width,
@@ -46,13 +38,9 @@ const SecondConstructor = (props) => {
     const normalizedThirdQuery = [];
     let defaultValue = "=";
     let dropdownValueQuery = "valore";
-    let opened = false;
     let checked = 0;
-    let au = true;
     let defaultTextValue = " ";
-    const currentWhereClause = whereClauses.find(
-      (item) => item.id === `${tablesId}`
-    );
+    const currentWhereClause = whereClauses.find((item) => item.id === `${tablesId}`);
     if (currentWhereClause && currentWhereClause.ifInOrNotInQueryValue) {
       currentWhereClause.ifInOrNotInQueryValue.map((el, i) => {
         normalizedThirdQuery.push({

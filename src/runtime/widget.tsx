@@ -18,10 +18,8 @@ import CallToAction from "./components/callToActionComponent";
 import AndOrSelector from "./components/common/andorSelector";
 import {CallToActionContext,LayerSelectContext,TablesContext} from "../context/contextApi";
 
-export default class Widget extends React.PureComponent<
-  AllWidgetProps<IMConfig>,
-  any
-> {
+export default class Widget extends React.PureComponent<AllWidgetProps<IMConfig>,any> {
+  
   graphicLayerFound = new GraphicsLayer({ listMode: "hide", visible: true });
   graphicLayerSelected = new GraphicsLayer({ listMode: "hide", visible: true });
 
@@ -45,22 +43,15 @@ export default class Widget extends React.PureComponent<
     //Layer
     this.getQueryAttribute = this.getQueryAttribute.bind(this);
     this.getQuery = this.getQuery.bind(this);
-    // this.sendQuerySet = this.sendQuerySet.bind(this);
-    // this.runbothQueries= this.runbothQueries.bind(this);
-    this.thirdQuery = this.thirdQuery.bind(this);
     this.dropdownItemClick = this.dropdownItemClick.bind(this);
-    // this.chooseAndOr = this.chooseAndOr.bind(this);
     this.chooseAndOrSet = this.chooseAndOrSet.bind(this);
     this.closeDrop = this.closeDrop.bind(this);
-    // this.openDrop = this.openDrop.bind(this);
     this.closeDropOnclickOutside = this.closeDropOnclickOutside.bind(this);
     this.onmouseLeave = this.onmouseLeave.bind(this);
     this.getAllCheckedLayers = this.getAllCheckedLayers.bind(this);
     this.getAllJimuLayerViews = this.getAllJimuLayerViews.bind(this);
-    // this.connector_function = this.connector_function.bind(this);
     this.functionCounterIsChecked = this.functionCounterIsChecked.bind(this);
     this.getQuerySet = this.getQuerySet.bind(this);
-    // this.onChangeCheckBoxSet = this.onChangeCheckBoxSet.bind(this);
   }
 
   init = () => {
@@ -120,12 +111,7 @@ export default class Widget extends React.PureComponent<
   };
 
   nls = (id: string) => {
-    return this.props.intl
-      ? this.props.intl.formatMessage({
-          id: id,
-          defaultMessage: defaultMessages[id],
-        })
-      : id;
+    return this.props.intl? this.props.intl.formatMessage({id: id,defaultMessage: defaultMessages[id]}): id;
   };
 
   activeViewChangeHandler(jmv: JimuMapView) {
@@ -159,10 +145,8 @@ export default class Widget extends React.PureComponent<
   }
 
   componentDidUpdate(prevProps, prevState) {
-    if (this.state.isLayerSelected !== prevProps.isLayerSelected) {
-    }
-    if (this.state.whereClauses !== prevProps.whereClauses) {
-    }
+    if (this.state.isLayerSelected !== prevProps.isLayerSelected) {}
+    if (this.state.whereClauses !== prevProps.whereClauses) {}
   }
 
   componentWillUnmount(): void {}
@@ -335,13 +319,8 @@ export default class Widget extends React.PureComponent<
     }
     if (keytype === "whereClauseSet") {
       if (newWhereSetClause?.length) {
-        const currentNewWhereSetClause = newWhereSetClause.find(
-          (item) => item.id === clickedQueryTableId
-        );
-        this.addCurrentWherClauseBlock(
-          clickedQueryTableId,
-          currentNewWhereSetClause
-        );
+        const currentNewWhereSetClause = newWhereSetClause.find((item) => item.id === clickedQueryTableId);
+        this.addCurrentWherClauseBlock(clickedQueryTableId,currentNewWhereSetClause);
       }
     }
   }
@@ -356,81 +335,19 @@ export default class Widget extends React.PureComponent<
   //TODO la sendQuery andrà risistemata quando si aggiungerà oltre all'espressione anche il set di espressioni
   // perché ora per l'AND fa il ciclo for su ogni where inserita nell'array ma dopo sarà necessario scomporre per creare le espressioni
 
-  async thirdQuery(e) {
-    const currentQueryTest = e.currentTarget.textContent;
-    this.state.jimuMapView.view.map.allLayers.forEach((f, index) => {
-      if (f.title === this.state.currentTargetText) {
-        this.state.jimuMapView.view.whenLayerView(f).then((layerView) => {
-          this.inQueryConstructor(
-            layerView,
-            this.state.currentFirstQuery,
-            this.state.currentSecondQuery,
-            currentQueryTest
-          );
-        });
-      }
-    });
-  }
-
   addTwoTable = (blockId) => {
     let newStateBlock = [...this.state.SetBlock];
     const index = newStateBlock.findIndex((item) => item.blockId === blockId);
     if (index !== -1) {
       const currentBlock = newStateBlock[index];
       const currentId = currentBlock["tableCounterSet"];
-      currentBlock["tablesSet"] = [
-        ...currentBlock["tablesSet"],
-        { id: currentId, deleted: false },
-      ];
-      currentBlock["dropDownsSet"] = {
-        ...currentBlock["dropDownsSet"],
-        [currentId]: false,
-      };
+      currentBlock["tablesSet"] = [ ...currentBlock["tablesSet"],{ id: currentId, deleted: false }];
+      currentBlock["dropDownsSet"] = {...currentBlock["dropDownsSet"],[currentId]: false};
       currentBlock["tableCounterSet"] = currentBlock["tableCounterSet"] + 1;
       newStateBlock[index] = currentBlock;
     }
     if (this.state.tables.length > 0) this.setState({ showAddSelect: false });
     this.setState({ SetBlock: newStateBlock });
-  };
-
-  addBlock = () => {
-    let idOne = this.state.SetBlock.tableCounterSet ?? 0;
-    let idTwo = idOne + 1;
-    const currentId = idOne;
-    const nextCurrentId = idTwo;
-    let newBlock = [...this.state.SetBlock];
-    newBlock.push({
-      blockId: this.state.SetBlock.length,
-      [`${this.state.SetBlock.length}`]: [],
-      tablesSet: [
-        { id: idOne, deleted: false },
-        { id: idTwo, deleted: false },
-      ],
-      tableCounterSet: this.state.tableCounterSet + 2,
-      dropDownsSet: {
-        ...this.state.dropDownsSet,
-        [`${currentId}-${this.state.SetBlock.length}`]: false,
-        [`${nextCurrentId}-${this.state.SetBlock.length}`]: false,
-      },
-      AndOrSet: this.state.AndOrSet,
-    });
-    this.setState({
-      SetBlock: newBlock,
-      dropDownsSet: {
-        ...this.state.dropDownsSet,
-        [`${currentId}-${this.state.SetBlock.length}`]: false,
-        [`${nextCurrentId}-${this.state.SetBlock.length}`]: false,
-      },
-    });
-
-    const tableLength = this.state.tables
-      .map((el, idx) => (el.deleted == false ? idx : ""))
-      .filter(String).length;
-    const tablesSetLength = this.state.SetBlock.length;
-
-    if (tableLength > 0) {
-      this.setState({ showAddSelect: false });
-    }
   };
 
   deleteTable = (id) => {
@@ -442,36 +359,23 @@ export default class Widget extends React.PureComponent<
     const newTables = copiedTable;
     this.setState({ tableCounter: this.state.tableCounter - 1 });
     const copiedWhereClauses = [...this.state.whereClauses];
-    const deletedWhereClauses = copiedWhereClauses.filter(
-      (el) => el.id !== id.toString()
-    );
+    const deletedWhereClauses = copiedWhereClauses.filter((el) => el.id !== id.toString());
     this.setState({
       tables: newTables,
       whereClauses: deletedWhereClauses,
       tableCounter: this.state.tableCounter - 1,
       selectedId: id,
     });
-    if (this.state.tables.length === 0) {
-      this.setState({
-        whereClauses: [],
-      });
-    }
-
-    const tableLength = this.state.tables
-      .map((el, idx) => (el.deleted == false ? idx : ""))
-      .filter(String).length;
+    if (this.state.tables.length === 0)this.setState({whereClauses:[]});
+    
+    const tableLength = this.state.tables.map((el, idx) => (el.deleted == false ? idx : "")).filter(String).length;
     const tablesSetLength = this.state.SetBlock.length;
-    if (tableLength == 2 && tablesSetLength == 0) {
-      this.setState({ showAddSelect: false });
-    }
+    if (tableLength == 2 && tablesSetLength == 0)this.setState({ showAddSelect: false });
+    
+    if (tableLength == 0 && tablesSetLength > 0)this.setState({ showAddSelect: true });
+    
+    if (tableLength == 1 && tablesSetLength == 0)this.setState({ showAddSelect: true });
 
-    if (tableLength == 0 && tablesSetLength > 0) {
-      this.setState({ showAddSelect: true });
-    }
-
-    if (tableLength == 1 && tablesSetLength == 0) {
-      this.setState({ showAddSelect: true });
-    }
   };
 
   deleteBlock = (blockId: string) => {
@@ -486,21 +390,15 @@ export default class Widget extends React.PureComponent<
       copiedWhereclauseSet.filter((item) => item.id.split("-")[1] === blockId);
       this.setState({ whereClauseSet: copiedWhereclauseSet });
     }
-    const tableLength = this.state.tables
-      .map((el, idx) => (el.deleted == false ? idx : ""))
-      .filter(String).length;
-    if (tableLength == 1 && copiedBlock.length == 0) {
-      this.setState({ showAddSelect: true });
-    }
+    const tableLength = this.state.tables.map((el, idx) => (el.deleted == false ? idx : "")).filter(String).length;
+    if (tableLength == 1 && copiedBlock.length == 0)this.setState({ showAddSelect: true });
   };
 
   deleteBlockTable = (tableBlockId: string, blockId: string) => {
     const tableId = tableBlockId.split("-")[0];
     const copiedBlock = [...this.state.SetBlock];
     const copiedWhereclauseSet = [...this.state.whereClauseSet];
-    const currentBlocIndex = copiedBlock.findIndex(
-      (block) => `${block.blockId}` === blockId
-    );
+    const currentBlocIndex = copiedBlock.findIndex((block) => `${block.blockId}` === blockId);
     let currentBlock;
     if (currentBlocIndex !== -1) currentBlock = copiedBlock[currentBlocIndex];
     if (currentBlock) {
@@ -508,8 +406,7 @@ export default class Widget extends React.PureComponent<
       const currentTableSets = currentBlock["tablesSet"];
       if (currentWhereClauseSet?.length) {
         const copiedCurrentWhereClauseSet = [...currentWhereClauseSet];
-        const whereClauseSetIndex = copiedCurrentWhereClauseSet.findIndex(
-          (item) => {
+        const whereClauseSetIndex = copiedCurrentWhereClauseSet.findIndex((item) => {
             if (item.id === tableBlockId) {
               return item;
             }
@@ -522,12 +419,9 @@ export default class Widget extends React.PureComponent<
       }
       if (currentTableSets?.length) {
         const copiedTableSets = [...currentTableSets];
-        const tableSetIndex = copiedTableSets.findIndex(
-          (item) => `${item.id}` === tableId
-        );
+        const tableSetIndex = copiedTableSets.findIndex((item) => `${item.id}` === tableId);
         if (tableSetIndex !== -1) {
           copiedTableSets[tableSetIndex]["deleted"] = true;
-          // copiedTableSets.splice(tableSetIndex,1);
           currentBlock["tablesSet"] = copiedTableSets;
         }
       }
@@ -580,16 +474,12 @@ export default class Widget extends React.PureComponent<
     let newWhereSetClause;
     const keyType = queryType === "single" ? "whereClauses" : "whereClauseSet";
     if (this.state[keyType].length) {
-      queryIndex = this.state[keyType]
-        .map((obj) => obj.id)
-        .indexOf(currentTableId);
+      queryIndex = this.state[keyType].map((obj) => obj.id).indexOf(currentTableId);
       if (queryIndex !== -1) {
         const updateState = this.state[keyType].map((obj) => {
           if (obj.id === currentTableId) {
             obj = { ...obj, value: { txt: txt } };
-            let filteredWhereClauses = this.state[keyType].filter(
-              (a) => a.id !== obj.id
-            );
+            let filteredWhereClauses = this.state[keyType].filter((a) => a.id !== obj.id);
             filteredWhereClauses.push(obj);
             filteredWhereClauses.sort(function (a, b) {
               return a.id < b.id ? -1 : a.id == b.id ? 0 : 1;
@@ -601,13 +491,9 @@ export default class Widget extends React.PureComponent<
         });
       }
       if (newWhereSetClause?.length) {
-        const currentNewWhereSetClause = newWhereSetClause.find(
-          (item) => item.id === currentTableId
+        const currentNewWhereSetClause = newWhereSetClause.find((item) => item.id === currentTableId
         );
-        this.addCurrentWherClauseBlock(
-          currentTableId,
-          currentNewWhereSetClause
-        );
+        this.addCurrentWherClauseBlock(currentTableId,currentNewWhereSetClause);
       }
     }
   };
@@ -617,18 +503,14 @@ export default class Widget extends React.PureComponent<
     let newWhereSetClause;
     const keyType = queryType === "single" ? "whereClauses" : "whereClauseSet";
     if (this.state[keyType].length) {
-      queryIndex = this.state[keyType]
-        .map((obj) => obj.id)
-        .indexOf(currentTableId);
+      queryIndex = this.state[keyType].map((obj) => obj.id).indexOf(currentTableId);
       if (queryIndex !== -1) {
         const updateState = this.state[keyType].map((obj) => {
           if (obj.id === currentTableId) {
             input === "first"
               ? (obj = { ...obj, firstTxt: { value: txt } })
               : (obj = { ...obj, secondTxt: { value: txt } });
-            let filteredWhereClauses = this.state[keyType].filter(
-              (a) => a.id !== obj.id
-            );
+            let filteredWhereClauses = this.state[keyType].filter((a) => a.id !== obj.id);
             filteredWhereClauses.push(obj);
             filteredWhereClauses.sort(function (a, b) {
               return a.id < b.id ? -1 : a.id == b.id ? 0 : 1;
@@ -640,13 +522,8 @@ export default class Widget extends React.PureComponent<
         });
       }
       if (newWhereSetClause?.length) {
-        const currentNewWhereSetClause = newWhereSetClause.find(
-          (item) => item.id === currentTableId
-        );
-        this.addCurrentWherClauseBlock(
-          currentTableId,
-          currentNewWhereSetClause
-        );
+        const currentNewWhereSetClause = newWhereSetClause.find((item) => item.id === currentTableId);
+        this.addCurrentWherClauseBlock(currentTableId,currentNewWhereSetClause);
       }
     }
   };
@@ -655,26 +532,20 @@ export default class Widget extends React.PureComponent<
     let clickedQueryTableId = e.currentTarget.attributes[2].value;
     let clickedValue = e.currentTarget.value;
     let currentClickedQueryAttribute;
-    let newWhereSetClause;
     let currentNewWhereSetClause;
     const keytype = type === "single" ? "whereClauses" : "whereClauseSet";
     let queryIndex;
-    queryIndex = this.state[keytype]
-      .map((obj) => obj.id)
-      .indexOf(clickedQueryTableId);
+    queryIndex = this.state[keytype].map((obj) => obj.id).indexOf(clickedQueryTableId);
     if (queryIndex !== -1) {
       const updateState = this.state[keytype].map((obj) => {
         if (obj.id === clickedQueryTableId) {
           obj = { ...obj, dropdownValueQuery: clickedValue };
-          let filteredWhereClauses = this.state[keytype].filter(
-            (a) => a.id !== obj.id
-          );
+          let filteredWhereClauses = this.state[keytype].filter((a) => a.id !== obj.id);
           filteredWhereClauses.push(obj);
           filteredWhereClauses.sort(function (a, b) {
             return a.id < b.id ? -1 : a.id == b.id ? 0 : 1;
           });
           currentNewWhereSetClause = obj;
-          // newWhereSetClause = filteredWhereClauses
           return this.setState({ [keytype]: filteredWhereClauses });
         }
         return { obj };
@@ -706,13 +577,9 @@ export default class Widget extends React.PureComponent<
                         });
                         if (queryIndex !== -1) {
                           if (typeof detailThirdQuery[0].value[0] !== "number") {
-                            detailThirdQuery.sort((a, b) =>
-                              a.label < b.label ? -1 : a.label > b.label ? 1 : 0
-                            );
+                            detailThirdQuery.sort((a, b) =>a.label < b.label ? -1 : a.label > b.label ? 1 : 0);
                           } else {
-                            detailThirdQuery.sort((a, b) =>
-                              a.value - b.value < 0 ? -1 : a.value === b.value ? 0 : 1
-                            );
+                            detailThirdQuery.sort((a, b) =>a.value - b.value < 0 ? -1 : a.value === b.value ? 0 : 1);
                           }
                           const updateState = this.state[keytype].map((obj) => {
                             if (obj.id === clickedQueryTableId) {
@@ -722,17 +589,12 @@ export default class Widget extends React.PureComponent<
                                 dropdownValueQuery: clickedValue,
                               };
                               currentNewWhereSetClause = obj;
-                              let filteredWhereClauses = this.state[
-                                keytype
-                              ].filter((a) => a.id !== obj.id);
+                              let filteredWhereClauses = this.state[keytype].filter((a) => a.id !== obj.id);
                               filteredWhereClauses.push(obj);
                               filteredWhereClauses.sort(function (a, b) {
                                 return a.id < b.id ? -1 : a.id == b.id ? 0 : 1;
                               });
-                              // newWhereSetClause = filteredWhereClauses
-                              return this.setState({
-                                [keytype]: filteredWhereClauses,
-                              });
+                              return this.setState({[keytype]: filteredWhereClauses});
                             }
                             return { obj };
                           });
@@ -748,134 +610,8 @@ export default class Widget extends React.PureComponent<
     }
     this.setState({ dropdownValueQuery: e.target.value }, () => {});
     if (keytype === "whereClauseSet") {
-      if (currentNewWhereSetClause)
-        this.addCurrentWherClauseBlock(
-          clickedQueryTableId,
-          currentNewWhereSetClause
-        );
+      if (currentNewWhereSetClause)this.addCurrentWherClauseBlock(clickedQueryTableId,currentNewWhereSetClause);
     }
-  };
-
-  // dropDown = (id,type="single") => {
-  //   console.log(type,"check type value")
-  //   const keytype = type === "single" ? "whereClauses" : "whereClauseSet";
-  //   this.setState({ autOpen: true });
-  //   let queryIndex;
-  //   queryIndex = this.state[keytype].map((obj) => obj.id).indexOf(id.toString());
-  //   if (queryIndex !== -1) {
-  //     const updateState = this.state[keytype].map((obj) => {
-  //       if (obj.id === queryIndex.toString()) {
-  //         if (!obj.isOpen) {
-  //           obj = { ...obj, isOpen: true };
-  //           let filteredWhereClauses = this.state[keytype].filter(
-  //             (a) => a.id !== obj.id
-  //           );
-  //           filteredWhereClauses.push(obj);
-  //           filteredWhereClauses.sort(function (a, b) {
-  //             return a.id < b.id ? -1 : a.id == b.id ? 0 : 1;
-  //           });
-  //           return this.setState({[keytype]: filteredWhereClauses,});
-  //         } else {
-  //           obj = { ...obj, isOpen: false };
-  //           let filteredWhereClauses = this.state[keytype].filter(
-  //             (a) => a.id !== obj.id
-  //           );
-  //           filteredWhereClauses.push(obj);
-  //           filteredWhereClauses.sort(function (a, b) {
-  //             return a.id < b.id ? -1 : a.id == b.id ? 0 : 1;
-  //           });
-  //           return this.setState({[keytype]: filteredWhereClauses,});
-  //         }
-  //       }
-  //       return { obj };
-  //     });
-  //   }
-  // };
-
-  // dropDown = (id) => {
-  //   this.setState({ autOpen: true });
-  //   let queryIndex;
-  //   queryIndex = this.state.whereClauses
-  //     .map((obj) => obj.id)
-  //     .indexOf(id.toString());
-  //   if (queryIndex !== -1) {
-  //     const updateState = this.state.whereClauses.map((obj) => {
-  //       if (obj.id === queryIndex.toString()) {
-  //         if (!obj.isOpen) {
-  //           obj = { ...obj, isOpen: true };
-  //           let filteredWhereClauses = this.state.whereClauses.filter(
-  //             (a) => a.id !== obj.id
-  //           );
-  //           filteredWhereClauses.push(obj);
-  //           filteredWhereClauses.sort(function (a, b) {
-  //             return a.id < b.id ? -1 : a.id == b.id ? 0 : 1;
-  //           });
-  //           return this.setState({
-  //             whereClauses: filteredWhereClauses,
-  //           });
-  //         } else {
-  //           obj = { ...obj, isOpen: false };
-  //           let filteredWhereClauses = this.state.whereClauses.filter(
-  //             (a) => a.id !== obj.id
-  //           );
-  //           filteredWhereClauses.push(obj);
-  //           filteredWhereClauses.sort(function (a, b) {
-  //             return a.id < b.id ? -1 : a.id == b.id ? 0 : 1;
-  //           });
-  //           return this.setState({
-  //             whereClauses: filteredWhereClauses,
-  //           });
-  //         }
-  //       }
-  //       return { obj };
-  //     });
-  //   }
-  // };
-
-  // dropDownSet = (id) => {
-  //   this.setState({ autOpen: true });
-  //   let queryIndex;
-  //   queryIndex = this.state.whereClauseSet
-  //     .map((obj) => obj.id)
-  //     .indexOf(id.toString());
-  //   if (queryIndex !== -1) {
-  //     const updateState = this.state.whereClauseSet.map((obj) => {
-  //       if (obj.id === queryIndex.toString()) {
-  //         if (!obj.isOpen) {
-  //           obj = { ...obj, isOpen: true };
-  //           let filteredWhereClauseSet = this.state.whereClauseSet.filter(
-  //             (a) => a.id !== obj.id
-  //           );
-  //           Set.push(obj);
-  //           filteredWhereClauseSet.sort(function (a, b) {
-  //             return a.id < b.id ? -1 : a.id == b.id ? 0 : 1;
-  //           });
-  //           return this.setState({
-  //             whereClauseSet: filteredWhereClauseSet,
-  //           });
-  //         } else {
-  //           obj = { ...obj, isOpen: false };
-  //           let filteredWhereClauseSet = this.state.whereClauseSet.filter(
-  //             (a) => a.id !== obj.id
-  //           );
-  //           filteredWhereClauseSet.push(obj);
-  //           filteredWhereClauseSet.sort(function (a, b) {
-  //             return a.id < b.id ? -1 : a.id == b.id ? 0 : 1;
-  //           });
-  //           return this.setState({
-  //             whereClauseSet: filteredWhereClauseSet,
-  //           });
-  //         }
-  //       }
-  //       return { obj };
-  //     });
-  //   }
-  // };
-
-  handleCheckBox = (event) => {
-    this.setState({
-      isChecked: event.target.checked,
-    });
   };
 
   addCurrentWherClauseBlock = (currentId, currentWhereClause) => {
@@ -883,19 +619,14 @@ export default class Widget extends React.PureComponent<
     const currentSetBlock = [...this.state.SetBlock];
     let currentBlockIndex = -1;
     let currentBlock;
-    currentBlockIndex = currentSetBlock.findIndex(
-      (item) => `${item?.blockId}` === blockId
-    );
-    if (currentBlockIndex !== -1)
-      currentBlock = currentSetBlock[currentBlockIndex];
+    currentBlockIndex = currentSetBlock.findIndex((item) => `${item?.blockId}` === blockId);
+    if (currentBlockIndex !== -1)currentBlock = currentSetBlock[currentBlockIndex];
     let currentWhereSetClause = null;
     if (currentBlock) {
       currentWhereSetClause = currentBlock[`${blockId}`];
       if (currentWhereSetClause?.length) {
         let index = -1;
-        index = currentWhereSetClause.findIndex(
-          (item) => item.id === currentId
-        );
+        index = currentWhereSetClause.findIndex((item) => item.id === currentId);
         if (index !== -1) {
           currentWhereSetClause[index] = currentWhereClause;
         } else {
@@ -926,42 +657,11 @@ export default class Widget extends React.PureComponent<
     this.setState({ AndOrSet: e.target.value, SetBlock: currentSetBlock });
   };
 
-  // openDrop = (id) => {
-  //   this.setState({ mouseleave: false });
-  //   this.setState({ dropId: id });
-  //   const dropDowns = { ...this.state.dropDowns };
-  //   if (dropDowns[id]) {
-  //     this.setState({ dropDowns: { ...this.state.dropDowns, [id]: false } });
-  //   } else {
-  //     this.setState({ dropDowns: { ...this.state.dropDowns, [id]: true } });
-  //   }
-  // };
-
-  // openDropSet = (id) => {
-  //   const currentId = id;
-  //   this.setState({ mouseleave: false });
-  //   this.setState({ dropIdSet: currentId });
-  //   const dropDownsSet = { ...this.state.dropDownsSet };
-  //   if (dropDownsSet[currentId]) {
-  //     this.setState({
-  //       dropDownsSet: { ...this.state.dropDownsSet, [currentId]: false },
-  //     });
-  //   } else {
-  //     this.setState({
-  //       dropDownsSet: { ...this.state.dropDownsSet, [currentId]: true },
-  //     });
-  //   }
-  // };
-
   closeDrop = () => this.setState({ opened: false, autOpen: false });
 
   closeDropOnclickOutside = () => {
-    if (this.state.dropId !== null && this.state.mouseleave) {
-      this.setState({ mouseleave: false });
-    }
-    if (this.state.dropIdSet !== null && this.state.mouseleave) {
-      this.setState({ mouseleave: false });
-    }
+    if (this.state.dropId !== null && this.state.mouseleave)this.setState({ mouseleave: false });
+    if (this.state.dropIdSet !== null && this.state.mouseleave)this.setState({ mouseleave: false });
   };
 
   onmouseLeave = () => this.setState({ mouseleave: true });
@@ -974,9 +674,7 @@ export default class Widget extends React.PureComponent<
     let newMapLayer = [];
     if (allMapLayers?.length > 0 && checkedLayers.length > 0) {
       newMapLayer = allMapLayers.reduce((newArray, item) => {
-        if (checkedLayers.includes(item.id)) {
-          newArray.push(item);
-        }
+        if (checkedLayers.includes(item.id))newArray.push(item);
         return newArray;
       }, []);
     }
@@ -994,9 +692,7 @@ export default class Widget extends React.PureComponent<
   };
 
   clearHighlights = (layerView: any) => {
-    if (layerView) {
-      layerView._highlightIds.clear();
-    }
+    if (layerView)layerView._highlightIds.clear();
   };
 
   returnToOriginalExtent = () => {
@@ -1035,9 +731,7 @@ export default class Widget extends React.PureComponent<
 
   //TODO config abilitare tab true/false
   render() {
-    const tableSetCounts = (
-      tableSetCounts: { id: string; deleted: boolean }[]
-    ) => {
+    const tableSetCounts = (tableSetCounts: { id: string; deleted: boolean }[]) => {
       let counts = 0;
       if (tableSetCounts.length) {
         const copiedTableSetCounts = [...tableSetCounts];
@@ -1067,10 +761,7 @@ export default class Widget extends React.PureComponent<
       if (this.currentLayerView) this.clearHighlights(this.currentLayerView);
     }
     if (this.props.state == "OPENED" && !this.state.widgetStateOpenedChecked) {
-      this.setState({
-        widgetStateClosedChecked: false,
-        widgetStateOpenedChecked: true,
-      });
+      this.setState({widgetStateClosedChecked: false,widgetStateOpenedChecked: true,});
     }
     return (
       <ReactResizeDetector handleWidth handleHeight>
@@ -1133,19 +824,7 @@ export default class Widget extends React.PureComponent<
                     </CallToActionContext.Provider>
                       
                     <TablesContext.Provider 
-                      value={{
-                        list:this.state.resultsLayerSelected,
-                        parent:this,
-                        queryChanged:this.state.queryChanged
-                        // isOpenDropD:this.state.isOpen,
-                        // dropdownValueQuery:this.state.dropdownValueQuery,
-                        // isChecked:this.state.isChecked,
-                        // counterIsChecked:this.state.counterIsChecked,
-                        // checkedToQuery:this.state.checkedToQuery,
-                        // opened:this.state.opened,
-                        // autOpen:this.state.autOpen,
-                        // mouseleave:this.state.mouseleave,
-                      }}
+                      value={{list:this.state.resultsLayerSelected,parent:this,queryChanged:this.state.queryChanged}}
                     >
                       <div className="row" style={{ height: "50%", overflowY: "scroll" }}>
                         <div className="col-md-12">
@@ -1154,43 +833,24 @@ export default class Widget extends React.PureComponent<
                               className="w-100"
                               key={i}
                               id={`row-${i}`}
-                              // list={this.state.resultsLayerSelected}
-                              // isOpenDropD={this.state.isOpen}
-                              // dropDown={() => this.dropDown(el.id,"single")}
                               dropdownValueQuery={this.state.dropdownValueQuery}
-                              // isChecked={this.state.isChecked}
-                              // counterIsChecked={this.state.counterIsChecked}
-                              // checkedToQuery={this.state.checkedToQuery}
                               tables={this.state.tables}
                               tablesId={el.id}
                               whereClauses={this.state.whereClauses}
                               getQueryAttribute={this.getQueryAttribute}
                               getQuery={this.getQuery}
-                              // handleThirdQuery={this.thirdQuery}
                               textInputHandler={this.textInputHandler}
                               dropdownItemHandler={this.dropdownItemClick}
                               textFirstIncludedHandler={this.textFirstIncludedHandler}
-                              textSecondIncludedHandler={
-                                this.textSecondIncludedHandler
-                              }
-                              // dropDownToggler={this.dropDown}
-                              // handleCheckBox={this.handleCheckBox}
+                              textSecondIncludedHandler={this.textSecondIncludedHandler}
                               deleteTable={() => this.deleteTable(el.id)}
                               univocoSelectHandler={this.univocoSelectHandler}
-                              // onChangeCheckBox={this.onChangeCheckBox}
-                              // openDrop={this.openDrop}
                               closeDrop={this.closeDrop}
-                              // opened={this.state.opened}
-                              // autOpen={this.state.autOpen}
-                              // mouseleave={this.state.mouseleave}
                               onmouseLeave={this.onmouseLeave}
                               functionCounterIsChecked={this.functionCounterIsChecked}
                               dropdowns={this.state.dropDowns}
-                              // itemNotFound={this.state.itemNotFound}
                               selectedId={this.state.selectedId}
                               currentTable={el}
-                              // queryChanged = {this.state.queryChanged}
-                              // parent={this}
                             />
                           ))}
                           <br />
@@ -1217,14 +877,8 @@ export default class Widget extends React.PureComponent<
                                   )
                                 ) : (
                                   <div
-                                  className={width >= 626 ? "d-flex col-l-1 ":"d-flex col-md-8"}
-                                    style={{
-                                      paddingLeft:0,
-                                      paddingRight:0
-                                      // display: "flex",
-                                      // flexDirection: "row",
-                                      // marginTop: "20px",
-                                    }}
+                                    className={width >= 626 ? "d-flex col-l-1 ":"d-flex col-md-8"}
+                                    style={{paddingLeft:0,paddingRight:0}}
                                   >
                                     <AndOrSelector chooseAndOr={(e)=>this.chooseAndOrSet(e,el.blockId)}/>
                                     <div className="">
@@ -1256,65 +910,30 @@ export default class Widget extends React.PureComponent<
                                     className="w-100"
                                     key={i}
                                     id={`row-${i}`}
-                                    // list={this.state.resultsLayerSelected}
-                                    // isOpenDropD={this.state.isOpen}
-                                    // dropDown={() => this.dropDown(el.id,"set")}
-                                    // dropDown={() => this.dropDownSet(el.id)}
-                                    // dropdownValueQuery={this.state.dropdownValueQuery}
-                                    // isChecked={this.state.isChecked}
-                                    // counterIsChecked={this.state.counterIsChecked}
-                                    // checkedToQuery={this.state.checkedToQuery}
                                     // for Add set table............................
                                     tablesSet={this.state.tablesSet}
-                                    tablesSetId={
-                                      `${innerEl.id}` + "-" + `${el.blockId}`
-                                    }
+                                    tablesSetId={`${innerEl.id}` + "-" + `${el.blockId}`}
                                     whereClausesSet={this.state.whereClauseSet}
                                     // End for Add set table............................
-                                    // getQueryAttribute={this.getQueryAttributeSet}
                                     getQueryAttribute={this.getQueryAttribute}
                                     getQuery={this.getQuerySet}
-                                    // handleThirdQuery={this.thirdQuery}
                                     textInputHandler={this.textInputHandler}
                                     dropdownItemHandler={this.dropdownItemClick}
-                                    textFirstIncludedHandler={
-                                      this.textFirstIncludedHandler
-                                    }
-                                    textSecondIncludedHandler={
-                                      this.textSecondIncludedHandler
-                                    }
-                                    // dropDownToggler={this.dropDownSet}
-                                    // handleCheckBox={this.handleCheckBox}
+                                    textFirstIncludedHandler={this.textFirstIncludedHandler}
+                                    textSecondIncludedHandler={this.textSecondIncludedHandler}
                                     deleteTable={(e) =>
-                                      this.deleteBlockTable(
-                                        `${innerEl.id}` + "-" + `${el.blockId}`,
-                                        `${el.blockId}`
-                                      )
+                                      this.deleteBlockTable(`${innerEl.id}` + "-" + `${el.blockId}`,`${el.blockId}`)
                                     }
                                     univocoSelectHandler={this.univocoSelectHandler}
-                                    // onChangeCheckBox={this.onChangeCheckBoxSet}
-                                    // openDrop={this.openDropSet}
                                     closeDrop={this.closeDrop}
-                                    // opened={this.state.opened}
-                                    // autOpen={this.state.autOpen}
-                                    // mouseleave={this.state.mouseleave}
                                     onmouseLeave={this.onmouseLeave}
-                                    functionCounterIsChecked={
-                                      this.functionCounterIsChecked
-                                    }
+                                    functionCounterIsChecked={this.functionCounterIsChecked}
                                     dropdownsSet={this.state.dropDownsSet}
-                                    // itemNotFound={this.state.itemNotFound}
                                     showDelete={counts > 2 ? true : false}
-                                    showBlockDelete={
-                                      counts === 2 && i == 0 ? true : false
-                                    }
+                                    showBlockDelete={counts === 2 && i == 0 ? true : false}
                                     blockId={el.blockId}
-                                    deleteBlockAll={() =>
-                                      this.deleteBlockAll({ el, innerEl })
-                                    }
+                                    deleteBlockAll={() =>this.deleteBlockAll({ el, innerEl })}
                                     currentTable={innerEl}
-                                    // queryChanged = {this.state.queryChanged}
-                                    // parent={this}
                                   />
                                 ))}
                               </div>
@@ -1336,200 +955,8 @@ export default class Widget extends React.PureComponent<
                         </div>
                       </div>
                     </TablesContext.Provider>
-                    {/* <div
-                      className="row"
-                      style={{ height: "50%", overflowY: "scroll" }}
-                    >
-                      <div className="col-md-12">
-                        {this.state.tables.map((el, i) => (
-                          <Table
-                            className="w-100"
-                            key={i}
-                            id={`row-${i}`}
-                            list={this.state.resultsLayerSelected}
-                            isOpenDropD={this.state.isOpen}
-                            // dropDown={() => this.dropDown(el.id,"single")}
-                            dropdownValueQuery={this.state.dropdownValueQuery}
-                            isChecked={this.state.isChecked}
-                            counterIsChecked={this.state.counterIsChecked}
-                            checkedToQuery={this.state.checkedToQuery}
-                            tables={this.state.tables}
-                            tablesId={el.id}
-                            whereClauses={this.state.whereClauses}
-                            getQueryAttribute={this.getQueryAttribute}
-                            getQuery={this.getQuery}
-                            handleThirdQuery={this.thirdQuery}
-                            textInputHandler={this.textInputHandler}
-                            dropdownItemHandler={this.dropdownItemClick}
-                            textFirstIncludedHandler={this.textFirstIncludedHandler}
-                            textSecondIncludedHandler={
-                              this.textSecondIncludedHandler
-                            }
-                            // dropDownToggler={this.dropDown}
-                            handleCheckBox={this.handleCheckBox}
-                            deleteTable={() => this.deleteTable(el.id)}
-                            univocoSelectHandler={this.univocoSelectHandler}
-                            // onChangeCheckBox={this.onChangeCheckBox}
-                            openDrop={this.openDrop}
-                            closeDrop={this.closeDrop}
-                            opened={this.state.opened}
-                            autOpen={this.state.autOpen}
-                            mouseleave={this.state.mouseleave}
-                            onmouseLeave={this.onmouseLeave}
-                            functionCounterIsChecked={this.functionCounterIsChecked}
-                            dropdowns={this.state.dropDowns}
-                            itemNotFound={this.state.itemNotFound}
-                            selectedId={this.state.selectedId}
-                            currentTable={el}
-                            queryChanged = {this.state.queryChanged}
-                            parent={this}
-                          />
-                        ))}
-                        <br />
-                        <div
-                          style={{
-                            width: "98%",
-                            background: "#005eca",
-                            height: "10px",
-                          }}
-                        ></div>
-                        <br />
-                        {this.state.SetBlock.map((el, index) => {
-                          const counts = tableSetCounts(el.tablesSet);
-                          return (
-                            <div id={index}>
-                              {counts < 2 ? (
-                                counts == 1 ? (
-                                  <p>
-                                    Visualizza le feature nel layer corrispondenti
-                                    alla seguente espressione
-                                  </p>
-                                ) : (
-                                  ""
-                                )
-                              ) : (
-                                <div
-                                className={width >= 626 ? "d-flex col-l-1 ":"d-flex col-md-8"}
-                                  style={{
-                                    paddingLeft:0,
-                                    paddingRight:0
-                                    // display: "flex",
-                                    // flexDirection: "row",
-                                    // marginTop: "20px",
-                                  }}
-                                >
-                                  <AndOrSelector chooseAndOr={(e)=>this.chooseAndOrSet(e,el.blockId)}/>
-                                  <div className="">
-                                    <Button
-                                      className=""
-                                      onClick={() => this.deleteBlock(el.blockId)}
-                                      icon
-                                      type="secondary"
-                                    >
-                                      <CloseOutlined />
-                                    </Button>
-                                  </div>
-
-                                  <div className=" ">
-                                    <Button
-                                      id={el.blockId}
-                                      onClick={() => this.addTwoTable(el.blockId)}
-                                      className=""
-                                      icon
-                                      type="secondary"
-                                    >
-                                      <PlusOutlined />
-                                    </Button>
-                                  </div>
-                                </div>
-                              )}
-                              {el.tablesSet.map((innerEl, i, TableArray) => (
-                                <AddSetTable
-                                  className="w-100"
-                                  key={i}
-                                  id={`row-${i}`}
-                                  list={this.state.resultsLayerSelected}
-                                  isOpenDropD={this.state.isOpen}
-                                  // dropDown={() => this.dropDown(el.id,"set")}
-                                  // dropDown={() => this.dropDownSet(el.id)}
-                                  dropdownValueQuery={this.state.dropdownValueQuery}
-                                  isChecked={this.state.isChecked}
-                                  counterIsChecked={this.state.counterIsChecked}
-                                  checkedToQuery={this.state.checkedToQuery}
-                                  // for Add set table............................
-                                  tablesSet={this.state.tablesSet}
-                                  tablesSetId={
-                                    `${innerEl.id}` + "-" + `${el.blockId}`
-                                  }
-                                  whereClausesSet={this.state.whereClauseSet}
-                                  // End for Add set table............................
-                                  // getQueryAttribute={this.getQueryAttributeSet}
-                                  getQueryAttribute={this.getQueryAttribute}
-                                  getQuery={this.getQuerySet}
-                                  handleThirdQuery={this.thirdQuery}
-                                  textInputHandler={this.textInputHandler}
-                                  dropdownItemHandler={this.dropdownItemClick}
-                                  textFirstIncludedHandler={
-                                    this.textFirstIncludedHandler
-                                  }
-                                  textSecondIncludedHandler={
-                                    this.textSecondIncludedHandler
-                                  }
-                                  dropDownToggler={this.dropDownSet}
-                                  handleCheckBox={this.handleCheckBox}
-                                  deleteTable={(e) =>
-                                    this.deleteBlockTable(
-                                      `${innerEl.id}` + "-" + `${el.blockId}`,
-                                      `${el.blockId}`
-                                    )
-                                  }
-                                  univocoSelectHandler={this.univocoSelectHandler}
-                                  // onChangeCheckBox={this.onChangeCheckBoxSet}
-                                  openDrop={this.openDropSet}
-                                  closeDrop={this.closeDrop}
-                                  opened={this.state.opened}
-                                  autOpen={this.state.autOpen}
-                                  mouseleave={this.state.mouseleave}
-                                  onmouseLeave={this.onmouseLeave}
-                                  functionCounterIsChecked={
-                                    this.functionCounterIsChecked
-                                  }
-                                  dropdownsSet={this.state.dropDownsSet}
-                                  itemNotFound={this.state.itemNotFound}
-                                  showDelete={counts > 2 ? true : false}
-                                  showBlockDelete={
-                                    counts === 2 && i == 0 ? true : false
-                                  }
-                                  blockId={el.blockId}
-                                  deleteBlockAll={() =>
-                                    this.deleteBlockAll({ el, innerEl })
-                                  }
-                                  currentTable={innerEl}
-                                  queryChanged = {this.state.queryChanged}
-                                  parent={this}
-                                />
-                              ))}
-                            </div>
-                          );
-                        })}
-
-                        <br />
-                        <br />
-                        {this.state.itemNotFound && (
-                          <Alert
-                            className="w-100"
-                            form="basic"
-                            open
-                            text={this.state.itemNotFound}
-                            type="error"
-                            withIcon
-                          />
-                        )}
-                      </div>
-                    </div> */}
                   </div>
                 </div>
-
           </div>
         )}
       </ReactResizeDetector>

@@ -18,22 +18,13 @@ const SecondConstructorAddset = (props) => {
     dropdownItemHandler,
     textFirstIncludedHandler,
     textSecondIncludedHandler,
-    counterIsChecked,
-    functionCounterIsChecked,
     tablesSetId,
     whereClausesSet,
-    dropDownToggler,
     univocoSelectHandler,
     dropDown,
-    isOpenDropD,
     onChangeCheckBox,
     openDrop,
-    closeDrop,
-    opened: d,
-    autOpen,
-    onmouseLeave,
     dropdownsSet,
-    blockId,
     width,
     queryChanged,
     parent,
@@ -50,7 +41,6 @@ const SecondConstructorAddset = (props) => {
   let checked = 0;
   let au = true;
   let singleWhereClause;
-  // valueThirdQuery.map((el, i) => { normalizedThirdQuery.push({ label: el.label[0].toString(), value: el.value[0].toString() }) })
   if (whereClausesSet.length) {
     const currentItem = whereClausesSet.find((item) => item.id === tablesSetId);
     if (currentItem?.ifInOrNotInQueryValue) {

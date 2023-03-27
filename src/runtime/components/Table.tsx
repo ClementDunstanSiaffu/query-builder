@@ -11,40 +11,23 @@ import { TablesContext } from "../../context/contextApi";
 
 function Table(props) {
   const {
-    // list,
-    handleThirdQuery,
     textInputHandler,
     multiSelectHandler,
     dropdownItemHandler,
     textFirstIncludedHandler,
     textSecondIncludedHandler,
     dropdownValueQuery,
-    // handleCheckBox,
-    // isChecked,
-    // counterIsChecked,
-    // dropDownToggler,
     functionCounterIsChecked,
-    // checkedToQuery,
     deleteTable,
     tablesId,
     getQueryAttribute,
     whereClauses,
-    tables,
     getQuery,
     univocoSelectHandler,
-    // dropDown,
-    // isOpenDropD,
-    // onChangeCheckBox,
-    // openDrop,
     closeDrop,
-    // opened,
-    // autOpen,
-    // mouseleave,
     onmouseLeave,
     dropdowns,
     currentTable,
-    // queryChanged,
-    // parent
   } = props;
 
   const context = React.useContext(TablesContext);
@@ -82,16 +65,6 @@ function Table(props) {
                 return a.id < b.id ? -1 : a.id == b.id ? 0 : 1;
               });
               self.setState({whereClauses: Array.from(new Set(filteredWhereClauses))});
-              // console.log(filteredWhereClauses,"check filtered whereclause first")
-              // self.setState({whereClauses: filteredWhereClauses},
-              //   () => {
-              //     filteredWhereClauses.sort(function (a, b) {
-              //       return a.id < b.id ? -1 : a.id == b.id ? 0 : 1;
-              //     });
-              //     // Remove duplicate entries from the whereClauses array
-              //     self.setState({whereClauses: Array.from(new Set(filteredWhereClauses))});
-              //   }
-              // );
             } else {
               const ifAlreadyCheck = obj.checkedList
                 .map((obj) => obj.checkValue)
@@ -117,17 +90,6 @@ function Table(props) {
                   return a.id < b.id ? -1 : a.id == b.id ? 0 : 1;
                 });
                 self.setState({whereClauses: Array.from(new Set(whereClauses))})
-                // self.setState({whereClauses: whereClauses},
-                //   () => {
-                //     whereClauses.sort(function (a, b) {
-                //       return a.id < b.id ? -1 : a.id == b.id ? 0 : 1;
-                //     });
-
-                //     // Remove duplicate entries from the whereClauses array
-                //     self.setState({whereClauses: Array.from(new Set(whereClauses)),
-                //     });
-                //   }
-                // );
               }
             }
           }
@@ -151,15 +113,6 @@ function Table(props) {
         return a.id < b.id ? -1 : a.id == b.id ? 0 : 1;
       });
       self.setState({whereClauses: Array.from(new Set(whereClauses))});
-      // self.setState({whereClauses:whereClauses},
-      //   () => {
-      //     whereClauses.sort(function (a, b) {
-      //       return a.id < b.id ? -1 : a.id == b.id ? 0 : 1;
-      //     });
-      //     // Remove duplicate entries from the whereClauses array
-      //     self.setState({whereClauses: Array.from(new Set(whereClauses))});
-      //   }
-      // );
     }
   };
 
@@ -280,31 +233,20 @@ function Table(props) {
                       </div>
                       <CommonSecondConstructor 
                         className="col-md-4"
-                        // handleThirdQuery={handleThirdQuery}
                         textInputHandler={textInputHandler}
                         multiSelectHandler={multiSelectHandler}
                         dropdownItemHandler={dropdownItemHandler}
                         textFirstIncludedHandler={textFirstIncludedHandler}
                         textSecondIncludedHandler={textSecondIncludedHandler}
                         dropdownValueQuery={dropdownValueQuery}
-                        // handleCheckBox={handleCheckBox}
-                        // isChecked={isChecked}
-                        // counterIsChecked={counterIsChecked}
                         functionCounterIsChecked={functionCounterIsChecked}
-                        // checkedToQuery={checkedToQuery}
                         getQueryAttribute={getQueryAttribute}
                         whereClauses={whereClauses}
                         tablesId={tablesId}
-                        // dropDownToggler={dropDownToggler}
                         univocoSelectHandler={univocoSelectHandler}
-                        // dropDown={dropDown}
-                        // isOpenDropD={isOpenDropD}
                         onChangeCheckBox={onChangeCheckBox}
                         openDrop={openDrop}
                         closeDrop={closeDrop}
-                        // opened={opened}
-                        // autOpen={autOpen}
-                        // mouseleave={mouseleave}
                         onmouseLeave={onmouseLeave}
                         dropdowns={dropdowns}
                         width={width}
