@@ -119,6 +119,7 @@ export default class Widget extends React.PureComponent<AllWidgetProps<IMConfig>
       jmv.view.map.add(this.graphicLayerFound);
       jmv.view.map.add(this.graphicLayerSelected);
       const resultLayerList = [];
+      jmv.clearSelectedFeatures();
       jmv.view.map.allLayers.forEach((f, index) => {
         if (f.type === "feature") {
           jmv.view.whenLayerView(f).then((layerView) => {
