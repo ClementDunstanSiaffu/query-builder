@@ -122,6 +122,7 @@ export default class Widget extends React.PureComponent<AllWidgetProps<IMConfig>
       jmv.clearSelectedFeatures();
       jmv.view.map.allLayers.forEach((f, index) => {
         if (f.type === "feature") {
+          if (!f.visible)f.visible = true;
           jmv.view.whenLayerView(f).then((layerView) => {
             const query = new Query();
             query.where = "1=1";
@@ -142,6 +143,8 @@ export default class Widget extends React.PureComponent<AllWidgetProps<IMConfig>
       this.setState({ resultLayerList: resultLayerList, jimuMapView: jmv });
       this.attributeTableConnector = new AttributeTableConnector(jmv, this);
       Widget.initialZoom = jmv.view.zoom;
+      this.props.dispatch(appActions.widgetStatePropChange("value","initialMapZoom",jmv.view.zoom));
+
     }
   }
 
